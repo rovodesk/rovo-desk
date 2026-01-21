@@ -1,0 +1,87 @@
+{
+  "tailwindCSS.experimental.configFile": "packages/design-system/styles/default.css",
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "emmet.showExpandedAbbreviation": "never",
+  "prettier.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "todo-tree.general.tags": ["TODO", "FIXME", "BUG"],
+  "todo-tree.highlights.defaultHighlight": {
+    "fontWeight": "bold",
+    "type": "text",
+    "borderRadius": "2px"
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "foreground": "#000000",
+      "background": "#ffeb3b",
+      "icon": "check",
+      "iconColour": "#ffeb3b",
+      "gutterIcon": true
+    },
+    "FIXME": {
+      "foreground": "#ffffff",
+      "background": "#ff9800",
+      "icon": "tools",
+      "iconColour": "#ff9800",
+      "gutterIcon": true
+    },
+    "BUG": {
+      "foreground": "#ffffff",
+      "background": "#f44336",
+      "icon": "bug",
+      "iconColour": "#f44336",
+      "gutterIcon": true
+    }
+  },
+  "todo-tree.general.statusBar": "total",
+  "files.exclude": {
+    "**/node_modules": true,
+    "bun.lock": true,
+    "bunfig.toml": true,
+    ".husky": true,
+    "**/.tanstack": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true
+}

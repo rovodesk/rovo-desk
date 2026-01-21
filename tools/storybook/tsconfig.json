@@ -1,0 +1,8 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/vite.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

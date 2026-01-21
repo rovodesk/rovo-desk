@@ -5,6 +5,10 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "module": "ESNext",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@/*": ["./*"],
+      "@zero-heads-lab/*": ["../../packages/*"]
+    }
   }
 }

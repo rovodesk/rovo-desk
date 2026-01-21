@@ -1,0 +1,52 @@
+{
+  "name": "dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate-routes": "tsr generate",
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@convex-dev/react-query": "catalog:convex",
+    "@t3-oss/env-core": "catalog:",
+    "@tanstack/react-devtools": "catalog:tanstack",
+    "@tanstack/react-query": "catalog:tanstack",
+    "@tanstack/react-query-devtools": "catalog:tanstack",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tanstack/react-router-ssr-query": "catalog:tanstack",
+    "@tanstack/react-router-with-query": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "@tanstack/router-plugin": "catalog:tanstack",
+    "@zero-heads-lab/backend": "workspace:*",
+    "@zero-heads-lab/design-system": "workspace:^",
+    "axios": "catalog:",
+    "lucide-react": "catalog:",
+    "nitro": "catalog:",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "vite-tsconfig-paths": "catalog:vite",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:tailwindcss",
+    "@tailwindcss/vite": "catalog:tailwindcss",
+    "@tanstack/devtools-vite": "catalog:tanstack",
+    "@tanstack/router-cli": "catalog:tanstack",
+    "@testing-library/dom": "catalog:testing",
+    "@testing-library/react": "catalog:testing",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:vite",
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "jsdom": "catalog:testing",
+    "typescript": "catalog:",
+    "vite": "catalog:vite",
+    "vitest": "catalog:vite",
+    "web-vitals": "catalog:vite"
+  }
+}

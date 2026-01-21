@@ -11,7 +11,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./*"],
-      "@workspace/*": ["../../packages/*"]
+      "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

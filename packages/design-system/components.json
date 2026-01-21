@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-maia",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "@zero-heads-lab/design-system/styles/globals.css",
+    "baseColor": "gray",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "tabler",
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "aliases": {
+    "components": "@zero-heads-lab/design-system/components",
+    "utils": "@zero-heads-lab/design-system/lib/utils",
+    "ui": "@zero-heads-lab/design-system/components/ui",
+    "lib": "@zero-heads-lab/design-system/lib",
+    "hooks": "@zero-heads-lab/design-system/hooks"
+  }
+}

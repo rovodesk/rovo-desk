@@ -1,0 +1,19 @@
+{
+  "name": "@zero-heads-lab/backend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "convex dev",
+    "setup": "convex dev --until-success"
+  },
+  "dependencies": {
+    "convex": "catalog:convex"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

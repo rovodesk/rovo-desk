@@ -1,0 +1,17 @@
+{
+  "name": "@zero-heads-lab/shared",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "catalog:react19",
+    "@zero-heads-lab/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}
