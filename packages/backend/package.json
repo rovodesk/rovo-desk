@@ -7,12 +7,10 @@
     "setup": "convex dev --until-success"
   },
   "dependencies": {
-    "convex": "catalog:convex"
+    "convex": "catalog:convex",
+    "zod": "catalog:"
   },
-  "devDependencies": {
-    "@zero-heads-lab/typescript-config": "workspace:*",
-    "@types/bun": "latest"
-  },
+  "devDependencies": {},
   "peerDependencies": {
     "typescript": "^5"
   }

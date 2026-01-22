@@ -4,13 +4,14 @@
   "type": "module",
   "scripts": {
     "generate-routes": "tsr generate",
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run"
   },
   "dependencies": {
     "@convex-dev/react-query": "catalog:convex",
+    "@convex-dev/better-auth": "catalog:convex",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-devtools": "catalog:tanstack",
     "@tanstack/react-query": "catalog:tanstack",

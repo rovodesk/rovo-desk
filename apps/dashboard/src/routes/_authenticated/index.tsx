@@ -1,15 +1,36 @@
 // routes/index.tsx
-
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router"; // [!code ++]
 import { getPunkSongs } from "@/data/demo-data";
 import "@/styles/app.css";
+import { convexQuery } from "@convex-dev/react-query";
+import { api } from "@zero-heads-lab/backend/convex/_generated/api";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
+	// Check for auth BEFORE the route loads
+	beforeLoad: async ({ context }) => {
+		const user = await context.queryClient.ensureQueryData(
+			convexQuery(api.auth.getCurrentUser, {})
+		);
+
+		// If no user is found, boot them to sign-in
+		if (!user) {
+			throw redirect({
+				to: "/sign-in",
+				search: {
+					redirect: "/",
+				},
+			});
+		}
+
+		// Return user to make it available to the loader/component via 'context'
+		return { user };
+	},
 	component: App,
 });
 
 function App() {
+	// This query handles the actual page content
 	const { data, isLoading, error } = useQuery({
 		queryKey: ["punkSongs"],
 		queryFn: () => getPunkSongs(),
