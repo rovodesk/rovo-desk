@@ -68,7 +68,7 @@
     "**/node_modules": true,
     "bun.lock": true,
     "bunfig.toml": true,
-    ".husky": true,
+    ".husky": false,
     "**/.tanstack": true
   },
   "files.readonlyInclude": {

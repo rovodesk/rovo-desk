@@ -1,5 +1,5 @@
 import { useTheme } from "../../context/theme";
-import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { Toaster as Sonner, toast, type ToasterProps } from "sonner";
 import { SquareCheck, Loader2, AlertTriangle, InfoIcon, OctagonAlert } from "lucide-react";
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -29,4 +29,4 @@ const Toaster = ({ ...props }: ToasterProps) => {
 	);
 };
 
-export { Toaster };
+export { Toaster, toast };

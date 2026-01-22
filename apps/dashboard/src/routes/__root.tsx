@@ -1,4 +1,3 @@
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
@@ -8,23 +7,14 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
-	useRouteContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { createServerFn } from "@tanstack/react-start";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppNavigationProgress } from "@/components/app-nav-progress";
-import { Header } from "@/components/header";
+// import { Header } from "@/components/header";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
-import { authClient } from "@/lib/auth/client";
-import { getToken } from "@/lib/auth/server";
 import appCss from "@/styles/app.css?url";
-
-// Get auth information for SSR using available cookies
-const getAuth = createServerFn({ method: "GET" }).handler(async () => {
-	return await getToken();
-});
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -38,43 +28,20 @@ export const Route = createRootRouteWithContext<{
 		],
 		links: [{ rel: "stylesheet", href: appCss }],
 	}),
-	beforeLoad: async (ctx) => {
-		const token = await getAuth();
 
-		// all queries, mutations and actions through TanStack Query will be
-		// authenticated during SSR if we have a valid token
-		if (token) {
-			// During SSR only (the only time serverHttpClient exists),
-			// set the auth token to make HTTP queries with.
-			ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
-		}
-
-		return {
-			isAuthenticated: !!token,
-			token,
-		};
-	},
 	component: RootComponent,
 	notFoundComponent: NotFoundError,
 	errorComponent: GeneralError,
 });
 
 function RootComponent() {
-	const context = useRouteContext({ from: Route.id });
-
 	return (
-		<ConvexBetterAuthProvider
-			authClient={authClient}
-			client={context.convexQueryClient.convexClient}
-			initialToken={context.token}
-		>
-			<RootDocument>
-				<UIProvider>
-					<AppNavigationProgress />
-					<Outlet />
-				</UIProvider>
-			</RootDocument>
-		</ConvexBetterAuthProvider>
+		<RootDocument>
+			<UIProvider>
+				<AppNavigationProgress />
+				<Outlet />
+			</UIProvider>
+		</RootDocument>
 	);
 }
 
@@ -85,7 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<Header />
+				{/* <Header /> */}
 				{children}
 
 				{import.meta.env.DEV && (

@@ -23,7 +23,8 @@
       "style": {
         "useBlockStatements": "off",
         "useNodejsImportProtocol": "off",
-        "noHeadElement": "off"
+        "noHeadElement": "off",
+        "useConsistentTypeDefinitions": "off"
       },
       "performance": {
         "noBarrelFile": "off",

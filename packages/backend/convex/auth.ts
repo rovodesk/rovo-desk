@@ -8,20 +8,29 @@ import type { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
 
-const siteUrl = keys.BETTER_AUTH_URL;
-
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
 	return betterAuth({
-		baseURL: siteUrl,
+		baseURL: keys.BETTER_AUTH_URL,
 		database: authComponent.adapter(ctx),
 		// Configure simple, non-verified email/password to get started
 		emailAndPassword: {
 			enabled: true,
 			requireEmailVerification: false,
+		},
+		socialProviders: {
+			google: {
+				prompt: "select_account consent",
+				clientId: keys.GOOGLE_CLIENT_ID,
+				clientSecret: keys.GOOGLE_CLIENT_SECRET,
+			},
+			github: {
+				clientId: keys.GITHUB_CLIENT_ID,
+				clientSecret: keys.GITHUB_CLIENT_SECRET,
+			},
 		},
 		plugins: [
 			// The Convex plugin is required for Convex compatibility

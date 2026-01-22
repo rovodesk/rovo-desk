@@ -1,6 +1,7 @@
 import { convexQuery } from "@convex-dev/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router"; // [!code ++]
 import { api } from "@zero-heads-lab/backend/convex/_generated/api";
+import { Auth } from "@/features/authentication/auth";
 
 export const Route = createFileRoute("/(auth)/sign-in")({
 	beforeLoad: async ({ context }) => {
@@ -16,13 +17,5 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 			});
 		}
 	},
-	component: SignIn,
+	component: Auth,
 });
-
-function SignIn() {
-	return (
-		<div>
-			<h2 className="font-bold text-2xl">Sign In</h2>
-		</div>
-	);
-}

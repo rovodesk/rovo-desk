@@ -1,64 +1,140 @@
-// routes/index.tsx
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router"; // [!code ++]
-import { getPunkSongs } from "@/data/demo-data";
-import "@/styles/app.css";
 import { convexQuery } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
+import {
+	createFileRoute,
+	redirect,
+	useRouteContext,
+	useRouterState,
+} from "@tanstack/react-router";
 import { api } from "@zero-heads-lab/backend/convex/_generated/api";
+import { LogoIcon } from "@zero-heads-lab/design-system/components/logo";
+import { NavigationProgress } from "@zero-heads-lab/design-system/components/navigation-progress";
+import { LogOutIcon, Music2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Header } from "@/components/header";
+import { SignOutDialog } from "@/components/sign-out-dialog";
+import { getPunkSongs } from "@/data/demo-data";
 
 export const Route = createFileRoute("/_authenticated/")({
-	// Check for auth BEFORE the route loads
 	beforeLoad: async ({ context }) => {
 		const user = await context.queryClient.ensureQueryData(
 			convexQuery(api.auth.getCurrentUser, {})
 		);
 
-		// If no user is found, boot them to sign-in
 		if (!user) {
 			throw redirect({
 				to: "/sign-in",
-				search: {
-					redirect: "/",
-				},
+				search: { redirect: "/" },
 			});
 		}
-
-		// Return user to make it available to the loader/component via 'context'
 		return { user };
 	},
 	component: App,
 });
 
 function App() {
-	// This query handles the actual page content
-	const { data, isLoading, error } = useQuery({
+	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
+	const { user } = useRouteContext({ from: Route.id });
+
+	// Logic: Show progress bar if the router is fetching data
+	const isLoadingRoute = useRouterState({ select: (s) => s.isLoading });
+
+	const { data, isLoading } = useQuery({
 		queryKey: ["punkSongs"],
 		queryFn: () => getPunkSongs(),
 	});
 
-	if (isLoading) {
-		return <div className="p-6">Loading punk songs...</div>;
-	}
-
-	if (error) {
-		return <div className="p-6 text-red-500">Failed to load songs</div>;
-	}
+	//Redirect
+	useEffect(() => {
+		if (!user) {
+			redirect({
+				to: "/sign-in",
+				search: { redirect: "/" },
+			});
+		}
+	}, [user]);
 
 	return (
-		<div className="p-6">
-			<h1 className="mb-4 font-bold text-2xl">🎸 Punk Songs</h1>
+		<div className="min-h-screen bg-background">
+			<NavigationProgress isNavigating={isLoadingRoute} />
 
-			<ul className="space-y-3">
-				{data?.map((song) => (
-					<li
-						className="flex justify-between rounded-lg border p-4"
-						key={song.id}
-					>
-						<span className="font-medium">{song.name}</span>
-						<span className="text-muted-foreground">{song.artist}</span>
-					</li>
-				))}
-			</ul>
+			<Header className="sticky top-0 z-40 border-b bg-card/50 backdrop-blur-md">
+				<div className="container mx-auto flex h-16 items-center justify-between px-4">
+					<div className="flex items-center gap-4">
+						<LogoIcon className="size-8 text-primary" />
+						<h1 className="font-bold text-xl tracking-tight">Zero Heads Lab</h1>
+					</div>
+
+					<div className="flex items-center gap-6">
+						<div className="hidden text-right md:block">
+							<p className="font-medium text-sm leading-none">{user.name}</p>
+							<p className="mt-1 text-muted-foreground text-xs">{user.email}</p>
+						</div>
+
+						<SignOutDialog
+							onOpenChange={setSignOutDialogOpen}
+							open={signOutDialogOpen}
+							trigger={
+								<button
+									aria-label="Sign out"
+									className="flex size-9 items-center justify-center rounded-full border bg-background text-destructive transition-colors hover:bg-muted"
+									type="button"
+								>
+									<LogOutIcon className="size-4" />
+								</button>
+							}
+						/>
+					</div>
+				</div>
+			</Header>
+
+			<main className="container mx-auto max-w-4xl p-6">
+				<div className="mb-8 flex items-center justify-between">
+					<div>
+						<h2 className="font-bold text-3xl tracking-tight">🎸 Punk Songs</h2>
+						<p className="text-muted-foreground">
+							The ultimate collection of high-energy tracks.
+						</p>
+					</div>
+				</div>
+
+				{isLoading ? (
+					<div className="grid gap-4">
+						{[1, 2, 3].map((i) => (
+							<div
+								className="h-20 w-full animate-pulse rounded-xl bg-muted"
+								key={i}
+							/>
+						))}
+					</div>
+				) : (
+					<div className="grid gap-3">
+						{data?.map((song) => (
+							<div
+								className="group flex items-center justify-between rounded-xl border bg-card p-4 transition-all hover:border-primary/20 hover:shadow-md"
+								key={song.id}
+							>
+								<div className="flex items-center gap-4">
+									<div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+										<Music2 className="size-5" />
+									</div>
+									<div>
+										<p className="font-semibold text-card-foreground">
+											{song.name}
+										</p>
+										<p className="text-muted-foreground text-sm">
+											{song.artist}
+										</p>
+									</div>
+								</div>
+								<div className="rounded bg-muted px-2 py-1 font-mono text-muted-foreground text-xs uppercase tracking-widest">
+									Punk-Rock
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</main>
 		</div>
 	);
 }
