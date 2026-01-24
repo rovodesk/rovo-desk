@@ -10,6 +10,7 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/alert-dialog";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface ConfirmDialogProps {
 	onOpenChange: (open: boolean) => void;
@@ -63,7 +64,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
 						onClick={handleConfirm}
 						variant={destructive ? "destructive" : "default"}
 					>
-						{confirmText ?? "Continue"}
+						{isLoading ? (
+							<span className="inline-flex items-center gap-2">
+								<Loader2 className="animate-spin" />
+								Processing…
+							</span>
+						) : (
+							(confirmText ?? "Continue")
+						)}
 					</Button>
 				</AlertDialogFooter>
 			</AlertDialogContent>

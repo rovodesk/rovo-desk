@@ -3,7 +3,7 @@ import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
-import OauthButtons from "../components/oauth-buttons";
+import OauthButtons from "../_components/oauth-buttons";
 
 type AuthProps = {
 	variant?: "sign-in" | "sign-up";

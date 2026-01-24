@@ -5,15 +5,9 @@ import {
 	redirect,
 	useRouteContext,
 } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth/client";
-import { getToken } from "@/lib/auth/server";
-
-// Get auth information for SSR using available cookies
-const getAuth = createServerFn({ method: "GET" }).handler(async () => {
-	return await getToken();
-});
+import { getAuth } from "@/server/getAuth";
 
 export const Route = createFileRoute("/_authenticated")({
 	component: RouteComponent,
@@ -43,7 +37,6 @@ function RouteComponent() {
 	const { token, convexQueryClient } = useRouteContext({
 		from: Route.id,
 	});
-	const navigate = Route.useNavigate();
 
 	// Use the hook provided by Better Auth
 	const { data: session } = authClient.useSession();
@@ -51,20 +44,9 @@ function RouteComponent() {
 	useEffect(() => {
 		// If the session becomes null (logout), kick them out
 		if (session === null) {
-			navigate({ to: "/sign-in" });
+			redirect({ to: "/sign-in" });
 		}
-	}, [session, navigate]);
-
-	// If you specifically want to subscribe to changes outside of the standard React render cycle (or if useSession isn't behaving), you use the $store property on the client.
-	// useEffect(() => {
-	// 	// Better Auth uses a store pattern under the hood
-	// 	const unsubscribe = authClient.$store.listen((state) => {
-	// 		if (!state.session) {
-	// 			navigate({ to: "/sign-in" });
-	// 		}
-	// 	});
-	// 	return () => unsubscribe();
-	// }, [navigate]);
+	}, [session]);
 
 	return (
 		<ConvexBetterAuthProvider

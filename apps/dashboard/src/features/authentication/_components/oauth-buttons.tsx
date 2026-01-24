@@ -1,5 +1,5 @@
-import { toast } from "@zero-heads-lab/design-system/components/toast";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { authClient } from "@/lib/auth/client";

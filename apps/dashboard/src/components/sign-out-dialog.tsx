@@ -1,4 +1,5 @@
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { useState } from "react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { authClient } from "@/lib/auth/client";
 
@@ -13,18 +14,16 @@ export function SignOutDialog({
 	onOpenChange,
 	trigger,
 }: SignOutDialogProps) {
+	const [isLoading, setIsLoading] = useState(false);
+
 	const handleSignOut = async () => {
 		try {
+			setIsLoading(true);
 			await authClient.signOut();
 		} catch (error) {
 			console.log(error);
 		} finally {
-			// Preserve current location for redirect after sign-in
-			// navigate({
-			// 	to: "/sign-in",
-			// 	search: { redirect: location.href },
-			// 	replace: true,
-			// });
+			setIsLoading(false);
 			location.reload();
 		}
 	};
@@ -36,6 +35,7 @@ export function SignOutDialog({
 			desc="Are you sure you want to sign out? You will need to sign in again to access your account."
 			destructive
 			handleConfirm={handleSignOut}
+			isLoading={isLoading}
 			onOpenChange={onOpenChange}
 			open={open}
 			title="Sign out"

@@ -2,7 +2,6 @@ import { convexQuery } from "@convex-dev/react-query";
 import { useQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
-	redirect,
 	useRouteContext,
 	useRouterState,
 } from "@tanstack/react-router";
@@ -10,7 +9,7 @@ import { api } from "@zero-heads-lab/backend/convex/_generated/api";
 import { LogoIcon } from "@zero-heads-lab/design-system/components/logo";
 import { NavigationProgress } from "@zero-heads-lab/design-system/components/navigation-progress";
 import { LogOutIcon, Music2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { SignOutDialog } from "@/components/sign-out-dialog";
 import { getPunkSongs } from "@/data/demo-data";
@@ -20,13 +19,6 @@ export const Route = createFileRoute("/_authenticated/")({
 		const user = await context.queryClient.ensureQueryData(
 			convexQuery(api.auth.getCurrentUser, {})
 		);
-
-		if (!user) {
-			throw redirect({
-				to: "/sign-in",
-				search: { redirect: "/" },
-			});
-		}
 		return { user };
 	},
 	component: App,
@@ -44,16 +36,6 @@ function App() {
 		queryFn: () => getPunkSongs(),
 	});
 
-	//Redirect
-	useEffect(() => {
-		if (!user) {
-			redirect({
-				to: "/sign-in",
-				search: { redirect: "/" },
-			});
-		}
-	}, [user]);
-
 	return (
 		<div className="min-h-screen bg-background">
 			<NavigationProgress isNavigating={isLoadingRoute} />
@@ -67,8 +49,10 @@ function App() {
 
 					<div className="flex items-center gap-6">
 						<div className="hidden text-right md:block">
-							<p className="font-medium text-sm leading-none">{user.name}</p>
-							<p className="mt-1 text-muted-foreground text-xs">{user.email}</p>
+							<p className="font-medium text-sm leading-none">{user?.name}</p>
+							<p className="mt-1 text-muted-foreground text-xs">
+								{user?.email}
+							</p>
 						</div>
 
 						<SignOutDialog

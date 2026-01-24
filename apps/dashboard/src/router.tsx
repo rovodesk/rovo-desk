@@ -47,8 +47,14 @@ export const getRouter = () => {
 };
 
 // Register the router instance for type safety
+import "@tanstack/react-router";
+
 declare module "@tanstack/react-router" {
-	interface Register {
-		router: ReturnType<typeof getRouter>;
+	interface RouterContext {
+		queryClient: import("@tanstack/react-query").QueryClient;
+		convexQueryClient: import("@convex-dev/react-query").ConvexQueryClient;
+		auth?: {
+			token: string;
+		};
 	}
 }
