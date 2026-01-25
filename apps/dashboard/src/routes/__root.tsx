@@ -1,3 +1,4 @@
+import { ClerkProvider, useAuth } from "@clerk/tanstack-react-start";
 import type { ConvexQueryClient } from "@convex-dev/react-query";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
@@ -7,17 +8,21 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useRouteContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { UIProvider } from "@zero-heads-lab/design-system";
+import type { ConvexReactClient } from "convex/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { AppNavigationProgress } from "@/components/app-nav-progress";
-// import { Header } from "@/components/header";
+import { env } from "@/env";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
+	convex: ConvexReactClient;
 	convexQueryClient: ConvexQueryClient;
 }>()({
 	head: () => ({
@@ -35,12 +40,21 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+	const { convexQueryClient } = useRouteContext({ from: Route.id });
+
 	return (
 		<RootDocument>
-			<UIProvider>
-				<AppNavigationProgress />
-				<Outlet />
-			</UIProvider>
+			<ClerkProvider publishableKey={env.VITE_CLERK_PUBLISHABLE_KEY}>
+				<ConvexProviderWithClerk
+					client={convexQueryClient.convexClient}
+					useAuth={useAuth}
+				>
+					<UIProvider>
+						<AppNavigationProgress />
+						<Outlet />
+					</UIProvider>
+				</ConvexProviderWithClerk>
+			</ClerkProvider>
 		</RootDocument>
 	);
 }
@@ -52,7 +66,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				{/* <Header /> */}
 				{children}
 
 				{import.meta.env.DEV && (
@@ -66,7 +79,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 								},
 							]}
 						/>
-						<ReactQueryDevtools buttonPosition="bottom-left" />
+						<ReactQueryDevtools buttonPosition="top-right" />
 					</>
 				)}
 

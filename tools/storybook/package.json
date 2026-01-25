@@ -14,7 +14,8 @@
     "@zero-heads-lab/design-system": "workspace:*",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
-    "react-dom": "catalog:react19"
+    "react-dom": "catalog:react19",
+    "cmdk": "catalog:"
   },
   "devDependencies": {
     "@storybook/addon-themes": "^10.2.0",

@@ -22,9 +22,6 @@ const config = defineConfig({
 		tanstackStart(),
 		viteReact(),
 	],
-	ssr: {
-		noExternal: ["@convex-dev/better-auth"],
-	},
 	server: {
 		port: 3001,
 	},

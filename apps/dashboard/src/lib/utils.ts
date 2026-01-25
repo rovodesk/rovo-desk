@@ -1,4 +1,4 @@
-import { toast } from "@zero-heads-lab/design-system/components/toast";
+import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { AxiosError } from "axios";
 
 export function handleServerError(error: unknown) {

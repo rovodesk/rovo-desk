@@ -1,30 +1,31 @@
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { useAuth } from "@clerk/tanstack-react-start";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { authClient } from "@/lib/auth/client";
 
 interface SignOutDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	trigger?: React.ReactNode;
 }
 
-export function SignOutDialog({
-	open,
-	onOpenChange,
-	trigger,
-}: SignOutDialogProps) {
+export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 	const [isLoading, setIsLoading] = useState(false);
+
+	const { signOut } = useAuth();
 
 	const handleSignOut = async () => {
 		try {
 			setIsLoading(true);
-			await authClient.signOut();
+			await signOut();
 		} catch (error) {
-			console.log(error);
+			console.error("Error Signing out", error);
+			setIsLoading(false);
+			onOpenChange(false);
 		} finally {
 			setIsLoading(false);
-			location.reload();
+			onOpenChange(false);
+
+			console.log("Signed out");
 		}
 	};
 
@@ -40,7 +41,13 @@ export function SignOutDialog({
 			open={open}
 			title="Sign out"
 			trigger={
-				trigger ? trigger : <Button variant="destructive">Logout</Button>
+				<button
+					className="group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-red-500/30 hover:bg-red-500/20 hover:shadow-sm"
+					type="button"
+				>
+					<LogOut className="h-4 w-4 text-red-500" />
+					<span className="font-medium text-red-500 text-sm">Sign Out</span>
+				</button>
 			}
 		/>
 	);

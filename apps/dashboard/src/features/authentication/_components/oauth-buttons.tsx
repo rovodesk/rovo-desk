@@ -1,8 +1,8 @@
+import { useSignIn } from "@clerk/tanstack-react-start";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
-import { authClient } from "@/lib/auth/client";
 
 type OAuthProvider = "google" | "github";
 
@@ -15,22 +15,24 @@ export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 		null
 	);
 
-	const handleOAuthSignIn = async (provider: OAuthProvider) => {
-		if (isAnyLoading || loadingProvider) return;
+	const { signIn, isLoaded } = useSignIn();
 
-		setLoadingProvider(provider);
+	const handleOAuthSignIn = async (provider: OAuthProvider) => {
+		if (!isLoaded || isAnyLoading || loadingProvider) return;
 
 		try {
-			await authClient.signIn.social({
-				provider,
-				callbackURL: "/",
+			setLoadingProvider(provider);
+			// Sign In
+			await signIn.authenticateWithRedirect({
+				strategy: `oauth_${provider}`,
+				redirectUrl: "/api/auth/callback",
+				redirectUrlComplete: "/",
 			});
 		} catch (error) {
-			console.error(error);
+			console.error("Error signing in", error);
 			toast.error("Login failed", {
-				description: `Could not authenticate with ${provider}.`,
+				description: `Could not authenticate with ${provider}.Please try again later`,
 			});
-		} finally {
 			setLoadingProvider(null);
 		}
 	};
@@ -38,7 +40,7 @@ export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 	return (
 		<div className="flex w-full flex-col gap-4">
 			<Button
-				disabled={isAnyLoading || loadingProvider === "google"}
+				disabled={isAnyLoading || loadingProvider !== null}
 				onClick={() => handleOAuthSignIn("google")}
 				size="lg"
 				type="button"
@@ -52,7 +54,7 @@ export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 			</Button>
 
 			<Button
-				disabled={isAnyLoading || loadingProvider === "github"}
+				disabled={isAnyLoading || loadingProvider !== null}
 				onClick={() => handleOAuthSignIn("github")}
 				size="lg"
 				type="button"

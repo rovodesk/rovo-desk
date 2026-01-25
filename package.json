@@ -19,7 +19,8 @@
     "axios": "^1.13.2",
     "zod": "^4.3.5",
     "@t3-oss/env-core": "^0.13.10",
-    "motion": "^12.28.1"
+    "motion": "^12.28.1",
+    "cmdk": "^1.1.1"
   },
   "catalogs": {
     "react19": {
@@ -61,9 +62,8 @@
       "@tanstack/react-router-with-query": "^1.130.17"
     },
     "convex": {
-      "convex": "^1.31.5",
-      "@convex-dev/react-query": "^0.1.0",
-      "@convex-dev/better-auth": "^0.10.10"
+      "convex": "1.31.6",
+      "@convex-dev/react-query": "^0.1.0"
     }
   },
   "scripts": {

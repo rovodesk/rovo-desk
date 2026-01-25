@@ -16,7 +16,7 @@ import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -52,9 +52,9 @@ const authSignInRoute = authSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
+const ApiAuthCallbackRoute = ApiAuthCallbackRouteImport.update({
+  id: '/api/auth/callback',
+  path: '/api/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -65,7 +65,7 @@ export interface FileRoutesByFullPath {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
@@ -74,7 +74,7 @@ export interface FileRoutesByTo {
   '/403': typeof errors403Route
   '/500': typeof errors500Route
   '/': typeof AuthenticatedIndexRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +85,7 @@ export interface FileRoutesById {
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,9 +96,16 @@ export interface FileRouteTypes {
     | '/401'
     | '/403'
     | '/500'
-    | '/api/auth/$'
+    | '/api/auth/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/401' | '/403' | '/500' | '/' | '/api/auth/$'
+  to:
+    | '/sign-in'
+    | '/sign-up'
+    | '/401'
+    | '/403'
+    | '/500'
+    | '/'
+    | '/api/auth/callback'
   id:
     | '__root__'
     | '/_authenticated'
@@ -108,7 +115,7 @@ export interface FileRouteTypes {
     | '/(errors)/403'
     | '/(errors)/500'
     | '/_authenticated/'
-    | '/api/auth/$'
+    | '/api/auth/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +125,7 @@ export interface RootRouteChildren {
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors500Route: typeof errors500Route
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiAuthCallbackRoute: typeof ApiAuthCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,11 +179,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
+    '/api/auth/callback': {
+      id: '/api/auth/callback'
+      path: '/api/auth/callback'
+      fullPath: '/api/auth/callback'
+      preLoaderRoute: typeof ApiAuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -200,17 +207,18 @@ const rootRouteChildren: RootRouteChildren = {
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors500Route: errors500Route,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiAuthCallbackRoute: ApiAuthCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
