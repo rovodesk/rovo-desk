@@ -13,9 +13,9 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { CirclePlusIcon, MailIcon } from "lucide-react";
-import { AppTitle } from "./app-title";
 import { SIDEBAR_CONFIG } from "./data";
-import { NavDomainsList } from "./nav-domains-list";
+// import { AppTitle } from "./app-title";
+import { DomainSwitcher } from "./domain-switcher";
 import { SidebarNavSection } from "./nav-section";
 import { ProfileDropdown } from "./profile-dropdown";
 
@@ -29,7 +29,8 @@ export function AppSidebar() {
 			variant={variant}
 		>
 			<SidebarHeader>
-				<AppTitle />
+				{/* <AppTitle /> */}
+				<DomainSwitcher />
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarGroup>
@@ -56,7 +57,7 @@ export function AppSidebar() {
 					<SidebarNavSection key={group.title} {...group} />
 				))}
 				{/* User's Domains */}
-				<NavDomainsList />
+				{/* <NavDomainsList /> */}
 			</SidebarContent>
 			<SidebarFooter className="flex flex-col gap-8">
 				<SidebarMenu>

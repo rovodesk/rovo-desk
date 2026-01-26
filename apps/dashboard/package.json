@@ -36,6 +36,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@clerk/types": "^4.101.13",
     "@tailwindcss/postcss": "catalog:tailwindcss",
     "@tailwindcss/vite": "catalog:tailwindcss",
     "@tanstack/devtools-vite": "catalog:tanstack",

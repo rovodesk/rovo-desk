@@ -32,6 +32,17 @@ export const handleClerkOrganizationWebhooks = httpAction(
 				);
 				break;
 			}
+			case "organization.deleted": {
+				const { id } = event.data;
+				console.log("Attempting to delete Clerk Org:", id); // Verify this ID exists in your DB
+				await ctx.runMutation(
+					internal.functions.organizations.deleteDomainFromWebhook,
+					{
+						clerkId: id,
+					}
+				);
+				break;
+			}
 			default: {
 				console.log("ignored Clerk webhook event", event.type);
 			}

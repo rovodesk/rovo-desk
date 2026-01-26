@@ -1,9 +1,3 @@
-//TODO: ADD SYNC
-
-import { useOrganizationList } from "@clerk/tanstack-react-start";
-import { convexQuery } from "@convex-dev/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { api } from "@zero-heads-lab/backend/convex/_generated/api";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Dialog,
@@ -20,23 +14,24 @@ import { SidebarGroupAction } from "@zero-heads-lab/design-system/components/ui/
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
+import { useDomains } from "@/hooks/use-domains";
 
 export function AddDomainDialog() {
-	//TODO: USE Friendly words
-	const defaultName = "test-org";
 	const [open, setOpen] = useState(false);
-	const [name, setName] = useState(defaultName);
-	const [slug, setSlug] = useState(defaultName);
-	const [pending, setPending] = useState(false);
+	const [name, setName] = useState("");
+	const [slug, setSlug] = useState("");
 
-	const { createOrganization } = useOrganizationList();
-	const queryClient = useQueryClient();
+	const { createDomain } = useDomains();
+
+	// Use the status from TanStack Query instead of local 'pending' state
+	const isPending = createDomain.isPending;
 
 	const onNameChange = (value: string) => {
 		setName(value);
 		setSlug(
 			value
 				.toLowerCase()
+				.trim()
 				.replace(/\s+/g, "-")
 				.replace(/[^a-z0-9-]/g, "")
 		);
@@ -44,28 +39,21 @@ export function AddDomainDialog() {
 
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!createOrganization) return;
 
 		try {
-			setPending(true);
-			await createOrganization({ name, slug });
+			const domain = await createDomain.mutateAsync({ name, slug });
+			toast.success(`${domain.name} is ready`);
 
-			await queryClient.invalidateQueries({
-				queryKey: convexQuery(api.functions.organizations.listUserDomains, {})
-					.queryKey,
-			});
-
-			toast.success("Domain created");
 			setOpen(false);
 			setName("");
 			setSlug("");
-			// biome-ignore lint/suspicious/noExplicitAny: Error can be of any type
-		} catch (err: any) {
+		} catch (err) {
+			console.error(err);
+			// Error handling is likely already managed in useDomains,
+			// but keeping toast here is fine for specific UI feedback
 			toast.error("Failed to create domain", {
-				description: err?.errors?.[0]?.message ?? "Please try again",
+				description: "Something went wrong. Please try again later.",
 			});
-		} finally {
-			setPending(false);
 		}
 	};
 
@@ -73,22 +61,26 @@ export function AddDomainDialog() {
 		<Dialog onOpenChange={setOpen} open={open}>
 			<DialogTrigger asChild>
 				<SidebarGroupAction title="Add Domain">
-					<Plus />
+					<Plus className="size-4" />
 				</SidebarGroupAction>
 			</DialogTrigger>
 
 			<DialogContent>
 				<form onSubmit={onSubmit}>
 					<DialogHeader>
-						<DialogTitle>Add New Domain</DialogTitle>
-						<DialogDescription>Create a new organization.</DialogDescription>
+						<DialogTitle>Create New Domain</DialogTitle>
+						<DialogDescription>
+							Domain names and slugs identify your projects.
+						</DialogDescription>
 					</DialogHeader>
 
 					<div className="grid gap-4 py-4">
 						<div className="grid gap-2">
-							<Label>Name</Label>
+							<Label htmlFor="name">Display Name</Label>
 							<Input
-								disabled={pending}
+								autoFocus
+								disabled={isPending}
+								id="name"
 								onChange={(e) => onNameChange(e.target.value)}
 								required
 								value={name}
@@ -96,11 +88,11 @@ export function AddDomainDialog() {
 						</div>
 
 						<div className="grid gap-2">
-							<Label>Slug</Label>
+							<Label htmlFor="slug">URL Slug</Label>
 							<Input
-								disabled={pending}
+								disabled={isPending}
+								id="slug"
 								onChange={(e) => setSlug(e.target.value)}
-								placeholder="example"
 								required
 								value={slug}
 							/>
@@ -109,16 +101,23 @@ export function AddDomainDialog() {
 
 					<DialogFooter>
 						<Button
-							disabled={pending}
+							disabled={isPending}
 							onClick={() => setOpen(false)}
 							type="button"
 							variant="outline"
 						>
 							Cancel
 						</Button>
-						<Button disabled={pending || !name} type="submit">
-							{pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-							Create Domain
+
+						<Button disabled={isPending || !name || !slug} type="submit">
+							{isPending ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Creating…
+								</>
+							) : (
+								"Create Domain"
+							)}
 						</Button>
 					</DialogFooter>
 				</form>
