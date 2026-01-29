@@ -34,11 +34,11 @@ const buttonVariants = cva(
   }
 )
 
-
 type ButtonProps =
   HTMLMotionProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    animated?: boolean;
     hoverScale?: number;
     tapScale?: number;
   };
@@ -52,6 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       asChild = false,
+      animated = true,
       hoverScale = 1.05,
       tapScale = 0.95,
       ...props
@@ -73,8 +74,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <MotionButton
         ref={ref}
         className={cn(buttonVariants({ variant, size, className }))}
-        whileHover={{ scale: hoverScale }}
-        whileTap={{ scale: tapScale }}
+        // Conditionally apply animations based on the 'animated' prop
+        whileHover={animated ? { scale: hoverScale } : undefined}
+        whileTap={animated ? { scale: tapScale } : undefined}
         data-slot="button"
         {...props}
       />

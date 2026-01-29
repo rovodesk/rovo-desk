@@ -22,6 +22,12 @@ const config = defineConfig({
 		tanstackStart(),
 		viteReact(),
 	],
+	server: {
+		port: 3001,
+	},
+	optimizeDeps: {
+		exclude: ["@zero-heads-lab/database"],
+	},
 });
 
 export default config;

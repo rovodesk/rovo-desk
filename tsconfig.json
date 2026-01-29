@@ -1,12 +1,12 @@
 {
-	"extends": "@zero-heads-lab/typescript-config/base.json",
-	"compilerOptions": {
-		"noEmit": true,
-		"strictNullChecks": true,
-		"paths": {
-			"@zero-heads-lab/*": ["./*"]
-		}
-	},
-	"include": ["index.ts", "**/*.ts", "**/*.tsx"],
-	"exclude": ["node_modules", "dist"]
+  "extends": "@zero-heads-lab/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "strictNullChecks": true,
+    "paths": {
+      "@zero-heads-lab/*": ["./*"]
+    }
+  },
+  "include": ["drizzle.config.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

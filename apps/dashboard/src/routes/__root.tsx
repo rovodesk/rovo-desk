@@ -8,15 +8,19 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type { AuthSession, AuthUser } from "@zero-heads-lab/auth/types";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppNavigationProgress } from "@/components/app-nav-progress";
-import { Header } from "@/components/header";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
+	auth?: {
+		session: AuthSession;
+		user: AuthUser;
+	};
 }>()({
 	head: () => ({
 		meta: [
@@ -50,7 +54,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<Header />
 				{children}
 
 				{import.meta.env.DEV && (
@@ -64,7 +67,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 								},
 							]}
 						/>
-						<ReactQueryDevtools buttonPosition="bottom-left" />
+						<ReactQueryDevtools buttonPosition="top-right" />
 					</>
 				)}
 
