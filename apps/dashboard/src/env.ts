@@ -1,8 +1,10 @@
 import { createEnv } from "@t3-oss/env-core";
+import { keys as authKeys } from "@zero-heads-lab/auth/keys";
+import { keys as databaseKeys } from "@zero-heads-lab/database/keys";
 import { z } from "zod";
 
 export const env = createEnv({
-	extends: [],
+	extends: [databaseKeys, authKeys],
 	clientPrefix: "VITE_",
 	server: {
 		CLERK_SECRET_KEY: z.string().min(1),

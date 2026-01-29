@@ -1,8 +1,8 @@
-import { useSignIn } from "@clerk/tanstack-react-start";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@zero-heads-lab/auth/client";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
-import { useState } from "react";
 
 type OAuthProvider = "google" | "github";
 
@@ -11,37 +11,33 @@ interface OauthButtonsProps {
 }
 
 export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
-	const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
-		null
-	);
-
-	const { signIn, isLoaded } = useSignIn();
-
-	const handleOAuthSignIn = async (provider: OAuthProvider) => {
-		if (!isLoaded || isAnyLoading || loadingProvider) return;
-
-		try {
-			setLoadingProvider(provider);
-			// Sign In
-			await signIn.authenticateWithRedirect({
-				strategy: `oauth_${provider}`,
-				redirectUrl: "/api/auth/callback",
-				redirectUrlComplete: "/",
+	const {
+		mutate: signIn,
+		isPending,
+		variables,
+	} = useMutation({
+		mutationFn: async (provider: OAuthProvider) => {
+			return await authClient.signIn.social({
+				requestSignUp: true,
+				provider,
+				callbackURL: "/",
 			});
-		} catch (error) {
+		},
+		onError: (error, provider) => {
 			console.error("Error signing in", error);
 			toast.error("Login failed", {
-				description: `Could not authenticate with ${provider}.Please try again later`,
+				description: `Could not authenticate with ${provider}. Please try again later.`,
 			});
-			setLoadingProvider(null);
-		}
-	};
+		},
+	});
+
+	const loadingProvider = isPending ? variables : null;
 
 	return (
 		<div className="flex w-full flex-col gap-4">
 			<Button
-				disabled={isAnyLoading || loadingProvider !== null}
-				onClick={() => handleOAuthSignIn("google")}
+				disabled={isAnyLoading || isPending}
+				onClick={() => signIn("google")}
 				size="lg"
 				type="button"
 			>
@@ -54,8 +50,8 @@ export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 			</Button>
 
 			<Button
-				disabled={isAnyLoading || loadingProvider !== null}
-				onClick={() => handleOAuthSignIn("github")}
+				disabled={isAnyLoading || isPending}
+				onClick={() => signIn("github")}
 				size="lg"
 				type="button"
 			>

@@ -16,7 +16,7 @@ import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
-import { Route as ApiAuthCallbackRouteImport } from './routes/api/auth/callback'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -52,9 +52,9 @@ const authSignInRoute = authSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAuthCallbackRoute = ApiAuthCallbackRouteImport.update({
-  id: '/api/auth/callback',
-  path: '/api/auth/callback',
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -65,7 +65,7 @@ export interface FileRoutesByFullPath {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
@@ -74,7 +74,7 @@ export interface FileRoutesByTo {
   '/403': typeof errors403Route
   '/500': typeof errors500Route
   '/': typeof AuthenticatedIndexRoute
-  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +85,7 @@ export interface FileRoutesById {
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,16 +96,9 @@ export interface FileRouteTypes {
     | '/401'
     | '/403'
     | '/500'
-    | '/api/auth/callback'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/sign-in'
-    | '/sign-up'
-    | '/401'
-    | '/403'
-    | '/500'
-    | '/'
-    | '/api/auth/callback'
+  to: '/sign-in' | '/sign-up' | '/401' | '/403' | '/500' | '/' | '/api/auth/$'
   id:
     | '__root__'
     | '/_authenticated'
@@ -115,7 +108,7 @@ export interface FileRouteTypes {
     | '/(errors)/403'
     | '/(errors)/500'
     | '/_authenticated/'
-    | '/api/auth/callback'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -125,7 +118,7 @@ export interface RootRouteChildren {
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors500Route: typeof errors500Route
-  ApiAuthCallbackRoute: typeof ApiAuthCallbackRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -179,11 +172,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/auth/callback': {
-      id: '/api/auth/callback'
-      path: '/api/auth/callback'
-      fullPath: '/api/auth/callback'
-      preLoaderRoute: typeof ApiAuthCallbackRouteImport
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -207,7 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors500Route: errors500Route,
-  ApiAuthCallbackRoute: ApiAuthCallbackRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

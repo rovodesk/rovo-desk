@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/tanstack-react-start";
+import { useQuery } from "@tanstack/react-query";
 import {
 	Avatar,
 	AvatarFallback,
@@ -23,26 +23,37 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard, MoreVertical, UserCircle } from "lucide-react";
 import { useState } from "react";
 import { SignOutDialog } from "@/components/sign-out-dialog";
+import { authQueries } from "@/lib/queries/auth";
+// ... (rest of your imports)
 
 export function ProfileDropdown() {
 	const { isMobile } = useSidebar();
 	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
-	const { user, isLoaded } = useUser();
 
-	// 🔑 Wait for Clerk session resolution
-	if (!isLoaded) {
+	// 🔑 Use the cached session data directly
+	const { data: session, isLoading } = useQuery(authQueries.session());
+
+	// Wait for the cache to hydrate
+	if (isLoading) {
 		return <ProfileDropdownSkeleton />;
 	}
 
-	// Safety guard (logged-out state)
+	const user = session?.user;
 	if (!user) return null;
 
-	const name = user.fullName;
-	const email = user.primaryEmailAddress?.emailAddress;
-	const image = user.imageUrl;
-	const abbreviation =
-		(user.firstName?.[0]?.toUpperCase() ?? "") +
-		(user.lastName?.[0]?.toUpperCase() ?? "");
+	const name = user.name;
+	const email = user.email;
+	const image =
+		user.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
+
+	// Improved abbreviation logic
+	const abbreviation = (
+		name
+			?.split(" ")
+			.map((n) => n[0])
+			.join("")
+			.slice(0, 2) || "??"
+	).toUpperCase();
 
 	return (
 		<SidebarMenu>
@@ -53,9 +64,9 @@ export function ProfileDropdown() {
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 							size="lg"
 						>
-							<Avatar className="h-8 w-8 rounded-lg grayscale">
-								<AvatarImage alt={name ?? ""} src={image} />
-								<AvatarFallback className="rounded-lg">
+							<Avatar className="h-8 w-8 rounded-lg">
+								<AvatarImage alt={name} src={image} />
+								<AvatarFallback className="rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 									{abbreviation}
 								</AvatarFallback>
 							</Avatar>
@@ -75,10 +86,11 @@ export function ProfileDropdown() {
 						side={isMobile ? "bottom" : "right"}
 						sideOffset={4}
 					>
+						{/* Dropdown Header */}
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage alt={name ?? ""} src={image} />
+									<AvatarImage alt={name} src={image} />
 									<AvatarFallback className="rounded-lg">
 										{abbreviation}
 									</AvatarFallback>
@@ -96,27 +108,28 @@ export function ProfileDropdown() {
 
 						<DropdownMenuGroup>
 							<DropdownMenuItem>
-								<UserCircle />
+								<UserCircle className="mr-2 h-4 w-4" />
 								Account
 							</DropdownMenuItem>
 							<DropdownMenuItem>
-								<CreditCard />
+								<CreditCard className="mr-2 h-4 w-4" />
 								Billing
 							</DropdownMenuItem>
 							<DropdownMenuItem>
-								<Bell />
+								<Bell className="mr-2 h-4 w-4" />
 								Notifications
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 
 						<DropdownMenuSeparator />
 
-						<DropdownMenuItem asChild variant="destructive">
+						{/* Sign Out Trigger */}
+						<div className="p-1">
 							<SignOutDialog
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}
 							/>
-						</DropdownMenuItem>
+						</div>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>

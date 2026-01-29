@@ -10,17 +10,20 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarRail,
+	SidebarSeparator,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { CirclePlusIcon, MailIcon } from "lucide-react";
-import { SIDEBAR_CONFIG } from "./data";
-// import { AppTitle } from "./app-title";
+import { AppTitle } from "./app-title";
+import { useSidebarData } from "./data";
 import { DomainSwitcher } from "./domain-switcher";
 import { SidebarNavSection } from "./nav-section";
 import { ProfileDropdown } from "./profile-dropdown";
 
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
+
+	const { sidebarData } = useSidebarData();
 
 	return (
 		<Sidebar
@@ -29,9 +32,11 @@ export function AppSidebar() {
 			variant={variant}
 		>
 			<SidebarHeader>
-				{/* <AppTitle /> */}
+				<AppTitle />
+				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 				<DomainSwitcher />
 			</SidebarHeader>
+
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenu>
@@ -53,15 +58,14 @@ export function AppSidebar() {
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarGroup>
-				{SIDEBAR_CONFIG.navGroups.map((group) => (
+				{sidebarData.navGroups.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
-				{/* User's Domains */}
-				{/* <NavDomainsList /> */}
 			</SidebarContent>
+
 			<SidebarFooter className="flex flex-col gap-8">
 				<SidebarMenu>
-					{SIDEBAR_CONFIG.footer.map((item) => (
+					{sidebarData.footer.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
@@ -88,6 +92,7 @@ export function AppSidebar() {
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarFooter>
+
 			<SidebarRail />
 		</Sidebar>
 	);

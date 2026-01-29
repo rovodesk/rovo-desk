@@ -1,20 +1,10 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"; // [!code ++]
+import { createFileRoute } from "@tanstack/react-router"; // [!code ++]
 import { Auth } from "@/features/authentication/auth";
-import { fetchAuth } from "@/server/fetchAuth";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
-	beforeLoad: async ({ location }) => {
-		const { isAuthenticated } = await fetchAuth();
-
-		// If already authenticated, bounce them away
-		if (isAuthenticated) {
-			throw redirect({
-				to: "/",
-				search: {
-					redirect: location.href,
-				},
-			});
-		}
+	server: {
+		middleware: [authMiddleware],
 	},
 	component: SignUp,
 });

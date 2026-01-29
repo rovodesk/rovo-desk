@@ -1,3 +1,5 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { authClient } from "@zero-heads-lab/auth/client";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Dialog,
@@ -14,17 +16,84 @@ import { SidebarGroupAction } from "@zero-heads-lab/design-system/components/ui/
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
-import { useDomains } from "@/hooks/use-domains";
 
+type Org = {
+	id: string;
+	name: string;
+	slug: string;
+	__optimistic?: boolean;
+};
+
+// TODO: USE Form from Design System
 export function AddDomainDialog() {
 	const [open, setOpen] = useState(false);
 	const [name, setName] = useState("");
 	const [slug, setSlug] = useState("");
 
-	const { createDomain } = useDomains();
+	const queryClient = useQueryClient();
 
-	// Use the status from TanStack Query instead of local 'pending' state
-	const isPending = createDomain.isPending;
+	const createOrganization = useMutation({
+		mutationFn: ({ name, slug }: { name: string; slug: string }) =>
+			authClient.organization.create({ name, slug }),
+
+		// ✅ OPTIMISTIC INSERT
+		onMutate: async ({ name, slug }) => {
+			await queryClient.cancelQueries({ queryKey: ["auth", "organizations"] });
+
+			const previousOrgs =
+				queryClient.getQueryData<Org[]>(["auth", "organizations"]) ?? [];
+
+			const optimisticOrg = {
+				id: `temp-${crypto.randomUUID()}`,
+				name,
+				slug,
+				__optimistic: true,
+			};
+
+			queryClient.setQueryData(
+				["auth", "organizations"],
+				[...previousOrgs, optimisticOrg]
+			);
+
+			return { previousOrgs, optimisticId: optimisticOrg.id };
+		},
+
+		onError: (_err, _vars, ctx) => {
+			if (ctx?.previousOrgs) {
+				queryClient.setQueryData(["auth", "organizations"], ctx.previousOrgs);
+			}
+
+			toast.error("Failed to create domain", {
+				description: "Something went wrong. Please try again later.",
+			});
+		},
+
+		onSuccess: async (res, variables, ctx) => {
+			// ✅ Replace ONLY the optimistic org
+			queryClient.setQueryData(["auth", "organizations"], (orgs: Org[] = []) =>
+				orgs.map((org) => (org.id === ctx?.optimisticId ? res.data : org))
+			);
+
+			// ✅ Switch active org and sync session
+			await authClient.organization.setActive({
+				organizationId: res?.data?.id,
+			});
+
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: ["auth", "session"] }),
+				queryClient.invalidateQueries({ queryKey: ["auth", "organization"] }),
+				queryClient.invalidateQueries({ queryKey: ["auth", "teams"] }),
+			]);
+
+			setOpen(false);
+			setName("");
+			setSlug("");
+
+			toast.success(`${variables.name} is ready`);
+		},
+	});
+
+	const isLoading = createOrganization.isPending;
 
 	const onNameChange = (value: string) => {
 		setName(value);
@@ -37,29 +106,14 @@ export function AddDomainDialog() {
 		);
 	};
 
-	const onSubmit = async (e: React.FormEvent) => {
+	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
-		try {
-			const domain = await createDomain.mutateAsync({ name, slug });
-			toast.success(`${domain.name} is ready`);
-
-			setOpen(false);
-			setName("");
-			setSlug("");
-		} catch (err) {
-			console.error(err);
-			// Error handling is likely already managed in useDomains,
-			// but keeping toast here is fine for specific UI feedback
-			toast.error("Failed to create domain", {
-				description: "Something went wrong. Please try again later.",
-			});
-		}
+		createOrganization.mutate({ name, slug });
 	};
 
 	return (
 		<Dialog onOpenChange={setOpen} open={open}>
-			<DialogTrigger asChild>
+			<DialogTrigger asChild className="h-7">
 				<SidebarGroupAction title="Add Domain">
 					<Plus className="size-4" />
 				</SidebarGroupAction>
@@ -79,7 +133,7 @@ export function AddDomainDialog() {
 							<Label htmlFor="name">Display Name</Label>
 							<Input
 								autoFocus
-								disabled={isPending}
+								disabled={isLoading}
 								id="name"
 								onChange={(e) => onNameChange(e.target.value)}
 								required
@@ -90,7 +144,7 @@ export function AddDomainDialog() {
 						<div className="grid gap-2">
 							<Label htmlFor="slug">URL Slug</Label>
 							<Input
-								disabled={isPending}
+								disabled={isLoading}
 								id="slug"
 								onChange={(e) => setSlug(e.target.value)}
 								required
@@ -101,7 +155,7 @@ export function AddDomainDialog() {
 
 					<DialogFooter>
 						<Button
-							disabled={isPending}
+							disabled={isLoading}
 							onClick={() => setOpen(false)}
 							type="button"
 							variant="outline"
@@ -109,8 +163,8 @@ export function AddDomainDialog() {
 							Cancel
 						</Button>
 
-						<Button disabled={isPending || !name || !slug} type="submit">
-							{isPending ? (
+						<Button disabled={isLoading || !name || !slug} type="submit">
+							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 									Creating…

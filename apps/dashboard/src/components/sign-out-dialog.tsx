@@ -1,6 +1,7 @@
-import { useAuth } from "@clerk/tanstack-react-start";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { redirect } from "@tanstack/react-router";
+import { authClient } from "@zero-heads-lab/auth/client";
 import { LogOut } from "lucide-react";
-import { useState } from "react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface SignOutDialogProps {
@@ -9,25 +10,28 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-	const [isLoading, setIsLoading] = useState(false);
+	const queryClient = useQueryClient();
 
-	const { signOut } = useAuth();
+	const { mutate: handleSignOut, isPending } = useMutation({
+		mutationFn: async () => await authClient.signOut(),
+		onSuccess: () => {
+			// 1. Wipe the cache so no sensitive data remains
+			queryClient.resetQueries();
+			queryClient.clear();
 
-	const handleSignOut = async () => {
-		try {
-			setIsLoading(true);
-			await signOut();
-		} catch (error) {
+			// 2. Close the dialog
+			onOpenChange(false);
+
+			// 3. Redirect to sign-in
+			throw redirect({
+				to: "/sign-in",
+			});
+		},
+		onError: (error) => {
 			console.error("Error Signing out", error);
-			setIsLoading(false);
-			onOpenChange(false);
-		} finally {
-			setIsLoading(false);
-			onOpenChange(false);
-
-			console.log("Signed out");
-		}
-	};
+			// If you have a toast utility in your AuthContext, you'd call it here
+		},
+	});
 
 	return (
 		<ConfirmDialog
@@ -35,8 +39,8 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 			confirmText="Sign out"
 			desc="Are you sure you want to sign out? You will need to sign in again to access your account."
 			destructive
-			handleConfirm={handleSignOut}
-			isLoading={isLoading}
+			handleConfirm={() => handleSignOut()} // Trigger the mutation
+			isLoading={isPending} // useMutation's state
 			onOpenChange={onOpenChange}
 			open={open}
 			title="Sign out"

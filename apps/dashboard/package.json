@@ -10,8 +10,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@clerk/tanstack-react-start": "^0.27.17",
-    "@convex-dev/react-query": "catalog:convex",
+    "@zero-heads-lab/auth": "workspace:*",
+    "@zero-heads-lab/design-system": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-devtools": "catalog:tanstack",
     "@tanstack/react-query": "catalog:tanstack",
@@ -22,11 +24,7 @@
     "@tanstack/react-router-with-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
-    "@zero-heads-lab/backend": "workspace:*",
-    "@zero-heads-lab/design-system": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*",
     "axios": "catalog:",
-    "convex": "catalog:convex",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "nitro": "catalog:",
@@ -36,7 +34,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@clerk/types": "^4.101.13",
     "@tailwindcss/postcss": "catalog:tailwindcss",
     "@tailwindcss/vite": "catalog:tailwindcss",
     "@tanstack/devtools-vite": "catalog:tanstack",

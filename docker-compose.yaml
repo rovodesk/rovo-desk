@@ -1,0 +1,71 @@
+services:
+  # --- CORE SERVICES ---
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: unless-stopped
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: zero-heads
+      POSTGRES_PASSWORD: Password
+    volumes:
+      - ./.docker/data/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d zero-heads"]
+      interval: 10s
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./.docker/data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: Password
+    volumes:
+      - ./.docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
+
+  # --- MANAGEMENT UIs ---
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    hostname: pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    restart: unless-stopped
+    hostname: redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis

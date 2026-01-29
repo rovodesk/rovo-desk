@@ -7,6 +7,6 @@
       "@zero-heads-lab/*": ["./*"]
     }
   },
-  "include": ["index.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["drizzle.config.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

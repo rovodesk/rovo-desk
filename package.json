@@ -60,10 +60,6 @@
       "@tanstack/react-query-devtools": "^5.91.2",
       "@tanstack/router-cli": "^1.153.2",
       "@tanstack/react-router-with-query": "^1.130.17"
-    },
-    "convex": {
-      "convex": "1.31.6",
-      "@convex-dev/react-query": "^0.1.0"
     }
   },
   "scripts": {

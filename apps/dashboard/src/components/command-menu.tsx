@@ -12,7 +12,7 @@ import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-a
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
-import { SIDEBAR_CONFIG } from "@/features/dashboard/layout/data";
+import { useSidebarData } from "@/features/dashboard/layout/data";
 import type { NavCollapsible } from "@/features/dashboard/layout/types";
 import { useSearch } from "@/providers/search";
 
@@ -20,6 +20,8 @@ export function CommandMenu() {
 	const navigate = useNavigate();
 	const { setTheme } = useTheme();
 	const { open, setOpen } = useSearch();
+
+	const { sidebarData } = useSidebarData();
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {
@@ -36,7 +38,7 @@ export function CommandMenu() {
 				<ScrollArea className="h-72 pe-1" type="hover">
 					<CommandEmpty>No results found.</CommandEmpty>
 
-					{SIDEBAR_CONFIG.navGroups.map((group) => (
+					{sidebarData.navGroups.map((group) => (
 						<CommandGroup heading={group.title} key={group.title}>
 							{group.items.map((navItem) => {
 								// We only support collapsible sections in this sidebar
