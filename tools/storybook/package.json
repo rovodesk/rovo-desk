@@ -12,10 +12,11 @@
   },
   "dependencies": {
     "@zero-heads-lab/design-system": "workspace:*",
+    "cmdk": "catalog:",
+    "date-fns": "^4.1.0",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
-    "react-dom": "catalog:react19",
-    "cmdk": "catalog:"
+    "react-dom": "catalog:react19"
   },
   "devDependencies": {
     "@storybook/addon-themes": "^10.2.0",

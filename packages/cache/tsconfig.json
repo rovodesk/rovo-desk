@@ -1,0 +1,14 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "strictNullChecks": true,
+    "types": ["@cloudflare/workers-types", "bun"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../../apps/dashboard/src/lib/queries/auth.cache.ts"
+  ],
+  "exclude": ["node_modules"]
+}

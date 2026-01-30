@@ -13,7 +13,7 @@ export async function createNewUserProfile(userId: string) {
 	const orgName = "Default Workspace";
 	let orgSlug = Placeholder.slug();
 
-	const db = await createDatabase();
+	const db = createDatabase();
 
 	// Check slug once
 	const existingOrg = await db

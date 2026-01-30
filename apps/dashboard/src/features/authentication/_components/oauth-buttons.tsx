@@ -6,11 +6,11 @@ import { Loader2Icon } from "lucide-react";
 
 type OAuthProvider = "google" | "github";
 
-interface OauthButtonsProps {
+type OauthButtonsProps = {
 	isAnyLoading?: boolean;
-}
+};
 
-export const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
+const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 	const {
 		mutate: signIn,
 		isPending,
@@ -87,3 +87,5 @@ const GithubIcon = (props: React.ComponentProps<"svg">) => (
 		/>
 	</svg>
 );
+
+export { OauthButtons };

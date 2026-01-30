@@ -9,17 +9,15 @@
 // 	SignInOtpTemplate,
 // } from "@workspace/email/templates";
 
+import { passkey } from "@better-auth/passkey";
+import { createCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
 	createNewUserProfile,
 	getUserOrganizations,
 	getUserTeams,
 } from "@zero-heads-lab/database/repositories";
-import {
-	capitalize,
-	generateUUID,
-	Placeholder,
-} from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	APIError,
 	type BetterAuthPlugin,
@@ -29,14 +27,12 @@ import {
 } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
-	anonymous,
-	emailOTP,
+	magicLink,
 	multiSession,
 	openAPI,
 	organization,
 } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-
 import { keys } from "../keys";
 
 const AUTH_CONFIG = {
@@ -55,17 +51,32 @@ const AUTH_CONFIG = {
 
 function openAPISpecs(): BetterAuthPlugin {
 	if (process.env.NODE_ENV !== "production")
-		console.log("OPENAPI PATH", `${keys.BETTER_AUTH_BASE_PATH}/openapi`);
-	return openAPI({
-		path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
-	});
+		return openAPI({
+			path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
+		});
+	return null as unknown as BetterAuthPlugin;
 }
 
-export async function createAuth() {
+export function createAuth() {
+	const cacheStore = createCacheStore();
+	const database = createDatabase();
+
 	return betterAuth({
-		database: drizzleAdapter(await createDatabase(), {
+		database: drizzleAdapter(database, {
 			provider: "pg",
 		}),
+		secondaryStorage: {
+			get: async (key) => {
+				return await cacheStore.get(key);
+			},
+			set: async (key, value, ttl) => {
+				if (ttl) await cacheStore.set(key, value, ttl);
+				else await cacheStore.set(key, value);
+			},
+			delete: async (key) => {
+				await cacheStore.delete(key);
+			},
+		},
 		baseURL: keys.BETTER_AUTH_URL,
 		basePath: keys.BETTER_AUTH_BASE_PATH,
 		usePlural: false,
@@ -78,6 +89,11 @@ export async function createAuth() {
 					input: false,
 				},
 				isAnonymous: {
+					type: "boolean",
+					required: false,
+					input: false,
+				},
+				twoFactorEnabled: {
 					type: "boolean",
 					required: false,
 					input: false,
@@ -146,60 +162,19 @@ export async function createAuth() {
 		},
 		plugins: [
 			// Magic Link Plugin
-			// magicLink({
-			// 	sendMagicLink: async ({ email, url }) => {
-			// 		// Send the magic link to the user
-			// 		// await sendEmail({
-			// 		// 	to: email,
-			// 		// 	subject: "Sign in to your account",
-			// 		// 	react: MagicLinkTemplate({ url }),
-			// 		// });
-			// 	},
-			// }),
-			// Email OTP Plugin
-			emailOTP({
-				otpLength: AUTH_CONFIG.EMAIL_OTP_LENGTH,
-				expiresIn: AUTH_CONFIG.EMAIL_OTP_EXPIRE_IN,
-				async sendVerificationOTP({ email, type }) {
-					switch (type) {
-						case "sign-in":
-							// await sendEmail({
-							// 	to: email,
-							// 	subject: "Sign in verification",
-							// 	react: SignInOtpTemplate({ otp }),
-							// });
-							await console.log("Sending Sign In OTP", email);
-							break;
-
-						case "email-verification":
-							// await sendEmail({
-							// 	to: email,
-							// 	subject: "Verify your email",
-							// 	react: EmailVerificationOtpTemplate({ otp }),
-							// });
-							await console.log("Sending Email Verification OTP", email);
-							break;
-
-						default:
-							throw new Error(`Unsupported OTP type: ${type}`);
-					}
-				},
-				overrideDefaultEmailVerification: false,
-			}),
-			//Anonymous User Plugin
-			anonymous({
-				generateRandomEmail: () => {
-					const id = generateUUID("guest-");
-					return `${id}@anonymous.zeroheads.com`;
-				},
-				onLinkAccount: ({ anonymousUser, newUser }) => {
-					// TODO: Link Posthog user
-					console.log("Anonymous User Linked", anonymousUser, newUser);
-				},
-				generateName() {
-					return capitalize(Placeholder.name(3, " "));
+			magicLink({
+				sendMagicLink: async ({ email, url }) => {
+					// TODO: Send the magic link to the user
+					// await sendEmail({
+					// 	to: email,
+					// 	subject: "Sign in to your account",
+					// 	react: MagicLinkTemplate({ url }),
+					// });
+					await console.log("Sending Magic Link", email, url);
 				},
 			}),
+			//Passkey Plugin
+			passkey(),
 			// Organization Plugin
 			organization({
 				teams: {

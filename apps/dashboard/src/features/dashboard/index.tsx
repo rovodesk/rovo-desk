@@ -16,10 +16,10 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Header } from "@/components/header";
 import { MainContent } from "@/components/main-content";
 import { Search } from "@/components/search";
 import { authQueries } from "@/lib/queries/auth";
-import { Header } from "./layout/header";
 
 export function Dashboard() {
 	const { data: session, isLoading } = useQuery(authQueries.session());

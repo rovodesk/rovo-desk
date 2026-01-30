@@ -1,5 +1,7 @@
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
 	inferAdditionalFields,
+	magicLinkClient,
 	multiSessionClient,
 	organizationClient,
 } from "better-auth/client/plugins";
@@ -18,5 +20,7 @@ export const authClient = createAuthClient({
 			},
 		}),
 		multiSessionClient(),
+		magicLinkClient(),
+		passkeyClient(),
 	],
 });

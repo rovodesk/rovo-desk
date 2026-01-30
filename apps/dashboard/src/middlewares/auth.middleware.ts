@@ -8,7 +8,7 @@ const publicRoutes = ["/sign-in", "/sign-up", "/api/auth/"];
 export const authMiddleware = createMiddleware().server(
 	async ({ next, request }) => {
 		const headers = getRequestHeaders();
-		const auth = await createAuth();
+		const auth = createAuth();
 		const session = await auth.api.getSession({ headers });
 
 		// Prepare parsed path for conditional routing

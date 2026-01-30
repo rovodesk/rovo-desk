@@ -1,18 +1,19 @@
+// biome-ignore lint/style/useFilenamingConvention: This is a splat/catch-all route
+
 import { createFileRoute } from "@tanstack/react-router";
 import { createAuth } from "@zero-heads-lab/auth/server";
 
-// Splat or catch-all route
 export const Route = createFileRoute("/api/auth/$")({
 	server: {
 		handlers: {
-			GET: async ({ request }: { request: Request }) => {
+			GET: ({ request }: { request: Request }) => {
 				console.log("GET /api/auth/$_");
-				const auth = await createAuth();
+				const auth = createAuth();
 				return auth.handler(request);
 			},
-			POST: async ({ request }: { request: Request }) => {
+			POST: ({ request }: { request: Request }) => {
 				console.log("POST /api/auth/$_");
-				const auth = await createAuth();
+				const auth = createAuth();
 				return auth.handler(request);
 			},
 		},

@@ -10,9 +10,9 @@ import {
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
 
 export async function getUserOrganizations(userId: string) {
-	const db = await createDatabase();
+	const db = createDatabase();
 
-	return db
+	return await db
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -29,9 +29,9 @@ export async function getUserOrganizations(userId: string) {
 }
 
 export async function getUserTeams(userId: string) {
-	const db = await createDatabase();
+	const db = createDatabase();
 
-	return db
+	return await db
 		.select({
 			id: teamSchema.id,
 			name: teamSchema.name,
@@ -43,8 +43,8 @@ export async function getUserTeams(userId: string) {
 }
 
 export async function getOrganizationBySlug(slug: string) {
-	const db = await createDatabase();
-	return db
+	const db = createDatabase();
+	return await db
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -54,12 +54,13 @@ export async function getOrganizationBySlug(slug: string) {
 		})
 		.from(organizationSchema)
 		.where(eq(organizationSchema.slug, slug))
-		.limit(1);
+		.limit(1)
+		.then((res) => res[0]);
 }
 
 export async function getProfileByUserId(userId: string) {
-	const db = await createDatabase();
-	return db
+	const db = createDatabase();
+	return await db
 		.select({
 			id: profileSchema.userId,
 			currentOnboardingStep: profileSchema.currentOnboardingStep,
@@ -70,5 +71,6 @@ export async function getProfileByUserId(userId: string) {
 		})
 		.from(profileSchema)
 		.where(eq(profileSchema.userId, userId))
-		.limit(1);
+		.limit(1)
+		.then((res) => res[0]);
 }
