@@ -11,16 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-<<<<<<< HEAD
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
-=======
->>>>>>> main
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
-<<<<<<< HEAD
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -28,9 +24,6 @@ import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-=======
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
->>>>>>> main
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -40,14 +33,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
-<<<<<<< HEAD
 } as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
-=======
->>>>>>> main
 } as any)
 const errors500Route = errors500RouteImport.update({
   id: '/(errors)/500',
@@ -74,7 +64,6 @@ const authSignInRoute = authSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-<<<<<<< HEAD
 const AuthenticatedSettingsRouteRoute =
   AuthenticatedSettingsRouteRouteImport.update({
     id: '/settings',
@@ -87,14 +76,11 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-=======
->>>>>>> main
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-<<<<<<< HEAD
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/security',
@@ -123,17 +109,11 @@ const AuthenticatedSettingsAppearanceRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
-=======
-
-export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
->>>>>>> main
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-<<<<<<< HEAD
   '/tasks': typeof AuthenticatedTasksRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -141,9 +121,6 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-=======
-  '/api/auth/$': typeof ApiAuthSplatRoute
->>>>>>> main
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
@@ -151,7 +128,6 @@ export interface FileRoutesByTo {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-<<<<<<< HEAD
   '/tasks': typeof AuthenticatedTasksRoute
   '/': typeof AuthenticatedIndexRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -160,24 +136,16 @@ export interface FileRoutesByTo {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
-=======
-  '/': typeof AuthenticatedIndexRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
->>>>>>> main
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-<<<<<<< HEAD
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
-=======
->>>>>>> main
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
-<<<<<<< HEAD
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -186,25 +154,17 @@ export interface FileRoutesById {
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
-=======
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
->>>>>>> main
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-<<<<<<< HEAD
     | '/settings'
-=======
->>>>>>> main
     | '/sign-in'
     | '/sign-up'
     | '/401'
     | '/403'
     | '/500'
-<<<<<<< HEAD
     | '/tasks'
     | '/settings/appearance'
     | '/settings/billing'
@@ -231,20 +191,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/_authenticated/settings'
-=======
-    | '/api/auth/$'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/sign-up' | '/401' | '/403' | '/500' | '/' | '/api/auth/$'
-  id:
-    | '__root__'
-    | '/_authenticated'
->>>>>>> main
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/500'
-<<<<<<< HEAD
     | '/_authenticated/tasks'
     | '/_authenticated/'
     | '/_authenticated/settings/appearance'
@@ -253,10 +204,6 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/security'
     | '/api/auth/$'
     | '/_authenticated/settings/'
-=======
-    | '/_authenticated/'
-    | '/api/auth/$'
->>>>>>> main
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,7 +231,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-<<<<<<< HEAD
     }
     '/_authenticated/tasks': {
       id: '/_authenticated/tasks'
@@ -292,8 +238,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-=======
->>>>>>> main
     }
     '/(errors)/500': {
       id: '/(errors)/500'
@@ -330,7 +274,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-<<<<<<< HEAD
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -345,8 +288,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-=======
->>>>>>> main
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -354,7 +295,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-<<<<<<< HEAD
     '/_authenticated/settings/security': {
       id: '/_authenticated/settings/security'
       path: '/security'
@@ -412,21 +352,12 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
-=======
-  }
-}
-
-interface AuthenticatedRouteRouteChildren {
->>>>>>> main
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-<<<<<<< HEAD
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
-=======
->>>>>>> main
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -445,13 +376,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -31,7 +31,10 @@ export function Dashboard() {
 	);
 
 	const activeOrgQuery = authQueries.activeOrg(activeOrgId ?? "");
-	const { data: orgDetails } = useQuery(activeOrgQuery);
+	const { data: orgDetails } = useQuery({
+		...activeOrgQuery,
+		enabled: !!activeOrgId,
+	});
 
 	if (isLoading) {
 		return <Skeleton className="h-8 w-40" />;
