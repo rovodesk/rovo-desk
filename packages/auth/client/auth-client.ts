@@ -5,8 +5,11 @@ import {
 	multiSessionClient,
 	organizationClient,
 } from "better-auth/client/plugins";
+
 import { createAuthClient } from "better-auth/react";
+
 import { accessControl, admin, member, owner } from "../access-control";
+
 import { keys } from "../keys";
 import type { AuthInstance } from "../types";
 
