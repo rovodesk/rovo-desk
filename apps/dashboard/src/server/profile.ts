@@ -6,7 +6,7 @@ import { getProfileByUserId } from "@zero-heads-lab/database/repositories";
 export const getCurrentProfile = createServerFn().handler(async () => {
 	const headers = getRequestHeaders();
 	// 1️⃣ Get authenticated user
-	const auth = await createAuth();
+	const auth = createAuth();
 	const session = await auth.api.getSession({ headers });
 
 	if (!session?.user?.id) {

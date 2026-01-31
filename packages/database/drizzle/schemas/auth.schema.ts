@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
 	boolean,
 	index,
+	integer,
 	jsonb,
 	pgSchema,
 	text,
@@ -30,7 +31,7 @@ export const user = authSchema.table("user", {
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
 });
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
 	sessions: many(session, {
 		relationName: "userSessions",
 	}),
@@ -45,6 +46,11 @@ export const userRelations = relations(user, ({ many }) => ({
 	}),
 	invitationsSent: many(invitation, {
 		relationName: "userInvitationsSent",
+	}),
+	passkey: one(passkey, {
+		fields: [user.id],
+		references: [passkey.userId],
+		relationName: "userPasskey",
 	}),
 }));
 
@@ -366,6 +372,36 @@ export const account = authSchema.table(
 		index("accountUserIdx").on(t.userId),
 	]
 );
+
+export const passkey = authSchema.table(
+	"passkey",
+	{
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		name: text("name"),
+		publicKey: text("publicKey").notNull(),
+		userId: text("userId")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		credentialId: text("credentialId").notNull().unique(),
+		counter: integer("counter").notNull(),
+		deviceType: text("deviceType").notNull(),
+		backedUp: boolean("backedUp").notNull(),
+		transports: text("transports"),
+		createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+		aaguid: text("aaguid"),
+	},
+	(t) => [index("passkeyUserIdx").on(t.userId)]
+);
+
+export const passkeyRelations = relations(passkey, ({ one }) => ({
+	user: one(user, {
+		fields: [passkey.userId],
+		references: [user.id],
+		relationName: "userPasskey",
+	}),
+}));
 
 export const verification = authSchema.table(
 	"verification",

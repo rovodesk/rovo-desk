@@ -26,7 +26,7 @@ const config = defineConfig({
 		port: 3001,
 	},
 	optimizeDeps: {
-		exclude: ["@zero-heads-lab/database"],
+		exclude: ["@zero-heads-lab/database", "@zero-heads-lab/cache"],
 	},
 });
 

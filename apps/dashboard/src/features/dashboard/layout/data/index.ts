@@ -1,5 +1,7 @@
 import {
 	Book,
+	CreditCard,
+	FileText,
 	Funnel,
 	LayoutDashboard,
 	LifeBuoy,
@@ -8,6 +10,7 @@ import {
 	MessagesSquare,
 	Package,
 	SendIcon,
+	Settings,
 	Users2,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -48,6 +51,14 @@ const BASE_SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Tags", url: "/knowledge-base/tags" },
 					],
 				},
+			],
+		},
+		{
+			title: "Quick Actions",
+			items: [
+				{ title: "Billing", url: "/settings/billing", icon: CreditCard },
+				{ title: "Settings", url: "/settings", icon: Settings },
+				{ title: "Audit Logs", url: "/audit-logs", icon: FileText },
 			],
 		},
 	],

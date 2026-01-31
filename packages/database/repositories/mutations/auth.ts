@@ -4,8 +4,10 @@ import { createDatabase } from "../../conn";
 import {
 	member as orgMemSchema,
 	organization as orgSchema,
+	session as sessionSchema,
 	teamMember as teamMemSchema,
 	team as teamSchema,
+	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
 
@@ -13,7 +15,7 @@ export async function createNewUserProfile(userId: string) {
 	const orgName = "Default Workspace";
 	let orgSlug = Placeholder.slug();
 
-	const db = await createDatabase();
+	const db = createDatabase();
 
 	// Check slug once
 	const existingOrg = await db
@@ -70,4 +72,20 @@ export async function createNewUserProfile(userId: string) {
 
 		return { orgId: org.id, teamId: team.id };
 	});
+}
+
+export async function markUserAsDeleted(userId: string) {
+	const db = createDatabase();
+	return await db
+		.update(userSchema)
+		.set({
+			deletedAt: new Date(),
+		})
+		.where(eq(userSchema.id, userId));
+}
+
+export async function deleteSession(sessionId: string) {
+	const db = createDatabase();
+
+	return await db.delete(sessionSchema).where(eq(sessionSchema.id, sessionId));
 }

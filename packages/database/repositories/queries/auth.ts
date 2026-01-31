@@ -1,18 +1,44 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
 	member as memberSchema,
 	organization as organizationSchema,
+	session as sessionSchema,
 	teamMember as teamMemberSchema,
 	team as teamSchema,
+	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
 
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
 
-export async function getUserOrganizations(userId: string) {
-	const db = await createDatabase();
+export async function getUserEmailByUserId(userId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			email: userSchema.email,
+		})
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
+		.limit(1)
+		.then((res) => res[0]);
+}
 
-	return db
+export async function getUserEmailVerificationStatus(userId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			emailVerified: userSchema.emailVerified,
+		})
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
+		.limit(1)
+		.then((res) => res[0]);
+}
+
+export async function getUserOrganizations(userId: string) {
+	const db = createDatabase();
+
+	return await db
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -28,10 +54,30 @@ export async function getUserOrganizations(userId: string) {
 		.where(eq(memberSchema.userId, userId));
 }
 
-export async function getUserTeams(userId: string) {
-	const db = await createDatabase();
+export async function getUserSessions(userId: string) {
+	const db = createDatabase();
 
-	return db
+	return await db
+		.select({
+			id: sessionSchema.id,
+			userId: sessionSchema.userId,
+			createdAt: sessionSchema.createdAt,
+			updatedAt: sessionSchema.updatedAt,
+			expiresAt: sessionSchema.expiresAt,
+			ipAddress: sessionSchema.ipAddress,
+			userAgent: sessionSchema.userAgent,
+			activeOrganizationId: sessionSchema.activeOrganizationId,
+			activeTeamId: sessionSchema.activeTeamId,
+		})
+		.from(sessionSchema)
+		.where(eq(sessionSchema.userId, userId))
+		.orderBy(desc(sessionSchema.createdAt));
+}
+
+export async function getUserTeams(userId: string) {
+	const db = createDatabase();
+
+	return await db
 		.select({
 			id: teamSchema.id,
 			name: teamSchema.name,
@@ -43,8 +89,8 @@ export async function getUserTeams(userId: string) {
 }
 
 export async function getOrganizationBySlug(slug: string) {
-	const db = await createDatabase();
-	return db
+	const db = createDatabase();
+	return await db
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -54,12 +100,13 @@ export async function getOrganizationBySlug(slug: string) {
 		})
 		.from(organizationSchema)
 		.where(eq(organizationSchema.slug, slug))
-		.limit(1);
+		.limit(1)
+		.then((res) => res[0]);
 }
 
 export async function getProfileByUserId(userId: string) {
-	const db = await createDatabase();
-	return db
+	const db = createDatabase();
+	return await db
 		.select({
 			id: profileSchema.userId,
 			currentOnboardingStep: profileSchema.currentOnboardingStep,
@@ -70,5 +117,6 @@ export async function getProfileByUserId(userId: string) {
 		})
 		.from(profileSchema)
 		.where(eq(profileSchema.userId, userId))
-		.limit(1);
+		.limit(1)
+		.then((res) => res[0]);
 }

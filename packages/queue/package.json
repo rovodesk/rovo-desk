@@ -1,0 +1,24 @@
+{
+  "name": "@zero-heads-lab/queue",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "catalog:",
+    "@zero-heads-lab/shared": "workspace:*",
+    "bullmq": "^5.67.2",
+    "ioredis": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/bun": "catalog:",
+    "@zero-heads-lab/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

@@ -23,8 +23,7 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard, MoreVertical, UserCircle } from "lucide-react";
 import { useState } from "react";
 import { SignOutDialog } from "@/components/sign-out-dialog";
-import { authQueries } from "@/lib/queries/auth";
-// ... (rest of your imports)
+import { authQueries } from "@/lib/queries/auth.queries";
 
 export function ProfileDropdown() {
 	const { isMobile } = useSidebar();

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@zero-heads-lab/design-system": "workspace:*",
+    "date-fns": "^4.1.0",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",

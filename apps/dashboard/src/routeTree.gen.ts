@@ -11,12 +11,26 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+<<<<<<< HEAD
+=======
+import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+>>>>>>> feat/auth
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+<<<<<<< HEAD
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+=======
+import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
+import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
+import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
+>>>>>>> feat/auth
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -26,6 +40,14 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
+<<<<<<< HEAD
+=======
+} as any)
+const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AuthenticatedRouteRoute,
+>>>>>>> feat/auth
 } as any)
 const errors500Route = errors500RouteImport.update({
   id: '/(errors)/500',
@@ -52,20 +74,76 @@ const authSignInRoute = authSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
+=======
+const AuthenticatedSettingsRouteRoute =
+  AuthenticatedSettingsRouteRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+>>>>>>> feat/auth
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+=======
+const AuthenticatedSettingsSecurityRoute =
+  AuthenticatedSettingsSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedSettingsBillingRoute =
+  AuthenticatedSettingsBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedSettingsAppearanceRoute =
+  AuthenticatedSettingsAppearanceRouteImport.update({
+    id: '/appearance',
+    path: '/appearance',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
+  '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+>>>>>>> feat/auth
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
+<<<<<<< HEAD
   '/api/auth/$': typeof ApiAuthSplatRoute
+=======
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
+>>>>>>> feat/auth
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
@@ -73,42 +151,112 @@ export interface FileRoutesByTo {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
+<<<<<<< HEAD
   '/': typeof AuthenticatedIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+=======
+  '/tasks': typeof AuthenticatedTasksRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+>>>>>>> feat/auth
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+<<<<<<< HEAD
+=======
+  '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+>>>>>>> feat/auth
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
+<<<<<<< HEAD
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+=======
+  '/_authenticated/tasks': typeof AuthenticatedTasksRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+>>>>>>> feat/auth
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+<<<<<<< HEAD
+=======
+    | '/settings'
+>>>>>>> feat/auth
     | '/sign-in'
     | '/sign-up'
     | '/401'
     | '/403'
     | '/500'
+<<<<<<< HEAD
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to: '/sign-in' | '/sign-up' | '/401' | '/403' | '/500' | '/' | '/api/auth/$'
   id:
     | '__root__'
     | '/_authenticated'
+=======
+    | '/tasks'
+    | '/settings/appearance'
+    | '/settings/billing'
+    | '/settings/notifications'
+    | '/settings/security'
+    | '/api/auth/$'
+    | '/settings/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/sign-in'
+    | '/sign-up'
+    | '/401'
+    | '/403'
+    | '/500'
+    | '/tasks'
+    | '/'
+    | '/settings/appearance'
+    | '/settings/billing'
+    | '/settings/notifications'
+    | '/settings/security'
+    | '/api/auth/$'
+    | '/settings'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/_authenticated/settings'
+>>>>>>> feat/auth
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/500'
+<<<<<<< HEAD
     | '/_authenticated/'
     | '/api/auth/$'
+=======
+    | '/_authenticated/tasks'
+    | '/_authenticated/'
+    | '/_authenticated/settings/appearance'
+    | '/_authenticated/settings/billing'
+    | '/_authenticated/settings/notifications'
+    | '/_authenticated/settings/security'
+    | '/api/auth/$'
+    | '/_authenticated/settings/'
+>>>>>>> feat/auth
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -136,6 +284,16 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+<<<<<<< HEAD
+=======
+    }
+    '/_authenticated/tasks': {
+      id: '/_authenticated/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+>>>>>>> feat/auth
     }
     '/(errors)/500': {
       id: '/(errors)/500'
@@ -172,6 +330,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
+=======
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+>>>>>>> feat/auth
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -179,14 +354,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+=======
+    '/_authenticated/settings/security': {
+      id: '/_authenticated/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/settings/billing': {
+      id: '/_authenticated/settings/billing'
+      path: '/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof AuthenticatedSettingsBillingRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/settings/appearance': {
+      id: '/_authenticated/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+  }
+}
+
+interface AuthenticatedSettingsRouteRouteChildren {
+  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
+  AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
+}
+
+const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteChildren =
+  {
+    AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
+    AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
+    AuthenticatedSettingsNotificationsRoute:
+      AuthenticatedSettingsNotificationsRoute,
+    AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
+    AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
+  }
+
+const AuthenticatedSettingsRouteRouteWithChildren =
+  AuthenticatedSettingsRouteRoute._addFileChildren(
+    AuthenticatedSettingsRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
+  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
+>>>>>>> feat/auth
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+<<<<<<< HEAD
+=======
+  AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
+  AuthenticatedTasksRoute: AuthenticatedTasksRoute,
+>>>>>>> feat/auth
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -205,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+<<<<<<< HEAD
 
 import type { getRouter } from './router.tsx'
 import type { startInstance } from './start.ts'
@@ -215,3 +456,5 @@ declare module '@tanstack/react-start' {
     config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
+=======
+>>>>>>> feat/auth

@@ -7,14 +7,17 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@zero-heads-lab/shared": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
-    "@tanstack/react-query": "catalog:tanstack",
-    "better-auth": "^1.4.17",
+    "@better-auth/passkey": "^1.4.18",
     "@t3-oss/env-core": "catalog:",
-    "zod": "catalog:",
+    "@tanstack/react-query": "catalog:tanstack",
+    "@zero-heads-lab/cache": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "@zero-heads-lab/design-system": "workspace:*",
+    "@zero-heads-lab/email": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
+    "better-auth": "^1.4.17",
     "react": "catalog:react19",
-    "@zero-heads-lab/design-system": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

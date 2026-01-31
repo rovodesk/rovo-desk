@@ -16,7 +16,6 @@ interface AuthenticatedLayoutProps {
 
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 	const sidebarOpen = getCookie("sidebar_state") !== "false";
-
 	return (
 		<LayoutProvider>
 			<SearchProvider>
