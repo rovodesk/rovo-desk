@@ -13,6 +13,7 @@
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
+    "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "better-auth": "^1.4.17",
     "react": "catalog:react19",

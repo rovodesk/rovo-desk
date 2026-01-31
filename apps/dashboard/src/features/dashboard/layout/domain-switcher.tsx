@@ -25,7 +25,7 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
 import { useMemo } from "react";
-import { authQueries } from "@/lib/queries/auth";
+import { authQueries } from "@/lib/queries/auth.queries";
 import { AddDomainDialog } from "./add-domain-dialog";
 
 export function DomainSwitcher() {

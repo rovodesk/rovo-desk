@@ -19,20 +19,19 @@ import { useMemo } from "react";
 import { Header } from "@/components/header";
 import { MainContent } from "@/components/main-content";
 import { Search } from "@/components/search";
-import { authQueries } from "@/lib/queries/auth";
+import { authQueries } from "@/lib/queries/auth.queries";
 
 export function Dashboard() {
-	const { data: session, isLoading } = useQuery(authQueries.session());
+	const sessionQuery = authQueries.session();
+	const { data: session, isLoading } = useQuery(sessionQuery);
 
 	const activeOrgId = useMemo(
 		() => session?.session.activeOrganizationId,
 		[session]
 	);
 
-	const { data: orgDetails } = useQuery({
-		...authQueries.activeOrg(activeOrgId ?? ""),
-		enabled: !!activeOrgId,
-	});
+	const activeOrgQuery = authQueries.activeOrg(activeOrgId ?? "");
+	const { data: orgDetails } = useQuery(activeOrgQuery);
 
 	if (isLoading) {
 		return <Skeleton className="h-8 w-40" />;

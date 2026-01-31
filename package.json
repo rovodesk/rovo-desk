@@ -20,7 +20,9 @@
     "zod": "^4.3.5",
     "@t3-oss/env-core": "^0.13.10",
     "motion": "^12.28.1",
-    "cmdk": "^1.1.1"
+    "cmdk": "^1.1.1",
+    "@cloudflare/workers-types": "^4.20260130.0",
+    "ioredis": "^5.9.2"
   },
   "catalogs": {
     "react19": {
@@ -62,6 +64,13 @@
       "@tanstack/react-router-with-query": "^1.130.17",
       "@tanstack/react-table": "^8.21.3",
       "@tanstack/react-form": "^1.28.0"
+    },
+    "email": {
+      "resend": "^6.5.2",
+      "@react-email/components": "^1.0.1",
+      "@react-email/preview-server": "^5.0.5",
+      "react-email": "^5.0.5",
+      "@react-email/render": "^2.0.0"
     }
   },
   "scripts": {

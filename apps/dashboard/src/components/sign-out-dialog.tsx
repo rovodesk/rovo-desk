@@ -14,11 +14,12 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 
 	const { mutate: handleSignOut, isPending } = useMutation({
 		mutationFn: async () => await authClient.signOut(),
-		onSuccess: () => {
+		onMutate: () => {
 			// 1. Wipe the cache so no sensitive data remains
 			queryClient.resetQueries();
 			queryClient.clear();
-
+		},
+		onSuccess: () => {
 			// 2. Close the dialog
 			onOpenChange(false);
 

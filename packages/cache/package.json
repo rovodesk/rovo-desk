@@ -9,11 +9,11 @@
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
     "@zero-heads-lab/shared": "workspace:*",
-    "ioredis": "^5.9.2",
+    "ioredis": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260130.0",
+    "@cloudflare/workers-types": "catalog:",
     "@types/bun": "catalog:",
     "@zero-heads-lab/typescript-config": "workspace:*"
   },

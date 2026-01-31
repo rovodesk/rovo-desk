@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Dashboard } from "@/features/dashboard";
-import { profileQueries } from "@/lib/queries/profile";
+import { profileQueries } from "@/lib/queries/profile.queries";
 
 export const Route = createFileRoute("/_authenticated/")({
 	component: Dashboard,

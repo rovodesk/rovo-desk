@@ -1,13 +1,39 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
 	member as memberSchema,
 	organization as organizationSchema,
+	session as sessionSchema,
 	teamMember as teamMemberSchema,
 	team as teamSchema,
+	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
 
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
+
+export async function getUserEmailByUserId(userId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			email: userSchema.email,
+		})
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
+		.limit(1)
+		.then((res) => res[0]);
+}
+
+export async function getUserEmailVerificationStatus(userId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			emailVerified: userSchema.emailVerified,
+		})
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
+		.limit(1)
+		.then((res) => res[0]);
+}
 
 export async function getUserOrganizations(userId: string) {
 	const db = createDatabase();
@@ -26,6 +52,26 @@ export async function getUserOrganizations(userId: string) {
 			eq(memberSchema.organizationId, organizationSchema.id)
 		)
 		.where(eq(memberSchema.userId, userId));
+}
+
+export async function getUserSessions(userId: string) {
+	const db = createDatabase();
+
+	return await db
+		.select({
+			id: sessionSchema.id,
+			userId: sessionSchema.userId,
+			createdAt: sessionSchema.createdAt,
+			updatedAt: sessionSchema.updatedAt,
+			expiresAt: sessionSchema.expiresAt,
+			ipAddress: sessionSchema.ipAddress,
+			userAgent: sessionSchema.userAgent,
+			activeOrganizationId: sessionSchema.activeOrganizationId,
+			activeTeamId: sessionSchema.activeTeamId,
+		})
+		.from(sessionSchema)
+		.where(eq(sessionSchema.userId, userId))
+		.orderBy(desc(sessionSchema.createdAt));
 }
 
 export async function getUserTeams(userId: string) {

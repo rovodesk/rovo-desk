@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { authQueries } from "@/lib/queries/auth";
+import { authQueries } from "@/lib/queries/auth.queries";
 
 const languages = [
 	{ label: "English", value: "en" },

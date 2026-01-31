@@ -1,0 +1,9 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/base.json",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
