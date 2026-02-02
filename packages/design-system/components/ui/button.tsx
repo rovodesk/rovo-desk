@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -52,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       asChild = false,
-      animated = true,
+      animated = false,
       hoverScale = 1.05,
       tapScale = 0.95,
       ...props

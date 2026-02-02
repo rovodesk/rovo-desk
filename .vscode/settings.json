@@ -34,7 +34,7 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "todo-tree.general.tags": ["TODO", "FIXME", "BUG"],
+  "todo-tree.general.tags": ["TODO", "FIXME", "BUG", "FUTURE"],
   "todo-tree.highlights.defaultHighlight": {
     "fontWeight": "bold",
     "type": "text",
@@ -46,6 +46,13 @@
       "background": "#ffeb3b",
       "icon": "check",
       "iconColour": "#ffeb3b",
+      "gutterIcon": true
+    },
+    "FUTURE": {
+      "foreground": "#ffffff",
+      "background": "#19ad0f",
+      "icon": "check",
+      "iconColour": "#19ad0f",
       "gutterIcon": true
     },
     "FIXME": {

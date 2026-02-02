@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { authQueries } from "@/lib/queries/auth.queries";
 
 const languages = [
 	{ label: "English", value: "en" },
@@ -49,7 +48,7 @@ const formSchema = z.object({
 });
 
 export function ProfileForm() {
-	const { data: session, isLoading } = useQuery(authQueries.session());
+	const { session, isLoading } = useSession();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -169,6 +168,9 @@ export function ProfileForm() {
 										<field.TextField
 											description="Primary email for notifications and security."
 											disabled
+											icon={
+												<AtSignIcon className="size-4 text-muted-foreground" />
+											}
 											label="Email Address"
 											value={session?.user.email}
 										/>

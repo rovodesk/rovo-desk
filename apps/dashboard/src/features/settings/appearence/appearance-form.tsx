@@ -76,9 +76,6 @@ export function AppearanceForm() {
 												value={option.value}
 											/>
 											<ThemePreview type={option.value as "light" | "dark"} />
-											<span className="block w-full pt-2 text-center font-medium text-muted-foreground text-xs group-data-[state=checked]:text-foreground">
-												{option.label}
-											</span>
 										</FieldLabel>
 									)}
 								/>

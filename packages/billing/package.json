@@ -1,0 +1,21 @@
+{
+  "name": "@zero-heads-lab/billing",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@polar-sh/sdk": "catalog:polar",
+    "@t3-oss/env-core": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:react19",
+    "@zero-heads-lab/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

@@ -5,7 +5,6 @@ import { createAuth } from "@zero-heads-lab/auth/server";
 
 const publicRoutes = ["/sign-in", "/sign-up", "/api/auth/"];
 
-// Initialize auth as a singleton (ensure your createAuth handles internal caching)
 const auth = createAuth();
 
 export const authMiddleware = createMiddleware().server(
@@ -39,8 +38,7 @@ export const authMiddleware = createMiddleware().server(
 				throw redirect({
 					to: "/sign-in",
 					search: {
-						redirect: request.url,
-						verified: isUnverified ? "true" : null,
+						verified: isUnverified ? "true" : undefined,
 					},
 				});
 			}
@@ -50,10 +48,7 @@ export const authMiddleware = createMiddleware().server(
 		// 5. Pass clean context to downstream loaders/actions
 		return next({
 			context: {
-				auth: {
-					session: session.session,
-					user: session.user,
-				},
+				session,
 			},
 		});
 	}

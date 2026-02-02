@@ -1,5 +1,5 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { UnauthorisedError as UnauthorisedErrorComponent } from "@zero-heads-lab/design-system/components/errors/unauthorized";
+import { UnauthorisedError as UnauthorisedErrorComponent } from "@zero-heads-lab/design-system/components/errors/unauthorized-error";
 
 export function UnauthorisedError() {
 	const navigate = useNavigate();

@@ -1,7 +1,9 @@
-import { MoonStarIcon, SunIcon } from 'lucide-react'
-import { useTheme } from '../context/theme'
-import { Button } from './ui/button'
-import { cn } from '../lib/utils';
+"use client";
+
+import { MoonStarIcon, SunIcon } from "lucide-react";
+import { useTheme } from "../context/theme";
+import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
 
 export function runThemeTransition(
   next: "light" | "dark" | "system",

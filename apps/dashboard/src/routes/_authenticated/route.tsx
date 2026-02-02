@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthenticatedLayout } from "@/features/dashboard/layout";
+import { AuthenticatedLayout } from "@/layout";
 import authMiddleware from "@/middlewares/auth.middleware";
 
 export const Route = createFileRoute("/_authenticated")({

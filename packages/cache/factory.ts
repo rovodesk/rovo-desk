@@ -1,3 +1,4 @@
+import type { KVNamespace } from "@cloudflare/workers-types";
 import { KvCacheStore } from "./cloudflare-kv";
 import type { ICacheStore } from "./interface";
 import { keys } from "./keys";

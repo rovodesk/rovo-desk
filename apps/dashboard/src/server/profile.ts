@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { createAuth } from "@zero-heads-lab/auth/server";
-import { getProfileByUserId } from "@zero-heads-lab/database/repositories";
+import { getProfileByUserId } from "@zero-heads-lab/database/repositories/profile/queries";
 
 export const getCurrentProfile = createServerFn().handler(async () => {
 	const headers = getRequestHeaders();

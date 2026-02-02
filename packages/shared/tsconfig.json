@@ -2,8 +2,9 @@
   "extends": "@zero-heads-lab/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["@types/bun"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "../global/components/command-menu.tsx"],
   "exclude": ["node_modules"]
 }

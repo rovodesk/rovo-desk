@@ -16,7 +16,7 @@ export class Placeholder {
 	}
 
 	static slug(words = 3, separator = "-", suffixLength = 4) {
-		const [value] = crypto.getRandomValues(new Uint32Array(1));
+		const [value] = globalThis.crypto.getRandomValues(new Uint32Array(1));
 
 		if (!value) throw new Error("Failed to generate random value");
 

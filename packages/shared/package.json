@@ -11,7 +11,7 @@
     "friendlier-words": "^1.1.3"
   },
   "devDependencies": {
-    "@types/react": "catalog:react19",
+    "@types/bun": "catalog:",
     "@zero-heads-lab/typescript-config": "workspace:*"
   },
   "peerDependencies": {

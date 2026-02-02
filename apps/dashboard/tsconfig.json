@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

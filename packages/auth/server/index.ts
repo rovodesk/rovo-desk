@@ -1,16 +1,29 @@
 import { passkey } from "@better-auth/passkey";
+import {
+	checkout,
+	polar,
+	portal,
+	usage,
+	webhooks,
+} from "@polar-sh/better-auth";
+import {
+	createFreeSubscription,
+	getProducts,
+	polarClient,
+} from "@zero-heads-lab/billing";
 import { createCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
-	createNewUserProfile,
+	createNewUserWithProfile,
 	deleteSession,
-	getUserEmailByUserId,
-	getUserEmailVerificationStatus,
-	getUserOrganizations,
-	getUserSessions,
-	getUserTeams,
 	markUserAsDeleted,
-} from "@zero-heads-lab/database/repositories";
+} from "@zero-heads-lab/database/repositories/auth/mutations";
+import {
+	getUserEmailVerificationStatus,
+	getUserSessionBootstrap,
+	getUserSessions,
+} from "@zero-heads-lab/database/repositories/auth/queries";
+import { createSubscriptionFromPolar } from "@zero-heads-lab/database/repositories/billing/mutations";
 import {
 	ChangeEmailConfirmationTemplate,
 	EmailVerificationLinkTemplate,
@@ -45,6 +58,8 @@ const AUTH_CONFIG = {
 	MAXIMUM_SESSIONS: 6,
 	COOKIE_PREFIX: "zero-heads-auth",
 	SESSION_TOKEN_NAME: "auth_session_token",
+	RATE_LIMIT_WINDOW_IN_SECS: 10, // 10 seconds
+	RATE_LIMIT_MAX_REQUESTS: 100,
 
 	DASHBOARD_URL: "http://localhost:3000",
 };
@@ -53,44 +68,87 @@ const AUTH_CONFIG = {
 // 	(o) => o.trim()
 // );
 
-const Plugins = [
-	// Magic Link Plugin
-	magicLink({
-		sendMagicLink: async ({ email, url }) => {
-			await sendEmail({
-				to: email,
-				subject: "Sign in to your account",
-				react: MagicLinkTemplate({ url }),
-			});
-		},
-	}),
-	//Passkey Plugin
-	passkey(),
-	// Organization Plugin
-	organization({
-		accessControl,
-		roles: {
-			owner,
-			admin,
-			member,
-		},
-		teams: {
-			enabled: true,
-			allowRemovingAllTeams: false, // Dont allow to remove the last team
-		},
-	}),
-	// Multi Session Plugin
-	multiSession({
-		maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
-	}),
-	// OPENAPI Plugin
-	process.env.NODE_ENV !== "production" &&
-		openAPI({
-			path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
+const Plugins = () => {
+	const products = getProducts();
+
+	return [
+		// Magic Link Plugin
+		magicLink({
+			sendMagicLink: async ({ email, url }) => {
+				await sendEmail({
+					to: email,
+					subject: "Sign in to your account",
+					react: MagicLinkTemplate({ url }),
+				});
+			},
 		}),
-	// This must be at the last
-	tanstackStartCookies(),
-].filter(Boolean) as BetterAuthPlugin[];
+		//Passkey Plugin
+		passkey(),
+		// Organization Plugin
+		organization({
+			accessControl,
+			roles: {
+				owner,
+				admin,
+				member,
+			},
+			teams: {
+				enabled: true,
+				allowRemovingAllTeams: false, // Dont allow to remove the last team
+			},
+		}),
+		// Multi Session Plugin
+		multiSession({
+			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
+		}),
+		// OPENAPI Plugin
+		process.env.NODE_ENV !== "production" &&
+			openAPI({
+				path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
+			}),
+		// Polar Plugin
+		polar({
+			client: polarClient,
+			createCustomerOnSignUp: false,
+			use: [
+				// Add Polar Plugins Here
+				checkout({
+					products: products.map((product) => ({
+						productId: product.productId,
+						slug: product.slug,
+					})),
+					successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
+					authenticatedUsersOnly: true,
+				}),
+				portal(),
+				usage(),
+				// Add Polar Webhooks Here
+				webhooks({
+					secret: keys.POALR_WEBHOOK_SECRET,
+					// biome-ignore lint/suspicious/useAwait: No awaited value
+					onCustomerCreated: async (payload) => {
+						console.log(payload);
+					},
+					onPayload: async (payload) => {
+						// Catch ALL for Events
+						// Redirect to Webhook Ingestion API
+						// 	await fetch("http://localhost:3001/api/webhook", {
+						// 		method: "POST",
+						// 		body: JSON.stringify(payload),
+						// 	});
+						await console.log(
+							`${payload.type}: ${payload.data}`,
+							payload.timestamp
+						);
+						//TODO: Add Analytics
+					},
+				}),
+			],
+		}),
+		// This must be at the last
+		tanstackStartCookies(),
+	].filter(Boolean) as BetterAuthPlugin[];
+};
 
 const SocialProviders = {
 	github: {
@@ -211,26 +269,58 @@ export function createAuth() {
 			},
 		},
 		account: {
+			encryptOAuthTokens: true,
 			accountLinking: {
 				enabled: true,
 				trustedProviders: ["github", "google"],
-				allowDifferentEmails: false,
-				// sendAccountLinkingEmail: async ({
-				// 	user,
-				// 	url,
-				// }: {
-				// 	user: User;
-				// 	url: string;
-				// }) => {
-				// 	// await sendEmail({
-				// 	// 	to: user.email,
-				// 	// 	subject: "Link your account",
-				// 	// 	react: AccountLinkingTemplate({ user, url }),
-				// 	// });
-				// },
+				updateUserInfoOnLink: true,
 			},
 		},
-		plugins: Plugins,
+		rateLimit: {
+			enabled: true,
+			window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
+			limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
+			storage: "secondary-storage",
+		},
+		plugins: Plugins(),
+		socialProviders: SocialProviders,
+		advanced: {
+			ipAddress: {
+				ipAddressHeaders: ["x-client-ip", "x-forwarded-for"],
+				disableIpTracking: false, // Enable IP Tracking [SECURITY]
+			},
+			useSecureCookies: true,
+			cookies: {
+				session_token: {
+					name: AUTH_CONFIG.SESSION_TOKEN_NAME,
+					attributes: {
+						httpOnly: true,
+						path: "/",
+						sameSite: "lax",
+						secure: true,
+					},
+				},
+			},
+			defaultCookieAttributes: {
+				httpOnly: true,
+				secure: true,
+				sameSite: process.env.NODE_ENV === "production" ? "lax" : "none",
+			},
+			cookiePrefix: AUTH_CONFIG.COOKIE_PREFIX,
+		},
+		logger: {
+			disabled: false,
+			disableColors: process.env.NODE_ENV === "production",
+			level: process.env.NODE_ENV === "production" ? "error" : "debug", //FUTURE: Change to warn when completed
+			log: (level, message, ...args) => {
+				// TODO: Add Logger from observability
+				console.log(
+					["AUTH", new Date().toISOString(), level.toUpperCase()].join(" "),
+					message,
+					...args
+				);
+			},
+		},
 		databaseHooks: {
 			session: {
 				create: {
@@ -241,47 +331,68 @@ export function createAuth() {
 						if (sessions && sessions.length >= AUTH_CONFIG.MAXIMUM_SESSIONS) {
 							const oldestSession = sessions.at(-1);
 							if (oldestSession) {
-								// 1. Delete from DB
-								await deleteSession(oldestSession.id);
+								try {
+									// 1. Delete from DB
+									await deleteSession(oldestSession.id);
 
-								// 2. Manual Cache Invalidation
-								// Better-Auth uses specific keys for sessions.
-								// Usually: "session:[token]" or "session:[id]"
-								await cacheStore.delete(`session:${oldestSession.id}`);
-								console.log(`Evicted session ${oldestSession.id} from cache`);
+									// 2. Manual Cache Invalidation
+									// Better-Auth uses specific keys for sessions.
+									// Usually: "session:[token]" or "session:[id]"
+									await cacheStore.delete(`session:${oldestSession.id}`);
+									console.log(`Evicted session ${oldestSession.id} from cache`);
+								} catch (error) {
+									console.error(
+										`Failed to evict session ${oldestSession.id} from cache`,
+										error
+									);
+									throw new APIError("INTERNAL_SERVER_ERROR", {
+										message: "Failed to evict session from cache",
+									});
+								}
 							}
 						}
 					},
 					after: async (session) => {
 						try {
-							const organizations = await getUserOrganizations(session.userId);
-							// If not, check all organizations and set the first one as active
-							if (organizations.length > 0) {
-								session.activeOrganizationId = organizations?.[0]?.id;
+							const rows = await getUserSessionBootstrap(session.userId);
+
+							if (!rows.length) {
+								throw new APIError("BAD_REQUEST", {
+									message: "User not found",
+								});
 							}
-							// Check if user has an active teamId
-							const teams = await getUserTeams(session.userId);
-							// If not, check all teams and set the first one as active
-							if (teams.length > 0) {
-								session.activeTeamId = teams?.[0]?.id;
+
+							const firstRow = rows[0];
+
+							// Set active organization
+							const org = rows.find((r) => r.organizationId);
+							if (org) {
+								session.activeOrganizationId = org.organizationId;
+							}
+
+							// Set active team
+							const team = rows.find((r) => r.teamId);
+							if (team) {
+								session.activeTeamId = team.teamId;
+							}
+
+							// Send login alert email
+							if (firstRow?.email) {
+								await sendEmail({
+									to: firstRow.email,
+									subject: "New login to your account",
+									react: LoginAlertTemplate({
+										ipAddress: session.ipAddress || "Unknown",
+										userAgent: session.userAgent || "Unknown",
+										time: session.createdAt.toISOString(),
+										securityUrl: `${AUTH_CONFIG.DASHBOARD_URL}/settings/security`,
+									}),
+								});
 							}
 						} catch (error) {
-							console.error("Failed to get user organizations", error);
-							throw new APIError("INTERNAL_SERVER_ERROR");
-						}
-
-						// Send Login Alert Email
-						const userInfo = await getUserEmailByUserId(session.userId);
-						if (userInfo?.email) {
-							await sendEmail({
-								to: userInfo.email,
-								subject: "New login to your account",
-								react: LoginAlertTemplate({
-									ipAddress: session.ipAddress || "Unknown",
-									userAgent: session.userAgent || "Unknown",
-									time: session.createdAt.toISOString(),
-									securityUrl: `${AUTH_CONFIG.DASHBOARD_URL}/settings/security`,
-								}),
+							console.error("Failed to bootstrap user session", error);
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Failed to initialize user session",
 							});
 						}
 					},
@@ -306,22 +417,50 @@ export function createAuth() {
 						};
 					},
 					after: async (user) => {
+						let orgId: string | null = null;
+						// Create User Profile
 						try {
-							await createNewUserProfile(user.id);
+							const { orgId: oId } = await createNewUserWithProfile(user.id);
+							orgId = oId;
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);
 							// If you throw here, the user might be created but the UI will show an error
-							throw new APIError("INTERNAL_SERVER_ERROR");
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: `Failed to create profile because ${error}`,
+							});
 						}
-						await sendEmail({
-							to: user.email,
-							subject: "Welcome to Zero Heads",
-							react: UserWelcomeTemplate({
-								user,
-								dashboardUrl: AUTH_CONFIG.DASHBOARD_URL,
-							}),
-						});
+
+						//Subscribe User to Basic PLan
+						try {
+							const sub = await createFreeSubscription(user.id);
+							await createSubscriptionFromPolar({
+								userId: user.id,
+								organizationId: orgId,
+								payload: sub,
+							});
+						} catch (error) {
+							console.error("Failed to create subscription", error);
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Failed to create subscription",
+							});
+						}
+
+						try {
+							await sendEmail({
+								to: user.email,
+								subject: "Welcome to Zero Heads",
+								react: UserWelcomeTemplate({
+									user,
+									dashboardUrl: AUTH_CONFIG.DASHBOARD_URL,
+								}),
+							});
+						} catch (error) {
+							console.error("Failed to send welcome email", error);
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Failed to send welcome email",
+							});
+						}
 						// TODO: ADD ANALYTICS
 					},
 				},
@@ -345,21 +484,6 @@ export function createAuth() {
 					},
 				},
 			},
-		},
-		socialProviders: SocialProviders,
-		advanced: {
-			cookies: {
-				session_token: {
-					name: AUTH_CONFIG.SESSION_TOKEN_NAME,
-					attributes: {
-						httpOnly: true,
-						path: "/",
-						sameSite: "lax",
-						secure: true,
-					},
-				},
-			},
-			cookiePrefix: AUTH_CONFIG.COOKIE_PREFIX,
 		},
 	});
 }

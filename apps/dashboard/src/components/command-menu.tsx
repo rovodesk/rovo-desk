@@ -12,16 +12,17 @@ import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-a
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
-import { useSidebarData } from "@/features/dashboard/layout/data";
-import type { NavCollapsible } from "@/features/dashboard/layout/types";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { useSearch } from "@/providers/search";
+import type { NavCollapsible } from "@/types/sidebar";
 
 export function CommandMenu() {
-	const navigate = useNavigate();
 	const { setTheme } = useTheme();
+	const navigate = useNavigate();
 	const { open, setOpen } = useSearch();
 
-	const { sidebarData } = useSidebarData();
+	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {

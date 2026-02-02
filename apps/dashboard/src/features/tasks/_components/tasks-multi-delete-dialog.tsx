@@ -1,4 +1,5 @@
 import type { Table } from "@tanstack/react-table";
+import { ConfirmDialog } from "@zero-heads-lab/design-system/components/confirm-dialog";
 import {
 	Alert,
 	AlertDescription,
@@ -10,7 +11,6 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { sleep } from "@zero-heads-lab/shared/utils";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 
 type TaskMultiDeleteDialogProps<TData> = {
 	open: boolean;

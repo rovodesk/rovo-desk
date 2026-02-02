@@ -1,3 +1,5 @@
+"use client";
+
 import { createFormHook } from "@tanstack/react-form";
 import { TextField } from "./text-field";
 import { FormSubmitButton } from "./submit-button";

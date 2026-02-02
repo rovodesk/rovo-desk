@@ -1,4 +1,5 @@
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
+import { getErrorStatus } from "@zero-heads-lab/shared/utils";
 import { AxiosError } from "axios";
 
 export function handleServerError(error: unknown) {
@@ -6,19 +7,21 @@ export function handleServerError(error: unknown) {
 	console.log(error);
 
 	let errMsg = "Something went wrong!";
+	const errorStatus = getErrorStatus(error);
 
-	if (
-		error &&
-		typeof error === "object" &&
-		"status" in error &&
-		Number(error.status) === 204
-	) {
+	if (errorStatus === 204) {
 		errMsg = "Content not found.";
+	}
+
+	if (errorStatus === 500) {
+		errMsg = "Internal server error.";
 	}
 
 	if (error instanceof AxiosError) {
 		errMsg = error.response?.data.title;
 	}
 
-	toast.error(errMsg);
+	toast.error("Something went wrong!", {
+		description: errMsg,
+	});
 }

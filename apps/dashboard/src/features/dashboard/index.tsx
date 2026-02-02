@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -16,25 +16,23 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
-import { Header } from "@/components/header";
-import { MainContent } from "@/components/main-content";
 import { Search } from "@/components/search";
-import { authQueries } from "@/lib/queries/auth.queries";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 
 export function Dashboard() {
-	const sessionQuery = authQueries.session();
-	const { data: session, isLoading } = useQuery(sessionQuery);
+	const { session, isLoading: isSessionLoading } = useSession();
 
-	const activeOrgId = useMemo(
+	const activedomainId = useMemo(
 		() => session?.session.activeOrganizationId,
 		[session]
 	);
 
-	const activeOrgQuery = authQueries.activeOrg(activeOrgId ?? "");
-	const { data: orgDetails } = useQuery({
-		...activeOrgQuery,
-		enabled: !!activeOrgId,
-	});
+	const { domain, isLoading: isDomainLoading } = useDomainDetails(
+		activedomainId ?? ""
+	);
+
+	const isLoading = isSessionLoading || isDomainLoading;
 
 	if (isLoading) {
 		return <Skeleton className="h-8 w-40" />;
@@ -72,11 +70,7 @@ export function Dashboard() {
 			<MainContent fluid>
 				<div className="mb-2 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-2xl tracking-tight">
-						{orgDetails?.name ? (
-							orgDetails.name
-						) : (
-							<Skeleton className="h-8 w-40" />
-						)}{" "}
+						{domain?.name ? domain.name : <Skeleton className="h-8 w-40" />}{" "}
 						Dashboard
 					</h1>
 					<div className="flex items-center space-x-2">

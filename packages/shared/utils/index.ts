@@ -1,5 +1,6 @@
 export * from "./capitalize";
 export * from "./cookies";
+export * from "./error";
 export * from "./faker";
 export * from "./friendly-words";
 export * from "./noop";

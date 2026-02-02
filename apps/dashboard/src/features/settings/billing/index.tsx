@@ -1,9 +1,19 @@
 import { ContentSection } from "../_components/content-section";
+import { BillingHistoryTable } from "./billing-history-table";
+import { PaymentMethod } from "./payment-method";
+import { SubscriptionOverview } from "./subscription-overview";
 
 export function SettingsBilling() {
 	return (
-		<ContentSection desc="Configure your payment settings." title="Billing">
-			<h2 className="font-semibold text-lg">Billing</h2>
+		<ContentSection
+			desc="Manage your subscription, payment methods, and download invoices."
+			title="Billing"
+		>
+			<div className="space-y-8">
+				<SubscriptionOverview />
+				<PaymentMethod />
+				<BillingHistoryTable />
+			</div>
 		</ContentSection>
 	);
 }

@@ -1,3 +1,5 @@
+"use client"
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'
 
@@ -63,9 +65,9 @@ export function FontProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <FontContext value={{ font, setFont, resetFont }}>
+    <FontContext.Provider value={{ font, setFont, resetFont }}>
 		{children}
-	</FontContext>
+	</FontContext.Provider>
   )
 }
 

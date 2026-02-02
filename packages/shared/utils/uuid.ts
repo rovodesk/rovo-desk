@@ -1,3 +1,3 @@
 export function generateUUID(prefix?: string) {
-	return `${prefix || ""}${crypto.randomUUID()}`;
+	return `${prefix || ""}${globalThis.crypto.randomUUID()}`;
 }

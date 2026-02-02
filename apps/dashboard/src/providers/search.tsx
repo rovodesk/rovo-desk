@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { CommandMenu } from "@/components/command-menu";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 
 type SearchContextType = {
 	open: boolean;
@@ -31,7 +32,11 @@ export function SearchProvider({ children }: SearchProviderProps) {
 	return (
 		<SearchContext value={{ open, setOpen }}>
 			{children}
-			<CommandMenu />
+			<CommandMenu
+				open={open}
+				setOpen={setOpen}
+				sidebarConfig={SIDEBAR_CONFIG}
+			/>
 		</SearchContext>
 	);
 }

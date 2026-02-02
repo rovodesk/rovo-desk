@@ -1,6 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { authClient } from "@zero-heads-lab/auth/client";
-import type { AuthSession } from "@zero-heads-lab/auth/types";
+import {
+	useDeleteSession,
+	useListSessions,
+	useSession,
+} from "@zero-heads-lab/auth/hooks";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import {
@@ -24,8 +26,6 @@ import {
 	SmartphoneIcon,
 	Trash2Icon,
 } from "lucide-react";
-import { useMemo } from "react";
-import { authQueries } from "@/lib/queries/auth.queries";
 
 function getDeviceInfo(userAgent?: string) {
 	if (!userAgent) {
@@ -43,58 +43,23 @@ function getDeviceInfo(userAgent?: string) {
 }
 
 export function SessionTable() {
-	const sessionListQuery = authQueries.sessionList();
-	const { data: sessions, isLoading } = useQuery(sessionListQuery);
-	const { data: activeSession } = useQuery(authQueries.session());
+	const { sessions, isLoading } = useListSessions();
+	const { session } = useSession();
+	const currentSessionId = session?.session?.id;
 
-	const queryClient = useQueryClient();
-	const activeSessionId = activeSession?.session?.id;
+	const sessionsWithCurrent = sessions.map((s) => ({
+		...s,
+		isCurrent: s.id === currentSessionId,
+	}));
 
-	const sessionsData = useMemo(() => {
-		return sessions?.map((session) => ({
-			...session,
-			isCurrent: session.id === activeSessionId,
-			device: getDeviceInfo(session.userAgent ?? undefined),
-		}));
-	}, [sessions, activeSessionId]);
-
-	const { mutate: deleteSession, variables: pendingToken } = useMutation({
-		mutationFn: async (sessionToken: string) =>
-			authClient.revokeSession({ token: sessionToken }),
-
-		onMutate: async (sessionToken) => {
-			await queryClient.cancelQueries({ queryKey: sessionListQuery.queryKey });
-
-			const previousSessions = queryClient.getQueryData<AuthSession[]>(
-				sessionListQuery.queryKey
-			);
-
-			queryClient.setQueryData(sessionListQuery.queryKey, (old) =>
-				old?.filter((s) => s.token !== sessionToken)
-			);
-
-			return { previousSessions };
+	const { deleteSession, variables: pendingToken } = useDeleteSession({
+		onSuccess: () => {
+			toast.success("Session revoked");
 		},
-
-		onError: (_err, _token, context) => {
-			if (context?.previousSessions) {
-				queryClient.setQueryData(
-					sessionListQuery.queryKey,
-					context.previousSessions
-				);
-			}
-
+		onError: () => {
 			toast.error("Failed to revoke session", {
 				description: "Please try again later",
 			});
-		},
-
-		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: sessionListQuery.queryKey });
-		},
-
-		onSuccess: () => {
-			toast.success("Session revoked");
 		},
 	});
 
@@ -108,13 +73,20 @@ export function SessionTable() {
 		);
 	}
 
-	if (!sessionsData?.length) {
+	if (!sessions?.length) {
 		return (
 			<div className="rounded-lg border bg-card p-6 text-center text-muted-foreground">
 				No active sessions found
 			</div>
 		);
 	}
+
+	console.log(
+		sessions?.map((s) => ({
+			id: s.id,
+			token: s.token,
+		}))
+	);
 
 	return (
 		<div className="w-full rounded-xl border bg-card shadow-sm">
@@ -129,8 +101,9 @@ export function SessionTable() {
 				</TableHeader>
 
 				<TableBody>
-					{sessionsData.map((session) => {
-						const DeviceIcon = session.device.Icon;
+					{sessionsWithCurrent.map((session) => {
+						const device = getDeviceInfo(session.userAgent);
+						const DeviceIcon = device.Icon;
 						const isDeleting = pendingToken === session.token;
 
 						return (
@@ -144,7 +117,7 @@ export function SessionTable() {
 										<DeviceIcon className="size-4 text-muted-foreground" />
 										<div className="flex flex-col">
 											<span className="font-medium text-sm">
-												{session.device.label}
+												{device.label}
 											</span>
 											{session.isCurrent && (
 												<span className="font-bold text-[10px] text-emerald-500 uppercase tracking-wider">
@@ -162,7 +135,7 @@ export function SessionTable() {
 
 								{/* Last active */}
 								<TableCell className="text-muted-foreground text-sm">
-									{session.createdAt.toLocaleString()}
+									{new Date(session.createdAt).toLocaleString()}
 								</TableCell>
 
 								{/* Actions */}
