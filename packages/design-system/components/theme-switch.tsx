@@ -1,5 +1,3 @@
-
-
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/theme";
 import { Button } from "./ui/button";

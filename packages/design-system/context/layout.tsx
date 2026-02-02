@@ -1,5 +1,3 @@
-
-
 import { createContext, useContext, useState } from 'react'
 import { getCookie, setCookie } from '@zero-heads-lab/shared/utils'
 

@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+"use client";
+
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { type QueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAuthContext } from "../client/context";

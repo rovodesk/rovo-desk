@@ -29,9 +29,13 @@ import type {
 	NavGroup as NavGroupProps,
 	NavItem,
 	NavLink,
+<<<<<<< HEAD
 } from "@zero-heads-lab/design-system/types/sidebar";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
+=======
+} from "@/types/sidebar";
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 function SidebarNavBadge({ children }: { children: ReactNode }) {
 	return (
@@ -204,6 +208,7 @@ function SidebarNavCollapsible({
 	);
 }
 
+<<<<<<< HEAD
 function isActiveRoute(href: string, item: NavItem): boolean {
 	const cleanHref = href.split("?")[0] ?? "";
 
@@ -229,6 +234,18 @@ function isActiveRoute(href: string, item: NavItem): boolean {
 	}
 
 	return false;
+=======
+function isActiveRoute(href: string, item: NavItem, mainNav = false) {
+	const cleanHref = href.split("?")[0] ?? "";
+
+	return !!(
+		cleanHref === item.url ||
+		item.items?.some((i) => i.url === cleanHref) ||
+		(mainNav &&
+			cleanHref.split("/")?.[1] !== "" &&
+			cleanHref.split("/")?.[1] === item.url?.split("/")?.[1])
+	);
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 }
 
 export {

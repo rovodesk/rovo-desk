@@ -1,6 +1,6 @@
-import { Separator } from "../components/ui/separator";
-import { SidebarTrigger } from "../components/ui/sidebar";
-import { cn } from "../lib/utils";
+import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
+import { SidebarTrigger } from "@zero-heads-lab/design-system/components/ui/sidebar";
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { useEffect, useState } from "react";
 
 type HeaderProps = React.HTMLAttributes<HTMLElement> & {

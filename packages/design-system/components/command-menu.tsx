@@ -12,6 +12,7 @@ import { Skeleton } from "./ui/skeleton";
 import { useTheme } from "../context/theme";
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 import { useSearch } from "../context/search";
 import type { NavCollapsible, SidebarConfig } from "../types/sidebar";
 
@@ -20,9 +21,22 @@ type CommandMenuProps = {
 };
 
 export function CommandMenu({sidebarData }: CommandMenuProps) {
+=======
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+import { useSidebarData } from "@/hooks/use-sidebar-data";
+import { useSearch } from "@/providers/search";
+import type { NavCollapsible } from "@/types/sidebar";
+
+export function CommandMenu() {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/components/command-menu.tsx
 	const { setTheme } = useTheme();
+	const navigate = useNavigate();
 	const { open, setOpen } = useSearch();
 
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
+=======
+	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/components/command-menu.tsx
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {
