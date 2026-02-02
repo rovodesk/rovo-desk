@@ -5,7 +5,11 @@ type Product = {
 
 const sandboxProducts: Product[] = [
 	{
+<<<<<<< HEAD
 		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
+=======
+		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 		slug: "Basic",
 	},
 	{
@@ -24,7 +28,11 @@ const sandboxProducts: Product[] = [
 
 const productionProducts: Product[] = [
 	{
+<<<<<<< HEAD
 		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
+=======
+		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 		slug: "Basic",
 	},
 	{

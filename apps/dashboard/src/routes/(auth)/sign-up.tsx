@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"; // [!code ++]
-import { Auth } from "@/features/authentication/auth";
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import { Auth } from "@/features/authentication";
 import { authMiddleware } from "@/middlewares/auth.middleware";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
@@ -7,6 +8,9 @@ export const Route = createFileRoute("/(auth)/sign-up")({
 		middleware: [authMiddleware],
 	},
 	component: SignUp,
+	validateSearch: z.object({
+		redirectUrl: z.string().optional(),
+	}),
 });
 
 function SignUp() {

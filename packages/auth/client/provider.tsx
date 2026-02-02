@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+"use client";
+
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { useMemo } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
 import { authClient } from "./auth-client";
@@ -9,8 +14,13 @@ function defaultReplace(href: string) {
 
 type AuthProviderProps = {
 	children: React.ReactNode;
+<<<<<<< HEAD
 	authClient?: AuthClient;
 	replace?: ReplaceFn;
+=======
+	replace?: ReplaceFn;
+	authClient?: AuthClient;
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 };
 
 function defaultAuthClient() {

@@ -18,7 +18,10 @@ export async function markUserAsDeleted(userId: string) {
 		.update(userSchema)
 		.set({
 			deletedAt: new Date(),
+<<<<<<< HEAD
 			role: "deleted",
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 		})
 		.where(eq(userSchema.id, userId));
 }
@@ -29,6 +32,7 @@ export async function deleteSession(sessionId: string) {
 	return await db.delete(sessionSchema).where(eq(sessionSchema.id, sessionId));
 }
 
+<<<<<<< HEAD
 export async function markSessionAsRevoked(sessionId: string) {
 	const db = createDatabase();
 
@@ -77,6 +81,23 @@ export async function createNewUserWithProfile(userId: string) {
 
 	if (attempt === MAX_ATTEMPTS) {
 		throw new Error("Failed to generate unique organization slug");
+=======
+export async function createNewUserWithProfile(userId: string) {
+	const orgName = "Default Workspace";
+	let orgSlug = Placeholder.slug();
+
+	const db = createDatabase();
+
+	// Check slug once
+	const existingOrg = await db
+		.select()
+		.from(orgSchema)
+		.where(eq(orgSchema.slug, orgSlug))
+		.limit(1);
+
+	if (existingOrg.length > 0) {
+		orgSlug = `${generateUUID(orgSlug).slice(0, 4)}`;
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	}
 
 	return await db.transaction(async (tx) => {
@@ -102,7 +123,11 @@ export async function createNewUserWithProfile(userId: string) {
 				organizationId: org.id,
 				role: "owner",
 			});
+<<<<<<< HEAD
 		} catch {
+=======
+		} catch (_error) {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 			tx.rollback();
 			throw new Error("Org member creation failed");
 		}
@@ -132,11 +157,16 @@ export async function createNewUserWithProfile(userId: string) {
 					teamId: team.id,
 				}),
 			]);
+<<<<<<< HEAD
 		} catch {
+=======
+		} catch (_error) {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 			tx.rollback();
 			throw new Error("Team member creation failed");
 		}
 
+<<<<<<< HEAD
 		return {
 			orgId: org.id,
 			orgName: org.name,
@@ -156,3 +186,8 @@ export async function markUserAsVerified(userId: string) {
 		})
 		.where(eq(userSchema.id, userId));
 }
+=======
+		return { orgId: org.id, teamId: team.id };
+	});
+}
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

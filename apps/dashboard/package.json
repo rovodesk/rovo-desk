@@ -15,7 +15,10 @@
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-router-with-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",

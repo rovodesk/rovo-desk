@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 "use client";
@@ -7,6 +8,9 @@
 =======
 
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+"use client";
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 import { motion } from "motion/react";
 

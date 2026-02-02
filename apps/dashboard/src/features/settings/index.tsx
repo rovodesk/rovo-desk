@@ -6,6 +6,12 @@ import {
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
 import { Bell, CreditCard, Palette, ShieldCheck, UserCog } from "lucide-react";
+<<<<<<< HEAD
+=======
+import { Search } from "@/components/search";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 const tabItems = [
 	{

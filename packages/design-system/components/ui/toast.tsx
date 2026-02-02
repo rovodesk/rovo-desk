@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+"use client"
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 "use client"
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

@@ -1,6 +1,3 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { authClient } from "@zero-heads-lab/auth/client";
 import {
 	Avatar,
 	AvatarFallback,
@@ -21,51 +18,39 @@ import {
 	useSidebar,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
+import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
 import { useMemo } from "react";
-import { authQueries } from "@/lib/queries/auth";
+import { useListDomains, useSession, useSwitchDomain } from "../hooks";
 import { AddDomainDialog } from "./add-domain-dialog";
 
 export function DomainSwitcher() {
 	const { isMobile } = useSidebar();
-	const queryClient = useQueryClient();
 
-	// 1. Fetch Data using our central Query Options
-	const { data: session, isLoading: isAuthLoading } = useQuery(
-		authQueries.session()
-	);
-	const { data: listOrganizations = [], isLoading: isOrgsLoading } = useQuery(
-		authQueries.orgList()
-	);
+	// 1. Fetch Data
+	const { session, isLoading: isAuthLoading } = useSession();
+	const { domains, isLoading: isOrgsLoading } = useListDomains();
 
 	// 2. Mutation for switching the active organization
-	const {
-		mutate: switchOrg,
-		isPending,
-		variables: switchingId,
-	} = useMutation({
-		mutationFn: async (organizationId: string) => {
-			await authClient.organization.setActive({ organizationId });
-			await authClient.organization.setActiveTeam({ teamId: null });
+	const { switchDomain, isPending, switchingId } = useSwitchDomain({
+		onSuccess: () => {
+			toast.success(`Organization switched to ${activeDomain?.name}`);
 		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
-			await queryClient.invalidateQueries({
-				queryKey: ["auth", "organization"],
-			});
-			await queryClient.invalidateQueries({ queryKey: ["auth", "teams"] });
-		},
-		onError: (error) => {
-			console.error("Failed to switch organization:", error);
+		onError: () => {
+			toast.error("Error switching organization");
 		},
 	});
 
 	// 3. Derive active organization from cached data
-	const activeOrganization = useMemo(() => {
-		return listOrganizations?.find(
+	const activeDomain = useMemo(() => {
+		return domains?.find(
 			(org) => org.id === session?.session?.activeOrganizationId
 		);
-	}, [listOrganizations, session?.session?.activeOrganizationId]);
+	}, [domains, session?.session?.activeOrganizationId]);
+
+	console.log("activeDomain", activeDomain);
+	console.log("domains", domains);
+	console.log("session", session);
 
 	const isLoaded = !(isAuthLoading || isOrgsLoading);
 
@@ -83,19 +68,19 @@ export function DomainSwitcher() {
 						>
 							<Avatar className="size-8 rounded-lg">
 								<AvatarImage
-									src={`https://api.dicebear.com/9.x/shapes/svg?seed=${activeOrganization?.name}`}
+									src={`https://api.dicebear.com/9.x/shapes/svg?seed=${activeDomain?.name}`}
 								/>
 								<AvatarFallback className="rounded-lg text-xs">
-									{activeOrganization?.name?.at(0)?.toUpperCase()}
+									{activeDomain?.name?.at(0)?.toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
 
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">
-									{activeOrganization?.name ?? "Select Workspace"}
+									{activeDomain?.name ?? "Select Workspace"}
 								</span>
 								<span className="truncate text-muted-foreground text-xs">
-									{activeOrganization?.slug}
+									{activeDomain?.slug}
 								</span>
 							</div>
 
@@ -117,27 +102,27 @@ export function DomainSwitcher() {
 							</DropdownMenuLabel>
 						</div>
 
-						{listOrganizations?.map((org) => {
+						{domains?.map((domain) => {
 							// Check if THIS specific item is the one currently being switched to
-							const isSwitchingThis = isPending && switchingId === org.id;
-							const isActive = activeOrganization?.id === org.id;
+							const isSwitchingThis = isPending && switchingId === domain.id;
+							const isActive = activeDomain?.id === domain.id;
 
 							return (
 								<DropdownMenuItem
 									className={`mt-2 cursor-pointer gap-2 p-2 ${isActive ? "bg-sidebar-accent" : "bg-transparent"}`}
 									disabled={isPending}
-									key={org.id}
+									key={domain.id}
 									onSelect={(e) => {
 										e.preventDefault();
-										if (!isActive) switchOrg(org.id);
+										if (!isActive) switchDomain(domain.id);
 									}}
 								>
 									<Avatar className="size-6 rounded-sm">
 										<AvatarImage
-											src={`https://api.dicebear.com/9.x/shapes/svg?seed=${org.name}`}
+											src={`https://api.dicebear.com/9.x/shapes/svg?seed=${domain.name}`}
 										/>
 										<AvatarFallback className="text-[10px]">
-											{org.name.at(0)?.toUpperCase()}
+											{domain.name.at(0)?.toUpperCase()}
 										</AvatarFallback>
 									</Avatar>
 									{isSwitchingThis ? (
@@ -145,7 +130,7 @@ export function DomainSwitcher() {
 											Switching…
 										</span>
 									) : (
-										<span className="flex-1 truncate">{org.name}</span>
+										<span className="flex-1 truncate">{domain.name}</span>
 									)}
 									<DropdownMenuShortcut>
 										{isSwitchingThis ? (
@@ -155,10 +140,10 @@ export function DomainSwitcher() {
 											</>
 										) : // biome-ignore lint/style/noNestedTernary: Need to show different icons based on active state
 										isActive ? (
-											<Link to="/">
+											<a href="/">
 												<Settings className="ml-auto size-4" />
 												<span className="sr-only">Settings</span>
-											</Link>
+											</a>
 										) : null}
 									</DropdownMenuShortcut>
 								</DropdownMenuItem>
