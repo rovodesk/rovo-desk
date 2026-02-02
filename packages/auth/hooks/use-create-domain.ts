@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+"use client";
+
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { generateUUID } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";

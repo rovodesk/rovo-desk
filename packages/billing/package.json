@@ -9,10 +9,14 @@
   "dependencies": {
     "@polar-sh/sdk": "catalog:polar",
     "@t3-oss/env-core": "catalog:",
+<<<<<<< HEAD
     "zod": "catalog:",
     "react": "catalog:react19",
     "lucide-react": "catalog:",
     "@zero-heads-lab/design-system": "workspace:*"
+=======
+    "zod": "catalog:"
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

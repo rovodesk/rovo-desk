@@ -1,14 +1,24 @@
+<<<<<<< HEAD
 import type { permissions, Resource } from "./access-control";
 import type { createAuthClient } from "./client";
+=======
+import type { authClient } from "./client";
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import type { createAuth } from "./server";
 
 export type AuthInstance = Awaited<ReturnType<typeof createAuth>>;
 export type AuthClient = ReturnType<typeof createAuthClient>;
 
+<<<<<<< HEAD
+=======
+export type AuthClient = ReturnType<typeof authClient>;
+
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 export type Session = AuthInstance["$Infer"]["Session"];
 export type AuthSession = Session["session"];
 export type AuthUser = Session["user"];
 
+<<<<<<< HEAD
 export type DeviceSession = {
 	session: {
 		id: string;
@@ -32,6 +42,8 @@ export type DeviceSession = {
 	};
 };
 
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 export type Organization = {
 	id: string;
 	name: string;
@@ -43,6 +55,7 @@ export type NavigateFn = (href: string) => void;
 
 export type ReplaceFn = (href: string) => void;
 
+<<<<<<< HEAD
 export type MutationOptions = {
 	onSuccess?: (...args: Record<string, unknown>[]) => void;
 	onError?: (error: Error) => void;
@@ -88,4 +101,18 @@ export type PermissionTuple = {
  */
 export type PermissionGrant = {
 	[R in Resource]?: ActionsOf<R>[];
+=======
+export type CheckAuthorizationParams = {
+	role: string;
+	permission: string;
+	feature: string;
+	plan: string;
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 };
+
+export type MutationOptions = {
+	onSuccess?: (...args: Record<string, unknown>[]) => void;
+	onError?: (error: Error) => void;
+};
+
+export type OAuthProvider = "google" | "github";
