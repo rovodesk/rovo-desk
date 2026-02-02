@@ -28,6 +28,16 @@ const config = defineConfig({
 	server: {
 		port: 3001,
 	},
+<<<<<<< HEAD
+=======
+	optimizeDeps: {
+		exclude: [
+			"@zero-heads-lab/database",
+			"@zero-heads-lab/cache",
+			"@zero-heads-lab/email",
+		],
+	},
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 });
 
 export default config;

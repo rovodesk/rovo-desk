@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import type { SidebarConfig } from "@zero-heads-lab/design-system/types/sidebar";
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import {
 	Book,
 	CreditCard,
@@ -14,16 +17,23 @@ import {
 	PencilRuler,
 	SendIcon,
 	Settings,
+<<<<<<< HEAD
 	SquareUserRound,
 } from "lucide-react";
 
 //TODO: Configure Sidebar Data Properly
+=======
+	Users2,
+} from "lucide-react";
+import type { SidebarConfig } from "@/types/sidebar";
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 export const SIDEBAR_CONFIG: SidebarConfig = {
 	navGroups: [
 		{
 			title: "General",
 			items: [
+<<<<<<< HEAD
 				{
 					title: "Dashboard",
 					url: "/",
@@ -49,6 +59,13 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/integrations",
 					icon: Package,
 				},
+=======
+				{ title: "Dashboard", url: "/", icon: LayoutDashboard },
+				{ title: "Conversations", url: "/conversations", icon: MessagesSquare },
+				{ title: "Tasks", url: "/tasks", icon: ListTodo },
+				{ title: "My Team", icon: Users2, url: "/my-team" },
+				{ title: "Integrations", url: "/integrations", icon: Package },
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 			],
 		},
 		{
@@ -78,6 +95,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		{
 			title: "Quick Actions",
 			items: [
+<<<<<<< HEAD
 				{
 					title: "Billing",
 					url: "/settings/billing",
@@ -97,14 +115,28 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		},
 	],
 	quickLinks: {
+=======
+				{ title: "Billing", url: "/settings/billing", icon: CreditCard },
+				{ title: "Settings", url: "/settings", icon: Settings },
+				{ title: "Audit Logs", url: "/audit-logs", icon: FileText },
+			],
+		},
+	],
+	quickLink: {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 		primary: {
 			title: "Create Draft",
 			url: "/",
 			icon: PencilRuler,
 		},
 		secondary: {
+<<<<<<< HEAD
 			title: "Create Campaign",
 			url: "/campaigns/create",
+=======
+			title: "Create Announcement",
+			url: "/announcements/create",
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 			icon: Megaphone,
 		},
 	},

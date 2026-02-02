@@ -17,6 +17,14 @@ export const keys = createEnv({
 
 		ALLOWED_ORIGINS: z.string(),
 	},
+<<<<<<< HEAD
+=======
+	clientPrefix: "VITE_",
+	client: {
+		VITE_AUTH_BASE_URL: z.string(),
+		VITE_AUTH_BASE_PATH: z.string(),
+	},
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	runtimeEnv: {
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
@@ -28,6 +36,11 @@ export const keys = createEnv({
 		GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
 		GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
 
+<<<<<<< HEAD
 		ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
+=======
+		VITE_AUTH_BASE_URL: import.meta.env.VITE_AUTH_BASE_URL,
+		VITE_AUTH_BASE_PATH: import.meta.env.VITE_AUTH_BASE_PATH,
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	},
 });

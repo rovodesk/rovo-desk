@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:packages/design-system/layout/main-content.tsx
 import { cn } from "../lib/utils";
+========
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
+>>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/layout/main-content.tsx
 import type { HTMLMotionProps } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
 
