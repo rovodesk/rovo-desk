@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";

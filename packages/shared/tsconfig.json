@@ -5,6 +5,6 @@
     "strictNullChecks": true,
     "types": ["@types/bun"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "../global/components/command-menu.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

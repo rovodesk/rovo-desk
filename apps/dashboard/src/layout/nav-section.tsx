@@ -83,7 +83,7 @@ function SidebarNavItem({ item, href }: { item: NavLink; href: string }) {
 		<SidebarMenuItem>
 			<SidebarMenuButton
 				asChild
-				className="bg-transparent! hover:bg-sidebar-accent!"
+				className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
 				isActive={isActiveRoute(href, item)}
 				onClick={() => setOpenMobile(false)}
 				tooltip={item.title}
@@ -119,7 +119,7 @@ function SidebarNavCollapsible({
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
-							className="bg-transparent! hover:bg-sidebar-accent!"
+							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
 							isActive={isActiveRoute(href, item)}
 							tooltip={item.title}
 						>
@@ -156,11 +156,11 @@ function SidebarNavCollapsible({
 	}
 
 	return (
-		<Collapsible asChild defaultOpen={isActiveRoute(href, item, true)}>
+		<Collapsible asChild defaultOpen={isActiveRoute(href, item)}>
 			<SidebarMenuItem>
 				<CollapsibleTrigger asChild>
 					<SidebarMenuButton
-						className="bg-transparent! hover:bg-sidebar-accent!"
+						className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
 						isActive={isActiveRoute(href, item)}
 						tooltip={item.title}
 					>
@@ -204,16 +204,31 @@ function SidebarNavCollapsible({
 	);
 }
 
-function isActiveRoute(href: string, item: NavItem, mainNav = false) {
+function isActiveRoute(href: string, item: NavItem): boolean {
 	const cleanHref = href.split("?")[0] ?? "";
 
-	return !!(
-		cleanHref === item.url ||
-		item.items?.some((i) => i.url === cleanHref) ||
-		(mainNav &&
-			cleanHref.split("/")?.[1] !== "" &&
-			cleanHref.split("/")?.[1] === item.url?.split("/")?.[1])
-	);
+	// LINK ITEM
+	if ("url" in item) {
+		const itemUrl = item.url;
+
+		// Exact match
+		if (cleanHref === itemUrl) return true;
+
+		// Root guard
+		if (itemUrl === "/") return cleanHref === "/";
+
+		// Sub-routes: /settings/*
+		return cleanHref.startsWith(`${itemUrl}/`);
+	}
+
+	// COLLAPSIBLE ITEM
+	if ("items" in item && item.items) {
+		return item.items.some((child) =>
+			isActiveRoute(cleanHref, child as NavItem)
+		);
+	}
+
+	return false;
 }
 
 export {

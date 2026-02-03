@@ -1,5 +1,4 @@
-import { Outlet, useLocation } from "@tanstack/react-router";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { Outlet } from "@tanstack/react-router";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -13,9 +12,6 @@ import { SearchProvider } from "@/providers/search";
 
 export function AuthenticatedLayout() {
 	const sidebarOpen = getCookie("sidebar_state") !== "false";
-
-	const { session } = useSession();
-	const location = useLocation({ select: (location) => location.href });
 
 	return (
 		<LayoutProvider>

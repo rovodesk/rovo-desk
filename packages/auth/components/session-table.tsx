@@ -1,8 +1,3 @@
-import {
-	useDeleteSession,
-	useListSessions,
-	useSession,
-} from "@zero-heads-lab/auth/hooks";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import {
@@ -26,6 +21,7 @@ import {
 	SmartphoneIcon,
 	Trash2Icon,
 } from "lucide-react";
+import { useDeleteSession, useListSessions, useSession } from "../hooks";
 
 function getDeviceInfo(userAgent?: string) {
 	if (!userAgent) {
@@ -81,13 +77,6 @@ export function SessionTable() {
 		);
 	}
 
-	console.log(
-		sessions?.map((s) => ({
-			id: s.id,
-			token: s.token,
-		}))
-	);
-
 	return (
 		<div className="w-full rounded-xl border bg-card shadow-sm">
 			<Table>
@@ -109,7 +98,7 @@ export function SessionTable() {
 						return (
 							<TableRow
 								className="group transition-colors hover:bg-muted/40"
-								key={session.id}
+								key={sessionsWithCurrent.findIndex((s) => s.id === session.id)}
 							>
 								{/* Device */}
 								<TableCell className="px-6">

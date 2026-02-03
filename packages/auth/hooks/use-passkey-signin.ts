@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuthContext } from "../client/context";

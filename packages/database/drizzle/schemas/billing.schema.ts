@@ -36,7 +36,7 @@ export const subscriptions = billingSchema.table(
 
 		seats: integer("seats"),
 
-		metadata: jsonb("metadata").notNull().default({}),
+		metadata: jsonb("metadata"),
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 		modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
@@ -86,7 +86,9 @@ export const subscriptionPeriods = billingSchema.table(
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
-	(t) => [index("subscriptionPeriodsSubscriptionIdx").on(t.subscriptionId)]
+	(t) => [
+		unique("subscriptionPeriodsSubscriptionIdUnique").on(t.subscriptionId),
+	]
 );
 
 export const subscriptionPeriodsRelations = relations(
@@ -122,7 +124,9 @@ export const subscriptionPricing = billingSchema.table(
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
-	(t) => [index("subscriptionPricingSubscriptionIdx").on(t.subscriptionId)]
+	(t) => [
+		unique("subscriptionPricingSubscriptionIdUnique").on(t.subscriptionId),
+	]
 );
 
 export const subscriptionPricingRelations = relations(
@@ -147,7 +151,12 @@ export const subscriptionCancellations = billingSchema.table(
 
 		reason: text("customerCancellationReason"),
 		comment: text("customerCancellationComment"),
-	}
+	},
+	(t) => [
+		unique("subscriptionCancellationsSubscriptionIdUnique").on(
+			t.subscriptionId
+		),
+	]
 );
 
 export const subscriptionCancellationsRelations = relations(

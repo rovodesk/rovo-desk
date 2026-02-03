@@ -21,15 +21,14 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard, MoreVertical, UserCircle } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "../hooks";
+import { useUser } from "../hooks";
 import { SignOutDialog } from "./sign-out-dialog";
 
 function ProfileDropdown() {
 	const { isMobile } = useSidebar();
 	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
-	const { session, isLoading } = useSession();
-	const user = session?.user;
+	const { user, isLoading } = useUser();
 	if (!user || isLoading) return <ProfileDropdownSkeleton />;
 
 	const name = user.name;
@@ -115,7 +114,7 @@ function ProfileDropdown() {
 						<DropdownMenuSeparator />
 
 						{/* Sign Out Trigger */}
-						<div className="p-1">
+						<div className="rounded border-destructive/20 p-1">
 							<SignOutDialog
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}

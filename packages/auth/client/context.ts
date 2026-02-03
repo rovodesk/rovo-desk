@@ -1,5 +1,3 @@
-"use client";
-
 import type {} from "better-auth/client";
 import { createContext, useContext } from "react";
 import type { AuthClient, ReplaceFn } from "../types";

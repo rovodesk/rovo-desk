@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
 import { authClient } from "./auth-client";

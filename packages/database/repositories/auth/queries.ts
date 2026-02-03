@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
 	member as memberSchema,
@@ -57,10 +57,11 @@ export async function getUserSessions(userId: string) {
 			id: sessionSchema.id,
 			userId: sessionSchema.userId,
 			createdAt: sessionSchema.createdAt,
-			updatedAt: sessionSchema.updatedAt,
+			lastActiveAt: sessionSchema.lastActiveAt,
 			expiresAt: sessionSchema.expiresAt,
 			ipAddress: sessionSchema.ipAddress,
 			userAgent: sessionSchema.userAgent,
+			deviceId: sessionSchema.deviceId,
 			activeOrganizationId: sessionSchema.activeOrganizationId,
 			activeTeamId: sessionSchema.activeTeamId,
 		})
@@ -83,4 +84,44 @@ export async function getOrganizationBySlug(slug: string) {
 		.where(eq(organizationSchema.slug, slug))
 		.limit(1)
 		.then((res) => res[0]);
+}
+
+export async function findReusableSession({
+	userId,
+	userAgent,
+	deviceId,
+}: {
+	userId: string;
+	userAgent?: string;
+	deviceId?: string;
+}) {
+	if (!(userAgent && deviceId)) return null;
+
+	const db = createDatabase();
+
+	const [session] = await db
+		.select({
+			id: sessionSchema.id,
+			userId: sessionSchema.userId,
+			createdAt: sessionSchema.createdAt,
+			lastActiveAt: sessionSchema.lastActiveAt,
+			expiresAt: sessionSchema.expiresAt,
+			ipAddress: sessionSchema.ipAddress,
+			userAgent: sessionSchema.userAgent,
+			deviceId: sessionSchema.deviceId,
+			activeOrganizationId: sessionSchema.activeOrganizationId,
+			activeTeamId: sessionSchema.activeTeamId,
+		})
+		.from(sessionSchema)
+		.where(
+			and(
+				eq(sessionSchema.userId, userId),
+				eq(sessionSchema.userAgent, userAgent),
+				eq(sessionSchema.deviceId, deviceId),
+				isNull(sessionSchema.revokedAt)
+			)
+		)
+		.limit(1);
+
+	return session ?? null;
 }

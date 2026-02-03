@@ -1,4 +1,4 @@
-"use client";
+
 
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/theme";

@@ -1,5 +1,3 @@
-"use client";
-
 import { type QueryOptions, useQuery } from "@tanstack/react-query";
 import { getErrorStatus } from "@zero-heads-lab/shared/utils";
 import { useMemo } from "react";

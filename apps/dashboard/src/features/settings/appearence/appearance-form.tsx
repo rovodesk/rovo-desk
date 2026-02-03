@@ -23,7 +23,7 @@ export function AppearanceForm() {
 	const form = useAppForm({
 		validators: { onSubmit: appearanceFormSchema },
 		defaultValues: {
-			theme: theme as "light" | "dark",
+			theme: "dark" as "light" | "dark",
 			font,
 			layout,
 		},
@@ -174,18 +174,42 @@ function ThemePreview({ type }: { type: "light" | "dark" }) {
 	const isDark = type === "dark";
 	return (
 		<div
-			className={`rounded-lg border-2 border-muted p-2 transition-all ${isDark ? "bg-slate-950" : "bg-slate-100"}`}
+			className={`flex h-24 w-full flex-col gap-2 rounded-md border-2 p-3 transition-colors ${
+				isDark
+					? "border-slate-800 bg-slate-950"
+					: "border-slate-200 bg-slate-100 data-[state=checked]:border-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent/20"
+			}`}
 		>
-			<div className="space-y-2">
+			{/* Header */}
+			<div className="flex gap-2">
 				<div
-					className={`h-2 w-12 rounded ${isDark ? "bg-slate-800" : "bg-white"}`}
+					className={`h-2 w-1/3 rounded-full ${
+						isDark ? "bg-slate-800" : "bg-white"
+					}`}
 				/>
-				<div className="grid grid-cols-2 gap-1">
+			</div>
+
+			{/* Body */}
+			<div className="flex flex-1 gap-2">
+				<div
+					className={`w-1/4 rounded-md ${
+						isDark ? "bg-slate-900" : "bg-white/50"
+					}`}
+				/>
+				<div
+					className={`flex-1 rounded-md shadow-sm ${
+						isDark ? "bg-slate-900" : "bg-white"
+					}`}
+				>
 					<div
-						className={`h-8 rounded ${isDark ? "bg-slate-800" : "bg-white"} shadow-sm`}
+						className={`m-2 h-2 w-1/2 rounded-full ${
+							isDark ? "bg-slate-800" : "bg-slate-100"
+						}`}
 					/>
 					<div
-						className={`h-8 rounded ${isDark ? "bg-slate-800" : "bg-white"} shadow-sm`}
+						className={`m-2 h-2 w-3/4 rounded-full ${
+							isDark ? "bg-slate-800" : "bg-slate-100"
+						}`}
 					/>
 				</div>
 			</div>

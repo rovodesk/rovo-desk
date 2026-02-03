@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "../client/context";
 import type { MutationOptions } from "../types";
@@ -18,14 +16,16 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 			await authClient.signOut();
 		},
 
-		onMutate: async () => {
-			await queryClient.cancelQueries();
-			queryClient.clear();
-		},
 		onSuccess: () => {
+			// Clear client state AFTER sign-out succeeds
+			queryClient.clear();
+
 			options?.onSuccess?.();
-			throw replace("/sign-in");
+
+			// Navigate — do NOT throw
+			replace("/sign-in");
 		},
+
 		onError: (error: Error) => {
 			console.error("Error Signing out", error);
 			options?.onError?.(error);

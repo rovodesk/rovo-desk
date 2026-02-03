@@ -1,10 +1,9 @@
-"use client";
-
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { WandSparklesIcon } from "lucide-react";
-import z from "zod";
-import { useMagicLinkSignIn } from "../hooks/use-magiclink-signin";
+import { z } from "zod";
+import { useLastLoginMethod, useMagicLinkSignIn } from "../hooks";
+import { LastLoginBadge } from "./last-login-badge";
 
 const emailSchema = z.object({
 	email: z.email("Invalid email address"),
@@ -39,6 +38,7 @@ export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
 	});
 
 	const isLoading = isPending || isAnyLoading;
+	const { lastLoginMethod } = useLastLoginMethod();
 
 	return (
 		<form
@@ -62,13 +62,18 @@ export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
 				/>
 
 				<form.SubmitButton
-					className="w-full"
+					className="relative w-full"
 					loading={isLoading}
 					loadingText="Sending magic link..."
 					size="lg"
 				>
 					<WandSparklesIcon className="h-5 w-5" />
 					Continue With Email
+					{lastLoginMethod === "magic-link" && (
+						<div className="absolute -top-[1/2] right-3">
+							<LastLoginBadge compact />
+						</div>
+					)}
 				</form.SubmitButton>
 			</form.AppForm>
 		</form>

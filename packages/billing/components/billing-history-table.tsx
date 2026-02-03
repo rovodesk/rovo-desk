@@ -1,4 +1,3 @@
-import { useCustomerSubscription } from "@zero-heads-lab/auth/hooks/use-customer-subscription";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import {
@@ -12,12 +11,6 @@ import {
 import { Download } from "lucide-react";
 
 export const BillingHistoryTable = () => {
-	const { subscriptions, isLoading } = useCustomerSubscription();
-
-	if (isLoading) return <BillingHistoryTableSkeleton />;
-
-	console.log(subscriptions);
-
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">

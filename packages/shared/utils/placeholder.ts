@@ -4,11 +4,11 @@ import { generateUUID } from "./uuid";
 // biome-ignore lint/complexity/noStaticOnlyClass: It is necessary
 export class Placeholder {
 	static avatar(email?: string) {
-		return `https://api.dicebear.com/9.x/shapes/svg?seed=${email || generateUUID()}`;
+		return `https://api.dicebear.com/9.x/avataaars/svg?seed=${email || generateUUID()}`;
 	}
 
-	static logo(name?: string) {
-		return `https://api.dicebear.com/9.x/glass/svg?seed=${name || generateUUID()}`;
+	static logo(name?: string, variant: "glass" | "shapes" = "glass") {
+		return `https://api.dicebear.com/9.x/${variant}/svg?seed=${name || generateUUID()}`;
 	}
 
 	static name(segments = 2, separator = " ") {

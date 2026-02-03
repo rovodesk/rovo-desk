@@ -1,29 +1,24 @@
 import { passkey } from "@better-auth/passkey";
-import {
-	checkout,
-	polar,
-	portal,
-	usage,
-	webhooks,
-} from "@polar-sh/better-auth";
-import {
-	createFreeSubscription,
-	getProducts,
-	polarClient,
-} from "@zero-heads-lab/billing";
+// import {
+// 	createFreeSubscriptionOrder,
+// 	deleteCustomer,
+// 	getProducts,
+// 	polarClient,
+// } from "@zero-heads-lab/billing";
 import { createCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
 	createNewUserWithProfile,
 	deleteSession,
+	markSessionAsRevoked,
 	markUserAsDeleted,
 } from "@zero-heads-lab/database/repositories/auth/mutations";
 import {
+	findReusableSession,
 	getUserEmailVerificationStatus,
 	getUserSessionBootstrap,
 	getUserSessions,
 } from "@zero-heads-lab/database/repositories/auth/queries";
-import { createSubscriptionFromPolar } from "@zero-heads-lab/database/repositories/billing/mutations";
 import {
 	ChangeEmailConfirmationTemplate,
 	EmailVerificationLinkTemplate,
@@ -42,6 +37,7 @@ import {
 } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
+	lastLoginMethod,
 	magicLink,
 	multiSession,
 	openAPI,
@@ -69,7 +65,7 @@ const AUTH_CONFIG = {
 // );
 
 const Plugins = () => {
-	const products = getProducts();
+	// const products = getProducts();
 
 	return [
 		// Magic Link Plugin
@@ -102,48 +98,52 @@ const Plugins = () => {
 			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
 		}),
 		// OPENAPI Plugin
-		process.env.NODE_ENV !== "production" &&
-			openAPI({
-				path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
-			}),
+		process.env.NODE_ENV !== "production" && openAPI(),
 		// Polar Plugin
-		polar({
-			client: polarClient,
-			createCustomerOnSignUp: false,
-			use: [
-				// Add Polar Plugins Here
-				checkout({
-					products: products.map((product) => ({
-						productId: product.productId,
-						slug: product.slug,
-					})),
-					successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
-					authenticatedUsersOnly: true,
-				}),
-				portal(),
-				usage(),
-				// Add Polar Webhooks Here
-				webhooks({
-					secret: keys.POALR_WEBHOOK_SECRET,
-					// biome-ignore lint/suspicious/useAwait: No awaited value
-					onCustomerCreated: async (payload) => {
-						console.log(payload);
-					},
-					onPayload: async (payload) => {
-						// Catch ALL for Events
-						// Redirect to Webhook Ingestion API
-						// 	await fetch("http://localhost:3001/api/webhook", {
-						// 		method: "POST",
-						// 		body: JSON.stringify(payload),
-						// 	});
-						await console.log(
-							`${payload.type}: ${payload.data}`,
-							payload.timestamp
-						);
-						//TODO: Add Analytics
-					},
-				}),
-			],
+		// polar({
+		// 	client: polarClient,
+		// 	createCustomerOnSignUp: false,
+		// 	use: [
+		// 		// Add Polar Plugins Here
+		// 		checkout({
+		// 			products: products.map((product) => ({
+		// 				productId: product.productId,
+		// 				slug: product.slug,
+		// 			})),
+		// 			successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
+		// 			authenticatedUsersOnly: true,
+		// 		}),
+		// 		portal(),
+		// 		usage(),
+		// 		// Add Polar Webhooks Here
+		// 		webhooks({
+		// 			secret: keys.POALR_WEBHOOK_SECRET,
+		// 			onPayload: async (payload) => {
+		// 				// Catch ALL for Events
+		// 				// Redirect to Webhook Ingestion API
+		// 				// 	await fetch("http://localhost:3001/api/webhook", {
+		// 				// 		method: "POST",
+		// 				// 		body: JSON.stringify(payload),
+		// 				// 	});
+		// 				await console.log(
+		// 					`${payload.type}: ${payload.data}`,
+		// 					payload.timestamp
+		// 				);
+		// 				//TODO: Add Analytics
+		// 			},
+		// 		}),
+		// 	],
+		// }),
+		lastLoginMethod({
+			storeInDatabase: true,
+			customResolveMethod: (ctx) => {
+				// Track magic link authentication
+				if (ctx.path === "/magic-link/verify") {
+					return "magic-link";
+				}
+				// Return null to use default resolution
+				return null;
+			},
 		}),
 		// This must be at the last
 		tanstackStartCookies(),
@@ -266,6 +266,26 @@ export function createAuth() {
 					defaultValue: null,
 					input: false,
 				},
+				isAnonymous: {
+					type: "boolean",
+					required: false,
+					input: false,
+				},
+				deviceId: {
+					type: "string",
+					required: false,
+					input: false,
+				},
+				lastActiveAt: {
+					type: "date",
+					required: false,
+					input: false,
+				},
+				revokedAt: {
+					type: "date",
+					required: false,
+					input: false,
+				},
 			},
 		},
 		account: {
@@ -324,11 +344,36 @@ export function createAuth() {
 		databaseHooks: {
 			session: {
 				create: {
-					before: async (session) => {
-						// Find All Available User Sessions
+					// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Need this
+					before: async (session, ctx) => {
+						// Reuse Session
+						const { userId, userAgent } = session;
+						const deviceId = ctx?.request?.headers.get("device-id");
+
+						if (deviceId && userAgent && !session.isAnonymous) {
+							const reusableSession = await findReusableSession({
+								userId,
+								userAgent,
+								deviceId,
+							});
+
+							if (reusableSession) {
+								// IMPORTANT:
+								// Returning an existing session here tells better-auth
+								// to SKIP creation and reuse this one.
+								return {
+									data: {
+										reuse: true,
+										...reusableSession,
+									},
+								};
+							}
+						}
+
+						// Enforce maximum sessions (only if creating a new one)
 						const sessions = await getUserSessions(session.userId);
-						// If All available session of the user are greater than the max session value then delete the oldest session
 						if (sessions && sessions.length >= AUTH_CONFIG.MAXIMUM_SESSIONS) {
+							// If All available session of the user are greater than the max session value then delete the oldest session
 							const oldestSession = sessions.at(-1);
 							if (oldestSession) {
 								try {
@@ -351,6 +396,8 @@ export function createAuth() {
 								}
 							}
 						}
+						// Allow the session to be created
+						return;
 					},
 					after: async (session) => {
 						try {
@@ -397,6 +444,22 @@ export function createAuth() {
 						}
 					},
 				},
+				delete: {
+					before: async (session) => {
+						console.log(`Session  ${session.id} is being revoked`);
+						try {
+							await markSessionAsRevoked(session.id);
+							// Delete session from cache
+							await cacheStore.delete(`session:${session.id}`);
+						} catch (error) {
+							console.error("Failed to revoke session", error);
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Failed to revoke session",
+							});
+						}
+						return false;
+					},
+				},
 			},
 			user: {
 				create: {
@@ -417,11 +480,8 @@ export function createAuth() {
 						};
 					},
 					after: async (user) => {
-						let orgId: string | null = null;
-						// Create User Profile
 						try {
-							const { orgId: oId } = await createNewUserWithProfile(user.id);
-							orgId = oId;
+							await createNewUserWithProfile(user.id);
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);
@@ -431,20 +491,25 @@ export function createAuth() {
 							});
 						}
 
-						//Subscribe User to Basic PLan
-						try {
-							const sub = await createFreeSubscription(user.id);
-							await createSubscriptionFromPolar({
-								userId: user.id,
-								organizationId: orgId,
-								payload: sub,
-							});
-						} catch (error) {
-							console.error("Failed to create subscription", error);
-							throw new APIError("INTERNAL_SERVER_ERROR", {
-								message: "Failed to create subscription",
-							});
-						}
+						// //Subscribe User to Basic PLan
+						// try {
+						// 	await createFreeSubscriptionOrder(
+						// 		user.id,
+						// 		user.name,
+						// 		user.email,
+						// 		user.emailVerified,
+						// 		orgId,
+						// 		orgName,
+						// 		orgSlug,
+						// 		teamId,
+						// 		teamName
+						// 	);
+						// } catch (error) {
+						// 	console.error("Failed to create subscription", error);
+						// 	throw new APIError("INTERNAL_SERVER_ERROR", {
+						// 		message: "Failed to create subscription",
+						// 	});
+						// }
 
 						try {
 							await sendEmail({
@@ -481,6 +546,16 @@ export function createAuth() {
 						}
 						//TODO: Add Analytics
 						return false; // Abort the deletion
+					},
+					after: async (user) => {
+						await console.log(`User ${user.email} is deleted`);
+						//TODO: Add Analytics
+						// try {
+						// 	await deleteCustomer(user.id);
+						// } catch (error) {
+						// 	console.error("Failed to delete customer", error);
+						// 	throw new APIError("INTERNAL_SERVER_ERROR");
+						// }
 					},
 				},
 			},

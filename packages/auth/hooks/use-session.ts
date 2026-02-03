@@ -1,5 +1,3 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import type { Session } from "@zero-heads-lab/auth/types";
 import { getErrorStatus } from "@zero-heads-lab/shared/utils";

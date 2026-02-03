@@ -1,5 +1,3 @@
-"use client";
-
 import { type QueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useAuthContext } from "../client/context";

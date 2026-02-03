@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { generateUUID } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";

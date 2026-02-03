@@ -5,7 +5,7 @@ type Product = {
 
 const sandboxProducts: Product[] = [
 	{
-		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
+		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
 		slug: "Basic",
 	},
 	{
@@ -22,9 +22,10 @@ const sandboxProducts: Product[] = [
 	},
 ];
 
+// TODO: Update with real Production Product IDs
 const productionProducts: Product[] = [
 	{
-		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
+		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
 		slug: "Basic",
 	},
 	{

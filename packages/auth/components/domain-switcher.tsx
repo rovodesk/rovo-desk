@@ -48,10 +48,6 @@ export function DomainSwitcher() {
 		);
 	}, [domains, session?.session?.activeOrganizationId]);
 
-	console.log("activeDomain", activeDomain);
-	console.log("domains", domains);
-	console.log("session", session);
-
 	const isLoaded = !(isAuthLoading || isOrgsLoading);
 
 	if (!isLoaded) return <DomainSwitcherSkeleton />;

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "../client/context";
 import type { MutationOptions } from "../types";

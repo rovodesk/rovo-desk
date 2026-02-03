@@ -1,5 +1,5 @@
-import { ContentSection } from "../_components/content-section";
-import { SessionTable } from "./session-table";
+import { SessionTable } from "@zero-heads-lab/auth/components/session-table";
+import { ContentSection } from "./_components/content-section";
 
 export function SettingsSecurity() {
 	return (

@@ -14,8 +14,8 @@ import {
 	SidebarRail,
 	SidebarSeparator,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
+import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { AppTitle } from "./app-title";
 import { SidebarNavSection } from "./nav-section";
@@ -23,7 +23,9 @@ import { SidebarNavSection } from "./nav-section";
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
 
-	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
+	const { sidebarData, isLoading } = useSidebarData();
+
+	if (isLoading) return <AppSidebarSkeleton />;
 
 	return (
 		<Sidebar
@@ -104,6 +106,79 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild>
 							<ProfileDropdown />
+						</SidebarMenuButton>
+					</SidebarMenuItem>
+				</SidebarMenu>
+			</SidebarFooter>
+
+			<SidebarRail />
+		</Sidebar>
+	);
+}
+
+function AppSidebarSkeleton() {
+	const { collapsible, variant } = useLayout();
+
+	return (
+		<Sidebar
+			className="dark:border-r"
+			collapsible={collapsible}
+			variant={variant}
+		>
+			{/* Header */}
+			<SidebarHeader className="gap-4">
+				<Skeleton className="h-6 w-32" /> {/* App title */}
+				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
+				<Skeleton className="h-8 w-full" /> {/* Domain switcher */}
+			</SidebarHeader>
+
+			{/* Content */}
+			<SidebarContent>
+				{/* Quick actions */}
+				<SidebarGroup>
+					<SidebarMenu>
+						<SidebarMenuItem className="flex items-center gap-2">
+							<Skeleton className="h-9 flex-1 rounded-md" />
+							<Skeleton className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0" />
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarGroup>
+
+				{/* Nav groups */}
+				{Array.from({ length: 3 }).map((_, groupIndex) => (
+					<SidebarGroup className="mt-2" key={groupIndex}>
+						<Skeleton className="mb-3 h-4 w-24" /> {/* Group title */}
+						<SidebarMenu>
+							{Array.from({ length: 4 }).map((_, itemIndex) => (
+								<SidebarMenuItem key={itemIndex}>
+									<SidebarMenuButton>
+										<Skeleton className="size-4 rounded-sm" />
+										<Skeleton className="ml-3 h-4 flex-1" />
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroup>
+				))}
+			</SidebarContent>
+
+			{/* Footer */}
+			<SidebarFooter className="flex flex-col gap-8">
+				<SidebarMenu>
+					{Array.from({ length: 3 }).map((_, index) => (
+						<SidebarMenuItem key={index}>
+							<SidebarMenuButton>
+								<Skeleton className="size-4" />
+								<Skeleton className="ml-3 h-4 w-20" />
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					))}
+				</SidebarMenu>
+
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<SidebarMenuButton>
+							<Skeleton className="h-8 w-full rounded-md" /> {/* Profile */}
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>

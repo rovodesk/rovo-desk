@@ -28,21 +28,54 @@ export async function deleteSession(sessionId: string) {
 	return await db.delete(sessionSchema).where(eq(sessionSchema.id, sessionId));
 }
 
-export async function createNewUserWithProfile(userId: string) {
-	const orgName = "Default Workspace";
-	let orgSlug = Placeholder.slug();
-
+export async function markSessionAsRevoked(sessionId: string) {
 	const db = createDatabase();
 
-	// Check slug once
-	const existingOrg = await db
+	return await db
+		.update(sessionSchema)
+		.set({
+			revokedAt: new Date(),
+		})
+		.where(eq(sessionSchema.id, sessionId));
+}
+
+export async function createNewUserWithProfile(userId: string) {
+	const orgName = "Default Workspace";
+	const db = createDatabase();
+
+	// Check User
+	const existingUser = await db
 		.select()
-		.from(orgSchema)
-		.where(eq(orgSchema.slug, orgSlug))
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
 		.limit(1);
 
-	if (existingOrg.length > 0) {
-		orgSlug = `${generateUUID(orgSlug).slice(0, 4)}`;
+	if (existingUser.length === 0) {
+		throw new Error("User not found");
+	}
+
+	// Generate a unique slug (loop until available)
+	let orgSlug = Placeholder.slug();
+	const MAX_ATTEMPTS = 5;
+	let attempt = 0;
+
+	while (attempt < MAX_ATTEMPTS) {
+		const existingOrg = await db
+			.select()
+			.from(orgSchema)
+			.where(eq(orgSchema.slug, orgSlug))
+			.limit(1);
+
+		if (existingOrg.length === 0) {
+			break;
+		}
+
+		orgSlug = `${Placeholder.slug()}-${generateUUID(orgSlug).slice(0, 4)}`;
+		attempt++;
+	}
+
+	if (attempt === MAX_ATTEMPTS) {
+		throw new Error("Failed to generate unique organization slug");
 	}
 
 	return await db.transaction(async (tx) => {
@@ -68,7 +101,7 @@ export async function createNewUserWithProfile(userId: string) {
 				organizationId: org.id,
 				role: "owner",
 			});
-		} catch (_error) {
+		} catch {
 			tx.rollback();
 			throw new Error("Org member creation failed");
 		}
@@ -98,11 +131,17 @@ export async function createNewUserWithProfile(userId: string) {
 					teamId: team.id,
 				}),
 			]);
-		} catch (_error) {
+		} catch {
 			tx.rollback();
 			throw new Error("Team member creation failed");
 		}
 
-		return { orgId: org.id, teamId: team.id };
+		return {
+			orgId: org.id,
+			orgName: org.name,
+			orgSlug: org.slug,
+			teamId: team.id,
+			teamName: team.name,
+		};
 	});
 }

@@ -22,6 +22,7 @@ export const user = authSchema.table("user", {
 	image: text("image"),
 	isAdmin: boolean("isAdmin").notNull().default(false),
 	isAnonymous: boolean("isAnonymous"),
+	lastLoginMethod: text("lastLoginMethod"),
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -299,6 +300,9 @@ export const session = authSchema.table(
 
 		token: text("token").notNull().unique(),
 
+		// 🔒 Critical: enforce one active session per device
+		deviceId: text("deviceId"),
+
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
 
 		isAnonymous: boolean("isAnonymous"),
@@ -319,13 +323,19 @@ export const session = authSchema.table(
 			.defaultNow()
 			.notNull(),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
+		lastActiveAt: timestamp("lastActiveAt", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+
+		// 🔑 NEW: soft revocation
+		revokedAt: timestamp("revokedAt", { withTimezone: true }),
 	},
 	(t) => [
 		index("sessionUserIdx").on(t.userId),
 		index("sessionExpiresIdx").on(t.expiresAt),
+
+		// 🔒 Critical: enforce one active session per device
+		index("sessionActiveDeviceIdx").on(t.userId, t.deviceId),
 	]
 );
 
