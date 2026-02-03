@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
-	date,
 	index,
 	integer,
 	jsonb,
@@ -21,12 +20,9 @@ export const user = authSchema.table("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("emailVerified").notNull().default(false),
 	image: text("image"),
+	isAdmin: boolean("isAdmin").notNull().default(false),
 	isAnonymous: boolean("isAnonymous"),
 	lastLoginMethod: text("lastLoginMethod"),
-	role: text("role").notNull().default("unverified"),
-	banned: boolean("banned"),
-	banReason: text("banReason"),
-	banExpires: date("banExpires"),
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -304,15 +300,12 @@ export const session = authSchema.table(
 
 		token: text("token").notNull().unique(),
 
+		// 🔒 Critical: enforce one active session per device
 		deviceId: text("deviceId"),
 
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
 
 		isAnonymous: boolean("isAnonymous"),
-
-		impersonatedBy: text("impersonatedBy").references(() => user.id, {
-			onDelete: "cascade",
-		}),
 
 		activeOrganizationId: text("activeOrganizationId").references(
 			() => organization.id,

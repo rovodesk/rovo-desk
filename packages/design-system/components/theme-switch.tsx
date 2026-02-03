@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-"use client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-"use client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/theme";

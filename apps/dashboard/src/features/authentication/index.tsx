@@ -1,11 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MagicLinkForm } from "@zero-heads-lab/auth/components/magic-link-form";
 import { OauthButtons } from "@zero-heads-lab/auth/components/oauth-buttons";
-<<<<<<< HEAD
 // import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
-=======
-import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -45,10 +41,10 @@ export function Auth({ variant = "sign-in" }: AuthProps) {
 						</p>
 					</div>
 
-					<OauthButtons callbackURL="http://localhost:3001" />
+					<OauthButtons />
 					{/* FIXME: NEED TO FIX */}
 					{/* <PasskeyButton /> */}
-					<MagicLinkForm callbackURL="http://localhost:3001" />
+					<MagicLinkForm />
 
 					<p className="mt-8 text-muted-foreground text-sm">
 						By clicking continue, you agree to our{" "}

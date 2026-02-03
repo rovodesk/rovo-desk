@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-=======
-"use client";
-
 import type {} from "better-auth/client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { createContext, useContext } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
 

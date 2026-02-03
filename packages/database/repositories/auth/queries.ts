@@ -85,7 +85,6 @@ export async function getOrganizationBySlug(slug: string) {
 		.limit(1)
 		.then((res) => res[0]);
 }
-<<<<<<< HEAD
 
 export async function findReusableSession({
 	userId,
@@ -126,5 +125,3 @@ export async function findReusableSession({
 
 	return session ?? null;
 }
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

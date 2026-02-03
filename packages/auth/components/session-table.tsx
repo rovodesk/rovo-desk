@@ -15,38 +15,40 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Loader2Icon, Trash2Icon } from "lucide-react";
-import { getDeviceInfo } from "../helpers";
 import {
-	useDeleteDeviceSession,
-	useListDeviceSessions,
-	useSession,
-} from "../hooks";
-import type { DeviceSession } from "../types";
+	Loader2Icon,
+	MonitorIcon,
+	SmartphoneIcon,
+	Trash2Icon,
+} from "lucide-react";
+import { useDeleteSession, useListSessions, useSession } from "../hooks";
 
-type DeviceSessionWithCurrent = DeviceSession & {
-	isCurrent: boolean;
-};
+function getDeviceInfo(userAgent?: string) {
+	if (!userAgent) {
+		return { label: "Unknown device", Icon: MonitorIcon };
+	}
+
+	const ua = userAgent.toLowerCase();
+	const isMobile =
+		ua.includes("iphone") || ua.includes("android") || ua.includes("mobile");
+
+	return {
+		label: isMobile ? "Mobile device" : "Desktop device",
+		Icon: isMobile ? SmartphoneIcon : MonitorIcon,
+	};
+}
 
 export function SessionTable() {
-	const { deviceSessions, isLoading: isSessionsLoading } =
-		useListDeviceSessions();
-	const { session, isLoading: isSessionLoading } = useSession();
+	const { sessions, isLoading } = useListSessions();
+	const { session } = useSession();
 	const currentSessionId = session?.session?.id;
 
-	const sessionsWithCurrent: DeviceSessionWithCurrent[] = deviceSessions.map(
-		(s) => ({
-			...s,
-			isCurrent: s.session.id === currentSessionId,
-		})
-	);
+	const sessionsWithCurrent = sessions.map((s) => ({
+		...s,
+		isCurrent: s.id === currentSessionId,
+	}));
 
-	const {
-		deleteSession,
-		isPending: isDeletingSession,
-		pendingToken,
-	} = useDeleteDeviceSession({
+	const { deleteSession, variables: pendingToken } = useDeleteSession({
 		onSuccess: () => {
 			toast.success("Session revoked");
 		},
@@ -57,7 +59,7 @@ export function SessionTable() {
 		},
 	});
 
-	if (isSessionsLoading || isSessionLoading) {
+	if (isLoading) {
 		return (
 			<div className="space-y-2">
 				<Skeleton className="h-12 w-full" />
@@ -67,7 +69,7 @@ export function SessionTable() {
 		);
 	}
 
-	if (!deviceSessions?.length) {
+	if (!sessions?.length) {
 		return (
 			<div className="rounded-lg border bg-card p-6 text-center text-muted-foreground">
 				No active sessions found
@@ -78,47 +80,28 @@ export function SessionTable() {
 	return (
 		<div className="w-full rounded-xl border bg-card shadow-sm">
 			<Table>
-				{/* Header */}
 				<TableHeader>
 					<TableRow className="hover:bg-transparent">
-						<TableHead className="text-center">Device</TableHead>
-						<TableHead className="text-left">IP Address</TableHead>
-						<TableHead className="text-left">Last Active Date</TableHead>
-						<TableHead className="text-left">Last Active At</TableHead>
-						<TableHead className="text-left">Actions</TableHead>
+						<TableHead className="px-6">Device</TableHead>
+						<TableHead>IP Address</TableHead>
+						<TableHead>Last Active</TableHead>
+						<TableHead className="w-[120px] pr-6 text-right">Actions</TableHead>
 					</TableRow>
 				</TableHeader>
 
-				{/* Body */}
 				<TableBody>
 					{sessionsWithCurrent.map((session) => {
-						const device = getDeviceInfo(session?.session?.userAgent);
-
+						const device = getDeviceInfo(session.userAgent);
 						const DeviceIcon = device.Icon;
-
-						const isDeleting =
-							pendingToken === session.session.token && isDeletingSession;
-
-						const lastActiveDate = new Date(
-							session.session.lastActiveAt ?? session.session.createdAt
-						)
-							.toLocaleString()
-							.split(",")[0];
-
-						const lastActiveTime = new Date(
-							session.session.lastActiveAt ?? session.session.createdAt
-						)
-							.toLocaleString()
-							.split(",")[1];
+						const isDeleting = pendingToken === session.token;
 
 						return (
-							// Row
 							<TableRow
 								className="group transition-colors hover:bg-muted/40"
-								key={session.session.id}
+								key={sessionsWithCurrent.findIndex((s) => s.id === session.id)}
 							>
 								{/* Device */}
-								<TableCell className="flex justify-center px-6">
+								<TableCell className="px-6">
 									<div className="flex items-center gap-3">
 										<DeviceIcon className="size-4 text-muted-foreground" />
 										<div className="flex flex-col">
@@ -135,49 +118,31 @@ export function SessionTable() {
 								</TableCell>
 
 								{/* IP */}
-								<TableCell className="px-2 text-muted-foreground text-sm">
-									{session.session.ipAddress}
+								<TableCell className="text-muted-foreground text-sm">
+									{session.ipAddress}
 								</TableCell>
 
-								{/* Date */}
-								<TableCell className="px-4 text-muted-foreground text-sm">
-									{lastActiveDate}
-								</TableCell>
-
-								{/* Time */}
-								<TableCell className="px-4 text-muted-foreground text-sm">
-									{lastActiveTime}
+								{/* Last active */}
+								<TableCell className="text-muted-foreground text-sm">
+									{new Date(session.createdAt).toLocaleString()}
 								</TableCell>
 
 								{/* Actions */}
-								<TableCell className="justify-center pr-6">
+								<TableCell className="pr-6 text-right">
 									<TooltipProvider>
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<Button
 													className="text-destructive hover:bg-destructive/10 disabled:opacity-40"
 													disabled={session.isCurrent || isDeleting}
-													onClick={() => deleteSession(session.session.token)}
+													onClick={() => deleteSession(session.token)}
 													size="icon"
 													variant="ghost"
 												>
-													{isDeleting &&
-													pendingToken === session.session.token ? (
-														<Loader2Icon
-															className={cn(
-																"size-4",
-																session.isCurrent &&
-																	"cursor-not-allowed opacity-40"
-															)}
-														/>
+													{isDeleting ? (
+														<Loader2Icon className="size-4 animate-spin" />
 													) : (
-														<Trash2Icon
-															className={cn(
-																"size-4",
-																session.isCurrent &&
-																	"cursor-not-allowed opacity-40"
-															)}
-														/>
+														<Trash2Icon className="size-4" />
 													)}
 												</Button>
 											</TooltipTrigger>

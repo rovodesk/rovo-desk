@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-"use client";
-
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { useQuery } from "@tanstack/react-query";
 import type { Session } from "@zero-heads-lab/auth/types";
 import { getErrorStatus } from "@zero-heads-lab/shared/utils";
@@ -22,16 +17,8 @@ export function useSession(): UseSessionResult {
 	const { data, isLoading, error, refetch } = useQuery<Session | null>({
 		queryKey: ["auth", "session"],
 		queryFn: async () => {
-<<<<<<< HEAD
-			const { data, error } = await authClient.getSession();
-			if (error) {
-				throw error;
-			}
-			return data ?? null;
-=======
 			const res = await authClient.getSession();
 			return res?.data ?? null;
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 		},
 
 		// ✅ Auth-friendly caching

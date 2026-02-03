@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import {
-	determineAccessRole,
-	hasPlatformAccessRole,
-} from "@zero-heads-lab/auth/helpers";
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -21,16 +14,11 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { Header } from "@zero-heads-lab/design-system/layout/header";
-import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Search } from "@/components/search";
-<<<<<<< HEAD
-=======
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
@@ -80,18 +68,9 @@ export function Dashboard() {
 
 			{/* ===== Main ===== */}
 			<MainContent fluid>
-<<<<<<< HEAD
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{hasPlatformAccessRole(determineAccessRole(session?.user?.role))
-							? "Platform"
-							: domain?.name}{" "}
-=======
-				<div className="mb-2 flex items-center justify-between space-y-2 px-2">
-					<h1 className="inline-flex items-center gap-2 font-bold text-2xl tracking-tight">
-						{domain?.name ? domain.name : <Skeleton className="h-8 w-40" />}{" "}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-						Dashboard
+						{domain?.name} Dashboard
 					</h1>
 					<div className="flex items-center space-x-2">
 						<button className="relative p-[3px]">
@@ -144,10 +123,10 @@ export function Dashboard() {
 									You made 265 sales this month.
 								</CardDescription>
 							</CardHeader>
-							<CardContent className="ps-2">
-								{/* Replace with your Chart component */}
+							<CardContent>
+								{/* Replace with your RecentSales list */}
 								<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
-									Chart Area
+									Sales List
 								</div>
 							</CardContent>
 						</Card>

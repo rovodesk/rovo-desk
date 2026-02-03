@@ -7,11 +7,7 @@ import {
 	subscriptions,
 } from "../../drizzle/schemas/billing.schema";
 
-<<<<<<< HEAD
 export async function createRecurringSubscriptionFromPolar({
-=======
-export async function createSubscriptionFromPolar({
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	userId,
 	organizationId,
 	payload,

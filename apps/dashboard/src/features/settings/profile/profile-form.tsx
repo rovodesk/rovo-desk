@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -206,7 +203,6 @@ export function ProfileForm() {
 											)}
 										</div>
 
-<<<<<<< HEAD
 										<form.AppField
 											children={(field) => (
 												<field.TextField
@@ -219,18 +215,6 @@ export function ProfileForm() {
 												/>
 											)}
 											name="email"
-=======
-								<form.AppField
-									children={(field) => (
-										<field.TextField
-											description="Primary email for notifications and security."
-											disabled
-											icon={
-												<AtSignIcon className="size-4 text-muted-foreground" />
-											}
-											label="Email Address"
-											value={session?.user.email}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 										/>
 
 										<div className="flex justify-end">

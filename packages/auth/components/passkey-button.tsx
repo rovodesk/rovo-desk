@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-"use client";
-
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";

@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
-import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
-=======
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,33 +14,18 @@ import {
 	SidebarRail,
 	SidebarSeparator,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
-<<<<<<< HEAD
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { useSidebarData } from "@zero-heads-lab/design-system/hooks/use-sidebar-data";
-import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
-import { Button } from "../../../../packages/design-system/components/ui/button";
-=======
-import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { AppTitle } from "./app-title";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { SidebarNavSection } from "./nav-section";
 
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
-<<<<<<< HEAD
-	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
-	if (isLoading) {
-		return <AppSidebarSkeleton />;
-	}
-=======
+	const { sidebarData, isLoading } = useSidebarData();
 
-	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+	if (isLoading) return <AppSidebarSkeleton />;
 
 	return (
 		<Sidebar
@@ -60,33 +40,6 @@ export function AppSidebar() {
 			</SidebarHeader>
 
 			<SidebarContent>
-<<<<<<< HEAD
-				{sidebarData.quickLinks && (
-					<SidebarGroup>
-						<SidebarMenu>
-							<SidebarMenuItem className="flex items-center gap-2">
-								{/* PRIMARY ACTIONS */}
-								{sidebarData.quickLinks.primary && (
-									<SidebarMenuButton
-										asChild
-										className="min-w-8 bg-primary hover:bg-primary/90"
-										tooltip={sidebarData.quickLinks.primary.title}
-									>
-										<a
-											className="flex items-center gap-2"
-											href={sidebarData.quickLinks.primary.url}
-										>
-											{sidebarData.quickLinks.primary.icon && (
-												<sidebarData.quickLinks.primary.icon />
-											)}
-											<span>{sidebarData.quickLinks.primary.title}</span>
-										</a>
-									</SidebarMenuButton>
-								)}
-
-								{/* SECONDARY ACTIONS */}
-								{sidebarData.quickLinks.secondary && (
-=======
 				<SidebarGroup>
 					<SidebarMenu>
 						{sidebarData.quickLink && (
@@ -104,29 +57,11 @@ export function AppSidebar() {
 								)}
 
 								{sidebarData.quickLink?.secondary && (
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 									<Button
 										asChild
 										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
 										size="icon"
 									>
-<<<<<<< HEAD
-										<a href={sidebarData.quickLinks.secondary.url}>
-											{sidebarData.quickLinks.secondary.icon && (
-												<sidebarData.quickLinks.secondary.icon />
-											)}
-											<span className="sr-only">
-												{sidebarData.quickLinks.secondary.title}
-											</span>
-										</a>
-									</Button>
-								)}
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroup>
-				)}
-
-=======
 										<Link to={sidebarData.quickLink?.secondary?.url}>
 											{sidebarData.quickLink.secondary?.icon && (
 												<sidebarData.quickLink.secondary.icon />
@@ -141,7 +76,6 @@ export function AppSidebar() {
 						)}
 					</SidebarMenu>
 				</SidebarGroup>
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 				{sidebarData.navGroups.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
@@ -153,13 +87,6 @@ export function AppSidebar() {
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
-<<<<<<< HEAD
-								className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-							>
-								<a className="flex items-center gap-2" href={item.url}>
-									{item.icon && <item.icon />}
-									<span>{item.title}</span>
-=======
 								className="bg-transparent! hover:bg-sidebar-accent!"
 							>
 								<a href={item.url}>
@@ -170,25 +97,14 @@ export function AppSidebar() {
 										</>
 									)}
 									{item.title}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 								</a>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
 				</SidebarMenu>
-<<<<<<< HEAD
-
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							asChild
-							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-						>
-=======
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild>
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 							<ProfileDropdown />
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -199,7 +115,6 @@ export function AppSidebar() {
 		</Sidebar>
 	);
 }
-<<<<<<< HEAD
 
 function AppSidebarSkeleton() {
 	const { collapsible, variant } = useLayout();
@@ -273,5 +188,3 @@ function AppSidebarSkeleton() {
 		</Sidebar>
 	);
 }
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

@@ -36,7 +36,7 @@ export const subscriptions = billingSchema.table(
 
 		seats: integer("seats"),
 
-		metadata: jsonb("metadata").notNull().default({}),
+		metadata: jsonb("metadata"),
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 		modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
@@ -86,13 +86,9 @@ export const subscriptionPeriods = billingSchema.table(
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
-<<<<<<< HEAD
 	(t) => [
 		unique("subscriptionPeriodsSubscriptionIdUnique").on(t.subscriptionId),
 	]
-=======
-	(t) => [index("subscriptionPeriodsSubscriptionIdx").on(t.subscriptionId)]
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 );
 
 export const subscriptionPeriodsRelations = relations(
@@ -128,13 +124,9 @@ export const subscriptionPricing = billingSchema.table(
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
-<<<<<<< HEAD
 	(t) => [
 		unique("subscriptionPricingSubscriptionIdUnique").on(t.subscriptionId),
 	]
-=======
-	(t) => [index("subscriptionPricingSubscriptionIdx").on(t.subscriptionId)]
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 );
 
 export const subscriptionPricingRelations = relations(
@@ -159,16 +151,12 @@ export const subscriptionCancellations = billingSchema.table(
 
 		reason: text("customerCancellationReason"),
 		comment: text("customerCancellationComment"),
-<<<<<<< HEAD
 	},
 	(t) => [
 		unique("subscriptionCancellationsSubscriptionIdUnique").on(
 			t.subscriptionId
 		),
 	]
-=======
-	}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 );
 
 export const subscriptionCancellationsRelations = relations(
