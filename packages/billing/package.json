@@ -10,6 +10,7 @@
     "@polar-sh/sdk": "catalog:polar",
     "@t3-oss/env-core": "catalog:",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "zod": "catalog:",
     "react": "catalog:react19",
     "lucide-react": "catalog:",
@@ -17,6 +18,11 @@
 =======
     "zod": "catalog:"
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+    "zod": "catalog:",
+    "react": "catalog:react19",
+    "lucide-react": "catalog:"
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

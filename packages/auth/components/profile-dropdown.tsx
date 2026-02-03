@@ -23,11 +23,15 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard, MoreVertical, UserCircle } from "lucide-react";
 import { useState } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { determineAccessRole } from "../helpers";
 import { useUser } from "../hooks";
 =======
 import { useSession } from "../hooks";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+import { useUser } from "../hooks";
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { SignOutDialog } from "./sign-out-dialog";
 
 function ProfileDropdown() {
@@ -35,11 +39,15 @@ function ProfileDropdown() {
 	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	const { user, isLoading } = useUser();
 =======
 	const { session, isLoading } = useSession();
 	const user = session?.user;
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	const { user, isLoading } = useUser();
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	if (!user || isLoading) return <ProfileDropdownSkeleton />;
 
 	const name = user.name;

@@ -6,10 +6,14 @@ type Product = {
 const sandboxProducts: Product[] = [
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
 =======
 		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		slug: "Basic",
 	},
 	{
@@ -27,6 +31,7 @@ const sandboxProducts: Product[] = [
 ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // TODO: Update with real Production Product IDs
 const productionProducts: Product[] = [
 	{
@@ -36,6 +41,12 @@ const productionProducts: Product[] = [
 	{
 		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+// TODO: Update with real Production Product IDs
+const productionProducts: Product[] = [
+	{
+		productId: "ae409149-37cc-4328-99c2-6023bef27e14",
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		slug: "Basic",
 	},
 	{

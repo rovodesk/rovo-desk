@@ -20,6 +20,7 @@ import {
 	SidebarSeparator,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { useSidebarData } from "@zero-heads-lab/design-system/hooks/use-sidebar-data";
@@ -27,8 +28,10 @@ import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { Button } from "../../../../packages/design-system/components/ui/button";
 =======
+=======
+import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { AppTitle } from "./app-title";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
@@ -44,8 +47,14 @@ export function AppSidebar() {
 	}
 =======
 
+<<<<<<< HEAD
 	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	const { sidebarData, isLoading } = useSidebarData();
+
+	if (isLoading) return <AppSidebarSkeleton />;
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 	return (
 		<Sidebar
@@ -200,6 +209,9 @@ export function AppSidebar() {
 	);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 function AppSidebarSkeleton() {
 	const { collapsible, variant } = useLayout();
@@ -273,5 +285,8 @@ function AppSidebarSkeleton() {
 		</Sidebar>
 	);
 }
+<<<<<<< HEAD
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
