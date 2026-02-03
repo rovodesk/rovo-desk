@@ -23,10 +23,13 @@ export const user = authSchema.table("user", {
 	image: text("image"),
 	isAnonymous: boolean("isAnonymous"),
 	lastLoginMethod: text("lastLoginMethod"),
+<<<<<<< HEAD
 	role: text("role").notNull().default("unverified"),
 	banned: boolean("banned"),
 	banReason: text("banReason"),
 	banExpires: date("banExpires"),
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -304,6 +307,10 @@ export const session = authSchema.table(
 
 		token: text("token").notNull().unique(),
 
+<<<<<<< HEAD
+=======
+		// 🔒 Critical: enforce one active session per device
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		deviceId: text("deviceId"),
 
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),

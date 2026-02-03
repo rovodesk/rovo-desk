@@ -33,6 +33,7 @@ export async function deleteSession(sessionId: string) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export async function markSessionAsRevoked(sessionId: string) {
 	const db = createDatabase();
 
@@ -86,18 +87,62 @@ export async function createNewUserWithProfile(userId: string) {
 	const orgName = "Default Workspace";
 	let orgSlug = Placeholder.slug();
 
+=======
+export async function markSessionAsRevoked(sessionId: string) {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	const db = createDatabase();
 
-	// Check slug once
-	const existingOrg = await db
+	return await db
+		.update(sessionSchema)
+		.set({
+			revokedAt: new Date(),
+		})
+		.where(eq(sessionSchema.id, sessionId));
+}
+
+export async function createNewUserWithProfile(userId: string) {
+	const orgName = "Default Workspace";
+	const db = createDatabase();
+
+	// Check User
+	const existingUser = await db
 		.select()
-		.from(orgSchema)
-		.where(eq(orgSchema.slug, orgSlug))
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
 		.limit(1);
 
+<<<<<<< HEAD
 	if (existingOrg.length > 0) {
 		orgSlug = `${generateUUID(orgSlug).slice(0, 4)}`;
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	if (existingUser.length === 0) {
+		throw new Error("User not found");
+	}
+
+	// Generate a unique slug (loop until available)
+	let orgSlug = Placeholder.slug();
+	const MAX_ATTEMPTS = 5;
+	let attempt = 0;
+
+	while (attempt < MAX_ATTEMPTS) {
+		const existingOrg = await db
+			.select()
+			.from(orgSchema)
+			.where(eq(orgSchema.slug, orgSlug))
+			.limit(1);
+
+		if (existingOrg.length === 0) {
+			break;
+		}
+
+		orgSlug = `${Placeholder.slug()}-${generateUUID(orgSlug).slice(0, 4)}`;
+		attempt++;
+	}
+
+	if (attempt === MAX_ATTEMPTS) {
+		throw new Error("Failed to generate unique organization slug");
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	}
 
 	return await db.transaction(async (tx) => {
@@ -124,10 +169,14 @@ export async function createNewUserWithProfile(userId: string) {
 				role: "owner",
 			});
 <<<<<<< HEAD
+<<<<<<< HEAD
 		} catch {
 =======
 		} catch (_error) {
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		} catch {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Org member creation failed");
 		}
@@ -158,14 +207,19 @@ export async function createNewUserWithProfile(userId: string) {
 				}),
 			]);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		} catch {
 =======
 		} catch (_error) {
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		} catch {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Team member creation failed");
 		}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		// 5. Mark User as Member
 		try {
@@ -180,6 +234,8 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("User role update failed");
 		}
 
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		return {
 			orgId: org.id,
 			orgName: org.name,
@@ -187,6 +243,7 @@ export async function createNewUserWithProfile(userId: string) {
 			teamId: team.id,
 			teamName: team.name,
 		};
+<<<<<<< HEAD
 	});
 }
 
@@ -201,6 +258,8 @@ export async function markUserAsVerified(userId: string) {
 }
 =======
 		return { orgId: org.id, teamId: team.id };
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	});
 }
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

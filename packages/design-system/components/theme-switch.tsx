@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/theme";
 import { Button } from "./ui/button";

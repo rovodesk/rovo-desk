@@ -1,9 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useMemo } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
 =======
 "use client";
 
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useMemo } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
 import { authClient } from "./auth-client";

@@ -1,52 +1,54 @@
+import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useMemo } from "react";
+import {
+	ADMIN_SIDEBAR_CONFIG,
+	BASE_SIDEBAR_CONFIG,
+	USER_SIDEBAR_CONFIG,
+} from "@/data/sidebar-data";
 import type { SidebarConfig } from "@/types/sidebar";
 
-export function useSidebarData(data: SidebarConfig) {
-	// const { data: userData, isLoading } = useQuery(authQueries.memberRole());
+export function useSidebarData() {
+	const { session, isLoading } = useSession();
 
-	// const role = userData?.role;
-
-	// // Logic: Add "My Team" to Workspace group if user is NOT an owner
-	// if (role && role !== "owner") {
-	// 	const workspaceGroup = navGroups.find((g) => g.title === "Workspace");
-
-	// 	if (workspaceGroup) {
-	// 		workspaceGroup.items.push({
-	// 			title: "My Team",
-	// 			url: "/my-team",
-	// 			icon: Users, // Using Lucide Users icon
-	// 		});
-	// 	}
-	// }
-	// Example: const { data: counts } = useQuery(notificationsQueries.unread());
+	// TODO: Implement real data fetching
 	const counts = {
 		conversations: "3",
 		tasks: "12",
 	};
 
-	const sidebarData = useMemo(() => {
-		// Map through navGroups to inject badges based on item title or URL
-		const navGroups = data.navGroups.map((group) => ({
+	const sidebarData: SidebarConfig | null = useMemo(() => {
+		if (!session?.user) return BASE_SIDEBAR_CONFIG;
+
+		// TODO: Choose config based on role
+		const baseConfig = session.user.isAdmin
+			? ADMIN_SIDEBAR_CONFIG
+			: USER_SIDEBAR_CONFIG;
+
+		// Inject dynamic data
+		const navGroups = baseConfig.navGroups.map((group) => ({
 			...group,
 			items: group.items.map((item) => {
 				if (item.title === "Conversations") {
 					return { ...item, badge: counts.conversations };
 				}
+
 				if (item.title === "Tasks") {
 					return { ...item, badge: counts.tasks };
 				}
+
 				return item;
 			}),
 		}));
 
 		return {
-			...data,
+			...baseConfig,
 			navGroups,
 		};
-	}, [data]);
+	}, [session]);
 
 	return {
 		sidebarData,
-		// isLoading,
+		isLoading,
+		isAdmin: session?.user?.isAdmin,
 	};
 }

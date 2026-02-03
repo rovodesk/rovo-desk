@@ -6,6 +6,7 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 } from "./ui/command";
 import { ScrollArea } from "./ui/scroll-area";
 import { Skeleton } from "./ui/skeleton";
@@ -23,6 +24,14 @@ type CommandMenuProps = {
 export function CommandMenu({sidebarData }: CommandMenuProps) {
 =======
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+=======
+} from "@zero-heads-lab/design-system/components/ui/command";
+import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-area";
+import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
+import { useTheme } from "@zero-heads-lab/design-system/context/theme";
+import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
+import React from "react";
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.):apps/dashboard/src/components/command-menu.tsx
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { useSearch } from "@/providers/search";
 import type { NavCollapsible } from "@/types/sidebar";
@@ -34,9 +43,13 @@ export function CommandMenu() {
 	const { open, setOpen } = useSearch();
 
 <<<<<<< HEAD:packages/design-system/components/command-menu.tsx
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 =======
 	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/components/command-menu.tsx
+=======
+	const { sidebarData, isLoading } = useSidebarData();
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.):apps/dashboard/src/components/command-menu.tsx
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {
@@ -45,6 +58,10 @@ export function CommandMenu() {
 		},
 		[setOpen]
 	);
+
+	if (isLoading) {
+		return <CommandMenuSkeleton open={open} />;
+	}
 
 	return (
 		<CommandDialog modal onOpenChange={setOpen} open={open}>

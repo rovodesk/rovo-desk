@@ -37,10 +37,14 @@ export const subscriptions = billingSchema.table(
 		seats: integer("seats"),
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		metadata: jsonb("metadata"),
 =======
 		metadata: jsonb("metadata").notNull().default({}),
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		metadata: jsonb("metadata"),
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 		modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
@@ -91,12 +95,18 @@ export const subscriptionPeriods = billingSchema.table(
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
 <<<<<<< HEAD
+<<<<<<< HEAD
 	(t) => [
 		unique("subscriptionPeriodsSubscriptionIdUnique").on(t.subscriptionId),
 	]
 =======
 	(t) => [index("subscriptionPeriodsSubscriptionIdx").on(t.subscriptionId)]
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	(t) => [
+		unique("subscriptionPeriodsSubscriptionIdUnique").on(t.subscriptionId),
+	]
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 );
 
 export const subscriptionPeriodsRelations = relations(
@@ -133,12 +143,18 @@ export const subscriptionPricing = billingSchema.table(
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 	},
 <<<<<<< HEAD
+<<<<<<< HEAD
 	(t) => [
 		unique("subscriptionPricingSubscriptionIdUnique").on(t.subscriptionId),
 	]
 =======
 	(t) => [index("subscriptionPricingSubscriptionIdx").on(t.subscriptionId)]
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	(t) => [
+		unique("subscriptionPricingSubscriptionIdUnique").on(t.subscriptionId),
+	]
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 );
 
 export const subscriptionPricingRelations = relations(
@@ -164,15 +180,21 @@ export const subscriptionCancellations = billingSchema.table(
 		reason: text("customerCancellationReason"),
 		comment: text("customerCancellationComment"),
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	},
 	(t) => [
 		unique("subscriptionCancellationsSubscriptionIdUnique").on(
 			t.subscriptionId
 		),
 	]
+<<<<<<< HEAD
 =======
 	}
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 );
 
 export const subscriptionCancellationsRelations = relations(
