@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<<< HEAD:packages/design-system/layout/header.tsx
 import { Separator } from "../components/ui/separator";
 import { SidebarTrigger } from "../components/ui/sidebar";
@@ -5,6 +6,8 @@ import { cn } from "../lib/utils";
 ========
 "use client";
 
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { SidebarTrigger } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";

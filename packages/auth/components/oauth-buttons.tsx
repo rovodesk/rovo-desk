@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import {
 	GithubIcon,
 	GoogleIcon,
 } from "@zero-heads-lab/design-system/assets/icons";
+<<<<<<< HEAD
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
@@ -30,10 +34,13 @@ const OauthButtons = ({ isAnyLoading, callbackURL }: OauthButtonsProps) => {
 =======
 "use client";
 
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
-import { useOauthSignIn } from "../hooks/use-oauth-login";
+import { useLastLoginMethod, useOauthSignIn } from "../hooks";
+import { LastLoginBadge } from "./last-login-badge";
 
 type OauthButtonsProps = {
 	isAnyLoading?: boolean;
@@ -49,18 +56,26 @@ const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 	});
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
+	const { lastLoginMethod } = useLastLoginMethod();
+
 	const loadingProvider = isPending ? variables : null;
 
 	return (
 		<div className="flex w-full flex-col gap-4">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			{/* Google SignIn Button */}
 
 			<Button
 				className="relative"
+<<<<<<< HEAD
 =======
 			<Button
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 				disabled={isAnyLoading || isPending}
 				onClick={() => signInWithOAuth("google")}
 				size="lg"
@@ -73,6 +88,9 @@ const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 				)}
 				Continue with Google
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 				{lastLoginMethod === "google" && (
 					<div className="absolute -top-[1/2] right-3">
 						<LastLoginBadge compact />
@@ -81,10 +99,13 @@ const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 			</Button>
 
 			{/* GitHub SignIn Button */}
+<<<<<<< HEAD
 =======
 			</Button>
 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			<Button
 				disabled={isAnyLoading || isPending}
 				onClick={() => signInWithOAuth("github")}
@@ -98,13 +119,19 @@ const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 				)}
 				Continue with GitHub
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 				{lastLoginMethod === "github" && (
 					<div className="absolute -top-[1/2] right-3">
 						<LastLoginBadge compact />
 					</div>
 				)}
+<<<<<<< HEAD
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			</Button>
 		</div>
 	);
@@ -112,6 +139,7 @@ const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
 
 export default OauthButtons;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 const GoogleIcon = (props: React.ComponentProps<"svg">) => (
@@ -135,4 +163,6 @@ const GithubIcon = (props: React.ComponentProps<"svg">) => (
 );
 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 export { OauthButtons };

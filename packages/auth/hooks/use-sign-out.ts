@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 "use client";
 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthContext } from "../client/context";
 import type { MutationOptions } from "../types";
@@ -22,6 +25,7 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 		},
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		onSuccess: () => {
 			// Clear client state AFTER sign-out succeeds
 			queryClient.cancelQueries();
@@ -37,11 +41,22 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 			await queryClient.cancelQueries();
 			queryClient.clear();
 		},
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		onSuccess: () => {
+			// Clear client state AFTER sign-out succeeds
+			queryClient.clear();
+
 			options?.onSuccess?.();
-			throw replace("/sign-in");
+
+			// Navigate — do NOT throw
+			replace("/sign-in");
 		},
+<<<<<<< HEAD
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		onError: (error: Error) => {
 			console.error("Error Signing out", error);
 			options?.onError?.(error);

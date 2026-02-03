@@ -1,9 +1,13 @@
 import { passkeyClient } from "@better-auth/passkey/client";
 <<<<<<< HEAD
+<<<<<<< HEAD
 // import { polarClient } from "@polar-sh/better-auth/client";
 =======
 import { polarClient } from "@polar-sh/better-auth/client";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+// import { polarClient } from "@polar-sh/better-auth/client";
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import type { BetterAuthClientPlugin } from "better-auth";
 import {
 	adminClient,
@@ -44,6 +48,7 @@ const Plugins = [
 	magicLinkClient(),
 	passkeyClient(),
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// polarClient(),
 	adminClient(),
 	lastLoginMethodClient(),
@@ -55,6 +60,10 @@ export function createAuthClient(baseURL: string, basePath: string) {
 		basePath,
 =======
 	polarClient(),
+=======
+	// polarClient(),
+	lastLoginMethodClient(),
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 ] satisfies BetterAuthClientPlugin[];
 
 export function authClient() {

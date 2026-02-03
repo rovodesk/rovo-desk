@@ -92,6 +92,7 @@ export function Dashboard() {
 			{/* ===== Main ===== */}
 			<MainContent fluid>
 <<<<<<< HEAD
+<<<<<<< HEAD
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
 						{hasPlatformAccessRole(determineAccessRole(session?.user?.role))
@@ -103,6 +104,11 @@ export function Dashboard() {
 						{domain?.name ? domain.name : <Skeleton className="h-8 w-40" />}{" "}
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 						Dashboard
+=======
+				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
+					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
+						{domain?.name} Dashboard
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 					</h1>
 					<div className="flex items-center space-x-2">
 						<button className="relative p-[3px]">

@@ -8,18 +8,12 @@
 import { KvCacheStore } from "@zero-heads-lab/cache";
 =======
 import { passkey } from "@better-auth/passkey";
-import {
-	checkout,
-	polar,
-	portal,
-	usage,
-	webhooks,
-} from "@polar-sh/better-auth";
-import {
-	createFreeSubscription,
-	getProducts,
-	polarClient,
-} from "@zero-heads-lab/billing";
+// import {
+// 	createFreeSubscriptionOrder,
+// 	deleteCustomer,
+// 	getProducts,
+// 	polarClient,
+// } from "@zero-heads-lab/billing";
 import { createCacheStore } from "@zero-heads-lab/cache";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { createDatabase } from "@zero-heads-lab/database";
@@ -27,25 +21,35 @@ import {
 	createNewUserWithProfile,
 	deleteSession,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	markSessionAsRevoked,
 	markUserAsDeleted,
 } from "@zero-heads-lab/database/repositories/auth/mutations";
 import {
+<<<<<<< HEAD
 	// findReusableSession,
 =======
 	markUserAsDeleted,
 } from "@zero-heads-lab/database/repositories/auth/mutations";
 import {
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	findReusableSession,
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	getUserEmailVerificationStatus,
 	getUserSessionBootstrap,
 	getUserSessions,
 } from "@zero-heads-lab/database/repositories/auth/queries";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { sendEmail } from "@zero-heads-lab/email";
 =======
 import { createSubscriptionFromPolar } from "@zero-heads-lab/database/repositories/billing/mutations";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import {
 	ChangeEmailConfirmationTemplate,
 	EmailVerificationLinkTemplate,
@@ -55,7 +59,19 @@ import {
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+<<<<<<< HEAD
 import { AUTH_CONFIG } from "../config";
+=======
+import {
+	lastLoginMethod,
+	magicLink,
+	multiSession,
+	openAPI,
+	organization,
+} from "better-auth/plugins";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { accessControl, admin, member, owner } from "../access-control";
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { keys } from "../keys";
 import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
@@ -84,7 +100,7 @@ const AUTH_CONFIG = {
 // );
 
 const Plugins = () => {
-	const products = getProducts();
+	// const products = getProducts();
 
 	return [
 		// Magic Link Plugin
@@ -117,48 +133,52 @@ const Plugins = () => {
 			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
 		}),
 		// OPENAPI Plugin
-		process.env.NODE_ENV !== "production" &&
-			openAPI({
-				path: `${keys.BETTER_AUTH_BASE_PATH}/openapi`,
-			}),
+		process.env.NODE_ENV !== "production" && openAPI(),
 		// Polar Plugin
-		polar({
-			client: polarClient,
-			createCustomerOnSignUp: false,
-			use: [
-				// Add Polar Plugins Here
-				checkout({
-					products: products.map((product) => ({
-						productId: product.productId,
-						slug: product.slug,
-					})),
-					successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
-					authenticatedUsersOnly: true,
-				}),
-				portal(),
-				usage(),
-				// Add Polar Webhooks Here
-				webhooks({
-					secret: keys.POALR_WEBHOOK_SECRET,
-					// biome-ignore lint/suspicious/useAwait: No awaited value
-					onCustomerCreated: async (payload) => {
-						console.log(payload);
-					},
-					onPayload: async (payload) => {
-						// Catch ALL for Events
-						// Redirect to Webhook Ingestion API
-						// 	await fetch("http://localhost:3001/api/webhook", {
-						// 		method: "POST",
-						// 		body: JSON.stringify(payload),
-						// 	});
-						await console.log(
-							`${payload.type}: ${payload.data}`,
-							payload.timestamp
-						);
-						//TODO: Add Analytics
-					},
-				}),
-			],
+		// polar({
+		// 	client: polarClient,
+		// 	createCustomerOnSignUp: false,
+		// 	use: [
+		// 		// Add Polar Plugins Here
+		// 		checkout({
+		// 			products: products.map((product) => ({
+		// 				productId: product.productId,
+		// 				slug: product.slug,
+		// 			})),
+		// 			successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
+		// 			authenticatedUsersOnly: true,
+		// 		}),
+		// 		portal(),
+		// 		usage(),
+		// 		// Add Polar Webhooks Here
+		// 		webhooks({
+		// 			secret: keys.POALR_WEBHOOK_SECRET,
+		// 			onPayload: async (payload) => {
+		// 				// Catch ALL for Events
+		// 				// Redirect to Webhook Ingestion API
+		// 				// 	await fetch("http://localhost:3001/api/webhook", {
+		// 				// 		method: "POST",
+		// 				// 		body: JSON.stringify(payload),
+		// 				// 	});
+		// 				await console.log(
+		// 					`${payload.type}: ${payload.data}`,
+		// 					payload.timestamp
+		// 				);
+		// 				//TODO: Add Analytics
+		// 			},
+		// 		}),
+		// 	],
+		// }),
+		lastLoginMethod({
+			storeInDatabase: true,
+			customResolveMethod: (ctx) => {
+				// Track magic link authentication
+				if (ctx.path === "/magic-link/verify") {
+					return "magic-link";
+				}
+				// Return null to use default resolution
+				return null;
+			},
 		}),
 		// This must be at the last
 		tanstackStartCookies(),
@@ -309,11 +329,19 @@ export function createAuth() {
 					required: false,
 					input: false,
 				},
+<<<<<<< HEAD
 				// deviceId: {
 				// 	type: "string",
 				// 	required: false,
 				// 	input: false,
 				// },
+=======
+				deviceId: {
+					type: "string",
+					required: false,
+					input: false,
+				},
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 				lastActiveAt: {
 					type: "date",
 					required: false,
@@ -432,6 +460,7 @@ export function createAuth() {
 		databaseHooks: {
 			session: {
 				create: {
+<<<<<<< HEAD
 					before: async (session) => {
 						// Reuse Session
 						// const { userId, userAgent } = session;
@@ -456,6 +485,33 @@ export function createAuth() {
 						// 		};
 						// 	}
 						// }
+=======
+					// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Need this
+					before: async (session, ctx) => {
+						// Reuse Session
+						const { userId, userAgent } = session;
+						const deviceId = ctx?.request?.headers.get("device-id");
+
+						if (deviceId && userAgent && !session.isAnonymous) {
+							const reusableSession = await findReusableSession({
+								userId,
+								userAgent,
+								deviceId,
+							});
+
+							if (reusableSession) {
+								// IMPORTANT:
+								// Returning an existing session here tells better-auth
+								// to SKIP creation and reuse this one.
+								return {
+									data: {
+										reuse: true,
+										...reusableSession,
+									},
+								};
+							}
+						}
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 						// Enforce maximum sessions (only if creating a new one)
 						const sessions = await getUserSessions(session.userId);
@@ -535,11 +591,15 @@ export function createAuth() {
 					before: async (session) => {
 						console.log(`Session  ${session.id} is being revoked`);
 						try {
+<<<<<<< HEAD
 							try {
 								await markSessionAsRevoked(session.id);
 							} catch {
 								// Ignore
 							}
+=======
+							await markSessionAsRevoked(session.id);
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 							// Delete session from cache
 							await cacheStore.delete(`session:${session.id}`);
 						} catch (error) {
@@ -571,15 +631,17 @@ export function createAuth() {
 						};
 					},
 					after: async (user) => {
-						let orgId: string | null = null;
-						// Create User Profile
 						try {
+<<<<<<< HEAD
 <<<<<<< HEAD
 							await createNewUserWithProfile(user.id);
 =======
 							const { orgId: oId } = await createNewUserWithProfile(user.id);
 							orgId = oId;
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+							await createNewUserWithProfile(user.id);
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);
@@ -590,6 +652,9 @@ export function createAuth() {
 						}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 						// //Subscribe User to Basic PLan
 						// try {
 						// 	await createFreeSubscriptionOrder(
@@ -609,6 +674,7 @@ export function createAuth() {
 						// 		message: "Failed to create subscription",
 						// 	});
 						// }
+<<<<<<< HEAD
 =======
 						//Subscribe User to Basic PLan
 						try {
@@ -625,6 +691,8 @@ export function createAuth() {
 							});
 						}
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 						try {
 							await sendEmail({
@@ -663,6 +731,9 @@ export function createAuth() {
 						return false; // Abort the deletion
 					},
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 					after: async (user) => {
 						await console.log(`User ${user.email} is deleted`);
 						//TODO: Add Analytics
@@ -673,8 +744,11 @@ export function createAuth() {
 						// 	throw new APIError("INTERNAL_SERVER_ERROR");
 						// }
 					},
+<<<<<<< HEAD
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 				},
 			},
 		},
