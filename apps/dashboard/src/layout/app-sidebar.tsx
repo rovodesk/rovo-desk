@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { DomainList } from "@zero-heads-lab/auth/components/domains-list";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
@@ -62,43 +61,47 @@ export function AppSidebar({
 			</SidebarHeader>
 
 			<SidebarContent>
-				<SidebarGroup>
-					<SidebarMenu>
+				{sidebarData.quickLinks && (
+					<SidebarGroup>
 						<SidebarMenu>
-							{(sidebarData.quickLinks?.primary?.length ||
-								sidebarData.quickLinks?.secondary?.length) && (
-								<SidebarMenuItem className="flex items-center gap-2">
-									{/* PRIMARY ACTIONS */}
-									{sidebarData.quickLinks?.primary?.map((item) => (
-										<SidebarMenuButton
-											asChild
-											className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-											key={item.title}
-											tooltip={item.title}
+							<SidebarMenuItem className="flex items-center gap-2">
+								{/* PRIMARY ACTIONS */}
+								{sidebarData.quickLinks.primary && (
+									<SidebarMenuButton
+										asChild
+										className="min-w-8 bg-primary hover:bg-primary/90"
+										tooltip={sidebarData.quickLinks.primary.title}
+									>
+										<a
+											className="flex items-center gap-2"
+											href={sidebarData.quickLinks.primary.url}
 										>
-											<Link className="flex items-center gap-2" to={item.url}>
-												{item.icon && <item.icon />}
-												<span>{item.title}</span>
-											</Link>
-										</SidebarMenuButton>
-									))}
+											{sidebarData.quickLinks.primary.icon && (
+												<sidebarData.quickLinks.primary.icon />
+											)}
+											<span>{sidebarData.quickLinks.primary.title}</span>
+										</a>
+									</SidebarMenuButton>
+								)}
 
-									{/* SECONDARY ACTIONS */}
-									{sidebarData.quickLinks?.secondary?.map((item) => (
-										<Button
-											asChild
-											className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
-											key={item.title}
-											size="icon"
-										>
-											<Link to={item.url}>
-												{item.icon && <item.icon />}
-												<span className="sr-only">{item.title}</span>
-											</Link>
-										</Button>
-									))}
-								</SidebarMenuItem>
-							)}
+								{/* SECONDARY ACTIONS */}
+								{sidebarData.quickLinks.secondary && (
+									<Button
+										asChild
+										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
+										size="icon"
+									>
+										<a href={sidebarData.quickLinks.secondary.url}>
+											{sidebarData.quickLinks.secondary.icon && (
+												<sidebarData.quickLinks.secondary.icon />
+											)}
+											<span className="sr-only">
+												{sidebarData.quickLinks.secondary.title}
+											</span>
+										</a>
+									</Button>
+								)}
+							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarMenu>
 				</SidebarGroup>
@@ -121,39 +124,41 @@ export function AppSidebar({
 				)}
 			</SidebarContent>
 
-			<SidebarFooter className="flex flex-col gap-8">
-				<SidebarMenu>
-					{sidebarData.footer.map((item) => (
-						<SidebarMenuItem key={item.title}>
-							<SidebarMenuButton
-								asChild
-								className="bg-transparent! hover:bg-sidebar-accent!"
-							>
-								<a href={item.url}>
-									{item.icon && (
-										<>
-											<item.icon />
-											<span className="sr-only">{item.title}</span>
-										</>
-									)}
-									{item.title}
-								</a>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					))}
-				</SidebarMenu>
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<SidebarMenuButton asChild>
-							<ProfileDropdown />
+			<SidebarFooter
+	className =
+		(
+			<SidebarMenu>
+				{sidebarData.footer.map((item) => (
+					<SidebarMenuItem key={item.title}>
+						<SidebarMenuButton
+							asChild
+							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
+						>
+							<a className="flex items-center gap-2" href={item.url}>
+								{item.icon && <item.icon />}
+								<span>{item.title}</span>
+							</a>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
-				</SidebarMenu>
+				))}
+			</SidebarMenu>
+		) <
+		"flex flex-col gap-8"<SidebarMenu>(
+			<SidebarMenuItem>
+				<SidebarMenuButton
+					asChild
+					className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
+				>
+					<ProfileDropdown />
+				</SidebarMenuButton>
+			</SidebarMenuItem>
+		);
+	</SidebarMenu>
 			</SidebarFooter>
 
 			<SidebarRail />
 		</Sidebar>
-	);
+	)
 }
 
 function AppSidebarSkeleton() {

@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -20,7 +20,6 @@ import type { NavCollapsible } from "@/types/sidebar";
 
 export function CommandMenu() {
 	const { setTheme } = useTheme();
-	const navigate = useNavigate();
 	const { open, setOpen } = useSearch();
 
 	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
@@ -32,9 +31,10 @@ export function CommandMenu() {
 		},
 		[setOpen]
 	);
+	const router = useRouter();
 
 	if (isLoading) {
-		return <CommandMenuSkeleton open={open} />;
+		return <CommandMenuSkeleton />;
 	}
 
 	return (
@@ -56,7 +56,7 @@ export function CommandMenu() {
 									<CommandItem
 										key={`${section.title}-${subItem.title}`}
 										onSelect={() =>
-											runCommand(() => navigate({ to: subItem.url }))
+											runCommand(() => router.navigate({ to: subItem.url }))
 										}
 										value={`${section.title} ${subItem.title}`}
 									>
@@ -111,9 +111,9 @@ export function CommandMenu() {
 	);
 }
 
-function CommandMenuSkeleton({ open }: { open: boolean }) {
+function CommandMenuSkeleton() {
 	return (
-		<CommandDialog modal open={open}>
+		<CommandDialog modal>
 			{/* Input */}
 			<CommandInput
 				className="opacity-50"
