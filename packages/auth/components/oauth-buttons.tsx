@@ -10,16 +10,20 @@ import { LastLoginBadge } from "./last-login-badge";
 
 type OauthButtonsProps = {
 	isAnyLoading?: boolean;
+	callbackURL: string;
 };
 
-const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
-	const { signInWithOAuth, isPending, variables } = useOauthSignIn({
-		onError: () => {
-			toast.error("Error signing in", {
-				description: "Please try again later.",
-			});
-		},
-	});
+const OauthButtons = ({ isAnyLoading, callbackURL }: OauthButtonsProps) => {
+	const { signInWithOAuth, isPending, variables } = useOauthSignIn(
+		callbackURL,
+		{
+			onError: () => {
+				toast.error("Error signing in", {
+					description: "Please try again later.",
+				});
+			},
+		}
+	);
 
 	const { lastLoginMethod } = useLastLoginMethod();
 
