@@ -8,10 +8,12 @@ export const AUTH_CONFIG = {
 	RATE_LIMIT_WINDOW_IN_SECS: 60, // 60 seconds
 	RATE_LIMIT_MAX_REQUESTS: 100,
 
+	DASHBOARD_URL: "http://localhost:3001",
+
 	IMPERSONATION_SESSION_DURATION_IN_SECS: 60 * 60 * 6, // 6 hours
 
 	CORS: {
-		origin: ["http://localhost:3001", "http://localhost:3002"],
+		origin: ["http://localhost:3001"],
 		allowHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
 		allowMethods: ["POST", "GET", "OPTIONS"],
 		exposeHeaders: ["Content-Length"],
