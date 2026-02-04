@@ -1,4 +1,3 @@
-import { passkey } from "@better-auth/passkey";
 // import {
 // 	createFreeSubscriptionOrder,
 // 	deleteCustomer,
@@ -19,163 +18,30 @@ import {
 	getUserSessionBootstrap,
 	getUserSessions,
 } from "@zero-heads-lab/database/repositories/auth/queries";
+import { sendEmail } from "@zero-heads-lab/email";
 import {
 	ChangeEmailConfirmationTemplate,
 	EmailVerificationLinkTemplate,
 	LoginAlertTemplate,
-	MagicLinkTemplate,
-	sendEmail,
 	UserWelcomeTemplate,
-} from "@zero-heads-lab/email";
+} from "@zero-heads-lab/email/templates";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
-import {
-	APIError,
-	type BetterAuthPlugin,
-	betterAuth,
-	type GithubProfile,
-	type GoogleProfile,
-} from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-	lastLoginMethod,
-	magicLink,
-	multiSession,
-	openAPI,
-	organization,
-} from "better-auth/plugins";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
-import { accessControl, admin, member, owner } from "../access-control";
 import { keys } from "../keys";
-
-const AUTH_CONFIG = {
-	EMAIL_OTP_LENGTH: 6,
-	EMAIL_OTP_EXPIRE_IN: 10 * 60, // 10 minutes
-	COOKIE_MAX_AGE: 60 * 60 * 24 * 7, // 7 days
-	MAXIMUM_SESSIONS: 6,
-	COOKIE_PREFIX: "zero-heads-auth",
-	SESSION_TOKEN_NAME: "auth_session_token",
-	RATE_LIMIT_WINDOW_IN_SECS: 10, // 10 seconds
-	RATE_LIMIT_MAX_REQUESTS: 100,
-
-	DASHBOARD_URL: "http://localhost:3000",
-};
+import { AUTH_CONFIG } from "./config";
+import { AuthPlugins } from "./plugins";
+import { OauthProviders } from "./social-providers";
 
 // export const trustedAuthOrigins = keys.AUTH_TRUSTED_ORIGINS.split(",").map(
 // 	(o) => o.trim()
 // );
 
-const Plugins = () => {
-	// const products = getProducts();
-
-	return [
-		// Magic Link Plugin
-		magicLink({
-			sendMagicLink: async ({ email, url }) => {
-				await sendEmail({
-					to: email,
-					subject: "Sign in to your account",
-					react: MagicLinkTemplate({ url }),
-				});
-			},
-		}),
-		//Passkey Plugin
-		passkey(),
-		// Organization Plugin
-		organization({
-			accessControl,
-			roles: {
-				owner,
-				admin,
-				member,
-			},
-			teams: {
-				enabled: true,
-				allowRemovingAllTeams: false, // Dont allow to remove the last team
-			},
-		}),
-		// Multi Session Plugin
-		multiSession({
-			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
-		}),
-		// OPENAPI Plugin
-		process.env.NODE_ENV !== "production" && openAPI(),
-		// Polar Plugin
-		// polar({
-		// 	client: polarClient,
-		// 	createCustomerOnSignUp: false,
-		// 	use: [
-		// 		// Add Polar Plugins Here
-		// 		checkout({
-		// 			products: products.map((product) => ({
-		// 				productId: product.productId,
-		// 				slug: product.slug,
-		// 			})),
-		// 			successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
-		// 			authenticatedUsersOnly: true,
-		// 		}),
-		// 		portal(),
-		// 		usage(),
-		// 		// Add Polar Webhooks Here
-		// 		webhooks({
-		// 			secret: keys.POALR_WEBHOOK_SECRET,
-		// 			onPayload: async (payload) => {
-		// 				// Catch ALL for Events
-		// 				// Redirect to Webhook Ingestion API
-		// 				// 	await fetch("http://localhost:3001/api/webhook", {
-		// 				// 		method: "POST",
-		// 				// 		body: JSON.stringify(payload),
-		// 				// 	});
-		// 				await console.log(
-		// 					`${payload.type}: ${payload.data}`,
-		// 					payload.timestamp
-		// 				);
-		// 				//TODO: Add Analytics
-		// 			},
-		// 		}),
-		// 	],
-		// }),
-		lastLoginMethod({
-			storeInDatabase: true,
-			customResolveMethod: (ctx) => {
-				// Track magic link authentication
-				if (ctx.path === "/magic-link/verify") {
-					return "magic-link";
-				}
-				// Return null to use default resolution
-				return null;
-			},
-		}),
-		// This must be at the last
-		tanstackStartCookies(),
-	].filter(Boolean) as BetterAuthPlugin[];
-};
-
-const SocialProviders = {
-	github: {
-		clientId: keys.GITHUB_CLIENT_ID,
-		clientSecret: keys.GITHUB_CLIENT_SECRET,
-		mapProfileToUser(profile: GithubProfile) {
-			return {
-				name: profile.name,
-				image: profile.avatar_url,
-			};
-		},
-	},
-	google: {
-		clientId: keys.GOOGLE_CLIENT_ID,
-		clientSecret: keys.GOOGLE_CLIENT_SECRET,
-		mapProfileToUser(profile: GoogleProfile) {
-			return {
-				name: `${profile.given_name} ${profile.family_name}`,
-				image: profile.picture,
-			};
-		},
-	},
-};
-
 export function createAuth() {
 	const cacheStore = createCacheStore();
 	const database = createDatabase();
+
+	const Plugins = AuthPlugins();
 
 	return betterAuth({
 		database: drizzleAdapter(database, {
@@ -215,10 +81,29 @@ export function createAuth() {
 		},
 		user: {
 			additionalFields: {
-				isAdmin: {
+				lastLoginMethod: {
+					type: "string",
+					required: false,
+					input: false,
+				},
+				role: {
+					type: "string",
+					required: true,
+					input: false,
+				},
+				banned: {
 					type: "boolean",
 					required: false,
-					defaultValue: false,
+					input: false,
+				},
+				banReason: {
+					type: "string",
+					required: false,
+					input: false,
+				},
+				banExpires: {
+					type: "date",
+					required: false,
 					input: false,
 				},
 				isAnonymous: {
@@ -302,8 +187,8 @@ export function createAuth() {
 			limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
 			storage: "secondary-storage",
 		},
-		plugins: Plugins(),
-		socialProviders: SocialProviders,
+		plugins: Plugins,
+		socialProviders: OauthProviders,
 		advanced: {
 			ipAddress: {
 				ipAddressHeaders: ["x-client-ip", "x-forwarded-for"],
@@ -448,7 +333,11 @@ export function createAuth() {
 					before: async (session) => {
 						console.log(`Session  ${session.id} is being revoked`);
 						try {
-							await markSessionAsRevoked(session.id);
+							try {
+								await markSessionAsRevoked(session.id);
+							} catch {
+								// Ignore
+							}
 							// Delete session from cache
 							await cacheStore.delete(`session:${session.id}`);
 						} catch (error) {
@@ -561,4 +450,8 @@ export function createAuth() {
 			},
 		},
 	});
+}
+
+export function auth() {
+	return createAuth();
 }

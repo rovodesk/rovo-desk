@@ -1,3 +1,7 @@
+import {
+	determineAccessRole,
+	hasPlatformAccessRole,
+} from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -70,7 +74,10 @@ export function Dashboard() {
 			<MainContent fluid>
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{domain?.name} Dashboard
+						{hasPlatformAccessRole(determineAccessRole(session?.user?.role))
+							? "Platform"
+							: domain?.name}{" "}
+						Dashboard
 					</h1>
 					<div className="flex items-center space-x-2">
 						<button className="relative p-[3px]">

@@ -9,8 +9,8 @@ import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
-	redirect,
 	Scripts,
+	useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { AuthProvider } from "@zero-heads-lab/auth/client";
@@ -41,12 +41,13 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
 	const queryClient = useQueryClient();
+	const router = useRouter();
 
 	return (
 		<RootDocument>
 			<QueryClientProvider client={queryClient}>
 				<UIProvider>
-					<AuthProvider replace={(href) => redirect({ to: href })}>
+					<AuthProvider replace={(href) => router.navigate({ to: href })}>
 						<AppNavigationProgress />
 						<Outlet />
 					</AuthProvider>

@@ -9,7 +9,6 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 	},
 	component: Auth,
 	validateSearch: z.object({
-		redirectUrl: z.string().optional(),
-		verified: z.string().optional(),
+		redirectReason: z.string().optional(),
 	}),
 });

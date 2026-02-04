@@ -12,7 +12,7 @@ export const useDeleteSession = (options?: MutationOptions) => {
 		variables,
 	} = useMutation({
 		mutationFn: async (sessionToken: string) =>
-			authClient.revokeSession({ token: sessionToken }),
+			authClient.multiSession.revoke({ sessionToken }),
 
 		onMutate: async (sessionToken) => {
 			await queryClient.cancelQueries({ queryKey: ["auth", "sessions"] });

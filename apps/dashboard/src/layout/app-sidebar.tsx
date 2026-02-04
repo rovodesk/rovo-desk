@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
+import { hasPlatformAccessRole } from "@zero-heads-lab/auth/helpers";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Sidebar,
@@ -16,6 +17,7 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { AppTitle } from "./app-title";
 import { SidebarNavSection } from "./nav-section";
@@ -23,9 +25,13 @@ import { SidebarNavSection } from "./nav-section";
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
 
-	const { sidebarData, isLoading } = useSidebarData();
+	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
-	if (isLoading) return <AppSidebarSkeleton />;
+	if (isLoading) {
+		return <AppSidebarSkeleton />;
+	}
+
+	console.log(role);
 
 	return (
 		<Sidebar
@@ -36,44 +42,49 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
-				<DomainSwitcher />
+				{/* Domain switcher is hidden for unverified users */}
+				{hasPlatformAccessRole(role) ? null : <DomainSwitcher />}
 			</SidebarHeader>
 
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenu>
-						{sidebarData.quickLink && (
-							<SidebarMenuItem className="flex items-center gap-2">
-								{sidebarData.quickLink?.primary && (
-									<SidebarMenuButton
-										className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-										tooltip={sidebarData.quickLink?.primary?.title}
-									>
-										{sidebarData.quickLink.primary?.icon && (
-											<sidebarData.quickLink.primary.icon />
-										)}
-										<span>{sidebarData.quickLink.primary?.title}</span>
-									</SidebarMenuButton>
-								)}
+						<SidebarMenu>
+							{(sidebarData.quickLinks?.primary?.length ||
+								sidebarData.quickLinks?.secondary?.length) && (
+								<SidebarMenuItem className="flex items-center gap-2">
+									{/* PRIMARY ACTIONS */}
+									{sidebarData.quickLinks?.primary?.map((item) => (
+										<SidebarMenuButton
+											asChild
+											className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+											key={item.title}
+											tooltip={item.title}
+										>
+											<Link className="flex items-center gap-2" to={item.url}>
+												{item.icon && <item.icon />}
+												<span>{item.title}</span>
+											</Link>
+										</SidebarMenuButton>
+									))}
 
-								{sidebarData.quickLink?.secondary && (
-									<Button
-										asChild
-										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
-										size="icon"
-									>
-										<Link to={sidebarData.quickLink?.secondary?.url}>
-											{sidebarData.quickLink.secondary?.icon && (
-												<sidebarData.quickLink.secondary.icon />
-											)}
-											<span className="sr-only">
-												{sidebarData.quickLink.secondary?.title}
-											</span>
-										</Link>
-									</Button>
-								)}
-							</SidebarMenuItem>
-						)}
+									{/* SECONDARY ACTIONS */}
+									{sidebarData.quickLinks?.secondary?.map((item) => (
+										<Button
+											asChild
+											className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
+											key={item.title}
+											size="icon"
+										>
+											<Link to={item.url}>
+												{item.icon && <item.icon />}
+												<span className="sr-only">{item.title}</span>
+											</Link>
+										</Button>
+									))}
+								</SidebarMenuItem>
+							)}
+						</SidebarMenu>
 					</SidebarMenu>
 				</SidebarGroup>
 				{sidebarData.navGroups.map((group) => (
