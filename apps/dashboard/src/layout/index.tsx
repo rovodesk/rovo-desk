@@ -6,7 +6,6 @@ import {
 import { LayoutProvider } from "@zero-heads-lab/design-system/context/layout";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
-import { SkipToMain } from "@/components/skip-to-main";
 import { AppSidebar } from "@/layout/app-sidebar";
 import { SearchProvider } from "@/providers/search";
 
@@ -17,7 +16,6 @@ export function AuthenticatedLayout() {
 		<LayoutProvider>
 			<SearchProvider>
 				<SidebarProvider defaultOpen={sidebarOpen}>
-					<SkipToMain />
 					<AppSidebar />
 					<SidebarInset
 						className={cn(
