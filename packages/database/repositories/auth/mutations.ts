@@ -19,9 +19,13 @@ export async function markUserAsDeleted(userId: string) {
 		.set({
 			deletedAt: new Date(),
 <<<<<<< HEAD
+<<<<<<< HEAD
 			role: "deleted",
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+			role: "deleted",
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		})
 		.where(eq(userSchema.id, userId));
 }
@@ -221,6 +225,9 @@ export async function createNewUserWithProfile(userId: string) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		// 5. Mark User as Member
 		try {
 			await tx
@@ -234,8 +241,11 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("User role update failed");
 		}
 
+<<<<<<< HEAD
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		return {
 			orgId: org.id,
 			orgName: org.name,
@@ -256,6 +266,7 @@ export async function markUserAsVerified(userId: string) {
 		})
 		.where(eq(userSchema.id, userId));
 }
+<<<<<<< HEAD
 =======
 		return { orgId: org.id, teamId: team.id };
 =======
@@ -263,3 +274,5 @@ export async function markUserAsVerified(userId: string) {
 	});
 }
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
