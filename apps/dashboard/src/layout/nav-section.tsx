@@ -29,19 +29,9 @@ import type {
 	NavGroup as NavGroupProps,
 	NavItem,
 	NavLink,
-<<<<<<< HEAD
-<<<<<<< HEAD
 } from "@zero-heads-lab/design-system/types/sidebar";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
-=======
-} from "@/types/sidebar";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-} from "@zero-heads-lab/design-system/types/sidebar";
-import { ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
->>>>>>> 41a6b28 (Feat/api (#6))
 
 function SidebarNavBadge({ children }: { children: ReactNode }) {
 	return (
@@ -214,8 +204,6 @@ function SidebarNavCollapsible({
 	);
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 function isActiveRoute(href: string, item: NavItem): boolean {
 	const cleanHref = href.split("?")[0] ?? "";
 
@@ -241,45 +229,6 @@ function isActiveRoute(href: string, item: NavItem): boolean {
 	}
 
 	return false;
-=======
-function isActiveRoute(href: string, item: NavItem, mainNav = false) {
-	const cleanHref = href.split("?")[0] ?? "";
-
-	return !!(
-		cleanHref === item.url ||
-		item.items?.some((i) => i.url === cleanHref) ||
-		(mainNav &&
-			cleanHref.split("/")?.[1] !== "" &&
-			cleanHref.split("/")?.[1] === item.url?.split("/")?.[1])
-	);
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-function isActiveRoute(href: string, item: NavItem): boolean {
-	const cleanHref = href.split("?")[0] ?? "";
-
-	// LINK ITEM
-	if ("url" in item) {
-		const itemUrl = item.url;
-
-		// Exact match
-		if (cleanHref === itemUrl) return true;
-
-		// Root guard
-		if (itemUrl === "/") return cleanHref === "/";
-
-		// Sub-routes: /settings/*
-		return cleanHref.startsWith(`${itemUrl}/`);
-	}
-
-	// COLLAPSIBLE ITEM
-	if ("items" in item && item.items) {
-		return item.items.some((child) =>
-			isActiveRoute(cleanHref, child as NavItem)
-		);
-	}
-
-	return false;
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 }
 
 export {

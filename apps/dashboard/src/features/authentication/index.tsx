@@ -1,15 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MagicLinkForm } from "@zero-heads-lab/auth/components/magic-link-form";
 import { OauthButtons } from "@zero-heads-lab/auth/components/oauth-buttons";
-<<<<<<< HEAD
-<<<<<<< HEAD
 // import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
-=======
-import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-// import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -49,17 +41,10 @@ export function Auth({ variant = "sign-in" }: AuthProps) {
 						</p>
 					</div>
 
-<<<<<<< HEAD
 					<OauthButtons callbackURL={"http://localhost:3001"} />
 					{/* FIXME: NEED TO FIX */}
 					{/* <PasskeyButton /> */}
 					<MagicLinkForm callbackURL={"http://localhost:3001"} />
-=======
-					<OauthButtons />
-					{/* FIXME: NEED TO FIX */}
-					{/* <PasskeyButton /> */}
-					<MagicLinkForm />
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 					<p className="mt-8 text-muted-foreground text-sm">
 						By clicking continue, you agree to our{" "}
