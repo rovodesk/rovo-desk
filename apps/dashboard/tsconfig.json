@@ -7,12 +7,6 @@
       "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "../../packages/billing/components/billing-history-table.tsx",
-    "../../packages/billing/components/payment-method.tsx",
-    "../../packages/billing/components/subscription-overview.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
