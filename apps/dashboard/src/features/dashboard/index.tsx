@@ -3,7 +3,6 @@ import {
 	hasPlatformAccessRole,
 } from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
-import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -19,10 +18,12 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { Header } from "@zero-heads-lab/design-system/layout/header";
-import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Search } from "@/components/search";
+import { useProfile } from "@/hooks/use-profile";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
@@ -36,7 +37,11 @@ export function Dashboard() {
 		activedomainId ?? ""
 	);
 
-	const isLoading = isSessionLoading || isDomainLoading;
+	// TODO: Remove this after testing
+	const { data: profile, isLoading: isProfileLoading } = useProfile();
+	console.log(profile);
+
+	const isLoading = isSessionLoading || isDomainLoading || isProfileLoading;
 
 	if (isLoading) {
 		return <DashboardSkeleton />;
@@ -130,10 +135,10 @@ export function Dashboard() {
 									You made 265 sales this month.
 								</CardDescription>
 							</CardHeader>
-							<CardContent className="ps-2">
-								{/* Replace with your Chart component */}
+							<CardContent>
+								{/* Replace with your RecentSales list */}
 								<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
-									Chart Area
+									Sales List
 								</div>
 							</CardContent>
 						</Card>

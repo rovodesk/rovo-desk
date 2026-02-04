@@ -1,10 +1,8 @@
-import type { SidebarConfig } from "@zero-heads-lab/design-system/types/sidebar";
 import {
 	Book,
 	CreditCard,
 	FileText,
 	Funnel,
-	Inbox,
 	LayoutDashboard,
 	LifeBuoy,
 	ListTodo,
@@ -12,11 +10,17 @@ import {
 	Megaphone,
 	MessagesSquare,
 	Package,
+	Package2,
+	PartyPopper,
 	PencilRuler,
 	SendIcon,
 	Settings,
 	SquareUserRound,
+	Users2,
 } from "lucide-react";
+import type { SidebarConfig } from "@/types/sidebar";
+
+//TODO: Configure Sidebar Data Properly
 
 export const SIDEBAR_CONFIG: SidebarConfig = {
 	navGroups: [
@@ -27,32 +31,143 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Dashboard",
 					url: "/",
 					icon: LayoutDashboard,
+					visibility: {
+						roles: [
+							"verified",
+							"superAdmin",
+							"moderator",
+							"support",
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
+				},
+				{
+					title: "Feature Flags",
+					url: "/feature-flags",
+					icon: Package2,
+					visibility: {
+						roles: ["superAdmin"],
+					},
+				},
+				{
+					title: "Sales",
+					url: "/sales",
+					icon: MapIcon,
+					visibility: {
+						roles: ["superAdmin"],
+					},
 				},
 				{
 					title: "Conversations",
 					url: "/conversations",
 					icon: MessagesSquare,
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "Tasks",
 					url: "/tasks",
 					icon: ListTodo,
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "My Team",
 					icon: SquareUserRound,
 					url: "/my-team",
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "Integrations",
 					url: "/integrations",
 					icon: Package,
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 			],
 		},
 		{
 			title: "Workspace",
 			items: [
+				{
+					title: "Manage Workspace",
+					icon: Users2,
+					items: [
+						{ title: "Overview", url: "/workspace" },
+						{ title: "Members", url: "/workspace/members" },
+						{ title: "Teams", url: "/workspace/teams" },
+						{ title: "Customise", url: "/workspace/customise" },
+					],
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
+				},
+				{
+					title: "Organizations",
+					icon: Users2,
+					items: [
+						{
+							title: "All Organizations",
+							url: "/organizations",
+						},
+						{
+							title: "Create Organization",
+							url: "/organizations/create",
+						},
+					],
+					visibility: {
+						roles: ["superAdmin"],
+					},
+				},
+				{
+					title: "Users",
+					icon: Users2,
+					items: [
+						{ title: "All Users", url: "/users" },
+						{ title: "Create User", url: "/users/create" },
+					],
+					visibility: {
+						roles: ["superAdmin"],
+					},
+				},
+				{
+					title: "Teams",
+					icon: Users2,
+					items: [
+						{ title: "All Teams", url: "/teams" },
+						{ title: "Create Team", url: "/teams/create" },
+					],
+					visibility: {
+						roles: ["superAdmin"],
+					},
+				},
 				{
 					title: "Funnel",
 					icon: Funnel,
@@ -61,6 +176,13 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Leads", url: "/leads" },
 						{ title: "Network", url: "/network" },
 					],
+					visibility: {
+						roles: [
+							"organizationMember",
+							"organizationAdmin",
+							"organizationOwner",
+						],
+					},
 				},
 				{
 					title: "Knowledge Base",
@@ -71,38 +193,55 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Categories", url: "/knowledge-base/categories" },
 						{ title: "Tags", url: "/knowledge-base/tags" },
 					],
+					visibility: {
+						roles: [
+							"organizationMember",
+							"organizationAdmin",
+							"organizationOwner",
+						],
+					},
 				},
 			],
 		},
 		{
 			title: "Quick Actions",
 			items: [
-<<<<<<< HEAD
-				{ title: "Billing", url: "/settings/billing", icon: CreditCard },
-				{ title: "Settings", url: "/settings", icon: Settings },
-				{ title: "Audit Logs", url: "/audit-logs", icon: FileText },
-=======
 				{
 					title: "Billing",
 					url: "/settings/billing",
 					icon: CreditCard,
+					visibility: { roles: ["organizationOwner", "organizationAdmin"] },
 				},
 				{
 					title: "Settings",
 					url: "/settings",
 					icon: Settings,
+					visibility: {
+						roles: [
+							"superAdmin",
+							"moderator",
+							"organizationOwner",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "Audit Logs",
 					url: "/audit-logs",
 					icon: FileText,
+					visibility: {
+						roles: [
+							"superAdmin",
+							"moderator",
+							"organizationOwner",
+							"organizationAdmin",
+						],
+					},
 				},
->>>>>>> 41a6b28 (Feat/api (#6))
 			],
 		},
 	],
 	quickLinks: {
-<<<<<<< HEAD
 		primary: [
 			{
 				title: "Create Draft",
@@ -127,9 +266,9 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		],
 		secondary: [
 			{
-				title: "Inbox",
-				url: "/inbox",
-				icon: Inbox,
+				title: "Create Campaign",
+				url: "/campaigns/create",
+				icon: Megaphone,
 				visibility: {
 					roles: [
 						"organizationMember",
@@ -147,18 +286,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 				},
 			},
 		],
-=======
-		primary: {
-			title: "Create Draft",
-			url: "/",
-			icon: PencilRuler,
-		},
-		secondary: {
-			title: "Create Campaign",
-			url: "/campaigns/create",
-			icon: Megaphone,
-		},
->>>>>>> 41a6b28 (Feat/api (#6))
 	},
 	footer: [
 		{ title: "Help Center", url: "/help-center", icon: LifeBuoy },
