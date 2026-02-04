@@ -9,5 +9,7 @@ export const AUTH_CONFIG = {
 	RATE_LIMIT_WINDOW_IN_SECS: 60, // 60 seconds
 	RATE_LIMIT_MAX_REQUESTS: 100,
 
+	DASHBOARD_URL: "http://localhost:3001",
+
 	IMPERSONATION_SESSION_DURATION_IN_SECS: 60 * 60 * 6, // 6 hours
 };
