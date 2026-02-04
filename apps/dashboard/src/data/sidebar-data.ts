@@ -30,7 +30,15 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/",
 					icon: LayoutDashboard,
 					visibility: {
-						roles: ["verified"],
+						roles: [
+							"verified",
+							"superAdmin",
+							"moderator",
+							"support",
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
 					},
 				},
 				{
@@ -38,7 +46,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/feature-flags",
 					icon: Package2,
 					visibility: {
-						roles: ["superAdmin", "moderator"],
+						roles: ["superAdmin"],
 					},
 				},
 				{
@@ -46,7 +54,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/sales",
 					icon: MapIcon,
 					visibility: {
-						roles: ["superAdmin", "moderator"],
+						roles: ["superAdmin"],
 					},
 				},
 				{
@@ -94,7 +102,11 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					icon: SquareUserRound,
 					url: "/my-team",
 					visibility: {
-						roles: ["organizationMember"],
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
 					},
 				},
 				{

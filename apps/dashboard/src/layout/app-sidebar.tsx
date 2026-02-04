@@ -65,10 +65,8 @@ export function AppSidebar({
 				<SidebarGroup>
 					<SidebarMenu>
 						<SidebarMenu>
-							{Boolean(
-								sidebarData.quickLinks?.primary?.length ||
-									sidebarData.quickLinks?.secondary?.length
-							) && (
+							{(sidebarData.quickLinks?.primary?.length ||
+								sidebarData.quickLinks?.secondary?.length) && (
 								<SidebarMenuItem className="flex items-center gap-2">
 									{/* PRIMARY ACTIONS */}
 									{sidebarData.quickLinks?.primary?.map((item) => (
