@@ -20,9 +20,7 @@
     "zod": "^4.3.5",
     "@t3-oss/env-core": "^0.13.10",
     "motion": "^12.28.1",
-    "cmdk": "^1.1.1",
-    "@cloudflare/workers-types": "^4.20260130.0",
-    "ioredis": "^5.9.2"
+    "cmdk": "^1.1.1"
   },
   "catalogs": {
     "react19": {
@@ -85,6 +83,8 @@
     "infra:down": "docker-compose down"
   },
   "devDependencies": {
+    "@types/vite": "^7.1.7",
+    "@cloudflare/workers-types": "^4.20260130.0",
     "@types/bun": "latest",
     "@zero-heads-lab/typescript-config": "workspace:*",
     "@biomejs/biome": "2.3.10",

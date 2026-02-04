@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useAuthContext } from "../client/context";
+import { AUTH_CONFIG } from "../config";
 import type { MutationOptions, OAuthProvider } from "../types";
 
 export const useOauthSignIn = (options?: MutationOptions) => {
@@ -14,7 +15,7 @@ export const useOauthSignIn = (options?: MutationOptions) => {
 			return await authClient.signIn.social({
 				requestSignUp: true,
 				provider,
-				callbackURL: "/",
+				callbackURL: AUTH_CONFIG.DASHBOARD_URL,
 			});
 		},
 		onSuccess: () => {

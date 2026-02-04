@@ -1,3 +1,4 @@
+import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
 import { z } from "zod";
 import type {
 	AuthRole,
@@ -132,4 +133,39 @@ export function determineAccessRole(role: unknown): AuthRole {
 
 export function isAuthRole(value: unknown): value is AuthRole {
 	return AUTH_ROLES.includes(value as AuthRole);
+}
+
+export function getDeviceInfo(userAgent?: string | null) {
+	if (!userAgent) {
+		return { label: "Unknown device", Icon: MonitorIcon };
+	}
+
+	const ua = userAgent.toLowerCase();
+
+	const isMobile =
+		ua.includes("iphone") || ua.includes("android") || ua.includes("mobile");
+
+	const isWeb =
+		ua.includes("chrome") ||
+		ua.includes("firefox") ||
+		ua.includes("safari") ||
+		ua.includes("edge") ||
+		ua.includes("mozilla");
+
+	const isDesktop =
+		ua.includes("windows") || ua.includes("mac") || ua.includes("linux");
+
+	if (isMobile) {
+		return { label: "Mobile device", Icon: SmartphoneIcon };
+	}
+
+	if (isWeb) {
+		return { label: "Browser", Icon: Globe2Icon };
+	}
+
+	if (isDesktop) {
+		return { label: "Desktop device", Icon: MonitorIcon };
+	}
+
+	return { label: "Unknown device", Icon: MonitorIcon };
 }

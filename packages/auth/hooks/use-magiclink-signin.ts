@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { capitalize, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";
+import { AUTH_CONFIG } from "../config";
 import type { MutationOptions } from "../types";
 
 export const useMagicLinkSignIn = (options?: MutationOptions) => {
@@ -11,7 +12,7 @@ export const useMagicLinkSignIn = (options?: MutationOptions) => {
 			return await authClient.signIn.magicLink({
 				email,
 				name: capitalize(Placeholder.name(2, " ")),
-				callbackURL: "/",
+				callbackURL: AUTH_CONFIG.DASHBOARD_URL,
 			});
 		},
 		onSuccess: () => {

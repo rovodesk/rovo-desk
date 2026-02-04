@@ -6,19 +6,16 @@ export const keys = createEnv({
 	extends: [billingKeys],
 	server: {
 		BETTER_AUTH_SECRET: z.string(),
-		BETTER_AUTH_URL: z.url().default("http://localhost:3001").optional(),
-		BETTER_AUTH_BASE_PATH: z.string().default("/api/auth").optional(),
+		BETTER_AUTH_URL: z.url().default("http://localhost:5001").optional(),
+		BETTER_AUTH_BASE_PATH: z.string().default("/auth").optional(),
 
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
 
 		GITHUB_CLIENT_ID: z.string(),
 		GITHUB_CLIENT_SECRET: z.string(),
-	},
-	clientPrefix: "VITE_",
-	client: {
-		VITE_AUTH_BASE_URL: z.string(),
-		VITE_AUTH_BASE_PATH: z.string(),
+
+		ALLOWED_ORIGINS: z.string(),
 	},
 	runtimeEnv: {
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
@@ -31,7 +28,6 @@ export const keys = createEnv({
 		GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
 		GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
 
-		VITE_AUTH_BASE_URL: import.meta.env.VITE_AUTH_BASE_URL,
-		VITE_AUTH_BASE_PATH: import.meta.env.VITE_AUTH_BASE_PATH,
+		ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
 	},
 });

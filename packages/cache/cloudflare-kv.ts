@@ -1,5 +1,3 @@
-import type { KVNamespace } from "@cloudflare/workers-types";
-import { noop } from "@zero-heads-lab/shared/utils";
 import type { ICacheStore } from "./interface";
 
 export class KvCacheStore implements ICacheStore {
@@ -22,6 +20,4 @@ export class KvCacheStore implements ICacheStore {
 	async delete(key: string): Promise<void> {
 		await this.kv.delete(key);
 	}
-
-	close = noop;
 }

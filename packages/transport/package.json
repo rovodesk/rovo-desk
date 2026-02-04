@@ -1,0 +1,27 @@
+{
+  "name": "@zero-heads-lab/transport",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@orpc/client": "^1.13.4",
+    "@orpc/contract": "^1.13.4",
+    "@orpc/server": "^1.13.4",
+    "@orpc/tanstack-query": "^1.13.4",
+    "@t3-oss/env-core": "catalog:",
+    "@zero-heads-lab/auth": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@zero-heads-lab/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}
