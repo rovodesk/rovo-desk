@@ -1,48 +1,14 @@
-<<<<<<< HEAD
 import type { permissions, Resource } from "./access-control";
 import type { authClient } from "./client";
-
-=======
-import type { authClient } from "./client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import type { createAuth } from "./server";
 
 export type AuthInstance = Awaited<ReturnType<typeof createAuth>>;
-export type AuthClient = ReturnType<typeof authClient>;
 
-<<<<<<< HEAD
-export type Session = AuthInstance["$Infer"]["Session"];
-export type AuthSession = Session["session"];
-export type AuthUser = Session["user"];
-export type DeviceSession = {
-	session: {
-		id: string;
-		createdAt: Date;
-		updatedAt: Date;
-		userId: string;
-		expiresAt: Date;
-		token: string;
-		ipAddress?: string | null;
-		userAgent?: string | null;
-		lastActiveAt?: Date | null;
-		revokedAt?: Date | null;
-	};
-
-	user: {
-		id: string;
-		email: string;
-		emailVerified: boolean;
-		name: string;
-		image?: string | null;
-	};
-};
-=======
 export type AuthClient = ReturnType<typeof authClient>;
 
 export type Session = AuthInstance["$Infer"]["Session"];
 export type AuthSession = Session["session"];
 export type AuthUser = Session["user"];
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 export type Organization = {
 	id: string;
@@ -55,7 +21,6 @@ export type NavigateFn = (href: string) => void;
 
 export type ReplaceFn = (href: string) => void;
 
-<<<<<<< HEAD
 export type MutationOptions = {
 	onSuccess?: (...args: Record<string, unknown>[]) => void;
 	onError?: (error: Error) => void;
@@ -101,18 +66,4 @@ export type PermissionTuple = {
  */
 export type PermissionGrant = {
 	[R in Resource]?: ActionsOf<R>[];
-=======
-export type CheckAuthorizationParams = {
-	role: string;
-	permission: string;
-	feature: string;
-	plan: string;
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 };
-
-export type MutationOptions = {
-	onSuccess?: (...args: Record<string, unknown>[]) => void;
-	onError?: (error: Error) => void;
-};
-
-export type OAuthProvider = "google" | "github";

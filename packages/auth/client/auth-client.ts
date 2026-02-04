@@ -2,6 +2,7 @@ import { passkeyClient } from "@better-auth/passkey/client";
 // import { polarClient } from "@polar-sh/better-auth/client";
 import type { BetterAuthClientPlugin } from "better-auth";
 import {
+	adminClient,
 	inferAdditionalFields,
 	lastLoginMethodClient,
 	magicLinkClient,
@@ -9,7 +10,7 @@ import {
 	organizationClient,
 } from "better-auth/client/plugins";
 import { createAuthClient as createBetterAuthClient } from "better-auth/react";
-import { accessControl, admin, member, owner } from "../access-control";
+import { AllRoles, accessControl } from "../access-control";
 import { keys } from "../keys";
 import type { AuthInstance } from "../types";
 
@@ -18,9 +19,7 @@ const Plugins = [
 	organizationClient({
 		accessControl,
 		roles: {
-			owner,
-			admin,
-			member,
+			...AllRoles,
 		},
 		teams: {
 			enabled: true,
@@ -30,6 +29,7 @@ const Plugins = [
 	magicLinkClient(),
 	passkeyClient(),
 	// polarClient(),
+	adminClient(),
 	lastLoginMethodClient(),
 ] satisfies BetterAuthClientPlugin[];
 

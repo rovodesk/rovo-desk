@@ -2,6 +2,8 @@
    Core navigation types
    ========================= */
 
+import type { AuthRole, Resource } from "@zero-heads-lab/auth/access-control";
+import type { PermissionAction } from "@zero-heads-lab/auth/types";
 import type { LucideIcon } from "lucide-react";
 
 export type NavRoute = string & {};
@@ -31,14 +33,18 @@ export type TypedRoute = keyof RouteMap extends never
 	? NavRoute
 	: keyof RouteMap;
 
-/* =========================
-   Base items
-   ========================= */
+export type NavItemVisibility = {
+	roles?: AuthRole[];
+	actions?: PermissionAction[];
+	resource?: Resource;
+	// plan?: string
+};
 
 export type BaseNavItem = {
 	title: string;
-	badge?: string;
+	badge?: number;
 	icon?: IconComponent;
+	visibility?: NavItemVisibility;
 };
 
 /* =========================
@@ -68,9 +74,9 @@ export type NavGroup = {
 
 export type SidebarConfig = {
 	navGroups: NavGroup[];
-	quickLink?: {
-		primary?: Omit<NavLink, "items">;
-		secondary?: Omit<NavLink, "items" | "badge">;
+	quickLinks?: {
+		primary?: Omit<NavLink, "items">[];
+		secondary?: Omit<NavLink, "items" | "badge">[];
 	};
 	footer: NavItem[];
 };

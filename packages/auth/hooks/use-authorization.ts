@@ -40,10 +40,8 @@ export function useAuthorization<R extends Resource>({
 				},
 			});
 
-			console.log("Permission result:", { data });
-
 			if (error) throw error;
-			return Boolean(data?.success);
+			return Boolean(data);
 		},
 		enabled: accessRole !== "anonymous",
 		staleTime: 60_000,

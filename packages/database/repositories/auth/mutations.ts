@@ -18,6 +18,7 @@ export async function markUserAsDeleted(userId: string) {
 		.update(userSchema)
 		.set({
 			deletedAt: new Date(),
+			role: "deleted",
 		})
 		.where(eq(userSchema.id, userId));
 }
@@ -136,6 +137,19 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Team member creation failed");
 		}
 
+		// 5. Mark User as Member
+		try {
+			await tx
+				.update(userSchema)
+				.set({
+					role: "organizationOwner",
+				})
+				.where(eq(userSchema.id, userId));
+		} catch {
+			tx.rollback();
+			throw new Error("User role update failed");
+		}
+
 		return {
 			orgId: org.id,
 			orgName: org.name,
@@ -144,4 +158,14 @@ export async function createNewUserWithProfile(userId: string) {
 			teamName: team.name,
 		};
 	});
+}
+
+export async function markUserAsVerified(userId: string) {
+	const db = createDatabase();
+	return await db
+		.update(userSchema)
+		.set({
+			role: "verified",
+		})
+		.where(eq(userSchema.id, userId));
 }

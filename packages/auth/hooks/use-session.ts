@@ -17,8 +17,11 @@ export function useSession(): UseSessionResult {
 	const { data, isLoading, error, refetch } = useQuery<Session | null>({
 		queryKey: ["auth", "session"],
 		queryFn: async () => {
-			const res = await authClient.getSession();
-			return res?.data ?? null;
+			const { data, error } = await authClient.getSession();
+			if (error) {
+				throw error;
+			}
+			return data ?? null;
 		},
 
 		// ✅ Auth-friendly caching

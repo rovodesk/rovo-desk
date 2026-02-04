@@ -10,7 +10,7 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { AllRoles, accessControl } from "../access-control";
 import { AUTH_CONFIG } from "./config";
 
@@ -97,5 +97,7 @@ export const AuthPlugins = () => {
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
+		// This must be at the last
+		tanstackStartCookies(),
 	].filter(Boolean) as BetterAuthPlugin[];
 };

@@ -18,11 +18,11 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 
 		onSuccess: () => {
 			// Clear client state AFTER sign-out succeeds
+			queryClient.cancelQueries();
 			queryClient.clear();
+			queryClient.resetQueries();
 
 			options?.onSuccess?.();
-
-			// Navigate — do NOT throw
 			replace("/sign-in");
 		},
 
