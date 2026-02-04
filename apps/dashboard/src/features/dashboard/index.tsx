@@ -1,13 +1,9 @@
-<<<<<<< HEAD
 import {
 	determineAccessRole,
 	hasPlatformAccessRole,
 } from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
 import { Search } from "@zero-heads-lab/design-system/components/search";
-=======
-import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -27,13 +23,6 @@ import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
-<<<<<<< HEAD
-import { useProfile } from "@/hooks/use-profile";
-=======
-import { Search } from "@/components/search";
-import { Header } from "@/layout/header";
-import { MainContent } from "@/layout/main-content";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
@@ -47,15 +36,7 @@ export function Dashboard() {
 		activedomainId ?? ""
 	);
 
-<<<<<<< HEAD
-	// TODO: Remove this after testing
-	const { data: profile, isLoading: isProfileLoading } = useProfile();
-	console.log(profile);
-
-	const isLoading = isSessionLoading || isDomainLoading || isProfileLoading;
-=======
 	const isLoading = isSessionLoading || isDomainLoading;
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 	if (isLoading) {
 		return <DashboardSkeleton />;
@@ -91,24 +72,12 @@ export function Dashboard() {
 
 			{/* ===== Main ===== */}
 			<MainContent fluid>
-<<<<<<< HEAD
-<<<<<<< HEAD
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
 						{hasPlatformAccessRole(determineAccessRole(session?.user?.role))
 							? "Platform"
 							: domain?.name}{" "}
-=======
-				<div className="mb-2 flex items-center justify-between space-y-2 px-2">
-					<h1 className="inline-flex items-center gap-2 font-bold text-2xl tracking-tight">
-						{domain?.name ? domain.name : <Skeleton className="h-8 w-40" />}{" "}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 						Dashboard
-=======
-				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
-					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{domain?.name} Dashboard
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 					</h1>
 					<div className="flex items-center space-x-2">
 						<button className="relative p-[3px]">
@@ -161,10 +130,10 @@ export function Dashboard() {
 									You made 265 sales this month.
 								</CardDescription>
 							</CardHeader>
-							<CardContent>
-								{/* Replace with your RecentSales list */}
+							<CardContent className="ps-2">
+								{/* Replace with your Chart component */}
 								<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
-									Sales List
+									Chart Area
 								</div>
 							</CardContent>
 						</Card>

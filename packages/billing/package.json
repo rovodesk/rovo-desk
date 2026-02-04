@@ -21,8 +21,13 @@
 =======
     "zod": "catalog:",
     "react": "catalog:react19",
+<<<<<<< HEAD
     "lucide-react": "catalog:"
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+    "lucide-react": "catalog:",
+    "@zero-heads-lab/design-system": "workspace:*"
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

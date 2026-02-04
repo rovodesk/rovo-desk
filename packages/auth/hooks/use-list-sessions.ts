@@ -7,7 +7,7 @@ export function useListSessions(options?: QueryOptions) {
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ["auth", "sessions"],
 		queryFn: async () => {
-			const res = (await authClient.listSessions()).data;
+			const res = (await authClient.multiSession.listDeviceSessions()).data;
 			return res ?? [];
 		},
 

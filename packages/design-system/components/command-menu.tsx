@@ -31,7 +31,11 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.):apps/dashboard/src/components/command-menu.tsx
+=======
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.):apps/dashboard/src/components/command-menu.tsx
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { useSearch } from "@/providers/search";
 import type { NavCollapsible } from "@/types/sidebar";
@@ -44,12 +48,16 @@ export function CommandMenu() {
 
 <<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 <<<<<<< HEAD:packages/design-system/components/command-menu.tsx
+<<<<<<< HEAD:packages/design-system/components/command-menu.tsx
 =======
 	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/components/command-menu.tsx
 =======
 	const { sidebarData, isLoading } = useSidebarData();
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.):apps/dashboard/src/components/command-menu.tsx
+=======
+	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.):apps/dashboard/src/components/command-menu.tsx
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {

@@ -5,6 +5,7 @@ import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdow
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
+import { hasPlatformAccessRole } from "@zero-heads-lab/auth/helpers";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import {
@@ -23,6 +24,7 @@ import {
 <<<<<<< HEAD
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
+<<<<<<< HEAD
 import { useSidebarData } from "@zero-heads-lab/design-system/hooks/use-sidebar-data";
 import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
@@ -32,6 +34,9 @@ import { Button } from "../../../../packages/design-system/components/ui/button"
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
+=======
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { AppTitle } from "./app-title";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
@@ -42,6 +47,7 @@ export function AppSidebar() {
 <<<<<<< HEAD
 	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
+<<<<<<< HEAD
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
 	}
@@ -55,6 +61,15 @@ export function AppSidebar() {
 
 	if (isLoading) return <AppSidebarSkeleton />;
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+
+	if (isLoading) {
+		return <AppSidebarSkeleton />;
+	}
+
+	console.log(role);
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 
 	return (
 		<Sidebar
@@ -65,7 +80,8 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
-				<DomainSwitcher />
+				{/* Domain switcher is hidden for unverified users */}
+				{hasPlatformAccessRole(role) ? null : <DomainSwitcher />}
 			</SidebarHeader>
 
 			<SidebarContent>
@@ -98,20 +114,26 @@ export function AppSidebar() {
 =======
 				<SidebarGroup>
 					<SidebarMenu>
-						{sidebarData.quickLink && (
-							<SidebarMenuItem className="flex items-center gap-2">
-								{sidebarData.quickLink?.primary && (
-									<SidebarMenuButton
-										className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-										tooltip={sidebarData.quickLink?.primary?.title}
-									>
-										{sidebarData.quickLink.primary?.icon && (
-											<sidebarData.quickLink.primary.icon />
-										)}
-										<span>{sidebarData.quickLink.primary?.title}</span>
-									</SidebarMenuButton>
-								)}
+						<SidebarMenu>
+							{(sidebarData.quickLinks?.primary?.length ||
+								sidebarData.quickLinks?.secondary?.length) && (
+								<SidebarMenuItem className="flex items-center gap-2">
+									{/* PRIMARY ACTIONS */}
+									{sidebarData.quickLinks?.primary?.map((item) => (
+										<SidebarMenuButton
+											asChild
+											className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+											key={item.title}
+											tooltip={item.title}
+										>
+											<Link className="flex items-center gap-2" to={item.url}>
+												{item.icon && <item.icon />}
+												<span>{item.title}</span>
+											</Link>
+										</SidebarMenuButton>
+									))}
 
+<<<<<<< HEAD
 								{sidebarData.quickLink?.secondary && (
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 									<Button
@@ -148,6 +170,25 @@ export function AppSidebar() {
 								)}
 							</SidebarMenuItem>
 						)}
+=======
+									{/* SECONDARY ACTIONS */}
+									{sidebarData.quickLinks?.secondary?.map((item) => (
+										<Button
+											asChild
+											className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
+											key={item.title}
+											size="icon"
+										>
+											<Link to={item.url}>
+												{item.icon && <item.icon />}
+												<span className="sr-only">{item.title}</span>
+											</Link>
+										</Button>
+									))}
+								</SidebarMenuItem>
+							)}
+						</SidebarMenu>
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 					</SidebarMenu>
 				</SidebarGroup>
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)

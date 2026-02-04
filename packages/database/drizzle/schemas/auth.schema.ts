@@ -24,12 +24,18 @@ export const user = authSchema.table("user", {
 	isAnonymous: boolean("isAnonymous"),
 	lastLoginMethod: text("lastLoginMethod"),
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 	role: text("role").notNull().default("unverified"),
 	banned: boolean("banned"),
 	banReason: text("banReason"),
 	banExpires: date("banExpires"),
+<<<<<<< HEAD
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -308,9 +314,12 @@ export const session = authSchema.table(
 		token: text("token").notNull().unique(),
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		// 🔒 Critical: enforce one active session per device
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		deviceId: text("deviceId"),
 
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),

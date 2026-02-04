@@ -45,11 +45,11 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		onSuccess: () => {
 			// Clear client state AFTER sign-out succeeds
+			queryClient.cancelQueries();
 			queryClient.clear();
+			queryClient.resetQueries();
 
 			options?.onSuccess?.();
-
-			// Navigate — do NOT throw
 			replace("/sign-in");
 		},
 <<<<<<< HEAD
