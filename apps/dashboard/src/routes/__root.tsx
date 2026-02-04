@@ -20,6 +20,7 @@ import appCss from "@zero-heads-lab/design-system/styles/default.css?url";
 import { AppNavigationProgress } from "@/components/app-nav-progress";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -47,7 +48,10 @@ function RootComponent() {
 		<RootDocument>
 			<QueryClientProvider client={queryClient}>
 				<UIProvider>
-					<AuthProvider replace={(href) => router.navigate({ to: href })}>
+					<AuthProvider
+						authClient={authClient}
+						replace={(href) => router.navigate({ to: href })}
+					>
 						<AppNavigationProgress />
 						<Outlet />
 					</AuthProvider>

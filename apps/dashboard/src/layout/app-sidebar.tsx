@@ -31,8 +31,6 @@ export function AppSidebar() {
 		return <AppSidebarSkeleton />;
 	}
 
-	console.log(role);
-
 	return (
 		<Sidebar
 			className="dark:border-r"

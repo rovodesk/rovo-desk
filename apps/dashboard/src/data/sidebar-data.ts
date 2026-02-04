@@ -32,7 +32,15 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/",
 					icon: LayoutDashboard,
 					visibility: {
-						roles: ["verified", "superAdmin"],
+						roles: [
+							"verified",
+							"superAdmin",
+							"moderator",
+							"support",
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
 					},
 				},
 				{

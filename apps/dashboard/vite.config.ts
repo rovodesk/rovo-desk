@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { AUTH_CONFIG } from "@zero-heads-lab/auth/config";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
@@ -24,6 +25,10 @@ const config = defineConfig({
 	],
 	server: {
 		port: 3001,
+		cors: {
+			...AUTH_CONFIG.CORS,
+			origin: "*",
+		},
 	},
 	optimizeDeps: {
 		exclude: [

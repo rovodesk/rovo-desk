@@ -21,6 +21,7 @@ import {
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Search } from "@/components/search";
+import { useProfile } from "@/hooks/use-profile";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 
@@ -36,7 +37,11 @@ export function Dashboard() {
 		activedomainId ?? ""
 	);
 
-	const isLoading = isSessionLoading || isDomainLoading;
+	// TODO: Remove this after testing
+	const { data: profile, isLoading: isProfileLoading } = useProfile();
+	console.log(profile);
+
+	const isLoading = isSessionLoading || isDomainLoading || isProfileLoading;
 
 	if (isLoading) {
 		return <DashboardSkeleton />;
