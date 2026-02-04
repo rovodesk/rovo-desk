@@ -82,25 +82,11 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Conversations",
 					url: "/conversations",
 					icon: MessagesSquare,
-					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
-					},
 				},
 				{
 					title: "Tasks",
 					url: "/tasks",
 					icon: ListTodo,
-					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
-					},
 				},
 				{
 					title: "My Team",
