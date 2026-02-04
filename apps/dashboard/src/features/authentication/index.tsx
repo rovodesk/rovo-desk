@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { MagicLinkForm } from "@zero-heads-lab/auth/components/magic-link-form";
+import { OauthButtons } from "@zero-heads-lab/auth/components/oauth-buttons";
+// import { PasskeyButton } from "@zero-heads-lab/auth/components/passkey-button";
 import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
-import { MagicLinkForm } from "./_components/magic-link-form";
-import { OauthButtons } from "./_components/oauth-buttons";
-import PasskeyButton from "./_components/passkey-logic";
 
 type AuthProps = {
 	variant?: "sign-in" | "sign-up";
@@ -42,7 +42,8 @@ export function Auth({ variant = "sign-in" }: AuthProps) {
 					</div>
 
 					<OauthButtons />
-					<PasskeyButton />
+					{/* FIXME: NEED TO FIX */}
+					{/* <PasskeyButton /> */}
 					<MagicLinkForm />
 
 					<p className="mt-8 text-muted-foreground text-sm">

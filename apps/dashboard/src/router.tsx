@@ -5,8 +5,7 @@ import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
 import { routeTree } from "@/routeTree.gen";
 
-// Setup Query Client with Convex
-const queryClient: QueryClient = new QueryClient({
+export const queryClient: QueryClient = new QueryClient({
 	defaultOptions: {
 		queries: {},
 	},

@@ -1,5 +1,5 @@
+import { ConfirmDialog } from "@zero-heads-lab/design-system/components/confirm-dialog";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { TasksImportDialog } from "./tasks-import-dialog";
 import { TasksMutateDrawer } from "./tasks-mutate-drawer";
 import { useTasks } from "./tasks-provider";

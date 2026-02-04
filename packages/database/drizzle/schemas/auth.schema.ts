@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	date,
 	index,
 	integer,
 	jsonb,
@@ -20,8 +21,12 @@ export const user = authSchema.table("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("emailVerified").notNull().default(false),
 	image: text("image"),
-	isAdmin: boolean("isAdmin").notNull().default(false),
 	isAnonymous: boolean("isAnonymous"),
+	lastLoginMethod: text("lastLoginMethod"),
+	role: text("role").notNull().default("unverified"),
+	banned: boolean("banned"),
+	banReason: text("banReason"),
+	banExpires: date("banExpires"),
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -299,9 +304,15 @@ export const session = authSchema.table(
 
 		token: text("token").notNull().unique(),
 
+		deviceId: text("deviceId"),
+
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
 
 		isAnonymous: boolean("isAnonymous"),
+
+		impersonatedBy: text("impersonatedBy").references(() => user.id, {
+			onDelete: "cascade",
+		}),
 
 		activeOrganizationId: text("activeOrganizationId").references(
 			() => organization.id,
@@ -319,13 +330,19 @@ export const session = authSchema.table(
 			.defaultNow()
 			.notNull(),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
+		lastActiveAt: timestamp("lastActiveAt", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+
+		// 🔑 NEW: soft revocation
+		revokedAt: timestamp("revokedAt", { withTimezone: true }),
 	},
 	(t) => [
 		index("sessionUserIdx").on(t.userId),
 		index("sessionExpiresIdx").on(t.expiresAt),
+
+		// 🔒 Critical: enforce one active session per device
+		index("sessionActiveDeviceIdx").on(t.userId, t.deviceId),
 	]
 );
 

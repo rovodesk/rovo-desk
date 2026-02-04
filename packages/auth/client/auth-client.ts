@@ -1,36 +1,42 @@
 import { passkeyClient } from "@better-auth/passkey/client";
+// import { polarClient } from "@polar-sh/better-auth/client";
+import type { BetterAuthClientPlugin } from "better-auth";
 import {
+	adminClient,
 	inferAdditionalFields,
+	lastLoginMethodClient,
 	magicLinkClient,
 	multiSessionClient,
 	organizationClient,
 } from "better-auth/client/plugins";
-
-import { createAuthClient } from "better-auth/react";
-
-import { accessControl, admin, member, owner } from "../access-control";
-
+import { createAuthClient as createBetterAuthClient } from "better-auth/react";
+import { AllRoles, accessControl } from "../access-control";
 import { keys } from "../keys";
 import type { AuthInstance } from "../types";
 
-export const authClient = createAuthClient({
-	baseURL: keys.VITE_BETTER_AUTH_URL,
-	basePath: keys.VITE_BETTER_AUTH_BASE_PATH,
-	plugins: [
-		inferAdditionalFields<AuthInstance>(),
-		organizationClient({
-			accessControl,
-			roles: {
-				owner,
-				admin,
-				member,
-			},
-			teams: {
-				enabled: true,
-			},
-		}),
-		multiSessionClient(),
-		magicLinkClient(),
-		passkeyClient(),
-	],
-});
+const Plugins = [
+	inferAdditionalFields<AuthInstance>(),
+	organizationClient({
+		accessControl,
+		roles: {
+			...AllRoles,
+		},
+		teams: {
+			enabled: true,
+		},
+	}),
+	multiSessionClient(),
+	magicLinkClient(),
+	passkeyClient(),
+	// polarClient(),
+	adminClient(),
+	lastLoginMethodClient(),
+] satisfies BetterAuthClientPlugin[];
+
+export function authClient() {
+	return createBetterAuthClient({
+		baseURL: keys.VITE_AUTH_BASE_URL,
+		basePath: keys.VITE_AUTH_BASE_PATH,
+		plugins: Plugins,
+	});
+}

@@ -1,3 +1,4 @@
+import type { KVNamespace } from "@cloudflare/workers-types";
 import { noop } from "@zero-heads-lab/shared/utils";
 import type { ICacheStore } from "./interface";
 

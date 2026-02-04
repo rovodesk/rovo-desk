@@ -9,19 +9,21 @@ import {
 	CommandSeparator,
 } from "@zero-heads-lab/design-system/components/ui/command";
 import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-area";
+import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from "lucide-react";
 import React from "react";
-import { useSidebarData } from "@/features/dashboard/layout/data";
-import type { NavCollapsible } from "@/features/dashboard/layout/types";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
+import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { useSearch } from "@/providers/search";
+import type { NavCollapsible } from "@/types/sidebar";
 
 export function CommandMenu() {
-	const navigate = useNavigate();
 	const { setTheme } = useTheme();
+	const navigate = useNavigate();
 	const { open, setOpen } = useSearch();
 
-	const { sidebarData } = useSidebarData();
+	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
 	const runCommand = React.useCallback(
 		(command: () => unknown) => {
@@ -30,6 +32,10 @@ export function CommandMenu() {
 		},
 		[setOpen]
 	);
+
+	if (isLoading) {
+		return <CommandMenuSkeleton open={open} />;
+	}
 
 	return (
 		<CommandDialog modal onOpenChange={setOpen} open={open}>
@@ -98,6 +104,57 @@ export function CommandMenu() {
 						>
 							<Laptop className="mr-2 size-4" /> <span>System Default</span>
 						</CommandItem>
+					</CommandGroup>
+				</ScrollArea>
+			</CommandList>
+		</CommandDialog>
+	);
+}
+
+function CommandMenuSkeleton({ open }: { open: boolean }) {
+	return (
+		<CommandDialog modal open={open}>
+			{/* Input */}
+			<CommandInput
+				className="opacity-50"
+				disabled
+				placeholder="Type a command or search..."
+			/>
+
+			<CommandList>
+				<ScrollArea className="h-72 pe-1" type="hover">
+					{/* Nav groups */}
+					{Array.from({ length: 3 }).map((_, groupIndex) => (
+						<CommandGroup heading="" key={groupIndex}>
+							<Skeleton className="mb-2 h-3 w-24" /> {/* Group title */}
+							{Array.from({ length: 4 }).map((_, itemIndex) => (
+								<div
+									className="flex items-center gap-3 px-2 py-2"
+									key={itemIndex}
+								>
+									<Skeleton className="size-4 rounded-sm" />
+									<div className="flex flex-1 items-center gap-2">
+										<Skeleton className="h-3 w-20" />
+										<Skeleton className="h-3 w-3" />
+										<Skeleton className="h-3 w-28" />
+									</div>
+								</div>
+							))}
+						</CommandGroup>
+					))}
+
+					<CommandSeparator />
+
+					{/* Theme section */}
+					<CommandGroup heading="">
+						<Skeleton className="mb-2 h-3 w-16" />
+
+						{Array.from({ length: 3 }).map((_, index) => (
+							<div className="flex items-center gap-3 px-2 py-2" key={index}>
+								<Skeleton className="size-4 rounded-sm" />
+								<Skeleton className="h-3 w-32" />
+							</div>
+						))}
 					</CommandGroup>
 				</ScrollArea>
 			</CommandList>
