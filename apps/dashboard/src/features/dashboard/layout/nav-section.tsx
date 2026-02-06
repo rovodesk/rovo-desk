@@ -113,6 +113,8 @@ function SidebarNavCollapsible({
 }) {
 	const { setOpenMobile } = useSidebar();
 
+	const isActive = isActiveRoute(href, item);
+
 	if (collapsed) {
 		return (
 			<SidebarMenuItem>
@@ -120,7 +122,7 @@ function SidebarNavCollapsible({
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
 							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-							isActive={isActiveRoute(href, item)}
+							isActive={isActive}
 							tooltip={item.title}
 						>
 							{item.icon && <item.icon />}
@@ -156,12 +158,12 @@ function SidebarNavCollapsible({
 	}
 
 	return (
-		<Collapsible asChild defaultOpen={isActiveRoute(href, item)}>
+		<Collapsible asChild defaultOpen={isActive}>
 			<SidebarMenuItem>
 				<CollapsibleTrigger asChild>
 					<SidebarMenuButton
 						className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-						isActive={isActiveRoute(href, item)}
+						isActive={isActive}
 						tooltip={item.title}
 					>
 						{item.icon && <item.icon />}
@@ -182,10 +184,10 @@ function SidebarNavCollapsible({
 								<SidebarMenuSubButton
 									asChild
 									className="bg-transparent! hover:bg-sidebar-accent!"
-									isActive={isActiveRoute(href, sub)}
+									isActive={isActive}
 									onClick={() => setOpenMobile(false)}
 								>
-									<a href={sub.url}>
+									<Link to={sub.url}>
 										{sub.icon && <sub.icon />}
 										<span>{sub.title}</span>
 										{sub.badge && (
@@ -193,7 +195,7 @@ function SidebarNavCollapsible({
 												{sub.badge}
 											</Badge>
 										)}
-									</a>
+									</Link>
 								</SidebarMenuSubButton>
 							</SidebarMenuSubItem>
 						))}

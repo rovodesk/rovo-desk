@@ -1,5 +1,4 @@
-import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
-import { DomainList } from "@zero-heads-lab/auth/components/domains-list";
+import { Link } from "@tanstack/react-router";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -16,19 +15,15 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
+import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
+import { SidebarNavSection } from "@/components/nav-section";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
-import { AppTitle } from "@/layout/app-title";
-import type { SidebarConfig } from "@/types/sidebar";
-import { SidebarNavSection } from "./nav-section";
 
-export function AppSidebar({
-	sidebarData: config,
-}: {
-	sidebarData: SidebarConfig;
-}) {
+export function AdminSidebar() {
 	const { collapsible, variant } = useLayout();
 
-	const { sidebarData, role, isLoading } = useSidebarData(config);
+	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
@@ -37,14 +32,6 @@ export function AppSidebar({
 	if (!sidebarData) {
 		return null;
 	}
-
-	const beforeQuickActions = sidebarData.navGroups.filter(
-		(group) => group.title !== "Quick Actions"
-	);
-
-	const quickActionsGroup = sidebarData.navGroups.find(
-		(group) => group.title === "Quick Actions"
-	);
 
 	return (
 		<Sidebar
@@ -55,110 +42,89 @@ export function AppSidebar({
 			<SidebarHeader>
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
-
-				{role === "organizationMember" ||
-					(role === "organizationAdmin" && <DomainSwitcher />)}
 			</SidebarHeader>
 
 			<SidebarContent>
-				{sidebarData.quickLinks && (
-					<SidebarGroup>
+				<SidebarGroup>
+					<SidebarMenu>
 						<SidebarMenu>
-							<SidebarMenuItem className="flex items-center gap-2">
-								{/* PRIMARY ACTIONS */}
-								{sidebarData.quickLinks.primary && (
-									<SidebarMenuButton
-										asChild
-										className="min-w-8 bg-primary hover:bg-primary/90"
-										tooltip={sidebarData.quickLinks.primary.title}
-									>
-										<a
-											className="flex items-center gap-2"
-											href={sidebarData.quickLinks.primary.url}
+							{Boolean(
+								sidebarData.quickLinks?.primary?.length ||
+									sidebarData.quickLinks?.secondary?.length
+							) && (
+								<SidebarMenuItem className="flex items-center gap-2">
+									{/* PRIMARY ACTIONS */}
+									{sidebarData.quickLinks?.primary?.map((item) => (
+										<SidebarMenuButton
+											asChild
+											className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+											key={item.title}
+											tooltip={item.title}
 										>
-											{sidebarData.quickLinks.primary.icon && (
-												<sidebarData.quickLinks.primary.icon />
-											)}
-											<span>{sidebarData.quickLinks.primary.title}</span>
-										</a>
-									</SidebarMenuButton>
-								)}
+											<Link className="flex items-center gap-2" to={item.url}>
+												{item.icon && <item.icon />}
+												<span>{item.title}</span>
+											</Link>
+										</SidebarMenuButton>
+									))}
 
-								{/* SECONDARY ACTIONS */}
-								{sidebarData.quickLinks.secondary && (
-									<Button
-										asChild
-										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
-										size="icon"
-									>
-										<a href={sidebarData.quickLinks.secondary.url}>
-											{sidebarData.quickLinks.secondary.icon && (
-												<sidebarData.quickLinks.secondary.icon />
-											)}
-											<span className="sr-only">
-												{sidebarData.quickLinks.secondary.title}
-											</span>
-										</a>
-									</Button>
-								)}
-							</SidebarMenuItem>
+									{/* SECONDARY ACTIONS */}
+									{sidebarData.quickLinks?.secondary?.map((item) => (
+										<Button
+											asChild
+											className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
+											key={item.title}
+											size="icon"
+										>
+											<Link to={item.url}>
+												{item.icon && <item.icon />}
+												<span className="sr-only">{item.title}</span>
+											</Link>
+										</Button>
+									))}
+								</SidebarMenuItem>
+							)}
 						</SidebarMenu>
 					</SidebarMenu>
 				</SidebarGroup>
-
-				{/* NORMAL NAV GROUPS */}
-				{beforeQuickActions.map((group) => (
+				{sidebarData.navGroups.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
-
-				{/* INSERT LIST HERE */}
-				{role === "organizationOwner" && <DomainList />}
-
-				{/* QUICK ACTIONS SECTION */}
-				{quickActionsGroup && (
-					<SidebarNavSection
-						items={quickActionsGroup.items}
-						key={quickActionsGroup.title}
-						title={quickActionsGroup.title}
-					/>
-				)}
 			</SidebarContent>
 
-			<SidebarFooter
-	className =
-		(
-			<SidebarMenu>
-				{sidebarData.footer.map((item) => (
-					<SidebarMenuItem key={item.title}>
-						<SidebarMenuButton
-							asChild
-							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-						>
-							<a className="flex items-center gap-2" href={item.url}>
-								{item.icon && <item.icon />}
-								<span>{item.title}</span>
-							</a>
+			<SidebarFooter className="flex flex-col gap-8">
+				<SidebarMenu>
+					{sidebarData.footer.map((item) => (
+						<SidebarMenuItem key={item.title}>
+							<SidebarMenuButton
+								asChild
+								className="bg-transparent! hover:bg-sidebar-accent!"
+							>
+								<a href={item.url}>
+									{item.icon && (
+										<>
+											<item.icon />
+											<span className="sr-only">{item.title}</span>
+										</>
+									)}
+									{item.title}
+								</a>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					))}
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<SidebarMenuButton asChild>
+							<ProfileDropdown />
 						</SidebarMenuButton>
 					</SidebarMenuItem>
-				))}
-			</SidebarMenu>
-		) <
-		"flex flex-col gap-8"<SidebarMenu>(
-			<SidebarMenuItem>
-				<SidebarMenuButton
-					asChild
-					className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-				>
-					<ProfileDropdown />
-				</SidebarMenuButton>
-			</SidebarMenuItem>
-		);
-	</SidebarMenu>
+				</SidebarMenu>
 			</SidebarFooter>
 
 			<SidebarRail />
 		</Sidebar>
-	)
+	);
 }
 
 function AppSidebarSkeleton() {
