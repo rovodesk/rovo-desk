@@ -20,8 +20,8 @@ import type { NavCollapsible } from "@/types/sidebar";
 
 export function CommandMenu() {
 	const { setTheme } = useTheme();
-	const { open, setOpen } = useSearch();
 	const navigate = useNavigate();
+	const { open, setOpen } = useSearch();
 	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
 	const runCommand = React.useCallback(
