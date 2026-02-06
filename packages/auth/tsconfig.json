@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "strictNullChecks": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types", "vite/client"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

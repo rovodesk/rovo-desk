@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import Logo from "../components/logo";
 import {
 	SidebarMenu,
@@ -5,7 +6,6 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "../components/ui/sidebar";
-import { motion } from "motion/react";
 
 export function AppTitle() {
 	const { setOpenMobile, state } = useSidebar();

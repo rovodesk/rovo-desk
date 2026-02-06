@@ -13,7 +13,10 @@ type OauthButtonsProps = {
 	callbackURL: string;
 };
 
-const OauthButtons = ({ isAnyLoading, callbackURL }: OauthButtonsProps) => {
+const OauthButtons = ({
+	isAnyLoading,
+	callbackURL = window.location.origin,
+}: OauthButtonsProps) => {
 	const { signInWithOAuth, isPending, variables } = useOauthSignIn(
 		callbackURL,
 		{
@@ -36,7 +39,9 @@ const OauthButtons = ({ isAnyLoading, callbackURL }: OauthButtonsProps) => {
 			<Button
 				className="relative"
 				disabled={isAnyLoading || isPending}
-				onClick={() => signInWithOAuth("google")}
+				onClick={() => {
+					signInWithOAuth("google");
+				}}
 				size="lg"
 				type="button"
 			>

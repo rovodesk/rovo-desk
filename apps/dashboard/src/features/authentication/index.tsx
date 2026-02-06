@@ -6,12 +6,17 @@ import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
+import { safelyRedirectTo } from "@/lib/redirects";
 
 type AuthProps = {
-	variant?: "sign-in" | "sign-up";
+	variant: "sign-in" | "sign-up";
+	redirectFrom?: string;
+	redirectTo: string;
 };
 
-export function Auth({ variant = "sign-in" }: AuthProps) {
+export function Auth({ variant, redirectTo, redirectFrom }: AuthProps) {
+	const safeRedirect = safelyRedirectTo(redirectTo);
+
 	return (
 		<div className="relative w-full md:h-screen md:overflow-hidden">
 			<Particles
@@ -41,23 +46,23 @@ export function Auth({ variant = "sign-in" }: AuthProps) {
 						</p>
 					</div>
 
-					<OauthButtons callbackURL={"http://localhost:3001"} />
+					<OauthButtons callbackURL={safeRedirect} />
 					{/* FIXME: NEED TO FIX */}
 					{/* <PasskeyButton /> */}
-					<MagicLinkForm callbackURL={"http://localhost:3001"} />
+					<MagicLinkForm callbackURL={safeRedirect} />
 
 					<p className="mt-8 text-muted-foreground text-sm">
 						By clicking continue, you agree to our{" "}
 						<Link
 							className="underline underline-offset-4 hover:text-primary"
-							to="/"
+							to={redirectFrom}
 						>
 							Terms of Service
 						</Link>{" "}
 						and{" "}
 						<Link
 							className="underline underline-offset-4 hover:text-primary"
-							to="/"
+							to={redirectFrom}
 						>
 							Privacy Policy
 						</Link>

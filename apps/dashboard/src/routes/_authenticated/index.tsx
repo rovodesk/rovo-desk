@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-// import { profileQueries } from "@/data/queries/profile.queries";
 import { Dashboard } from "@/features/dashboard";
 
 export const Route = createFileRoute("/_authenticated/")({

@@ -24,14 +24,6 @@ export function useSession(): UseSessionResult {
 			return data ?? null;
 		},
 
-		// ✅ Auth-friendly caching
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		gcTime: 1000 * 60 * 30, // 30 minutes
-
-		// ✅ Keep session fresh without spamming
-		refetchInterval: 1000 * 60 * 10, // 10 minutes
-		refetchOnWindowFocus: false,
-
 		// ❌ Don’t retry on auth failures
 		retry: (failureCount, error) => {
 			const status = getErrorStatus(error);
@@ -40,10 +32,12 @@ export function useSession(): UseSessionResult {
 		},
 	});
 
+	const isAuthenticated = Boolean(data?.user?.id);
+
 	return {
 		session: data ?? null,
 		isLoading,
-		isAuthenticated: Boolean(data),
+		isAuthenticated,
 		error,
 		refetch,
 	};

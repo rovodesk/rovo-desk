@@ -16,7 +16,7 @@ type MagicLinkFormProps = {
 
 export default function MagicLinkForm({
 	isAnyLoading,
-	callbackURL,
+	callbackURL = window.location.origin,
 }: MagicLinkFormProps) {
 	const form = useAppForm({
 		defaultValues: {

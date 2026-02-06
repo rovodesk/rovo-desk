@@ -1,9 +1,9 @@
 import type { permissions, Resource } from "./access-control";
-import type { createAuthClient } from "./client";
-import type { createAuth } from "./server";
+import type { authClient } from "./client";
+import type { createAuth } from "./server/better-auth";
 
 export type AuthInstance = Awaited<ReturnType<typeof createAuth>>;
-export type AuthClient = ReturnType<typeof createAuthClient>;
+export type AuthClient = typeof authClient;
 
 export type Session = AuthInstance["$Infer"]["Session"];
 export type AuthSession = Session["session"];
@@ -89,3 +89,20 @@ export type PermissionTuple = {
 export type PermissionGrant = {
 	[R in Resource]?: ActionsOf<R>[];
 };
+
+/**
+ * A map of permissions to check, indexed by resource.
+ */
+export type PermissionCheckMap = Partial<Record<Resource, PermissionAction[]>>;
+
+/**
+ * A map of permission check results, indexed by "resource:action".
+ */
+export type AuthorizationResultMap = Record<string, boolean>;
+
+/**
+ * A raw map of permissions returned by the auth client.
+ */
+export type ClientPermissionMap = Parameters<
+	typeof authClient.organization.checkRolePermission
+>[0]["permissions"];

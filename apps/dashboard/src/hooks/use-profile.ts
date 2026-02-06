@@ -1,7 +1,7 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import type { Profile } from "@zero-heads-lab/database/repositories/profile/queries";
-import { orpcQuery } from "@zero-heads-lab/transport/query";
+import { orpcQuery } from "@zero-heads-lab/transport/client";
 
 export function useProfile(
 	userId?: string,

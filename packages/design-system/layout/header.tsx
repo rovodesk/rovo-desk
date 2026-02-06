@@ -1,24 +1,7 @@
-<<<<<<<< HEAD:apps/dashboard/src/layout/header.tsx
-<<<<<<< HEAD
-<<<<<<<< HEAD:packages/design-system/layout/header.tsx
-import { Separator } from "../components/ui/separator";
-import { SidebarTrigger } from "../components/ui/sidebar";
-import { cn } from "../lib/utils";
-========
-"use client";
-
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
-import { SidebarTrigger } from "@zero-heads-lab/design-system/components/ui/sidebar";
-import { cn } from "@zero-heads-lab/design-system/lib/utils";
->>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/layout/header.tsx
-========
-import { Separator } from "../components/ui/separator";
-import { SidebarTrigger } from "../components/ui/sidebar";
-import { cn } from "../lib/utils";
->>>>>>>> 387cb85 (feat: Migrate dashboard application from TanStack Start to TanStack Router with a new `main.tsx` entry point and `index.html`, and update build tooling to use `@vitejs/plugin-):packages/design-system/layout/header.tsx
 import { useEffect, useState } from "react";
+import { Separator } from "../components/ui/separator";
+import { SidebarTrigger } from "../components/ui/sidebar";
+import { cn } from "../lib/utils";
 
 type HeaderProps = React.HTMLAttributes<HTMLElement> & {
 	fixed?: boolean;

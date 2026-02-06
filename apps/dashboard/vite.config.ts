@@ -26,7 +26,10 @@ const config = defineConfig({
 		react(),
 	],
 	server: {
+		host: true,
 		port: 3001,
+		strictPort: true,
+		allowedHosts: ["dashboard.zeroheads.local"],
 	},
 });
 

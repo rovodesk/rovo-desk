@@ -1,6 +1,7 @@
 import { ConfirmDialog } from "@zero-heads-lab/design-system/components/confirm-dialog";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { LogOut } from "lucide-react";
+import { keys } from "../client/keys";
 import { useSignOut } from "../hooks";
 
 interface SignOutDialogProps {
@@ -9,7 +10,9 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-	const { signOut, isPending } = useSignOut({
+	const signOutRedirectUrl = `${keys.VITE_SIGN_OUT_REDIRECT_URL}?redirectedFrom=${encodeURIComponent(window.location.href)}`;
+
+	const { signOut, isPending } = useSignOut(signOutRedirectUrl, {
 		onSuccess: () => {
 			onOpenChange(false);
 		},

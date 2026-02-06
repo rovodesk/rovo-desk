@@ -1,17 +1,19 @@
 import { createEnv } from "@t3-oss/env-core";
-import { keys as transportKeys } from "@zero-heads-lab/transport/keys/client";
-import z from "zod";
+import { keys as authKeys } from "@zero-heads-lab/auth/client";
+import { keys as transportKeys } from "@zero-heads-lab/transport/client";
+import { z } from "zod";
 
 export const env = createEnv({
-	extends: [transportKeys],
-	server: {},
+	extends: [transportKeys, authKeys],
 	clientPrefix: "VITE_",
 	client: {
-		VITE_BETTER_AUTH_URL: z.url(),
-		VITE_BETTER_AUTH_BASE_PATH: z.string(),
+		VITE_ALLOWED_REDIRECT_TO_URLS: z.string(),
+		VITE_ALLOWED_REDIRECT_FROM_URLS: z.string(),
 	},
 	runtimeEnv: {
-		VITE_BETTER_AUTH_URL: import.meta.env.VITE_BETTER_AUTH_URL,
-		VITE_BETTER_AUTH_BASE_PATH: import.meta.env.VITE_BETTER_AUTH_BASE_PATH,
+		VITE_ALLOWED_REDIRECT_TO_URLS: import.meta.env
+			.VITE_ALLOWED_REDIRECT_TO_URLS,
+		VITE_ALLOWED_REDIRECT_FROM_URLS: import.meta.env
+			.VITE_ALLOWED_REDIRECT_FROM_URLS,
 	},
 });

@@ -11,7 +11,7 @@ import {
 	ORGANIZATION_MEMBER_ROLES,
 	PLATFORM_ROLES,
 } from "./access-control";
-import type { Session } from "./types";
+import type { ClientPermissionMap, PermissionCheckMap, Session } from "./types";
 
 /**
  * Validated session result - discriminated union
@@ -116,16 +116,22 @@ export function isLifecycleRole(role: unknown): boolean {
  * @returns {AuthRole}
  */
 export function determineAccessRole(role: unknown): AuthRole {
-	if (hasPlatformAccessRole(role)) {
-		return role;
+	// 1. Normalize Better Auth internal roles to our AuthRole types
+	let normalizedRole = role;
+	if (role === "owner") normalizedRole = "organizationOwner";
+	if (role === "admin") normalizedRole = "organizationAdmin";
+	if (role === "member") normalizedRole = "organizationMember";
+
+	if (hasPlatformAccessRole(normalizedRole)) {
+		return normalizedRole;
 	}
 
-	if (hasOrganizationAccessRole(role)) {
-		return role;
+	if (hasOrganizationAccessRole(normalizedRole)) {
+		return normalizedRole;
 	}
 
-	if (isLifecycleRole(role)) {
-		return role as AuthRole;
+	if (isLifecycleRole(normalizedRole)) {
+		return normalizedRole as AuthRole;
 	}
 
 	return "anonymous";
@@ -168,4 +174,19 @@ export function getDeviceInfo(userAgent?: string | null) {
 	}
 
 	return { label: "Unknown device", Icon: MonitorIcon };
+}
+
+export function narrowToClientPermissions(
+	permissions: PermissionCheckMap
+): ClientPermissionMap {
+	const result: ClientPermissionMap = {};
+
+	for (const [resource, actions] of Object.entries(permissions)) {
+		if (!actions) continue;
+
+		// TS-safe assignment at boundary
+		(result as Record<string, unknown>)[resource] = actions;
+	}
+
+	return result;
 }

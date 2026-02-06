@@ -15,7 +15,10 @@ export type UseSignOutResult = {
 	isPending: boolean;
 };
 
-export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
+export const useSignOut = (
+	redirectUrl: string,
+	options?: MutationOptions
+): UseSignOutResult => {
 	const queryClient = useQueryClient();
 	const { authClient, replace } = useAuthContext();
 
@@ -33,7 +36,7 @@ export const useSignOut = (options?: MutationOptions): UseSignOutResult => {
 			queryClient.resetQueries();
 
 			options?.onSuccess?.();
-			replace("/sign-in");
+			replace(redirectUrl);
 		},
 
 =======

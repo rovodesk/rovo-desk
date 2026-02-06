@@ -1,14 +1,6 @@
-<<<<<<<< HEAD:apps/dashboard/src/layout/main-content.tsx
-<<<<<<<< HEAD:packages/design-system/layout/main-content.tsx
-import { cn } from "../lib/utils";
-========
-import { cn } from "@zero-heads-lab/design-system/lib/utils";
->>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored):apps/dashboard/src/layout/main-content.tsx
-========
-import { cn } from "../lib/utils";
->>>>>>>> 387cb85 (feat: Migrate dashboard application from TanStack Start to TanStack Router with a new `main.tsx` entry point and `index.html`, and update build tooling to use `@vitejs/plugin-):packages/design-system/layout/main-content.tsx
 import type { HTMLMotionProps } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
+import { cn } from "../lib/utils";
 
 type MainContentProps = {
 	fixed?: boolean;

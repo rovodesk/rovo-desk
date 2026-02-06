@@ -25,7 +25,8 @@
   },
   "devDependencies": {
     "@types/react": "catalog:react19",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "vite": "catalog:vite"
   },
   "peerDependencies": {
     "typescript": "catalog:"

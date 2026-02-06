@@ -5,17 +5,9 @@ export const AUTH_CONFIG = {
 	MAXIMUM_SESSIONS: 6,
 	COOKIE_PREFIX: "zero-heads-auth",
 	SESSION_TOKEN_NAME: "auth_session_token",
+	DOMAIN: "zeroheads.local",
 	RATE_LIMIT_WINDOW_IN_SECS: 60, // 60 seconds
 	RATE_LIMIT_MAX_REQUESTS: 100,
 
 	IMPERSONATION_SESSION_DURATION_IN_SECS: 60 * 60 * 6, // 6 hours
-
-	CORS: {
-		origin: ["http://localhost:3001", "http://localhost:3002"],
-		allowHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
-		allowMethods: ["POST", "GET", "OPTIONS"],
-		exposeHeaders: ["Content-Length"],
-		maxAge: 600,
-		credentials: true,
-	},
 };

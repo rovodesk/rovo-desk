@@ -1,9 +1,4 @@
-import {
-	determineAccessRole,
-	hasPlatformAccessRole,
-} from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
-import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -23,6 +18,7 @@ import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Search } from "@/components/search";
 import { useProfile } from "@/hooks/use-profile";
 
 export function Dashboard() {
@@ -79,10 +75,7 @@ export function Dashboard() {
 			<MainContent fluid>
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
 					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{hasPlatformAccessRole(determineAccessRole(session?.user?.role))
-							? "Platform"
-							: domain?.name}{" "}
-						Dashboard
+						{domain.name} Dashboard
 					</h1>
 					<div className="flex items-center space-x-2">
 						<button className="relative p-[3px]">

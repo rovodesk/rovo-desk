@@ -6,18 +6,18 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { AuthProvider } from "@zero-heads-lab/auth/client";
+import { AuthProvider, authClient } from "@zero-heads-lab/auth/client";
+import { useSession } from "@zero-heads-lab/auth/hooks";
 import { UIProvider } from "@zero-heads-lab/design-system";
+import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { AxiosError } from "axios";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
-import { authClient } from "@/lib/auth-client";
 import { AppErrorBoundary } from "@/lib/error-boundary";
 import { handleServerError } from "@/lib/utils";
-
 import { routeTree } from "@/routeTree.gen";
 
 export const queryClient = new QueryClient({
@@ -70,11 +70,11 @@ export const queryClient = new QueryClient({
 });
 
 // Create a new router instance
-
 const router = createRouter({
 	routeTree,
 	defaultPreload: "intent",
-	context: { queryClient },
+	// biome-ignore lint/style/noNonNullAssertion: Auth is always provided
+	context: { queryClient, auth: undefined! },
 	defaultNotFoundComponent: () => <NotFoundError />,
 	defaultErrorComponent: () => <GeneralError />,
 	scrollRestoration: true,
@@ -87,26 +87,39 @@ if (!rootElement.innerHTML) {
 	root.render(
 		<StrictMode>
 			<AppErrorBoundary>
-				<App />
+				<QueryClientProvider client={queryClient}>
+					<AuthProvider authClient={authClient}>
+						<App />
+					</AuthProvider>
+				</QueryClientProvider>
 			</AppErrorBoundary>
 		</StrictMode>
 	);
 }
 
 function App() {
+	const { session, isAuthenticated, isLoading } = useSession();
+
+	if (isLoading) return <Loader fullScreen />;
+
+	const authContext = {
+		session,
+		isAuthenticated,
+	};
+	console.log(authContext);
+
 	return (
-		<QueryClientProvider client={queryClient}>
-			<UIProvider>
-				<AuthProvider authClient={authClient}>
-					<RouterProvider router={router} />
-				</AuthProvider>
-			</UIProvider>
-		</QueryClientProvider>
+		<UIProvider>
+			<SearchProvider>
+				<RouterProvider context={{ auth: authContext }} router={router} />
+			</SearchProvider>
+		</UIProvider>
 	);
 }
 
 // Register the router instance for type safety
 import "@tanstack/react-router";
+import { SearchProvider } from "./providers/search";
 
 declare module "@tanstack/react-router" {
 	interface Register {

@@ -1,5 +1,4 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import {
 	Tabs,
@@ -9,6 +8,7 @@ import {
 import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { Bell, CreditCard, Palette, ShieldCheck, UserCog } from "lucide-react";
+import { Search } from "@/components/search";
 
 const tabItems = [
 	{

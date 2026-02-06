@@ -3,7 +3,7 @@ import type {
 	GoogleProfile,
 	SocialProviders,
 } from "better-auth";
-import { keys } from "../keys";
+import { keys } from "./keys";
 
 export const OauthProviders: SocialProviders = {
 	github: {
