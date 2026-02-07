@@ -1,4 +1,3 @@
-import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import {
 	Tabs,
