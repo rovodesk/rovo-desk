@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
-=======
-import { Link } from "@tanstack/react-router";
-import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
-import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
-import { hasPlatformAccessRole } from "@zero-heads-lab/auth/helpers";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,56 +12,21 @@ import {
 	SidebarRail,
 	SidebarSeparator,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-<<<<<<< HEAD
-import { useSidebarData } from "@zero-heads-lab/design-system/hooks/use-sidebar-data";
-import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
-import { Button } from "../../../../packages/design-system/components/ui/button";
-=======
-=======
-import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-=======
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 import { useSidebarData } from "@/hooks/use-sidebar-data";
+import { Button } from "../../../../packages/design-system/components/ui/button";
 import { AppTitle } from "./app-title";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { SidebarNavSection } from "./nav-section";
 
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
-<<<<<<< HEAD
 	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
-<<<<<<< HEAD
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
 	}
-=======
-
-<<<<<<< HEAD
-	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-	const { sidebarData, isLoading } = useSidebarData();
-
-	if (isLoading) return <AppSidebarSkeleton />;
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-=======
-	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
-
-	if (isLoading) {
-		return <AppSidebarSkeleton />;
-	}
-
-	console.log(role);
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 
 	return (
 		<Sidebar
@@ -135,7 +92,7 @@ export function AppSidebar() {
 
 <<<<<<< HEAD
 								{sidebarData.quickLink?.secondary && (
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 									<Button
 										asChild
 										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
@@ -197,8 +154,7 @@ export function AppSidebar() {
 				))}
 			</SidebarContent>
 
-			<SidebarFooter className="flex flex-col gap-8">
-				<SidebarMenu>
+			<SidebarFooter className=<SidebarMenu>
 					{sidebarData.footer.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
@@ -249,10 +205,6 @@ export function AppSidebar() {
 		</Sidebar>
 	);
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 function AppSidebarSkeleton() {
 	const { collapsible, variant } = useLayout();
@@ -326,8 +278,5 @@ function AppSidebarSkeleton() {
 		</Sidebar>
 	);
 }
-<<<<<<< HEAD
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+<
+				"flex flex-col gap-8"

@@ -22,12 +22,13 @@ export async function markUserAsDeleted(userId: string) {
 <<<<<<< HEAD
 			role: "deleted",
 =======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 			role: "deleted",
 >>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
-		})
-		.where(eq(userSchema.id, userId));
+}
+)
+		.where(eq(userSchema.id, userId))
 }
 
 export async function deleteSession(sessionId: string) {
@@ -89,7 +90,7 @@ export async function createNewUserWithProfile(userId: string) {
 =======
 export async function createNewUserWithProfile(userId: string) {
 	const orgName = "Default Workspace";
-	let orgSlug = Placeholder.slug();
+	const orgSlug = Placeholder.slug();
 
 =======
 export async function markSessionAsRevoked(sessionId: string) {
@@ -176,14 +177,12 @@ export async function createNewUserWithProfile(userId: string) {
 <<<<<<< HEAD
 		} catch {
 =======
-		} catch (_error) {
+		} catch (_error) 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-		} catch {
+=======catch 
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Org member creation failed");
-		}
 
 		// 3. Create Team
 		const [team] = await tx
@@ -214,14 +213,12 @@ export async function createNewUserWithProfile(userId: string) {
 <<<<<<< HEAD
 		} catch {
 =======
-		} catch (_error) {
+		} catch (_error) 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-		} catch {
+=======catch 
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Team member creation failed");
-		}
 
 <<<<<<< HEAD
 <<<<<<< HEAD

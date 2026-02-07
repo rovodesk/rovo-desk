@@ -40,7 +40,7 @@ const productionProducts: Product[] = [
 const productionProducts: Product[] = [
 	{
 		productId: "087c1d12-550e-4a6e-82ed-8b45dffa40c6",
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 // TODO: Update with real Production Product IDs
 const productionProducts: Product[] = [

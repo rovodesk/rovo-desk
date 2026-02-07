@@ -1,13 +1,17 @@
 import { Polar } from "@polar-sh/sdk";
+
 <<<<<<< HEAD
 <<<<<<< HEAD
-import type { CustomerWithMembers } from "@polar-sh/sdk/models/components/customerwithmembers.js";
+
+
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
+
 import type { CustomerWithMembers } from "@polar-sh/sdk/models/components/customerwithmembers.js";
+
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-import type { Subscription } from "@polar-sh/sdk/models/components/subscription.js";
+
 import { keys } from "./keys";
 import { getProducts } from "./products";
 
@@ -36,7 +40,8 @@ export async function createFreeSubscription(
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-): Promise<Subscription> {
+): Promise<Subscription>
+{
 	const products = getProducts();
 
 	const basicPlan = products.find((p) => p.slug === "Basic");
@@ -44,7 +49,7 @@ export async function createFreeSubscription(
 		throw new Error("Basic plan not found");
 	}
 
-<<<<<<< HEAD
+	<<<<<<< HEAD
 <<<<<<< HEAD
 	// 1. Get or create customer (idempotent & concurrency-safe)
 	let customer: CustomerWithMembers;
@@ -119,13 +124,13 @@ export async function deleteCustomer(userId: string) {
 		externalId: userId,
 		anonymize: true,
 	});
-=======
-	console.log("Creating free subscription for user", userId);
+	=======
+	console.log("Creating free subscription for user", userId)
 	console.log("Product ID", basicPlan.productId);
-=======
+	=======
 	// 1. Get or create customer (idempotent & concurrency-safe)
 	let customer: CustomerWithMembers;
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+	>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 	try {
 		customer = await polarClient.customers.getExternal({
@@ -154,26 +159,23 @@ export async function deleteCustomer(userId: string) {
 			});
 		}
 	}
-<<<<<<< HEAD
+	<<<<<<< HEAD
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 
 	// 2. Ensure metadata stays in sync
-	await polarClient.customers.update({
+	await polarClient.customers.update(
 		id: customer.id,
-		customerUpdate: {
+		customerUpdate: 
 			name,
 			email,
-			metadata: {
+			metadata: 
 				emailVerified,
 				orgId,
 				orgName,
 				orgSlug,
 				teamId,
-				teamName,
-			},
-		},
-	});
+				teamName,,,)
 
 	// 3. Check for existing active Basic subscription
 	const subscriptions = await polarClient.subscriptions.list({
@@ -200,5 +202,5 @@ export async function deleteCustomer(userId: string) {
 		externalId: userId,
 		anonymize: true,
 	});
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+	>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 }

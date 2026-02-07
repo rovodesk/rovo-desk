@@ -2,16 +2,15 @@
 <<<<<<< HEAD
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+
 import {
 	GithubIcon,
 	GoogleIcon,
 } from "@zero-heads-lab/design-system/assets/icons";
+
 <<<<<<< HEAD
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { Loader2Icon } from "lucide-react";
-import { useLastLoginMethod, useOauthSignIn } from "../hooks";
-import { LastLoginBadge } from "./last-login-badge";
 
 type OauthButtonsProps = {
 	isAnyLoading?: boolean;

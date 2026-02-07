@@ -1,32 +1,26 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import {
-	type QueryClient,
-	QueryClientProvider,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 <<<<<<< HEAD
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import type { Session } from "@zero-heads-lab/auth/types";
+
 import { Toaster } from "@zero-heads-lab/design-system/components/ui/toast";
+
 =======
+
 import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
-	Scripts,
-	useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { AuthProvider } from "@zero-heads-lab/auth/client";
 import type { Session } from "@zero-heads-lab/auth/types";
 import { UIProvider } from "@zero-heads-lab/design-system";
-import appCss from "@zero-heads-lab/design-system/styles/default.css?url";
+
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+
 import { AppNavigationProgress } from "@/components/app-nav-progress";
-import { GeneralError } from "@/features/errors/general-error";
-import { NotFoundError } from "@/features/errors/not-found-error";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

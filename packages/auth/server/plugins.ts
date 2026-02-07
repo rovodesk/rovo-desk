@@ -10,14 +10,24 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
+
 <<<<<<< HEAD
-import { AllRoles, accessControl } from "../access-control";
-import { AUTH_CONFIG } from "../config";
+
+
+
 =======
+
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { AllRoles, accessControl } from "../access-control";
 import { AUTH_CONFIG } from "./config";
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management
+with new server-side configurations
+and;
+dashboard;
+sidebar;
+filtering.
+)
 
 export const AuthPlugins = () => {
 	// const products = getProducts();

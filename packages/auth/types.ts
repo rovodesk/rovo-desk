@@ -1,13 +1,25 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-import type { permissions, Resource } from "./access-control";
+
 import type { createAuthClient } from "./client";
+
 =======
 =======
+
 import type { permissions, Resource } from "./access-control";
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management
+with new server-side configurations
+and;
+dashboard;
+sidebar;
+filtering.
+)
+
 import type { authClient } from "./client";
+
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+
 import type { createAuth } from "./server";
 
 export type AuthInstance = Awaited<ReturnType<typeof createAuth>>;
@@ -113,10 +125,16 @@ export type CheckAuthorizationParams = {
 	feature: string;
 	plan: string;
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-};
+}
 
 =======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management
+with new server-side configurations
+and;
+dashboard;
+sidebar;
+filtering.
+)
 export type MutationOptions = {
 	onSuccess?: (...args: Record<string, unknown>[]) => void;
 	onError?: (error: Error) => void;
