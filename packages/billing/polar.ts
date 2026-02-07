@@ -126,7 +126,7 @@ export async function deleteCustomer(userId: string) {
 	});
 	=======
 	console.log("Creating free subscription for user", userId)
-	console.log("Product ID", basicPlan.productId);
+	console.log("Product ID", basicPlan.productId)
 	=======
 	// 1. Get or create customer (idempotent & concurrency-safe)
 	let customer: CustomerWithMembers;

@@ -41,7 +41,7 @@ export const useMagicLinkSignIn = (
 			console.error("Error signing in",
 	error;
 )
-options?.onError?.(error);
+options?.onError?.(error)
 },
 	})
 

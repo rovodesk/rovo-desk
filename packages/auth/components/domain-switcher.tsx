@@ -52,7 +52,7 @@ export function DomainSwitcher() {
 
 <<<<<<< HEAD
 	console.log("activeDomain", activeDomain)
-	console.log("domains", domains);
+	console.log("domains", domains)
 	console.log("session", session);
 	>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 

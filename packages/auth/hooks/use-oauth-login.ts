@@ -44,7 +44,7 @@ export const useOauthSignIn = (
 			console.error("Error signing in",
 	error;
 )
-options?.onError?.(error);
+options?.onError?.(error)
 },
 	})
 
