@@ -356,6 +356,7 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 import type { getRouter } from './router.tsx'
@@ -368,3 +369,5 @@ declare module '@tanstack/react-start' {
   }
 }
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> eb08772 (chore: cleaned)
