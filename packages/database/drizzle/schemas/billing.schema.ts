@@ -79,5 +79,6 @@ export const subscriptionRelations = relations(subscription, ({ one }) => ({
 	plan: one(plan, {
 		fields: [subscription.planId],
 		references: [plan.id],
+		relationName: "subscriptionPlan",
 	}),
 }));

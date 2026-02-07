@@ -8,11 +8,11 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
-    "zod": "catalog:",
-    "react": "catalog:react19",
-    "lucide-react": "catalog:",
     "@zero-heads-lab/design-system": "workspace:*",
-    "stripe": "^20.3.1"
+    "lucide-react": "catalog:",
+    "react": "catalog:react19",
+    "stripe": "^20.3.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:react19",
