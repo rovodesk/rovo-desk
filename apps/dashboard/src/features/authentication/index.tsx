@@ -41,10 +41,10 @@ export function Auth({ variant = "sign-in" }: AuthProps) {
 						</p>
 					</div>
 
-					<OauthButtons />
+					<OauthButtons callbackURL={"http://localhost:3001"} />
 					{/* FIXME: NEED TO FIX */}
 					{/* <PasskeyButton /> */}
-					<MagicLinkForm />
+					<MagicLinkForm callbackURL={"http://localhost:3001"} />
 
 					<p className="mt-8 text-muted-foreground text-sm">
 						By clicking continue, you agree to our{" "}

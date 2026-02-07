@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import type { AuthClient, ReplaceFn } from "../types";
-import { authClient } from "./auth-client";
 import { AuthContext } from "./context";
 
 function defaultReplace(href: string) {
@@ -9,25 +8,16 @@ function defaultReplace(href: string) {
 
 type AuthProviderProps = {
 	children: React.ReactNode;
+	authClient: AuthClient;
 	replace?: ReplaceFn;
-	authClient?: AuthClient;
 };
-
-function defaultAuthClient() {
-	return authClient();
-}
 
 export const AuthProvider = ({
 	children,
 	replace,
-	authClient: authClientProp,
+	authClient,
 }: AuthProviderProps) => {
 	const replaceFn = useMemo(() => replace || defaultReplace, [replace]);
-
-	const authClient = useMemo(
-		() => authClientProp || defaultAuthClient(),
-		[authClientProp]
-	);
 
 	const values = useMemo(
 		() => ({

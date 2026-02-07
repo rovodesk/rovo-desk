@@ -30,7 +30,7 @@
     "@types/bun": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
-    "@vitejs/plugin-react": "catalog:vite",
+    "@vitejs/plugin-react-swc": "catalog:vite",
     "@vitest/browser-playwright": "^4.0.17",
     "@vitest/coverage-v8": "^4.0.17",
     "@zero-heads-lab/typescript-config": "workspace:*",

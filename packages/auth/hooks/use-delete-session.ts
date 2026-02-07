@@ -6,13 +6,15 @@ export const useDeleteSession = (options?: MutationOptions) => {
 	const { authClient } = useAuthContext();
 	const queryClient = useQueryClient();
 
-	const {
-		mutate: deleteSession,
-		isPending,
-		variables,
-	} = useMutation({
-		mutationFn: async (sessionToken: string) =>
-			authClient.multiSession.revoke({ sessionToken }),
+	const mutation = useMutation({
+		mutationFn: async (sessionToken: string) => {
+			const { error } = await authClient.revokeSession({
+				token: sessionToken,
+			});
+			if (error) {
+				throw error;
+			}
+		},
 
 		onMutate: async (sessionToken) => {
 			await queryClient.cancelQueries({ queryKey: ["auth", "sessions"] });
@@ -36,20 +38,21 @@ export const useDeleteSession = (options?: MutationOptions) => {
 					context.previousSessions
 				);
 			}
-		},
-
-		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ["auth", "sessions"] });
+			options?.onError?.(_err);
 		},
 
 		onSuccess: () => {
 			options?.onSuccess?.();
 		},
+
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ["auth", "sessions"] });
+		},
 	});
 
 	return {
-		deleteSession,
-		isPending,
-		variables,
+		deleteSession: mutation.mutate,
+		isPending: mutation.isPending,
+		pendingToken: mutation.variables,
 	};
 };

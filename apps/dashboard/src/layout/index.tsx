@@ -4,20 +4,22 @@ import {
 	SidebarProvider,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { LayoutProvider } from "@zero-heads-lab/design-system/context/layout";
+import { SearchProvider } from "@zero-heads-lab/design-system/context/search";
+import { useSidebarData } from "@zero-heads-lab/design-system/hooks/use-sidebar-data";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
-import { SkipToMain } from "@/components/skip-to-main";
+import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { AppSidebar } from "@/layout/app-sidebar";
-import { SearchProvider } from "@/providers/search";
 
 export function AuthenticatedLayout() {
 	const sidebarOpen = getCookie("sidebar_state") !== "false";
 
+	const { sidebarData } = useSidebarData(SIDEBAR_CONFIG);
+
 	return (
 		<LayoutProvider>
-			<SearchProvider>
+			<SearchProvider sidebarData={sidebarData}>
 				<SidebarProvider defaultOpen={sidebarOpen}>
-					<SkipToMain />
 					<AppSidebar />
 					<SidebarInset
 						className={cn(

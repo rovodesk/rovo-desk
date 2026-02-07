@@ -1,14 +1,36 @@
 import type { permissions, Resource } from "./access-control";
-import type { authClient } from "./client";
+import type { createAuthClient } from "./client";
 import type { createAuth } from "./server";
 
 export type AuthInstance = Awaited<ReturnType<typeof createAuth>>;
-
-export type AuthClient = ReturnType<typeof authClient>;
+export type AuthClient = ReturnType<typeof createAuthClient>;
 
 export type Session = AuthInstance["$Infer"]["Session"];
 export type AuthSession = Session["session"];
 export type AuthUser = Session["user"];
+
+export type DeviceSession = {
+	session: {
+		id: string;
+		createdAt: Date;
+		updatedAt: Date;
+		userId: string;
+		expiresAt: Date;
+		token: string;
+		ipAddress?: string | null;
+		userAgent?: string | null;
+		lastActiveAt?: Date | null;
+		revokedAt?: Date | null;
+	};
+
+	user: {
+		id: string;
+		email: string;
+		emailVerified: boolean;
+		name: string;
+		image?: string | null;
+	};
+};
 
 export type Organization = {
 	id: string;
