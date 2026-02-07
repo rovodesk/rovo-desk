@@ -3,7 +3,6 @@ import {
 	boolean,
 	index,
 	integer,
-	jsonb,
 	pgSchema,
 	text,
 	timestamp,
@@ -41,20 +40,20 @@ export const subscriptions = billingSchema.table(
 		metadata: jsonb("metadata"),
 =======
 		metadata: jsonb("metadata").notNull().default({}),
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 		metadata: jsonb("metadata"),
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
 		modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
-	},
+},
 	(t) => [
 		unique("subscriptionsPolarSubscriptionIdIdx").on(t.polarSubscriptionId),
 		index("subscriptionsOrgIdx").on(t.organizationId),
 		index("subscriptionsStatusIdx").on(t.status),
 	]
-);
+)
 
 export const subscriptionsRelations = relations(
 	subscriptions,
@@ -101,7 +100,7 @@ export const subscriptionPeriods = billingSchema.table(
 	]
 =======
 	(t) => [index("subscriptionPeriodsSubscriptionIdx").on(t.subscriptionId)]
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 	(t) => [
 		unique("subscriptionPeriodsSubscriptionIdUnique").on(t.subscriptionId),
@@ -149,7 +148,7 @@ export const subscriptionPricing = billingSchema.table(
 	]
 =======
 	(t) => [index("subscriptionPricingSubscriptionIdx").on(t.subscriptionId)]
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 	(t) => [
 		unique("subscriptionPricingSubscriptionIdUnique").on(t.subscriptionId),
@@ -183,7 +182,7 @@ export const subscriptionCancellations = billingSchema.table(
 <<<<<<< HEAD
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-	},
+},
 	(t) => [
 		unique("subscriptionCancellationsSubscriptionIdUnique").on(
 			t.subscriptionId
@@ -195,7 +194,7 @@ export const subscriptionCancellations = billingSchema.table(
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-);
+)
 
 export const subscriptionCancellationsRelations = relations(
 	subscriptionCancellations,

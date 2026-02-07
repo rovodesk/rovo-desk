@@ -1,27 +1,25 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-import { useAppForm } from "@zero-heads-lab/design-system/components/form";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { WandSparklesIcon } from "lucide-react";
-import { z } from "zod";
-import { useLastLoginMethod, useMagicLinkSignIn } from "../hooks";
-import { LastLoginBadge } from "./last-login-badge";
+
+
+
+
+
+
+
 =======
-"use client";
+"use client"
+
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
 
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { WandSparklesIcon } from "lucide-react";
-import z from "zod";
-import { useMagicLinkSignIn } from "../hooks/use-magiclink-signin";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-import { useAppForm } from "@zero-heads-lab/design-system/components/form";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { WandSparklesIcon } from "lucide-react";
 import { z } from "zod";
 import { useLastLoginMethod, useMagicLinkSignIn } from "../hooks";
 import { LastLoginBadge } from "./last-login-badge";
+
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 const emailSchema = z.object({
@@ -49,11 +47,11 @@ export default function MagicLinkForm({
 		},
 	});
 
-<<<<<<< HEAD
+	<<<<<<< HEAD
 	const { signInWithMagicLink, isPending } = useMagicLinkSignIn(callbackURL, {
 =======
 	const { signInWithMagicLink, isPending } = useMagicLinkSignIn({
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 		onSuccess: () => {
 			toast.success("Magic link sent successfully");
 		},
@@ -62,12 +60,13 @@ export default function MagicLinkForm({
 				description: "Please try again later.",
 			});
 		},
-	});
+}
+)
 
-	const isLoading = isPending || isAnyLoading;
-	const { lastLoginMethod } = useLastLoginMethod();
+const isLoading = isPending || isAnyLoading;
+const { lastLoginMethod } = useLastLoginMethod();
 
-	return (
+return (
 		<form
 			className="space-y-4"
 			onSubmit={(e) => {

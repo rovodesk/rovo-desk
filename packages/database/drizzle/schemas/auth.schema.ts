@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
-	date,
 	index,
 	integer,
 	jsonb,
@@ -43,7 +42,7 @@ export const user = authSchema.table("user", {
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
-});
+})
 
 export const userRelations = relations(user, ({ many, one }) => ({
 	sessions: many(session, {
@@ -352,7 +351,7 @@ export const session = authSchema.table(
 
 		// 🔑 NEW: soft revocation
 		revokedAt: timestamp("revokedAt", { withTimezone: true }),
-	},
+},
 	(t) => [
 		index("sessionUserIdx").on(t.userId),
 		index("sessionExpiresIdx").on(t.expiresAt),
@@ -360,7 +359,7 @@ export const session = authSchema.table(
 		// 🔒 Critical: enforce one active session per device
 		index("sessionActiveDeviceIdx").on(t.userId, t.deviceId),
 	]
-);
+)
 
 export const account = authSchema.table(
 	"account",

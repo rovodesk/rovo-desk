@@ -1,11 +1,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
-"use client";
+"use client"
 
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+
 import { useMutation } from "@tanstack/react-query";
 import { capitalize, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";
@@ -13,11 +14,11 @@ import type { MutationOptions } from "../types";
 
 <<<<<<< HEAD
 export const useMagicLinkSignIn = (
-	callbackURL: string,
-	options?: MutationOptions
-) => {
-=======
-export const useMagicLinkSignIn = (options?: MutationOptions) => {
+		callbackURL: string,
+		options?: MutationOptions
+	) => {
+		=======
+		export const useMagicLinkSignIn = (options?: MutationOptions) => {
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	const { authClient } = useAuthContext();
 
@@ -30,20 +31,22 @@ export const useMagicLinkSignIn = (options?: MutationOptions) => {
 				callbackURL,
 =======
 				callbackURL: "/",
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+>>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
 			});
 		},
 		onSuccess: () => {
 			options?.onSuccess?.();
-		},
-		onError: (error) => {
-			console.error("Error signing in", error);
-			options?.onError?.(error);
-		},
-	});
+	},
+	onError: (error) => {
+			console.error("Error signing in",
+	error;
+)
+options?.onError?.(error);
+},
+	})
 
-	return {
+return {
 		signInWithMagicLink,
 		isPending,
 	};
-};
+}

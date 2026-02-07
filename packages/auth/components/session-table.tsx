@@ -15,15 +15,11 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
+
 <<<<<<< HEAD
+
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Loader2Icon, Trash2Icon } from "lucide-react";
-import { getDeviceInfo } from "../helpers";
-import {
-	useDeleteDeviceSession,
-	useListDeviceSessions,
-	useSession,
-} from "../hooks";
+import { useDeleteDeviceSession, useListDeviceSessions } from "../hooks";
 import type { DeviceSession } from "../types";
 
 type DeviceSessionWithCurrent = DeviceSession & {

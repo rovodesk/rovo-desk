@@ -1,11 +1,15 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
+
+
 =======
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 =======
+
 import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
+
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -32,7 +36,7 @@ import {
 	UserIcon,
 	XCircleIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
 
 const languages = [

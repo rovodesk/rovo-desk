@@ -1,4 +1,3 @@
-import type { Subscription } from "@zero-heads-lab/billing/types";
 import { createDatabase } from "../../conn";
 import {
 	subscriptionCancellations,
@@ -19,11 +18,14 @@ export async function createRecurringSubscriptionFromPolar({
 	userId,
 	organizationId,
 	payload,
-}: {
+}:
+{
 	userId: string;
 	organizationId: string;
 	payload: Subscription;
-}) {
+}
+)
+{
 	const db = createDatabase();
 
 	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Need this its unavoidable

@@ -460,23 +460,21 @@ try {
 	,
 				delete:
 	before: async (user) =>
-	{
-		console.log("User $user.emailis being deleted");
-		try {
-			await markUserAsDeleted(user.id);
-			// Delete from Cache
-			const userSessions = await getUserSessions(user.id);
-			userSessions.forEach((session) => {
-				cacheStore.delete("session:$session.id");
-			});
-			await cacheStore.delete("user:$user.id");
-		} catch (error) {
-			console.error("Failed to mark user as deleted", error);
-			throw new APIError("INTERNAL_SERVER_ERROR");
-		}
-		//TODO: Add Analytics
-		return false; // Abort the deletion
+		console.log("User $user.emailis being deleted")
+	try {
+		await markUserAsDeleted(user.id);
+		// Delete from Cache
+		const userSessions = await getUserSessions(user.id);
+		userSessions.forEach((session) => {
+			cacheStore.delete("session:$session.id");
+		});
+		await cacheStore.delete("user:$user.id");
+	} catch (error) {
+		console.error("Failed to mark user as deleted", error);
+		throw new APIError("INTERNAL_SERVER_ERROR");
 	}
+	//TODO: Add Analytics
+	return false; // Abort the deletion
 	,
 		after
 	: async (user) =>
