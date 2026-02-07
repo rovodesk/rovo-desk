@@ -1,4 +1,4 @@
-"use client"
+
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'

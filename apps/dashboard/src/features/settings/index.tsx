@@ -10,11 +10,14 @@ import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { Bell, CreditCard, Palette, ShieldCheck, UserCog } from "lucide-react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { Search } from "@/components/search";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> 41a6b28 (Feat/api (#6))
 
 const tabItems = [
 	{

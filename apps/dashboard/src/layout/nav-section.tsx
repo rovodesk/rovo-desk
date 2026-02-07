@@ -30,12 +30,18 @@ import type {
 	NavItem,
 	NavLink,
 <<<<<<< HEAD
+<<<<<<< HEAD
 } from "@zero-heads-lab/design-system/types/sidebar";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 =======
 } from "@/types/sidebar";
 >>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+} from "@zero-heads-lab/design-system/types/sidebar";
+import { ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
+>>>>>>> 41a6b28 (Feat/api (#6))
 
 function SidebarNavBadge({ children }: { children: ReactNode }) {
 	return (
