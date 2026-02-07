@@ -24,14 +24,14 @@ import {
 	SidebarMenuSubItem,
 	useSidebar,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
-import { ChevronRight } from "lucide-react";
-import type { ReactNode } from "react";
 import type {
 	NavCollapsible,
 	NavGroup as NavGroupProps,
 	NavItem,
 	NavLink,
-} from "@/types/sidebar";
+} from "@zero-heads-lab/design-system/types/sidebar";
+import { ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 
 function SidebarNavBadge({ children }: { children: ReactNode }) {
 	return (

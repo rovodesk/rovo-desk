@@ -10,7 +10,7 @@ import {
 } from "better-auth/client/plugins";
 import { createAuthClient as createBetterAuthClient } from "better-auth/react";
 import { AllRoles, accessControl } from "../access-control";
-import { keys } from "../keys";
+// import { keys } from "../keys";
 import type { AuthInstance } from "../types";
 
 const Plugins = [
@@ -31,10 +31,10 @@ const Plugins = [
 	lastLoginMethodClient(),
 ] satisfies BetterAuthClientPlugin[];
 
-export function authClient() {
+export function createAuthClient(baseURL: string, basePath: string) {
 	return createBetterAuthClient({
-		baseURL: keys.VITE_AUTH_BASE_URL,
-		basePath: keys.VITE_AUTH_BASE_PATH,
+		baseURL,
+		basePath,
 		plugins: Plugins,
 	});
 }
