@@ -1,3 +1,4 @@
+import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import {
 	Tabs,
@@ -5,14 +6,8 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
-<<<<<<< HEAD
 import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
-=======
-import { Search } from "@/components/search";
-import { Header } from "@/layout/header";
-import { MainContent } from "@/layout/main-content";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 import { TasksDialogs } from "./_components/tasks-dialog";
 import { TasksPrimaryButtons } from "./_components/tasks-primary-buttons";
 import { TasksProvider } from "./_components/tasks-provider";

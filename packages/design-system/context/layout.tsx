@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-"use client"
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-"use client"
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 import { createContext, useContext, useState } from 'react'
 import { getCookie, setCookie } from '@zero-heads-lab/shared/utils'

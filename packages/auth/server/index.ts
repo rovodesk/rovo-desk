@@ -4,7 +4,7 @@
 // 	getProducts,
 // 	polarClient,
 // } from "@zero-heads-lab/billing";
-import { createCacheStore } from "@zero-heads-lab/cache";
+import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
 	createNewUserWithProfile,
@@ -13,7 +13,7 @@ import {
 	markUserAsDeleted,
 } from "@zero-heads-lab/database/repositories/auth/mutations";
 import {
-	findReusableSession,
+	// findReusableSession,
 	getUserEmailVerificationStatus,
 	getUserSessionBootstrap,
 	getUserSessions,
@@ -28,17 +28,15 @@ import {
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { AUTH_CONFIG } from "../config";
 import { keys } from "../keys";
-import { AUTH_CONFIG } from "./config";
 import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
 
-// export const trustedAuthOrigins = keys.AUTH_TRUSTED_ORIGINS.split(",").map(
-// 	(o) => o.trim()
-// );
+const trustedAuthOrigins = keys.ALLOWED_ORIGINS.split(",").map((o) => o.trim());
 
-export function createAuth() {
-	const cacheStore = createCacheStore();
+export function createAuth(namespace: KVNamespace) {
+	const cacheStore = new KvCacheStore(namespace);
 	const database = createDatabase();
 
 	const Plugins = AuthPlugins();
@@ -47,6 +45,7 @@ export function createAuth() {
 		database: drizzleAdapter(database, {
 			provider: "pg",
 		}),
+		trustedOrigins: trustedAuthOrigins,
 		secondaryStorage: {
 			get: async (key) => {
 				return await cacheStore.get(key);
@@ -156,11 +155,11 @@ export function createAuth() {
 					required: false,
 					input: false,
 				},
-				deviceId: {
-					type: "string",
-					required: false,
-					input: false,
-				},
+				// deviceId: {
+				// 	type: "string",
+				// 	required: false,
+				// 	input: false,
+				// },
 				lastActiveAt: {
 					type: "date",
 					required: false,
@@ -181,12 +180,12 @@ export function createAuth() {
 				updateUserInfoOnLink: true,
 			},
 		},
-		rateLimit: {
-			enabled: true,
-			window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
-			limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
-			storage: "secondary-storage",
-		},
+		// rateLimit: {
+		// 	enabled: true,
+		// 	window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
+		// 	limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
+		// 	storage: "secondary-storage",
+		// },
 		plugins: Plugins,
 		socialProviders: OauthProviders,
 		advanced: {
@@ -229,31 +228,30 @@ export function createAuth() {
 		databaseHooks: {
 			session: {
 				create: {
-					// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Need this
-					before: async (session, ctx) => {
+					before: async (session) => {
 						// Reuse Session
-						const { userId, userAgent } = session;
-						const deviceId = ctx?.request?.headers.get("device-id");
+						// const { userId, userAgent } = session;
+						// const deviceId = ctx?.request?.headers.get("device-id");
 
-						if (deviceId && userAgent && !session.isAnonymous) {
-							const reusableSession = await findReusableSession({
-								userId,
-								userAgent,
-								deviceId,
-							});
+						// if (deviceId && userAgent && !session.isAnonymous) {
+						// 	const reusableSession = await findReusableSession({
+						// 		userId,
+						// 		userAgent,
+						// 		deviceId,
+						// 	});
 
-							if (reusableSession) {
-								// IMPORTANT:
-								// Returning an existing session here tells better-auth
-								// to SKIP creation and reuse this one.
-								return {
-									data: {
-										reuse: true,
-										...reusableSession,
-									},
-								};
-							}
-						}
+						// 	if (reusableSession) {
+						// 		// IMPORTANT:
+						// 		// Returning an existing session here tells better-auth
+						// 		// to SKIP creation and reuse this one.
+						// 		return {
+						// 			data: {
+						// 				reuse: true,
+						// 				...reusableSession,
+						// 			},
+						// 		};
+						// 	}
+						// }
 
 						// Enforce maximum sessions (only if creating a new one)
 						const sessions = await getUserSessions(session.userId);
@@ -450,8 +448,4 @@ export function createAuth() {
 			},
 		},
 	});
-}
-
-export function auth() {
-	return createAuth();
 }

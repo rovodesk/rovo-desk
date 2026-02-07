@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import { profile as profileSchema } from "../../schema";
 
-<<<<<<< HEAD
 // TODO: Auto generate this type from schema
 export type Profile = {
 	id: string;
@@ -16,9 +15,6 @@ export type Profile = {
 export async function getProfileByUserId(
 	userId: string
 ): Promise<Profile | null> {
-=======
-export async function getProfileByUserId(userId: string) {
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 	const db = createDatabase();
 	return await db
 		.select({
@@ -32,9 +28,5 @@ export async function getProfileByUserId(userId: string) {
 		.from(profileSchema)
 		.where(eq(profileSchema.userId, userId))
 		.limit(1)
-<<<<<<< HEAD
 		.then((res) => res[0] ?? null);
-=======
-		.then((res) => res[0]);
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 }
