@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-"use client"
-
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";

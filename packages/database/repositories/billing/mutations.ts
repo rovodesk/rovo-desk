@@ -1,3 +1,4 @@
+import type { Subscription } from "@zero-heads-lab/billing/types";
 import { createDatabase } from "../../conn";
 import {
 	subscriptionCancellations,
@@ -6,26 +7,15 @@ import {
 	subscriptions,
 } from "../../drizzle/schemas/billing.schema";
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export async function createRecurringSubscriptionFromPolar({
-=======
-export async function createSubscriptionFromPolar({
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-export async function createRecurringSubscriptionFromPolar({
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	userId,
 	organizationId,
 	payload,
-}:
-{
+}: {
 	userId: string;
 	organizationId: string;
 	payload: Subscription;
-}
-)
-{
+}) {
 	const db = createDatabase();
 
 	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Need this its unavoidable

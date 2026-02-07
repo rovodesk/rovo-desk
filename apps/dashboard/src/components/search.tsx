@@ -1,9 +1,9 @@
 //TODO: Move this to a dedicated package
 
-import { Button } from "./ui/button";
-import { cn } from "../lib/utils";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { useSearch } from "@zero-heads-lab/design-system/context/search";
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { SearchIcon } from "lucide-react";
-import { useSearch } from "../context/search";
 
 interface SearchProps {
 	className?: string;

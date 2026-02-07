@@ -9,25 +9,10 @@
   "dependencies": {
     "@polar-sh/sdk": "catalog:polar",
     "@t3-oss/env-core": "catalog:",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "zod": "catalog:",
     "react": "catalog:react19",
     "lucide-react": "catalog:",
     "@zero-heads-lab/design-system": "workspace:*"
-=======
-    "zod": "catalog:"
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-    "zod": "catalog:",
-    "react": "catalog:react19",
-<<<<<<< HEAD
-    "lucide-react": "catalog:"
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-=======
-    "lucide-react": "catalog:",
-    "@zero-heads-lab/design-system": "workspace:*"
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

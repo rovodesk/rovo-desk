@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-<<<<<<< HEAD
 // import { profileQueries } from "@/data/queries/profile.queries";
-=======
-
-
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
 import { Dashboard } from "@/features/dashboard";
 

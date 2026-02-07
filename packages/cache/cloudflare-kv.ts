@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-=======
-
-import type { KVNamespace } from "@cloudflare/workers-types";
-
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-
 import type { ICacheStore } from "./interface";
 
 export class KvCacheStore implements ICacheStore {

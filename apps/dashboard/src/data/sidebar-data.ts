@@ -3,7 +3,6 @@ import {
 	CreditCard,
 	FileText,
 	Funnel,
-	Inbox,
 	LayoutDashboard,
 	LifeBuoy,
 	ListTodo,
@@ -20,6 +19,8 @@ import {
 	Users2,
 } from "lucide-react";
 import type { SidebarConfig } from "@/types/sidebar";
+
+//TODO: Configure Sidebar Data Properly
 
 export const SIDEBAR_CONFIG: SidebarConfig = {
 	navGroups: [
@@ -197,9 +198,38 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		{
 			title: "Quick Actions",
 			items: [
-				{ title: "Billing", url: "/settings/billing", icon: CreditCard },
-				{ title: "Settings", url: "/settings", icon: Settings },
-				{ title: "Audit Logs", url: "/audit-logs", icon: FileText },
+				{
+					title: "Billing",
+					url: "/settings/billing",
+					icon: CreditCard,
+					visibility: { roles: ["organizationOwner", "organizationAdmin"] },
+				},
+				{
+					title: "Settings",
+					url: "/settings",
+					icon: Settings,
+					visibility: {
+						roles: [
+							"superAdmin",
+							"moderator",
+							"organizationOwner",
+							"organizationAdmin",
+						],
+					},
+				},
+				{
+					title: "Audit Logs",
+					url: "/audit-logs",
+					icon: FileText,
+					visibility: {
+						roles: [
+							"superAdmin",
+							"moderator",
+							"organizationOwner",
+							"organizationAdmin",
+						],
+					},
+				},
 			],
 		},
 	],
@@ -228,9 +258,9 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		],
 		secondary: [
 			{
-				title: "Inbox",
-				url: "/inbox",
-				icon: Inbox,
+				title: "Create Campaign",
+				url: "/campaigns/create",
+				icon: Megaphone,
 				visibility: {
 					roles: [
 						"organizationMember",
