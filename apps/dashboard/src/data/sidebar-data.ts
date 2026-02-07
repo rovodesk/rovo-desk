@@ -13,7 +13,6 @@ import {
 	Package,
 	Package2,
 	PartyPopper,
-	PencilRuler,
 	SendIcon,
 	Settings,
 	SquareUserRound,
@@ -30,6 +29,25 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Dashboard",
 					url: "/",
 					icon: LayoutDashboard,
+					visibility: {
+						roles: ["verified"],
+					},
+				},
+				{
+					title: "Feature Flags",
+					url: "/feature-flags",
+					icon: Package2,
+					visibility: {
+						roles: ["superAdmin", "moderator"],
+					},
+				},
+				{
+					title: "Sales",
+					url: "/sales",
+					icon: MapIcon,
+					visibility: {
+						roles: ["superAdmin", "moderator"],
+					},
 				},
 				{
 					title: "Feature Flags",
@@ -51,11 +69,25 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Conversations",
 					url: "/conversations",
 					icon: MessagesSquare,
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "Tasks",
 					url: "/tasks",
 					icon: ListTodo,
+					visibility: {
+						roles: [
+							"organizationOwner",
+							"organizationMember",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "My Team",
@@ -141,6 +173,14 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Settings",
 					url: "/settings",
 					icon: Settings,
+					visibility: {
+						roles: [
+							"superAdmin",
+							"moderator",
+							"organizationOwner",
+							"organizationAdmin",
+						],
+					},
 				},
 				{
 					title: "Audit Logs",
@@ -164,9 +204,9 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 				},
 			},
 			{
-				title: "Create Draft",
-				url: "/",
-				icon: PencilRuler,
+				title: "Create Campaign",
+				url: "/campaigns/create",
+				icon: Megaphone,
 				visibility: {
 					roles: [
 						"organizationOwner",

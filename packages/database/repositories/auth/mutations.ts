@@ -1,4 +1,4 @@
-import { generateUUID, Placeholder } from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
@@ -44,38 +44,34 @@ export async function createNewUserWithProfile(userId: string) {
 	const orgName = "Default Workspace";
 	const db = createDatabase();
 
-	// Check User
-	const existingUser = await db
+	// 1. Check User exists
+	const [existingUser] = await db
 		.select()
 		.from(userSchema)
 		.where(eq(userSchema.id, userId))
 		.limit(1);
 
-	if (existingUser.length === 0) {
+	if (!existingUser) {
 		throw new Error("User not found");
 	}
 
-	// Generate a unique slug (loop until available)
-	let orgSlug = Placeholder.slug();
+	// 2. Generate a unique slug
 	const MAX_ATTEMPTS = 5;
-	let attempt = 0;
+	let orgSlug = Placeholder.slug();
 
-	while (attempt < MAX_ATTEMPTS) {
-		const existingOrg = await db
+	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+		const [existingOrg] = await db
 			.select()
 			.from(orgSchema)
 			.where(eq(orgSchema.slug, orgSlug))
 			.limit(1);
 
-		if (existingOrg.length === 0) {
-			break;
-		}
+		if (!existingOrg) break;
 
-		orgSlug = `${Placeholder.slug()}-${generateUUID(orgSlug).slice(0, 4)}`;
-		attempt++;
+		orgSlug = `${Placeholder.slug()}-${crypto.randomUUID().slice(0, 6)}`;
 	}
 
-	if (attempt === MAX_ATTEMPTS) {
+	if (!orgSlug) {
 		throw new Error("Failed to generate unique organization slug");
 	}
 
@@ -95,7 +91,8 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Org creation failed");
 		}
 
-		// Create Org Membership
+		// Create Org Member
+
 		await tx.insert(orgMemSchema).values({
 			userId,
 			organizationId: org.id,
