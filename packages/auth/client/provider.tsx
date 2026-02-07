@@ -24,7 +24,7 @@ type AuthProviderProps = {
 	children: React.ReactNode;
 <<<<<<< HEAD
 	authClient: AuthClient
-replace?: ReplaceFn;
+replace?: ReplaceFn
 }
 
 export const AuthProvider = ({
@@ -36,7 +36,7 @@ export const AuthProvider = ({
 
 	=======
 	replace?: ReplaceFn
-	authClient?: AuthClient;
+	authClient?: AuthClient
 };
 
 function defaultAuthClient() {
