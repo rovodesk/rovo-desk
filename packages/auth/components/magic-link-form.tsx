@@ -11,9 +11,13 @@ const emailSchema = z.object({
 
 type MagicLinkFormProps = {
 	isAnyLoading?: boolean;
+	callbackURL: string;
 };
 
-export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
+export default function MagicLinkForm({
+	isAnyLoading,
+	callbackURL,
+}: MagicLinkFormProps) {
 	const form = useAppForm({
 		defaultValues: {
 			email: "",
@@ -26,7 +30,7 @@ export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
 		},
 	});
 
-	const { signInWithMagicLink, isPending } = useMagicLinkSignIn({
+	const { signInWithMagicLink, isPending } = useMagicLinkSignIn(callbackURL, {
 		onSuccess: () => {
 			toast.success("Magic link sent successfully");
 		},

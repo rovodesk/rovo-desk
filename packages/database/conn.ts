@@ -8,10 +8,6 @@ export function createDatabase() {
 		throw new Error("Database can be used in server only");
 	}
 
-	if (!keys.DATABASE_URL) {
-		throw new Error("DATABASE_URL is not defined");
-	}
-
 	const client = postgres(keys.DATABASE_URL, {
 		prepare: false,
 		max: 1,

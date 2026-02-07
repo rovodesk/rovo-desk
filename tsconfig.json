@@ -5,7 +5,8 @@
     "strictNullChecks": true,
     "paths": {
       "@zero-heads-lab/*": ["./*"]
-    }
+    },
+    "types": ["@cloudflare/workers-types"]
   },
   "include": ["drizzle.config.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
