@@ -1,9 +1,3 @@
-// import {
-// 	createFreeSubscriptionOrder,
-// 	deleteCustomer,
-// 	getProducts,
-// 	polarClient,
-// } from "@zero-heads-lab/billing";
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
@@ -108,6 +102,11 @@ export function createAuth(namespace: KVNamespace) {
 				},
 				isAnonymous: {
 					type: "boolean",
+					required: false,
+					input: false,
+				},
+				stripeCustomerId: {
+					type: "string",
 					required: false,
 					input: false,
 				},
@@ -373,6 +372,7 @@ export function createAuth(namespace: KVNamespace) {
 					},
 					after: async (user) => {
 						try {
+							// Create A New User Profile
 							await createNewUserWithProfile(user.id);
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
@@ -382,26 +382,6 @@ export function createAuth(namespace: KVNamespace) {
 								message: `Failed to create profile because ${error}`,
 							});
 						}
-
-						// //Subscribe User to Basic PLan
-						// try {
-						// 	await createFreeSubscriptionOrder(
-						// 		user.id,
-						// 		user.name,
-						// 		user.email,
-						// 		user.emailVerified,
-						// 		orgId,
-						// 		orgName,
-						// 		orgSlug,
-						// 		teamId,
-						// 		teamName
-						// 	);
-						// } catch (error) {
-						// 	console.error("Failed to create subscription", error);
-						// 	throw new APIError("INTERNAL_SERVER_ERROR", {
-						// 		message: "Failed to create subscription",
-						// 	});
-						// }
 
 						try {
 							await sendEmail({

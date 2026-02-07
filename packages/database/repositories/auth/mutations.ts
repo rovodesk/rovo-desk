@@ -1,4 +1,4 @@
-import { generateUUID, Placeholder } from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
@@ -9,6 +9,7 @@ import {
 	team as teamSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
+import { subscription as billingSubscriptionSchema } from "../../drizzle/schemas/billing.schema";
 
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
 
@@ -53,38 +54,34 @@ export async function createNewUserWithProfile(userId: string) {
 	const orgName = "Default Workspace";
 	const db = createDatabase();
 
-	// Check User
-	const existingUser = await db
+	// 1. Check User exists
+	const [existingUser] = await db
 		.select()
 		.from(userSchema)
 		.where(eq(userSchema.id, userId))
 		.limit(1);
 
-	if (existingUser.length === 0) {
+	if (!existingUser) {
 		throw new Error("User not found");
 	}
 
-	// Generate a unique slug (loop until available)
-	let orgSlug = Placeholder.slug();
+	// 2. Generate a unique slug
 	const MAX_ATTEMPTS = 5;
-	let attempt = 0;
+	let orgSlug = Placeholder.slug();
 
-	while (attempt < MAX_ATTEMPTS) {
-		const existingOrg = await db
+	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+		const [existingOrg] = await db
 			.select()
 			.from(orgSchema)
 			.where(eq(orgSchema.slug, orgSlug))
 			.limit(1);
 
-		if (existingOrg.length === 0) {
-			break;
-		}
+		if (!existingOrg) break;
 
-		orgSlug = `${Placeholder.slug()}-${generateUUID(orgSlug).slice(0, 4)}`;
-		attempt++;
+		orgSlug = `${Placeholder.slug()}-${crypto.randomUUID().slice(0, 6)}`;
 	}
 
-	if (attempt === MAX_ATTEMPTS) {
+	if (!orgSlug) {
 		throw new Error("Failed to generate unique organization slug");
 =======
 export async function createNewUserWithProfile(userId: string) {
@@ -149,8 +146,9 @@ export async function createNewUserWithProfile(userId: string) {
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	}
 
-	return await db.transaction(async (tx) => {
-		// 1. Create Organization
+	// 3. Transaction
+	return db.transaction(async (tx) => {
+		// Create Organization
 		const [org] = await tx
 			.insert(orgSchema)
 			.values({
@@ -161,10 +159,10 @@ export async function createNewUserWithProfile(userId: string) {
 			.returning();
 
 		if (!org) {
-			tx.rollback();
 			throw new Error("Org creation failed");
 		}
 
+<<<<<<< HEAD
 		// 2. Create Org Member
 		try {
 			await tx.insert(orgMemSchema).values({
@@ -184,8 +182,16 @@ export async function createNewUserWithProfile(userId: string) {
 			tx.rollback();
 			throw new Error("Org member creation failed");
 		}
+=======
+		// Create Org Member
+		await tx.insert(orgMemSchema).values({
+			userId,
+			organizationId: org.id,
+			role: "owner",
+		});
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
 
-		// 3. Create Team
+		// Create Team
 		const [team] = await tx
 			.insert(teamSchema)
 			.values({
@@ -195,10 +201,10 @@ export async function createNewUserWithProfile(userId: string) {
 			.returning();
 
 		if (!team) {
-			tx.rollback();
 			throw new Error("Team creation failed");
 		}
 
+<<<<<<< HEAD
 		// 4. Create Team Member & Profile
 		try {
 			await Promise.all([
@@ -250,8 +256,49 @@ export async function createNewUserWithProfile(userId: string) {
 			orgId: org.id,
 			orgName: org.name,
 			orgSlug: org.slug,
+=======
+		// Create Team Member
+		await tx.insert(teamMemSchema).values({
+			userId,
 			teamId: team.id,
-			teamName: team.name,
+		});
+
+		// Update User Role
+		await tx
+			.update(userSchema)
+			.set({ role: "organizationOwner" })
+			.where(eq(userSchema.id, userId));
+
+		// Create Billing Subscription
+		const [subscription] = await tx
+			.insert(billingSubscriptionSchema)
+			.values({
+				plan: "basic",
+				referenceId: org.id,
+				status: "active",
+				seats: 1,
+				createdAt: new Date(),
+			})
+			.returning();
+
+		if (!subscription) {
+			throw new Error("Subscription creation failed");
+		}
+
+		// Create Profile
+		await tx.insert(profileSchema).values({
+			userId,
+			currentOnboardingStep: "account_context",
+			organizationId: org.id,
+			teamId: team.id,
+			subscriptionId: subscription.id,
+		});
+
+		// Return something useful
+		return {
+			organizationId: org.id,
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
+			teamId: team.id,
 		};
 <<<<<<< HEAD
 	});

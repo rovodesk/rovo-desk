@@ -44,7 +44,7 @@ export function CommandMenu() {
 				<ScrollArea className="h-72 pe-1" type="hover">
 					<CommandEmpty>No results found.</CommandEmpty>
 
-					{sidebarData.navGroups.map((group) => (
+					{sidebarData?.navGroups.map((group) => (
 						<CommandGroup heading={group.title} key={group.title}>
 							{group.items.map((navItem) => {
 								// We only support collapsible sections in this sidebar

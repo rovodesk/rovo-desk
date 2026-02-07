@@ -32,10 +32,14 @@ export const user = authSchema.table("user", {
 	banReason: text("banReason"),
 	banExpires: date("banExpires"),
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 =======
 >>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+=======
+	stripeCustomerId: text("stripeCustomerId"),
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -79,6 +83,7 @@ export const organization = authSchema.table("organization", {
 
 	logo: text("logo"),
 	metadata: jsonb("metadata"),
+	stripeCustomerId: text("stripeCustomerId"),
 
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()

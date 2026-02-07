@@ -7,8 +7,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@polar-sh/sdk": "catalog:polar",
     "@t3-oss/env-core": "catalog:",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     "zod": "catalog:",
@@ -28,6 +28,13 @@
     "lucide-react": "catalog:",
     "@zero-heads-lab/design-system": "workspace:*"
 >>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+=======
+    "@zero-heads-lab/design-system": "workspace:*",
+    "lucide-react": "catalog:",
+    "react": "catalog:react19",
+    "stripe": "^20.3.1",
+    "zod": "catalog:"
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

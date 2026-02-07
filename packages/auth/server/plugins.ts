@@ -1,4 +1,6 @@
 import { passkey } from "@better-auth/passkey";
+import { stripe } from "@better-auth/stripe";
+import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import { sendEmail } from "@zero-heads-lab/email";
 import { MagicLinkTemplate } from "@zero-heads-lab/email/templates";
 import type { BetterAuthPlugin } from "better-auth";
@@ -12,6 +14,7 @@ import {
 } from "better-auth/plugins";
 import { AllRoles, accessControl } from "../access-control";
 import { AUTH_CONFIG } from "../config";
+import { keys } from "./keys";
 
 export const AuthPlugins = () => {
 	// const products = getProducts();
@@ -39,6 +42,17 @@ export const AuthPlugins = () => {
 				enabled: true,
 				allowRemovingAllTeams: false, // Dont allow to remove the last team
 			},
+			schema: {
+				organization: {
+					additionalFields: {
+						stripeCustomerId: {
+							type: "string",
+							required: false,
+							input: false,
+						},
+					},
+				},
+			},
 		}),
 		// Multi Session Plugin
 		multiSession({
@@ -46,41 +60,25 @@ export const AuthPlugins = () => {
 		}),
 		// OPENAPI Plugin
 		process.env.NODE_ENV !== "production" && openAPI(),
-		// Polar Plugin
-		// polar({
-		// 	client: polarClient,
-		// 	createCustomerOnSignUp: false,
-		// 	use: [
-		// 		// Add Polar Plugins Here
-		// 		checkout({
-		// 			products: products.map((product) => ({
-		// 				productId: product.productId,
-		// 				slug: product.slug,
-		// 			})),
-		// 			successUrl: "/checkout-success?checkout_id={CHECKOUT_ID}",
-		// 			authenticatedUsersOnly: true,
-		// 		}),
-		// 		portal(),
-		// 		usage(),
-		// 		// Add Polar Webhooks Here
-		// 		webhooks({
-		// 			secret: keys.POALR_WEBHOOK_SECRET,
-		// 			onPayload: async (payload) => {
-		// 				// Catch ALL for Events
-		// 				// Redirect to Webhook Ingestion API
-		// 				// 	await fetch("http://localhost:3001/api/webhook", {
-		// 				// 		method: "POST",
-		// 				// 		body: JSON.stringify(payload),
-		// 				// 	});
-		// 				await console.log(
-		// 					`${payload.type}: ${payload.data}`,
-		// 					payload.timestamp
-		// 				);
-		// 				//TODO: Add Analytics
-		// 			},
-		// 		}),
-		// 	],
-		// }),
+		// Stripe Plugin
+		stripe({
+			stripeClient,
+			stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
+			createCustomerOnSignUp: false, // Will be handled manually
+			subscription: {
+				enabled: true,
+				plans: () => {
+					return UserPlans.map((plan) => ({
+						id: plan.priceId,
+						name: plan.name,
+						annualDiscountPriceId: plan.annualDiscountPriceId,
+						limits: plan.limits,
+						freeTrial: plan.freeTrial,
+					}));
+				},
+				requireEmailVerification: true,
+			},
+		}),
 		lastLoginMethod({
 			storeInDatabase: true,
 			customResolveMethod: (ctx) => {

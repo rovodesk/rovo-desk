@@ -1,6 +1,7 @@
 import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Card,
@@ -61,16 +62,16 @@ export function AdminDashboard() {
 			{/* ===== Main ===== */}
 			<MainContent fluid>
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
-					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{role} Dashboard
-					</h1>
+					<div className="flex items-center gap-2">
+						<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
+							Admin Dashboard
+						</h1>
+						<Badge variant="outline">{role}</Badge>
+					</div>
 					<div className="flex items-center space-x-2">
-						<button className="relative p-[3px]">
-							<div className="absolute inset-0 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500" />
-							<div className="group relative rounded-[6px] bg-black px-4 py-2 font-medium text-white transition duration-200 hover:bg-transparent">
-								Upgrade Plan ✨
-							</div>
-						</button>
+						<p className="text-muted-foreground text-sm">
+							<span className="font-bold">Id: </span> {session?.user.id}
+						</p>
 					</div>
 				</div>
 

@@ -1,8 +1,13 @@
 import { passkeyClient } from "@better-auth/passkey/client";
+<<<<<<< HEAD
+=======
+import { stripeClient } from "@better-auth/stripe/client";
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
 import type { BetterAuthClientPlugin } from "better-auth";
 import {
 	adminClient,
 	inferAdditionalFields,
+	inferOrgAdditionalFields,
 	lastLoginMethodClient,
 	magicLinkClient,
 	multiSessionClient,
@@ -23,11 +28,14 @@ const Plugins = [
 		teams: {
 			enabled: true,
 		},
+		schema: inferOrgAdditionalFields<AuthInstance>(),
 	}),
 	multiSessionClient(),
 	magicLinkClient(),
 	passkeyClient(),
-	// polarClient(),
+	stripeClient({
+		subscription: true,
+	}),
 	adminClient(),
 	lastLoginMethodClient(),
 ] satisfies BetterAuthClientPlugin[];

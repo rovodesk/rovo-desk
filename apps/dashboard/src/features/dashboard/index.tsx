@@ -1,5 +1,7 @@
+import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Card,
@@ -17,31 +19,23 @@ import {
 import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
-import { useMemo } from "react";
 import { Search } from "@/components/search";
 import { useProfile } from "@/hooks/use-profile";
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
-
-	const activedomainId = useMemo(
-		() => session?.session.activeOrganizationId,
-		[session]
-	);
-
-	const { domain, isLoading: isDomainLoading } = useDomainDetails(
-		activedomainId ?? ""
-	);
-
-	// TODO: Remove this after testing
 	const { data: profile, isLoading: isProfileLoading } = useProfile();
-	console.log(profile);
+	const { domain, isLoading: isDomainLoading } = useDomainDetails();
 
-	const isLoading = isSessionLoading || isDomainLoading || isProfileLoading;
+	const isLoading = isSessionLoading || isProfileLoading || isDomainLoading;
 
 	if (isLoading) {
 		return <DashboardSkeleton />;
 	}
+
+	const name = domain?.name ?? session?.user?.name ?? "User";
+	const plan = profile?.plan ?? "basic";
+	const role = determineAccessRole(session?.user?.role);
 
 	return (
 		<>
@@ -74,16 +68,21 @@ export function Dashboard() {
 			{/* ===== Main ===== */}
 			<MainContent fluid>
 				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
-					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-						{domain.name} Dashboard
-					</h1>
+					<div className="flex items-center gap-2">
+						<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
+							{name} Dashboard
+						</h1>
+						<Badge variant="outline">{role}</Badge>
+					</div>
 					<div className="flex items-center space-x-2">
-						<button className="relative p-[3px]">
-							<div className="absolute inset-0 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500" />
-							<div className="group relative rounded-[6px] bg-black px-4 py-2 font-medium text-white transition duration-200 hover:bg-transparent">
-								Upgrade Plan ✨
-							</div>
-						</button>
+						{plan !== "startup" && plan !== "enterprise" && (
+							<button className="relative p-[3px]">
+								<div className="absolute inset-0 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500" />
+								<div className="group relative rounded-[6px] bg-black px-4 py-2 font-medium text-white transition duration-200 hover:bg-transparent">
+									Upgrade Plan ✨
+								</div>
+							</button>
+						)}
 					</div>
 				</div>
 

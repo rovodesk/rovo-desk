@@ -3,7 +3,6 @@ import {
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
-import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -22,7 +21,6 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard, MoreVertical, UserCircle } from "lucide-react";
 import { useState } from "react";
-import { determineAccessRole } from "../helpers";
 import { useUser } from "../hooks";
 import { SignOutDialog } from "./sign-out-dialog";
 
@@ -37,7 +35,6 @@ function ProfileDropdown() {
 	const email = user.email;
 	const image =
 		user.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
-	const role = user.role;
 
 	// Improved abbreviation logic
 	const abbreviation = (
@@ -81,26 +78,20 @@ function ProfileDropdown() {
 					>
 						{/* Dropdown Header */}
 						<DropdownMenuLabel className="h-12 px-2 py-1 font-normal">
-							<div className="flex items-center justify-between gap-3">
-								<div className="flex min-w-0 items-center gap-2">
-									<Avatar className="h-8 w-8 shrink-0 rounded-lg">
-										<AvatarImage alt={name} src={image} />
-										<AvatarFallback className="rounded-lg">
-											{abbreviation}
-										</AvatarFallback>
-									</Avatar>
+							<div className="flex min-w-0 items-center gap-2">
+								<Avatar className="h-8 w-8 shrink-0 rounded-lg">
+									<AvatarImage alt={name} src={image} />
+									<AvatarFallback className="rounded-lg">
+										{abbreviation}
+									</AvatarFallback>
+								</Avatar>
 
-									<div className="grid min-w-0 text-left text-sm leading-tight">
-										<span className="truncate font-medium">{name}</span>
-										<span className="truncate text-muted-foreground text-xs">
-											{email}
-										</span>
-									</div>
+								<div className="grid min-w-0 text-left text-sm leading-tight">
+									<span className="truncate font-medium">{name}</span>
+									<span className="truncate text-muted-foreground text-xs">
+										{email}
+									</span>
 								</div>
-
-								<Badge className="shrink-0" variant="destructive">
-									{determineAccessRole(role)}
-								</Badge>
 							</div>
 						</DropdownMenuLabel>
 

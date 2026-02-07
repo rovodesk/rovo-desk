@@ -9,19 +9,19 @@
   },
   "dependencies": {
     "@better-auth/passkey": "^1.4.18",
-    "@polar-sh/better-auth": "catalog:polar",
+    "@better-auth/stripe": "^1.4.18",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",
+    "@zero-heads-lab/billing": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
-    "@zero-heads-lab/billing": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "better-auth": "^1.4.17",
+    "lucide-react": "catalog:",
     "react": "catalog:react19",
-    "zod": "catalog:",
-    "lucide-react": "catalog:"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:react19",

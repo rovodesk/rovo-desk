@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
+import { hasOrganizationAccessRole } from "@zero-heads-lab/auth/helpers";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Sidebar,
@@ -16,14 +18,14 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
-import { SidebarNavSection } from "@/components/nav-section";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
+import { SidebarNavSection } from "./nav-section";
 
-export function AdminSidebar() {
+export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
 
-	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
@@ -32,6 +34,8 @@ export function AdminSidebar() {
 	if (!sidebarData) {
 		return null;
 	}
+
+	console.log(role);
 
 	return (
 		<Sidebar
@@ -42,6 +46,8 @@ export function AdminSidebar() {
 			<SidebarHeader>
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
+
+				{hasOrganizationAccessRole(role) && <DomainSwitcher />}
 			</SidebarHeader>
 
 			<SidebarContent>

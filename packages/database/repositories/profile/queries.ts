@@ -1,8 +1,10 @@
 import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
-import { profile as profileSchema } from "../../schema";
+import {
+	subscription as billingSubscriptionSchema,
+	profile as profileSchema,
+} from "../../schema";
 
-// TODO: Auto generate this type from schema
 export type Profile = {
 	id: string;
 	currentOnboardingStep: string | null;
@@ -10,13 +12,15 @@ export type Profile = {
 	onboardingCompletedAt: Date | null;
 	organizationId: string | null;
 	teamId: string | null;
+	plan: string | null;
 };
 
 export async function getProfileByUserId(
 	userId: string
 ): Promise<Profile | null> {
 	const db = createDatabase();
-	return await db
+
+	const [result] = await db
 		.select({
 			id: profileSchema.userId,
 			currentOnboardingStep: profileSchema.currentOnboardingStep,
@@ -24,9 +28,15 @@ export async function getProfileByUserId(
 			onboardingCompletedAt: profileSchema.onboardingCompletedAt,
 			organizationId: profileSchema.organizationId,
 			teamId: profileSchema.teamId,
+			plan: billingSubscriptionSchema.plan,
 		})
 		.from(profileSchema)
+		.leftJoin(
+			billingSubscriptionSchema,
+			eq(profileSchema.subscriptionId, billingSubscriptionSchema.id)
+		)
 		.where(eq(profileSchema.userId, userId))
-		.limit(1)
-		.then((res) => res[0] ?? null);
+		.limit(1);
+
+	return result ?? null;
 }

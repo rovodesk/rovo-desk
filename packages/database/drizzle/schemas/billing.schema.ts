@@ -1,41 +1,48 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	date,
 	index,
 	integer,
-	jsonb,
 	pgSchema,
 	text,
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
-import { organization, user } from "./auth.schema";
+import { organization } from "schema";
 
 export const billingSchema = pgSchema("billing");
 
-export const subscriptions = billingSchema.table(
-	"subscriptions",
+export const subscription = billingSchema.table(
+	"subscription",
 	{
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
 
-		userId: text("userId").references(() => user.id, {
-			onDelete: "set null",
-		}),
-
-		organizationId: text("organizationId")
+		plan: text("plan").notNull(),
+		referenceId: text("referenceId")
 			.notNull()
-			.references(() => organization.id, { onDelete: "cascade" }),
+			.references(() => organization.id, {
+				onDelete: "cascade",
+			}),
 
-		polarSubscriptionId: text("polarSubscriptionId").notNull(),
-		polarCustomerId: text("polarCustomerId").notNull(),
-		polarProductId: text("polar_product_id").notNull(),
+		stripeCustomerId: text("stripeCustomerId"),
+		stripeSubscriptionId: text("stripeSubscriptionId"),
 
 		status: text("status").notNull(),
 
+		periodStart: date("periodStart"),
+		periodEnd: date("periodEnd"),
+
+		cancelAtPeriodEnd: boolean("cancelAtPeriodEnd"),
+		cancelAt: date("cancelAt"),
+		canceledAt: date("canceledAt"),
+		endedAt: date("endedAt"),
+
 		seats: integer("seats"),
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		metadata: jsonb("metadata"),
@@ -45,33 +52,39 @@ export const subscriptions = billingSchema.table(
 =======
 		metadata: jsonb("metadata"),
 >>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+		trialStart: date("trialStart"),
+		trialEnd: date("trialEnd"),
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)
 
 		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
-		modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
+		updatedAt: timestamp("updatedAt", { withTimezone: true }),
 	},
 	(t) => [
-		unique("subscriptionsPolarSubscriptionIdIdx").on(t.polarSubscriptionId),
-		index("subscriptionsOrgIdx").on(t.organizationId),
+		unique("subscriptionsReferenceIdIdx").on(t.referenceId),
 		index("subscriptionsStatusIdx").on(t.status),
 	]
 );
 
-export const subscriptionsRelations = relations(
-	subscriptions,
-	({ one, many }) => ({
-		periods: many(subscriptionPeriods),
-		pricing: many(subscriptionPricing),
-		cancellation: one(subscriptionCancellations),
-	})
-);
+export const subscriptionRelations = relations(subscription, ({ one }) => ({
+	plan: one(plan, {
+		fields: [subscription.plan],
+		references: [plan.id],
+		relationName: "subscriptionPlan",
+	}),
+}));
 
-export const subscriptionPeriods = billingSchema.table(
-	"subscriptionPeriods",
-	{
-		id: text("id")
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+export const plan = billingSchema.table("plan", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text("name").notNull(),
+	price: integer("price").notNull(),
+	createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
+	modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
+});
 
+<<<<<<< HEAD
 		subscriptionId: text("subscriptionId")
 			.notNull()
 			.references(() => subscriptions.id, { onDelete: "cascade" }),
@@ -207,3 +220,10 @@ export const subscriptionCancellationsRelations = relations(
 		}),
 	})
 );
+=======
+export const planRelations = relations(plan, ({ many }) => ({
+	subscription: many(subscription, {
+		relationName: "subscriptionPlan",
+	}),
+}));
+>>>>>>> b062417 (feat: Migrate billing from Polar to Stripe, introducing Stripe client and customer helpers, updating billing schemas, and adjusting admin routes.)

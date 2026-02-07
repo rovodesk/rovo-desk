@@ -7,6 +7,7 @@ import {
 	text,
 	timestamp,
 } from "drizzle-orm/pg-core";
+import { subscription } from "schema";
 import { organization, team, user } from "./auth.schema";
 
 export const profileSchema = pgSchema("profile");
@@ -29,6 +30,10 @@ export const profile = profileSchema.table("profile", {
 	organizationId: text("organizationId").references(() => organization.id),
 
 	teamId: text("teamId").references(() => team.id),
+
+	subscriptionId: text("subscriptionId").references(() => subscription.id, {
+		onDelete: "set null",
+	}),
 
 	settings: jsonb("settings")
 		.$type<{
