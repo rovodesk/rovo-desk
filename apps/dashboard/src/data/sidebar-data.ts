@@ -4,6 +4,7 @@ import {
 	CreditCard,
 	FileText,
 	Funnel,
+	Inbox,
 	LayoutDashboard,
 	LifeBuoy,
 	ListTodo,
@@ -16,8 +17,6 @@ import {
 	Settings,
 	SquareUserRound,
 } from "lucide-react";
-
-//TODO: Configure Sidebar Data Properly
 
 export const SIDEBAR_CONFIG: SidebarConfig = {
 	navGroups: [
@@ -78,6 +77,11 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 		{
 			title: "Quick Actions",
 			items: [
+<<<<<<< HEAD
+				{ title: "Billing", url: "/settings/billing", icon: CreditCard },
+				{ title: "Settings", url: "/settings", icon: Settings },
+				{ title: "Audit Logs", url: "/audit-logs", icon: FileText },
+=======
 				{
 					title: "Billing",
 					url: "/settings/billing",
@@ -93,10 +97,57 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/audit-logs",
 					icon: FileText,
 				},
+>>>>>>> 41a6b28 (Feat/api (#6))
 			],
 		},
 	],
 	quickLinks: {
+<<<<<<< HEAD
+		primary: [
+			{
+				title: "Create Draft",
+				url: "/",
+				icon: PencilRuler,
+				visibility: {
+					roles: [
+						"organizationMember",
+						"organizationAdmin",
+						"organizationOwner",
+					],
+				},
+			},
+			{
+				title: "Onboard Enterprise",
+				url: "/onboard-enterprise",
+				icon: PartyPopper,
+				visibility: {
+					roles: ["superAdmin", "moderator"],
+				},
+			},
+		],
+		secondary: [
+			{
+				title: "Inbox",
+				url: "/inbox",
+				icon: Inbox,
+				visibility: {
+					roles: [
+						"organizationMember",
+						"organizationAdmin",
+						"organizationOwner",
+					],
+				},
+			},
+			{
+				title: "Create Announcement",
+				url: "/announcements/create",
+				icon: Megaphone,
+				visibility: {
+					roles: ["superAdmin", "moderator"],
+				},
+			},
+		],
+=======
 		primary: {
 			title: "Create Draft",
 			url: "/",
@@ -107,6 +158,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 			url: "/campaigns/create",
 			icon: Megaphone,
 		},
+>>>>>>> 41a6b28 (Feat/api (#6))
 	},
 	footer: [
 		{ title: "Help Center", url: "/help-center", icon: LifeBuoy },

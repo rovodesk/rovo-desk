@@ -27,6 +27,7 @@ const Plugins = [
 	multiSessionClient(),
 	magicLinkClient(),
 	passkeyClient(),
+	// polarClient(),
 	adminClient(),
 	lastLoginMethodClient(),
 ] satisfies BetterAuthClientPlugin[];

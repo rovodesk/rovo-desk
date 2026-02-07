@@ -85,6 +85,10 @@ export async function getOrganizationBySlug(slug: string) {
 		.limit(1)
 		.then((res) => res[0]);
 }
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 
 export async function findReusableSession({
 	userId,
@@ -125,3 +129,8 @@ export async function findReusableSession({
 
 	return session ?? null;
 }
+<<<<<<< HEAD
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)

@@ -14,12 +14,6 @@
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
-<<<<<<< HEAD
-=======
-    "@tanstack/react-router-ssr-query": "catalog:tanstack",
-    "@tanstack/react-router-with-query": "catalog:tanstack",
-    "@tanstack/react-start": "catalog:tanstack",
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
     "@tanstack/react-table": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
     "@zero-heads-lab/auth": "workspace:*",

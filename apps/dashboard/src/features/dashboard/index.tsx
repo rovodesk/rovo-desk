@@ -3,6 +3,7 @@ import {
 	hasPlatformAccessRole,
 } from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
+import { Search } from "@zero-heads-lab/design-system/components/search";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -22,7 +23,6 @@ import { Header } from "@zero-heads-lab/design-system/layout/header";
 import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { useMemo } from "react";
-import { Search } from "@/components/search";
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();

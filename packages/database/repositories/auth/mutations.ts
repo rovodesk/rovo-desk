@@ -18,7 +18,14 @@ export async function markUserAsDeleted(userId: string) {
 		.update(userSchema)
 		.set({
 			deletedAt: new Date(),
+<<<<<<< HEAD
+<<<<<<< HEAD
 			role: "deleted",
+=======
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+			role: "deleted",
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		})
 		.where(eq(userSchema.id, userId));
 }
@@ -29,6 +36,8 @@ export async function deleteSession(sessionId: string) {
 	return await db.delete(sessionSchema).where(eq(sessionSchema.id, sessionId));
 }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 export async function markSessionAsRevoked(sessionId: string) {
 	const db = createDatabase();
 
@@ -77,6 +86,67 @@ export async function createNewUserWithProfile(userId: string) {
 
 	if (attempt === MAX_ATTEMPTS) {
 		throw new Error("Failed to generate unique organization slug");
+=======
+export async function createNewUserWithProfile(userId: string) {
+	const orgName = "Default Workspace";
+	let orgSlug = Placeholder.slug();
+
+=======
+export async function markSessionAsRevoked(sessionId: string) {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+	const db = createDatabase();
+
+	return await db
+		.update(sessionSchema)
+		.set({
+			revokedAt: new Date(),
+		})
+		.where(eq(sessionSchema.id, sessionId));
+}
+
+export async function createNewUserWithProfile(userId: string) {
+	const orgName = "Default Workspace";
+	const db = createDatabase();
+
+	// Check User
+	const existingUser = await db
+		.select()
+		.from(userSchema)
+		.where(eq(userSchema.id, userId))
+		.limit(1);
+
+<<<<<<< HEAD
+	if (existingOrg.length > 0) {
+		orgSlug = `${generateUUID(orgSlug).slice(0, 4)}`;
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+	if (existingUser.length === 0) {
+		throw new Error("User not found");
+	}
+
+	// Generate a unique slug (loop until available)
+	let orgSlug = Placeholder.slug();
+	const MAX_ATTEMPTS = 5;
+	let attempt = 0;
+
+	while (attempt < MAX_ATTEMPTS) {
+		const existingOrg = await db
+			.select()
+			.from(orgSchema)
+			.where(eq(orgSchema.slug, orgSlug))
+			.limit(1);
+
+		if (existingOrg.length === 0) {
+			break;
+		}
+
+		orgSlug = `${Placeholder.slug()}-${generateUUID(orgSlug).slice(0, 4)}`;
+		attempt++;
+	}
+
+	if (attempt === MAX_ATTEMPTS) {
+		throw new Error("Failed to generate unique organization slug");
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 	}
 
 	return await db.transaction(async (tx) => {
@@ -102,7 +172,15 @@ export async function createNewUserWithProfile(userId: string) {
 				organizationId: org.id,
 				role: "owner",
 			});
+<<<<<<< HEAD
+<<<<<<< HEAD
 		} catch {
+=======
+		} catch (_error) {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		} catch {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Org member creation failed");
 		}
@@ -132,11 +210,42 @@ export async function createNewUserWithProfile(userId: string) {
 					teamId: team.id,
 				}),
 			]);
+<<<<<<< HEAD
+<<<<<<< HEAD
 		} catch {
+=======
+		} catch (_error) {
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+		} catch {
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 			tx.rollback();
 			throw new Error("Team member creation failed");
 		}
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
+		// 5. Mark User as Member
+		try {
+			await tx
+				.update(userSchema)
+				.set({
+					role: "organizationOwner",
+				})
+				.where(eq(userSchema.id, userId));
+		} catch {
+			tx.rollback();
+			throw new Error("User role update failed");
+		}
+
+<<<<<<< HEAD
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		return {
 			orgId: org.id,
 			orgName: org.name,
@@ -144,6 +253,7 @@ export async function createNewUserWithProfile(userId: string) {
 			teamId: team.id,
 			teamName: team.name,
 		};
+<<<<<<< HEAD
 	});
 }
 
@@ -156,3 +266,13 @@ export async function markUserAsVerified(userId: string) {
 		})
 		.where(eq(userSchema.id, userId));
 }
+<<<<<<< HEAD
+=======
+		return { orgId: org.id, teamId: team.id };
+=======
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
+	});
+}
+>>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
+=======
+>>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)

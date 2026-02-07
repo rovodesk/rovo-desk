@@ -1,9 +1,8 @@
 <<<<<<< HEAD
-
 =======
-"use client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 
+
+>>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useFieldContext } from "./form-context"
 import { Field, FieldDescription, FieldLabel } from "../ui/field"
 import { FormFieldError } from "./field-error"
