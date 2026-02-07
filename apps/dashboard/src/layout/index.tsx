@@ -6,7 +6,6 @@ import {
 import { LayoutProvider } from "@zero-heads-lab/design-system/context/layout";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { SearchProvider } from "@/providers/search";
 import { AppSidebar } from "./app-sidebar";
 
@@ -17,7 +16,7 @@ export function AuthenticatedLayout() {
 		<SearchProvider>
 			<LayoutProvider>
 				<SidebarProvider defaultOpen={sidebarOpen}>
-					<AppSidebar sidebarData={SIDEBAR_CONFIG} />
+					<AppSidebar />
 					<SidebarInset
 						className={cn(
 							// Set content container, so we can use container queries

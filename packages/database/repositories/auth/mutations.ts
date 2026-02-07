@@ -2,7 +2,6 @@ import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
-	member as orgMemSchema,
 	organization as orgSchema,
 	session as sessionSchema,
 	teamMember as teamMemSchema,
@@ -91,13 +90,6 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Org creation failed");
 		}
 
-		// Create Org Member
-		await tx.insert(orgMemSchema).values({
-			userId,
-			organizationId: org.id,
-			role: "owner",
-		});
-
 		// Update User Role
 		await tx
 			.update(userSchema)
@@ -116,14 +108,6 @@ export async function createNewUserWithProfile(userId: string) {
 		if (!team) {
 			throw new Error("Team creation failed");
 		}
-
-		// 5. Mark User as Member
-		await tx
-			.update(userSchema)
-			.set({
-				role: "organizationOwner",
-			})
-			.where(eq(userSchema.id, userId));
 
 		// Create Team Member
 		await tx.insert(teamMemSchema).values({

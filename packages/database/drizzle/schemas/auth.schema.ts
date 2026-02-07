@@ -28,7 +28,6 @@ export const user = authSchema.table("user", {
 	banReason: text("banReason"),
 	banExpires: date("banExpires"),
 	stripeCustomerId: text("stripeCustomerId"),
-
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),

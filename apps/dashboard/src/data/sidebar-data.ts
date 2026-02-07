@@ -107,8 +107,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 							"organizationMember",
 							"organizationAdmin",
 						],
-						resource: "conversations",
-						actions: ["list"],
 					},
 				},
 				{
@@ -121,8 +119,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 							"organizationMember",
 							"organizationAdmin",
 						],
-						resource: "tasks",
-						actions: ["list"],
 					},
 				},
 				{
