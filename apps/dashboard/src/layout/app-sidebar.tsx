@@ -1,5 +1,8 @@
+import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
+import { hasPlatformAccessRole } from "@zero-heads-lab/auth/helpers";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -16,17 +19,19 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
-import { Button } from "../../../../packages/design-system/components/ui/button";
 import { AppTitle } from "./app-title";
 import { SidebarNavSection } from "./nav-section";
 
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
-	const { sidebarData, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+
+	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
 
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
 	}
+
+	console.log(role);
 
 	return (
 		<Sidebar
@@ -42,33 +47,6 @@ export function AppSidebar() {
 			</SidebarHeader>
 
 			<SidebarContent>
-<<<<<<< HEAD
-				{sidebarData.quickLinks && (
-					<SidebarGroup>
-						<SidebarMenu>
-							<SidebarMenuItem className="flex items-center gap-2">
-								{/* PRIMARY ACTIONS */}
-								{sidebarData.quickLinks.primary && (
-									<SidebarMenuButton
-										asChild
-										className="min-w-8 bg-primary hover:bg-primary/90"
-										tooltip={sidebarData.quickLinks.primary.title}
-									>
-										<a
-											className="flex items-center gap-2"
-											href={sidebarData.quickLinks.primary.url}
-										>
-											{sidebarData.quickLinks.primary.icon && (
-												<sidebarData.quickLinks.primary.icon />
-											)}
-											<span>{sidebarData.quickLinks.primary.title}</span>
-										</a>
-									</SidebarMenuButton>
-								)}
-
-								{/* SECONDARY ACTIONS */}
-								{sidebarData.quickLinks.secondary && (
-=======
 				<SidebarGroup>
 					<SidebarMenu>
 						<SidebarMenu>
@@ -90,44 +68,6 @@ export function AppSidebar() {
 										</SidebarMenuButton>
 									))}
 
-<<<<<<< HEAD
-								{sidebarData.quickLink?.secondary && (
->>>>>>> 8_137_094 (feat: roles and basic permissions addded, optimzed and refactored)
-									<Button
-										asChild
-										className="size-8 rounded-md group-data-[collapsible=icon]:opacity-0"
-										size="icon"
-									>
-<<<<<<< HEAD
-										<a href={sidebarData.quickLinks.secondary.url}>
-											{sidebarData.quickLinks.secondary.icon && (
-												<sidebarData.quickLinks.secondary.icon />
-											)}
-											<span className="sr-only">
-												{sidebarData.quickLinks.secondary.title}
-											</span>
-										</a>
-									</Button>
-								)}
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroup>
-				)}
-
-=======
-										<Link to={sidebarData.quickLink?.secondary?.url}>
-											{sidebarData.quickLink.secondary?.icon && (
-												<sidebarData.quickLink.secondary.icon />
-											)}
-											<span className="sr-only">
-												{sidebarData.quickLink.secondary?.title}
-											</span>
-										</Link>
-									</Button>
-								)}
-							</SidebarMenuItem>
-						)}
-=======
 									{/* SECONDARY ACTIONS */}
 									{sidebarData.quickLinks?.secondary?.map((item) => (
 										<Button
@@ -145,27 +85,19 @@ export function AppSidebar() {
 								</SidebarMenuItem>
 							)}
 						</SidebarMenu>
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 					</SidebarMenu>
 				</SidebarGroup>
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 				{sidebarData.navGroups.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
 			</SidebarContent>
 
-			<SidebarFooter className=<SidebarMenu>
+			<SidebarFooter className="flex flex-col gap-8">
+				<SidebarMenu>
 					{sidebarData.footer.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
-<<<<<<< HEAD
-								className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-							>
-								<a className="flex items-center gap-2" href={item.url}>
-									{item.icon && <item.icon />}
-									<span>{item.title}</span>
-=======
 								className="bg-transparent! hover:bg-sidebar-accent!"
 							>
 								<a href={item.url}>
@@ -176,25 +108,14 @@ export function AppSidebar() {
 										</>
 									)}
 									{item.title}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 								</a>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
 				</SidebarMenu>
-<<<<<<< HEAD
-
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							asChild
-							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-						>
-=======
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild>
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
 							<ProfileDropdown />
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -278,5 +199,3 @@ function AppSidebarSkeleton() {
 		</Sidebar>
 	);
 }
-<
-				"flex flex-col gap-8"

@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-
 import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
-
-=======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management
-with new server-side configurations
-and;
-dashboard;
-sidebar;
-filtering.
-)
-
 import { z } from "zod";
 import type {
 	AuthRole,
@@ -146,7 +134,6 @@ export function determineAccessRole(role: unknown): AuthRole {
 export function isAuthRole(value: unknown): value is AuthRole {
 	return AUTH_ROLES.includes(value as AuthRole);
 }
-<<<<<<< HEAD
 
 export function getDeviceInfo(userAgent?: string | null) {
 	if (!userAgent) {
@@ -182,11 +169,3 @@ export function getDeviceInfo(userAgent?: string | null) {
 
 	return { label: "Unknown device", Icon: MonitorIcon };
 }
-=======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management
-with new server-side configurations
-and;
-dashboard;
-sidebar;
-filtering.
-)

@@ -8,6 +8,6 @@
     },
     "strictNullChecks": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "../../apps/dashboard/src/components/search.tsx"],
   "exclude": ["node_modules", "dist"]
 }

@@ -15,11 +15,14 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-
-<<<<<<< HEAD
-
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { useDeleteDeviceSession, useListDeviceSessions } from "../hooks";
+import { Loader2Icon, Trash2Icon } from "lucide-react";
+import { getDeviceInfo } from "../helpers";
+import {
+	useDeleteDeviceSession,
+	useListDeviceSessions,
+	useSession,
+} from "../hooks";
 import type { DeviceSession } from "../types";
 
 type DeviceSessionWithCurrent = DeviceSession & {
@@ -44,42 +47,6 @@ export function SessionTable() {
 		isPending: isDeletingSession,
 		pendingToken,
 	} = useDeleteDeviceSession({
-=======
-import {
-	Loader2Icon,
-	MonitorIcon,
-	SmartphoneIcon,
-	Trash2Icon,
-} from "lucide-react";
-import { useDeleteSession, useListSessions, useSession } from "../hooks";
-
-function getDeviceInfo(userAgent?: string) {
-	if (!userAgent) {
-		return { label: "Unknown device", Icon: MonitorIcon };
-	}
-
-	const ua = userAgent.toLowerCase();
-	const isMobile =
-		ua.includes("iphone") || ua.includes("android") || ua.includes("mobile");
-
-	return {
-		label: isMobile ? "Mobile device" : "Desktop device",
-		Icon: isMobile ? SmartphoneIcon : MonitorIcon,
-	};
-}
-
-export function SessionTable() {
-	const { sessions, isLoading } = useListSessions();
-	const { session } = useSession();
-	const currentSessionId = session?.session?.id;
-
-	const sessionsWithCurrent = sessions.map((s) => ({
-		...s,
-		isCurrent: s.id === currentSessionId,
-	}));
-
-	const { deleteSession, variables: pendingToken } = useDeleteSession({
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		onSuccess: () => {
 			toast.success("Session revoked");
 		},
@@ -90,11 +57,7 @@ export function SessionTable() {
 		},
 	});
 
-<<<<<<< HEAD
 	if (isSessionsLoading || isSessionLoading) {
-=======
-	if (isLoading) {
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		return (
 			<div className="space-y-2">
 				<Skeleton className="h-12 w-full" />
@@ -104,11 +67,7 @@ export function SessionTable() {
 		);
 	}
 
-<<<<<<< HEAD
 	if (!deviceSessions?.length) {
-=======
-	if (!sessions?.length) {
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 		return (
 			<div className="rounded-lg border bg-card p-6 text-center text-muted-foreground">
 				No active sessions found
@@ -119,7 +78,6 @@ export function SessionTable() {
 	return (
 		<div className="w-full rounded-xl border bg-card shadow-sm">
 			<Table>
-<<<<<<< HEAD
 				{/* Header */}
 				<TableHeader>
 					<TableRow className="hover:bg-transparent">
@@ -161,30 +119,6 @@ export function SessionTable() {
 							>
 								{/* Device */}
 								<TableCell className="flex justify-center px-6">
-=======
-				<TableHeader>
-					<TableRow className="hover:bg-transparent">
-						<TableHead className="px-6">Device</TableHead>
-						<TableHead>IP Address</TableHead>
-						<TableHead>Last Active</TableHead>
-						<TableHead className="w-[120px] pr-6 text-right">Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-
-				<TableBody>
-					{sessionsWithCurrent.map((session) => {
-						const device = getDeviceInfo(session.userAgent);
-						const DeviceIcon = device.Icon;
-						const isDeleting = pendingToken === session.token;
-
-						return (
-							<TableRow
-								className="group transition-colors hover:bg-muted/40"
-								key={sessionsWithCurrent.findIndex((s) => s.id === session.id)}
-							>
-								{/* Device */}
-								<TableCell className="px-6">
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 									<div className="flex items-center gap-3">
 										<DeviceIcon className="size-4 text-muted-foreground" />
 										<div className="flex flex-col">
@@ -201,7 +135,6 @@ export function SessionTable() {
 								</TableCell>
 
 								{/* IP */}
-<<<<<<< HEAD
 								<TableCell className="px-2 text-muted-foreground text-sm">
 									{session.session.ipAddress}
 								</TableCell>
@@ -218,26 +151,12 @@ export function SessionTable() {
 
 								{/* Actions */}
 								<TableCell className="justify-center pr-6">
-=======
-								<TableCell className="text-muted-foreground text-sm">
-									{session.ipAddress}
-								</TableCell>
-
-								{/* Last active */}
-								<TableCell className="text-muted-foreground text-sm">
-									{new Date(session.createdAt).toLocaleString()}
-								</TableCell>
-
-								{/* Actions */}
-								<TableCell className="pr-6 text-right">
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 									<TooltipProvider>
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<Button
 													className="text-destructive hover:bg-destructive/10 disabled:opacity-40"
 													disabled={session.isCurrent || isDeleting}
-<<<<<<< HEAD
 													onClick={() => deleteSession(session.session.token)}
 													size="icon"
 													variant="ghost"
@@ -259,16 +178,6 @@ export function SessionTable() {
 																	"cursor-not-allowed opacity-40"
 															)}
 														/>
-=======
-													onClick={() => deleteSession(session.token)}
-													size="icon"
-													variant="ghost"
-												>
-													{isDeleting ? (
-														<Loader2Icon className="size-4 animate-spin" />
-													) : (
-														<Trash2Icon className="size-4" />
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 													)}
 												</Button>
 											</TooltipTrigger>

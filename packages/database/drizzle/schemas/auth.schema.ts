@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	date,
 	index,
 	integer,
 	jsonb,
@@ -22,19 +23,10 @@ export const user = authSchema.table("user", {
 	image: text("image"),
 	isAnonymous: boolean("isAnonymous"),
 	lastLoginMethod: text("lastLoginMethod"),
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 	role: text("role").notNull().default("unverified"),
 	banned: boolean("banned"),
 	banReason: text("banReason"),
 	banExpires: date("banExpires"),
-<<<<<<< HEAD
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-=======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
 		.notNull(),
@@ -42,7 +34,7 @@ export const user = authSchema.table("user", {
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
-})
+});
 
 export const userRelations = relations(user, ({ many, one }) => ({
 	sessions: many(session, {
@@ -312,13 +304,6 @@ export const session = authSchema.table(
 
 		token: text("token").notNull().unique(),
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-		// 🔒 Critical: enforce one active session per device
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-=======
->>>>>>> 36d2c52 (feat: Implement robust access control and multi-session management with new server-side configurations and dashboard sidebar filtering.)
 		deviceId: text("deviceId"),
 
 		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
@@ -351,7 +336,7 @@ export const session = authSchema.table(
 
 		// 🔑 NEW: soft revocation
 		revokedAt: timestamp("revokedAt", { withTimezone: true }),
-},
+	},
 	(t) => [
 		index("sessionUserIdx").on(t.userId),
 		index("sessionExpiresIdx").on(t.expiresAt),
@@ -359,7 +344,7 @@ export const session = authSchema.table(
 		// 🔒 Critical: enforce one active session per device
 		index("sessionActiveDeviceIdx").on(t.userId, t.deviceId),
 	]
-)
+);
 
 export const account = authSchema.table(
 	"account",
