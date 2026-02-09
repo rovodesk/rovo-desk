@@ -29,9 +29,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Dashboard",
 					url: "/",
 					icon: LayoutDashboard,
-					visibility: {
-						roles: ["verified"],
-					},
 				},
 				{
 					title: "Feature Flags",
@@ -189,14 +186,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Settings",
 					url: "/settings",
 					icon: Settings,
-					visibility: {
-						roles: [
-							"superAdmin",
-							"moderator",
-							"organizationOwner",
-							"organizationAdmin",
-						],
-					},
 				},
 				{
 					title: "Audit Logs",
