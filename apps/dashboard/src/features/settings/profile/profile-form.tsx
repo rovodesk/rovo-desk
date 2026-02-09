@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
-=======
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -142,8 +135,6 @@ export function ProfileForm() {
 							</div>
 						</div>
 					</div>
-<<<<<<< HEAD
-
 					{/* SECTION 2: FORM CONTENT */}
 					<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
 						{/* LEFT COLUMN: PUBLIC PROFILE */}
@@ -211,77 +202,6 @@ export function ProfileForm() {
 											)}
 										</div>
 
-<<<<<<< HEAD
-=======
-
-					{/* SECTION 2: FORM CONTENT */}
-					<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-						{/* LEFT COLUMN: PUBLIC PROFILE */}
-						<div className="space-y-6 lg:col-span-2">
-							<div>
-								<h3 className="mb-4 font-medium text-lg">Public Profile</h3>
-								<div className="grid gap-6">
-									<form.AppField
-										children={(field) => (
-											<field.TextField
-												icon={<UserIcon className="size-4" />}
-												label="Display Name"
-												placeholder="e.g. Jane Doe"
-											/>
-										)}
-										name="name"
-									/>
-
-									<form.AppField
-										children={(field) => (
-											<field.TextareaField
-												className="min-h-[120px] resize-none"
-												description="Brief description for your profile. URLs are hyperlinked."
-												label="Bio"
-												maxLength={160}
-												placeholder="I'm a software engineer based in..."
-											/>
-										)}
-										name="bio"
-									/>
-
-									<form.AppField
-										children={(field) => (
-											<field.SelectField
-												icon={<GlobeIcon className="size-4" />}
-												label="Interface Language"
-												options={languages}
-											/>
-										)}
-										name="language"
-									/>
-								</div>
-							</div>
-						</div>
-
-						{/* RIGHT COLUMN: ACCOUNT & SECURITY */}
-						<div className="space-y-8">
-							<div>
-								<h3 className="mb-4 font-medium text-lg">Account Details</h3>
-								<div className="flex flex-col gap-6 rounded-lg border bg-card p-5 text-card-foreground shadow-sm">
-									{/* Email Field with Verification Status embedded cleanly */}
-									<div className="space-y-2">
-										<div className="flex items-center justify-between">
-											<Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-												Email Address
-											</Label>
-											{session?.user.emailVerified ? (
-												<span className="flex items-center gap-1 font-medium text-[10px] text-emerald-500 uppercase tracking-wider">
-													<CheckCircle2Icon className="size-3" /> Verified
-												</span>
-											) : (
-												<span className="flex items-center gap-1 font-medium text-[10px] text-amber-500 uppercase tracking-wider">
-													<XCircleIcon className="size-3" /> Unverified
-												</span>
-											)}
-										</div>
-
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 										<form.AppField
 											children={(field) => (
 												<field.TextField
@@ -294,21 +214,6 @@ export function ProfileForm() {
 												/>
 											)}
 											name="email"
-<<<<<<< HEAD
-=======
-								<form.AppField
-									children={(field) => (
-										<field.TextField
-											description="Primary email for notifications and security."
-											disabled
-											icon={
-												<AtSignIcon className="size-4 text-muted-foreground" />
-											}
-											label="Email Address"
-											value={session?.user.email}
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
 										/>
 
 										<div className="flex justify-end">
