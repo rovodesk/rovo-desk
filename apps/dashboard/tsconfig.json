@@ -7,12 +7,6 @@
       "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "../../packages/design-system/layout/main-content.tsx",
-    "../../packages/design-system/layout/header.tsx",
-    "../../packages/design-system/layout/app-title.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

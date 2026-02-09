@@ -17,9 +17,9 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
 import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
+import { AppTitle } from "./app-title";
 import { SidebarNavSection } from "./nav-section";
 
 export function AppSidebar() {
