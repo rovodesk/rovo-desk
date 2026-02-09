@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
+import { DomainList } from "@zero-heads-lab/auth/components/domains-list";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
-import { hasOrganizationAccessRole } from "@zero-heads-lab/auth/helpers";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Sidebar,
@@ -17,15 +17,19 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
-import { AppTitle } from "@zero-heads-lab/design-system/layout/app-title";
-import { SIDEBAR_CONFIG } from "@/data/sidebar-data";
 import { useSidebarData } from "@/hooks/use-sidebar-data";
+import { AppTitle } from "@/layout/app-title";
+import type { SidebarConfig } from "@/types/sidebar";
 import { SidebarNavSection } from "./nav-section";
 
-export function AppSidebar() {
+export function AppSidebar({
+	sidebarData: config,
+}: {
+	sidebarData: SidebarConfig;
+}) {
 	const { collapsible, variant } = useLayout();
 
-	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+	const { sidebarData, role, isLoading } = useSidebarData(config);
 
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
@@ -35,7 +39,13 @@ export function AppSidebar() {
 		return null;
 	}
 
-	console.log(role);
+	const beforeQuickActions = sidebarData.navGroups.filter(
+		(group) => group.title !== "Quick Actions"
+	);
+
+	const quickActionsGroup = sidebarData.navGroups.find(
+		(group) => group.title === "Quick Actions"
+	);
 
 	return (
 		<Sidebar
@@ -47,7 +57,8 @@ export function AppSidebar() {
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
-				{hasOrganizationAccessRole(role) && <DomainSwitcher />}
+				{role === "organizationMember" ||
+					(role === "organizationAdmin" && <DomainSwitcher />)}
 			</SidebarHeader>
 
 			<SidebarContent>
@@ -93,9 +104,23 @@ export function AppSidebar() {
 						</SidebarMenu>
 					</SidebarMenu>
 				</SidebarGroup>
-				{sidebarData.navGroups.map((group) => (
+
+				{/* NORMAL NAV GROUPS */}
+				{beforeQuickActions.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
+
+				{/* INSERT LIST HERE */}
+				{role === "organizationOwner" && <DomainList />}
+
+				{/* QUICK ACTIONS SECTION */}
+				{quickActionsGroup && (
+					<SidebarNavSection
+						items={quickActionsGroup.items}
+						key={quickActionsGroup.title}
+						title={quickActionsGroup.title}
+					/>
+				)}
 			</SidebarContent>
 
 			<SidebarFooter className="flex flex-col gap-8">

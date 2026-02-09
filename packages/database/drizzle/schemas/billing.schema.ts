@@ -14,6 +14,20 @@ import { organization } from "schema";
 
 export const billingSchema = pgSchema("billing");
 
+export const plan = billingSchema.table("plan", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text("name").notNull(),
+	price: integer("price").notNull(),
+	createdAt: timestamp("createdAt", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	modifiedAt: timestamp("modifiedAt", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+});
+
 export const subscription = billingSchema.table(
 	"subscription",
 	{
@@ -21,7 +35,10 @@ export const subscription = billingSchema.table(
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
 
-		plan: text("plan").notNull(),
+		planId: text("planId")
+			.notNull()
+			.references(() => plan.id),
+
 		referenceId: text("referenceId")
 			.notNull()
 			.references(() => organization.id, {
@@ -47,8 +64,10 @@ export const subscription = billingSchema.table(
 		trialStart: date("trialStart"),
 		trialEnd: date("trialEnd"),
 
-		createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
-		updatedAt: timestamp("updatedAt", { withTimezone: true }),
+		createdAt: timestamp("createdAt", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
 	},
 	(t) => [
 		unique("subscriptionsReferenceIdIdx").on(t.referenceId),
@@ -58,18 +77,7 @@ export const subscription = billingSchema.table(
 
 export const subscriptionRelations = relations(subscription, ({ one }) => ({
 	plan: one(plan, {
-		fields: [subscription.plan],
+		fields: [subscription.planId],
 		references: [plan.id],
-		relationName: "subscriptionPlan",
 	}),
 }));
-
-export const plan = billingSchema.table("plan", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	name: text("name").notNull(),
-	price: integer("price").notNull(),
-	createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
-	modifiedAt: timestamp("modifiedAt", { withTimezone: true }).notNull(),
-});

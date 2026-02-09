@@ -1,3 +1,4 @@
+import type { AuthRole } from "@zero-heads-lab/auth/access-control";
 import type {
 	NavItem,
 	NavItemVisibility,
@@ -5,34 +6,24 @@ import type {
 	SidebarConfig,
 } from "@/types/sidebar";
 
-type PermissionMap = Record<string, boolean>;
-
 export function isNavItemVisible(
 	visibility: NavItemVisibility | undefined,
-	permissions: PermissionMap
+	authRole: AuthRole
 ): boolean {
 	//Defaults to visible unless restricted.
 	if (!visibility) return true;
 
-	const { resource, actions } = visibility;
+	const { roles } = visibility;
 
-	// Permission gate (ONLY if permissions exist)
-	if (resource && actions?.length) {
-		return actions.some((action) => {
-			const key = `${resource}:${action}`;
-			return permissions[key] === true;
-		});
-	}
+	// Match the authRole with the visibility roles
+	if (roles && !roles.includes(authRole)) return false;
 
 	return true;
 }
 
-function filterNavItem(
-	item: NavItem,
-	permissions: PermissionMap
-): NavItem | null {
+function filterNavItem(item: NavItem, role: AuthRole): NavItem | null {
 	// ⛔ Parent not allowed → drop immediately
-	if (!isNavItemVisible(item.visibility, permissions)) {
+	if (!isNavItemVisible(item.visibility, role)) {
 		return null;
 	}
 
@@ -42,9 +33,7 @@ function filterNavItem(
 			.map((child) => {
 				const effectiveVisibility = child.visibility ?? item.visibility;
 
-				return isNavItemVisible(effectiveVisibility, permissions)
-					? child
-					: null;
+				return isNavItemVisible(effectiveVisibility, role) ? child : null;
 			})
 			.filter(Boolean) as NavLink[];
 
@@ -61,16 +50,16 @@ function filterNavItem(
 
 function filterNavLinks<T extends NavLink>(
 	items: T[] | undefined,
-	permissions: PermissionMap
+	role: AuthRole
 ): T[] | undefined {
 	if (!items) return undefined;
 
-	return items.filter((item) => isNavItemVisible(item.visibility, permissions));
+	return items.filter((item) => isNavItemVisible(item.visibility, role));
 }
 
 export function filterSidebarConfig(
 	config: SidebarConfig,
-	permissions: PermissionMap
+	role: AuthRole
 ): SidebarConfig {
 	return {
 		...config,
@@ -78,7 +67,7 @@ export function filterSidebarConfig(
 		navGroups: config.navGroups
 			.map((group) => {
 				const items = group.items
-					.map((item) => filterNavItem(item, permissions))
+					.map((item) => filterNavItem(item, role))
 					.filter(Boolean) as NavItem[];
 
 				if (!items.length) return null;
@@ -89,8 +78,8 @@ export function filterSidebarConfig(
 
 		quickLinks: config.quickLinks
 			? {
-					primary: filterNavLinks(config.quickLinks.primary, permissions),
-					secondary: filterNavLinks(config.quickLinks.secondary, permissions),
+					primary: filterNavLinks(config.quickLinks.primary, role),
+					secondary: filterNavLinks(config.quickLinks.secondary, role),
 				}
 			: undefined,
 	};

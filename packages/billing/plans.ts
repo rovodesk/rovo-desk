@@ -18,9 +18,16 @@ export type Plan = {
 	};
 };
 
+export const PlanNames = {
+	Basic: "Basic",
+	Pro: "Pro",
+	Startup: "Startup",
+	Enterprise: "Enterprise",
+};
+
 export const UserPlans: Plan[] = [
 	{
-		name: "Pro",
+		name: PlanNames.Pro,
 		priceId: keys.PRO_PLAN_MONTHLY_PRICE_ID,
 		annualDiscountPriceId: keys.PRO_PLAN_ANNUAL_PRICE_ID,
 		limits: {
@@ -36,7 +43,7 @@ export const UserPlans: Plan[] = [
 		},
 	},
 	{
-		name: "Startup",
+		name: PlanNames.Startup,
 		priceId: keys.STARTUP_PLAN_MONTHLY_PRICE_ID,
 		annualDiscountPriceId: keys.STARTUP_PLAN_ANNUAL_PRICE_ID,
 		limits: {

@@ -5,10 +5,10 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
-import { Header } from "@zero-heads-lab/design-system/layout/header";
-import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { Bell, CreditCard, Palette, ShieldCheck, UserCog } from "lucide-react";
 import { Search } from "@/components/search";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 
 const tabItems = [
 	{

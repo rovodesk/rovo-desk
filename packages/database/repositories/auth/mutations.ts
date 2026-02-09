@@ -9,7 +9,6 @@ import {
 	team as teamSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
-import { subscription as billingSubscriptionSchema } from "../../drizzle/schemas/billing.schema";
 
 import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
 
@@ -96,23 +95,18 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Org creation failed");
 		}
 
-		// 2. Create Org Member
-		try {
-			await tx.insert(orgMemSchema).values({
-				userId,
-				organizationId: org.id,
-				role: "owner",
-			});
-		} catch {
-			tx.rollback();
-			throw new Error("Org member creation failed");
-		}
-		// Create Org Member
+		// Create Org Membership
 		await tx.insert(orgMemSchema).values({
 			userId,
 			organizationId: org.id,
 			role: "owner",
 		});
+
+		// Update User Role
+		await tx
+			.update(userSchema)
+			.set({ role: "organizationOwner" })
+			.where(eq(userSchema.id, userId));
 
 		// Create Team
 		const [team] = await tx
@@ -127,49 +121,11 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Team creation failed");
 		}
 
-		// 4. Create Team Member & Profile
-		try {
-			await Promise.all([
-				tx.insert(teamMemSchema).values({ userId, teamId: team.id }),
-				tx.insert(profileSchema).values({
-					userId,
-					currentOnboardingStep: "account_context",
-					organizationId: org.id,
-					teamId: team.id,
-				}),
-			]);
-		} catch {
-			tx.rollback();
-			throw new Error("Team member creation failed");
-		}
-
 		// Create Team Member
 		await tx.insert(teamMemSchema).values({
 			userId,
 			teamId: team.id,
 		});
-
-		// Update User Role
-		await tx
-			.update(userSchema)
-			.set({ role: "organizationOwner" })
-			.where(eq(userSchema.id, userId));
-
-		// Create Billing Subscription
-		const [subscription] = await tx
-			.insert(billingSubscriptionSchema)
-			.values({
-				plan: "basic",
-				referenceId: org.id,
-				status: "active",
-				seats: 1,
-				createdAt: new Date(),
-			})
-			.returning();
-
-		if (!subscription) {
-			throw new Error("Subscription creation failed");
-		}
 
 		// Create Profile
 		await tx.insert(profileSchema).values({
@@ -177,7 +133,6 @@ export async function createNewUserWithProfile(userId: string) {
 			currentOnboardingStep: "account_context",
 			organizationId: org.id,
 			teamId: team.id,
-			subscriptionId: subscription.id,
 		});
 
 		// Return something useful

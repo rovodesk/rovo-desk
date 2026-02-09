@@ -1,28 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { getErrorStatus } from "@zero-heads-lab/shared/utils";
-import type { AuthRole } from "../access-control";
 import { useAuthContext } from "../client/context";
-import { determineAccessRole, narrowToClientPermissions } from "../helpers";
+import { narrowToClientPermissions } from "../helpers";
 import type { AuthorizationResultMap, PermissionCheckMap } from "../types";
 
 export function useAuthorization({
-	role,
 	permissions,
 }: {
-	role: AuthRole;
 	permissions: PermissionCheckMap;
 }) {
-	const accessRole = determineAccessRole(role);
 	const { authClient } = useAuthContext();
 	const clientPermissions = narrowToClientPermissions(permissions);
 
 	const query = useQuery({
-		queryKey: ["authorization-map", accessRole, permissions],
+		queryKey: ["authorization-map", permissions],
 		queryFn: () => {
-			const canPerform = authClient.organization.checkRolePermission({
-				role: accessRole,
-				// biome-ignore lint/suspicious/noExplicitAny: Strongly typed permissions map is not inferable
-				permissions: clientPermissions as any,
+			const canPerform = authClient.organization.hasPermission({
+				permissions: clientPermissions,
 			});
 			/**
 			 * Normalize Better Auth response into:
@@ -46,7 +40,7 @@ export function useAuthorization({
 
 			return result;
 		},
-		enabled: accessRole !== "anonymous",
+		enabled: Object.keys(permissions).length > 0,
 		staleTime: 60_000,
 		retry: (failureCount, error) => {
 			const status = getErrorStatus(error);

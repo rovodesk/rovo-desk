@@ -11,7 +11,7 @@ import {
 	organizationClient,
 } from "better-auth/client/plugins";
 import { createAuthClient as createBetterAuthClient } from "better-auth/react";
-import { AllRoles, accessControl } from "../access-control";
+import { accessControl, Role } from "../access-control";
 import type { AuthInstance } from "../types";
 import { keys } from "./keys";
 
@@ -20,7 +20,7 @@ const Plugins = [
 	organizationClient({
 		accessControl,
 		roles: {
-			...AllRoles,
+			...Role,
 		},
 		teams: {
 			enabled: true,

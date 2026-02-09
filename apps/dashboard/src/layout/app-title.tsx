@@ -1,11 +1,11 @@
-import { motion } from "motion/react";
-import Logo from "../components/logo";
+import Logo from "@zero-heads-lab/design-system/components/logo";
 import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	useSidebar,
-} from "../components/ui/sidebar";
+} from "@zero-heads-lab/design-system/components/ui/sidebar";
+import { motion } from "motion/react";
 
 export function AppTitle() {
 	const { setOpenMobile, state } = useSidebar();

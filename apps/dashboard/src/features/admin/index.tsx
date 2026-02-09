@@ -16,10 +16,10 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { Header } from "@zero-heads-lab/design-system/layout/header";
-import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { Search } from "@/components/search";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 
 export function AdminDashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();

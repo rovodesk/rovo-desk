@@ -110,16 +110,13 @@ function App() {
 
 	return (
 		<UIProvider>
-			<SearchProvider>
-				<RouterProvider context={{ auth: authContext }} router={router} />
-			</SearchProvider>
+			<RouterProvider context={{ auth: authContext }} router={router} />
 		</UIProvider>
 	);
 }
 
 // Register the router instance for type safety
 import "@tanstack/react-router";
-import { SearchProvider } from "./providers/search";
 
 declare module "@tanstack/react-router" {
 	interface Register {

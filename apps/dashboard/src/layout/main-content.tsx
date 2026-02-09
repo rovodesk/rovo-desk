@@ -1,6 +1,6 @@
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import type { HTMLMotionProps } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
-import { cn } from "../lib/utils";
 
 type MainContentProps = {
 	fixed?: boolean;

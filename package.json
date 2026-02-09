@@ -57,7 +57,8 @@
       "@tanstack/react-query-devtools": "^5.91.2",
       "@tanstack/router-cli": "^1.153.2",
       "@tanstack/react-table": "^8.21.3",
-      "@tanstack/react-form": "^1.28.0"
+      "@tanstack/react-form": "^1.28.0",
+      "@tanstack/react-virtual": "^3.11.2"
     },
     "email": {
       "resend": "^6.5.2",

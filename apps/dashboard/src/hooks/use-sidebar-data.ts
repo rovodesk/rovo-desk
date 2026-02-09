@@ -1,10 +1,8 @@
-import type { AuthRole } from "@zero-heads-lab/auth/access-control";
 import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
-import { useMemberRole, useSession } from "@zero-heads-lab/auth/hooks";
+import { useSession } from "@zero-heads-lab/auth/hooks";
 import { useMemo } from "react";
 import { filterSidebarConfig } from "@/lib/naviagtion-filters";
 import type { SidebarConfig } from "@/types/sidebar";
-import { useUserPermissions } from "./use-user-permissions";
 
 interface BadgeCounts {
 	conversations?: number;
@@ -45,40 +43,23 @@ function injectBadges(
 
 export function useSidebarData(config: SidebarConfig) {
 	const { session, isLoading: sessionLoading } = useSession();
-	const { memberRole, isLoading: memberRoleLoading } = useMemberRole();
-
-	/**
-	 * Prioritize Member Role if we are in an organization context.
-	 * Otherwise fall back to the platform/user role.
-	 */
-	const role: AuthRole = useMemo(() => {
-		if (memberRole) return determineAccessRole(memberRole);
-		return determineAccessRole(session?.user?.role);
-	}, [memberRole, session?.user?.role]);
-
-	const { permissions, isLoading: authLoading } = useUserPermissions(
-		role,
-		config
-	);
 
 	const counts: BadgeCounts = {
 		conversations: 3,
 		tasks: 12,
 		notifications: 12,
 	};
+	const role = determineAccessRole(session?.user?.role);
 
 	// Filter the provided Sidebar Items based on role, permissions
 	const sidebarData = useMemo(() => {
-		if (!session?.user) return null;
-
-		const sidebar = filterSidebarConfig(config, permissions);
-
+		const sidebar = filterSidebarConfig(config, role);
 		return injectBadges(sidebar, counts);
-	}, [config, permissions, session]);
+	}, [config, role]);
 
 	return {
 		sidebarData,
 		role,
-		isLoading: sessionLoading || authLoading || memberRoleLoading,
+		isLoading: sessionLoading,
 	};
 }

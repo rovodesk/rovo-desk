@@ -12,7 +12,19 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-import { AllRoles, accessControl } from "../access-control";
+import {
+	accessControl,
+	anonymous,
+	deleted,
+	moderator,
+	organizationAdmin,
+	organizationMember,
+	organizationOwner,
+	superAdmin,
+	support,
+	unverified,
+	verified,
+} from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 
@@ -36,7 +48,19 @@ export const AuthPlugins = () => {
 		organization({
 			accessControl,
 			roles: {
-				...AllRoles,
+				superAdmin,
+				moderator,
+				support,
+
+				organizationOwner,
+				organizationAdmin,
+				organizationMember,
+
+				verified,
+				unverified,
+				anonymous,
+
+				deleted,
 			},
 			teams: {
 				enabled: true,
@@ -91,6 +115,22 @@ export const AuthPlugins = () => {
 			},
 		}),
 		betterAuthAdmin({
+			roles: {
+				superAdmin,
+				moderator,
+				support,
+
+				organizationOwner,
+				organizationAdmin,
+				organizationMember,
+
+				verified,
+				unverified,
+				anonymous,
+
+				deleted,
+			},
+			adminRoles: ["superAdmin", "moderator", "support"],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),

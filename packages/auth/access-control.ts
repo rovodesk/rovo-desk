@@ -21,7 +21,7 @@ const accessControl = createAccessControl(permissions);
 // ─────────────────────────────────────────────
 
 // Full platform access — internal/system use only
-const superAdmin = accessControl.newRole({
+export const superAdmin = accessControl.newRole({
 	organization: ["create", "read", "list", "update", "delete"],
 	team: ["create", "read", "list", "update", "delete"],
 	user: ["create", "read", "list", "update", "delete"],
@@ -37,7 +37,7 @@ const superAdmin = accessControl.newRole({
 
 // Can view/moderate content across orgs, manage users, but can't
 // restructure orgs or touch role/permission definitions
-const moderator = accessControl.newRole({
+export const moderator = accessControl.newRole({
 	organization: ["read", "list"],
 	team: ["read", "list"],
 	user: ["read", "list", "update", "delete"],
@@ -52,7 +52,7 @@ const moderator = accessControl.newRole({
 });
 
 // Read-only across the platform — answers questions, doesn't change things
-const support = accessControl.newRole({
+export const support = accessControl.newRole({
 	organization: ["read", "list"],
 	team: ["read", "list"],
 	user: ["read", "list"],
@@ -72,7 +72,7 @@ const support = accessControl.newRole({
 
 // Owns the org — full control over everything inside it,
 // including who has what role
-const organizationOwner = accessControl.newRole({
+export const organizationOwner = accessControl.newRole({
 	organization: ["read", "update", "delete"],
 	team: ["create", "read", "list", "update", "delete"],
 	user: ["create", "read", "list", "update", "delete"],
@@ -88,7 +88,7 @@ const organizationOwner = accessControl.newRole({
 
 // Manages the org day-to-day — can add/remove members and teams,
 // but can't delete the org or redefine roles
-const organizationAdmin = accessControl.newRole({
+export const organizationAdmin = accessControl.newRole({
 	organization: ["read"],
 	team: ["create", "read", "list", "update", "delete"],
 	user: ["create", "read", "list", "update", "delete"],
@@ -103,7 +103,7 @@ const organizationAdmin = accessControl.newRole({
 });
 
 // Regular worker — does their job, sees their team, no admin tasks
-const organizationMember = accessControl.newRole({
+export const organizationMember = accessControl.newRole({
 	organization: ["read"],
 	team: ["read", "list"],
 	user: ["read", "list"],
@@ -122,7 +122,7 @@ const organizationMember = accessControl.newRole({
 // ─────────────────────────────────────────────
 
 // Logged out / no account — can only browse public-facing things
-const anonymous = accessControl.newRole({
+export const anonymous = accessControl.newRole({
 	organization: [],
 	team: [],
 	user: [],
@@ -134,7 +134,7 @@ const anonymous = accessControl.newRole({
 });
 
 // Signed up but email not confirmed — locked out until verified
-const unverified = accessControl.newRole({
+export const unverified = accessControl.newRole({
 	organization: [],
 	team: [],
 	user: ["read"], // can see their own profile
@@ -145,7 +145,7 @@ const unverified = accessControl.newRole({
 	files: [],
 });
 
-const verified = accessControl.newRole({
+export const verified = accessControl.newRole({
 	organization: [],
 	team: [],
 	user: ["read"], // can see their own profile
@@ -157,7 +157,7 @@ const verified = accessControl.newRole({
 });
 
 // Account flagged as deleted — no access at all
-const deleted = accessControl.newRole({
+export const deleted = accessControl.newRole({
 	organization: [],
 	team: [],
 	user: [],
@@ -168,7 +168,7 @@ const deleted = accessControl.newRole({
 	files: [],
 });
 
-const AllRoles = {
+const Role = {
 	superAdmin,
 	moderator,
 	support,
@@ -184,12 +184,12 @@ const AllRoles = {
 	deleted,
 } as const;
 
-export { accessControl, AllRoles };
+export { accessControl, Role };
 
 /**
  * All possible role strings derived from the AllRoles object
  */
-export type AuthRole = keyof typeof AllRoles;
+export type AuthRole = keyof typeof Role;
 
 /**
  * Platform-level roles (above org scope)

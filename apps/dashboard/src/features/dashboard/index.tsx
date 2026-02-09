@@ -16,25 +16,23 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { Header } from "@zero-heads-lab/design-system/layout/header";
-import { MainContent } from "@zero-heads-lab/design-system/layout/main-content";
 import { BellIcon } from "lucide-react";
 import { Search } from "@/components/search";
-import { useProfile } from "@/hooks/use-profile";
+import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 
 export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
-	const { data: profile, isLoading: isProfileLoading } = useProfile();
 	const { domain, isLoading: isDomainLoading } = useDomainDetails();
 
-	const isLoading = isSessionLoading || isProfileLoading || isDomainLoading;
+	const isLoading = isSessionLoading || isDomainLoading;
 
 	if (isLoading) {
 		return <DashboardSkeleton />;
 	}
 
 	const name = domain?.name ?? session?.user?.name ?? "User";
-	const plan = profile?.plan ?? "basic";
+	const plan: "basic" | "pro" | "startup" | "enterprise" = "basic";
 	const role = determineAccessRole(session?.user?.role);
 
 	return (
@@ -75,14 +73,14 @@ export function Dashboard() {
 						<Badge variant="outline">{role}</Badge>
 					</div>
 					<div className="flex items-center space-x-2">
-						{plan !== "startup" && plan !== "enterprise" && (
+						{plan !== "basic" && plan !== "pro" ? (
 							<button className="relative p-[3px]">
 								<div className="absolute inset-0 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500" />
 								<div className="group relative rounded-[6px] bg-black px-4 py-2 font-medium text-white transition duration-200 hover:bg-transparent">
 									Upgrade Plan ✨
 								</div>
 							</button>
-						)}
+						) : null}
 					</div>
 				</div>
 

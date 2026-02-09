@@ -3,6 +3,7 @@ import {
 	CreditCard,
 	FileText,
 	Funnel,
+	FunnelPlus,
 	LayoutDashboard,
 	LifeBuoy,
 	ListTodo,
@@ -29,9 +30,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Dashboard",
 					url: "/",
 					icon: LayoutDashboard,
-					visibility: {
-						roles: ["verified"],
-					},
 				},
 				{
 					title: "Feature Flags",
@@ -53,29 +51,11 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Conversations",
 					url: "/conversations",
 					icon: MessagesSquare,
-					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
-						resource: "conversations",
-						actions: ["list"],
-					},
 				},
 				{
 					title: "Tasks",
 					url: "/tasks",
 					icon: ListTodo,
-					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
-						resource: "tasks",
-						actions: ["list"],
-					},
 				},
 				{
 					title: "My Team",
@@ -91,8 +71,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					icon: Package,
 					visibility: {
 						roles: ["organizationOwner", "organizationAdmin"],
-						resource: "organization",
-						actions: ["update"],
 					},
 				},
 			],
@@ -111,8 +89,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					],
 					visibility: {
 						roles: ["organizationOwner", "organizationAdmin"],
-						resource: "organization",
-						actions: ["read"],
 					},
 				},
 				{
@@ -125,12 +101,10 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					],
 					visibility: {
 						roles: [
-							"organizationMember",
-							"organizationAdmin",
 							"organizationOwner",
+							"organizationAdmin",
+							"organizationMember",
 						],
-						resource: "funnels",
-						actions: ["list"],
 					},
 				},
 				{
@@ -144,12 +118,10 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					],
 					visibility: {
 						roles: [
-							"organizationMember",
-							"organizationAdmin",
 							"organizationOwner",
+							"organizationAdmin",
+							"organizationMember",
 						],
-						resource: "folders",
-						actions: ["list"],
 					},
 				},
 			],
@@ -162,35 +134,20 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/settings/billing",
 					icon: CreditCard,
 					visibility: {
-						roles: ["organizationOwner", "organizationAdmin"],
-						resource: "organization",
-						actions: ["update"],
+						roles: ["organizationOwner"],
 					},
 				},
 				{
 					title: "Settings",
 					url: "/settings",
 					icon: Settings,
-					visibility: {
-						roles: [
-							"superAdmin",
-							"moderator",
-							"organizationOwner",
-							"organizationAdmin",
-						],
-					},
 				},
 				{
 					title: "Audit Logs",
 					url: "/audit-logs",
 					icon: FileText,
 					visibility: {
-						roles: [
-							"superAdmin",
-							"moderator",
-							"organizationOwner",
-							"organizationAdmin",
-						],
+						roles: ["organizationOwner", "organizationAdmin"],
 					},
 				},
 			],
@@ -199,53 +156,45 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 	quickLinks: {
 		primary: [
 			{
-				title: "Create Draft",
-				url: "/",
-				icon: PencilRuler,
-				visibility: {
-					roles: [
-						"organizationMember",
-						"organizationAdmin",
-						"organizationOwner",
-					],
-					resource: "tasks",
-					actions: ["create"],
-				},
-			},
-			{
 				title: "Onboard Enterprise",
 				url: "/onboard-enterprise",
 				icon: PartyPopper,
 				visibility: {
 					roles: ["superAdmin", "moderator"],
-					resource: "organization",
-					actions: ["update"],
+				},
+			},
+			{
+				title: "Create Draft",
+				url: "/",
+				icon: PencilRuler,
+				visibility: {
+					roles: [
+						"organizationOwner",
+						"organizationAdmin",
+						"organizationMember",
+					],
 				},
 			},
 		],
 		secondary: [
-			{
-				title: "Create Campaign",
-				url: "/campaigns/create",
-				icon: Megaphone,
-				visibility: {
-					roles: [
-						"organizationMember",
-						"organizationAdmin",
-						"organizationOwner",
-					],
-					resource: "funnels",
-					actions: ["create"],
-				},
-			},
 			{
 				title: "Create Announcement",
 				url: "/announcements/create",
 				icon: Megaphone,
 				visibility: {
 					roles: ["superAdmin", "moderator"],
-					resource: "organization",
-					actions: ["update"],
+				},
+			},
+			{
+				title: "Create Funnel",
+				url: "/funnel/create",
+				icon: FunnelPlus,
+				visibility: {
+					roles: [
+						"organizationOwner",
+						"organizationAdmin",
+						"organizationMember",
+					],
 				},
 			},
 		],

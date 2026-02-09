@@ -1,5 +1,4 @@
-import type { AuthRole, Resource } from "@zero-heads-lab/auth/access-control";
-import type { PermissionAction } from "@zero-heads-lab/auth/types";
+import type { AuthRole } from "@zero-heads-lab/auth/access-control";
 import type { LucideIcon } from "lucide-react";
 
 export type NavRoute = string & {};
@@ -30,9 +29,7 @@ export type TypedRoute = keyof RouteMap extends never
 	: keyof RouteMap;
 
 export type NavItemVisibility = {
-	roles?: AuthRole[];
-	actions?: PermissionAction[];
-	resource?: Resource;
+	roles: AuthRole[];
 	// plan?: string
 };
 
