@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-"use client";
->>>>>>> 8137094 (feat: roles and basic permissions addded, optimzed and refactored)
-=======
-
->>>>>>> fe3fce5 (feat: Implement last login method display, update billing products, and refactor authentication hooks and schemas.)
-
 import { motion } from "motion/react";
 
 export function FloatingPaths({ position }: { position: number }) {
