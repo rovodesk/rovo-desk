@@ -123,41 +123,39 @@ export function AppSidebar({
 				)}
 			</SidebarContent>
 
-			<SidebarFooter
-	className =
-		(
-			<SidebarMenu>
-				{sidebarData.footer.map((item) => (
-					<SidebarMenuItem key={item.title}>
-						<SidebarMenuButton
-							asChild
-							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-						>
-							<a className="flex items-center gap-2" href={item.url}>
-								{item.icon && <item.icon />}
-								<span>{item.title}</span>
-							</a>
+			<SidebarFooter className="flex flex-col gap-8">
+				<SidebarMenu>
+					{sidebarData.footer.map((item) => (
+						<SidebarMenuItem key={item.title}>
+							<SidebarMenuButton
+								asChild
+								className="bg-transparent! hover:bg-sidebar-accent!"
+							>
+								<a href={item.url}>
+									{item.icon && (
+										<>
+											<item.icon />
+											<span className="sr-only">{item.title}</span>
+										</>
+									)}
+									{item.title}
+								</a>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					))}
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<SidebarMenuButton asChild>
+							<ProfileDropdown />
 						</SidebarMenuButton>
 					</SidebarMenuItem>
-				))}
-			</SidebarMenu>
-		) <
-		"flex flex-col gap-8"<SidebarMenu>(
-			<SidebarMenuItem>
-				<SidebarMenuButton
-					asChild
-					className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-				>
-					<ProfileDropdown />
-				</SidebarMenuButton>
-			</SidebarMenuItem>
-		);
-	</SidebarMenu>
+				</SidebarMenu>
 			</SidebarFooter>
 
 			<SidebarRail />
 		</Sidebar>
-	)
+	);
 }
 
 function AppSidebarSkeleton() {
