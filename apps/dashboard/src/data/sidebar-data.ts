@@ -29,57 +29,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					title: "Dashboard",
 					url: "/",
 					icon: LayoutDashboard,
-					visibility: {
-						roles: ["verified"],
-					},
-				},
-				{
-					title: "Feature Flags",
-					url: "/feature-flags",
-					icon: Package2,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
-				},
-				{
-					title: "Sales",
-					url: "/sales",
-					icon: MapIcon,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
-				},
-				{
-					title: "Feature Flags",
-					url: "/feature-flags",
-					icon: Package2,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
-				},
-				{
-					title: "Sales",
-					url: "/sales",
-					icon: MapIcon,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
-				},
-				{
-					title: "Feature Flags",
-					url: "/feature-flags",
-					icon: Package2,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
-				},
-				{
-					title: "Sales",
-					url: "/sales",
-					icon: MapIcon,
-					visibility: {
-						roles: ["superAdmin", "moderator"],
-					},
 				},
 				{
 					title: "Feature Flags",
@@ -176,7 +125,6 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					icon: Book,
 					items: [
 						{ title: "All Contents", url: "/knowledge-base" },
-						{ title: "Editor", url: "/knowledge-base/editor" },
 						{ title: "Categories", url: "/knowledge-base/categories" },
 						{ title: "Tags", url: "/knowledge-base/tags" },
 					],

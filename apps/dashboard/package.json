@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
+    "@tabler/icons-react": "^3.36.1",
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-table": "catalog:tanstack",
@@ -23,10 +24,12 @@
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "axios": "^1.13.4",
+    "date-fns": "catalog:",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "recharts": "^3.7.0",
     "vite-tsconfig-paths": "catalog:vite",
     "zod": "catalog:"
   },

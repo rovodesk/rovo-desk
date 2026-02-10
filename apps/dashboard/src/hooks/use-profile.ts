@@ -11,7 +11,11 @@ export function useProfile(
 
 	const resolvedUserId = userId ?? session?.user?.id;
 
-	const query = useQuery<Profile>(
+	const {
+		data: profile,
+		isLoading,
+		refetch,
+	} = useQuery<Profile>(
 		orpcQuery.profile.get.queryOptions({
 			input: resolvedUserId ? { userId: resolvedUserId } : undefined,
 			enabled: Boolean(resolvedUserId) && !isSessionLoading,
@@ -19,5 +23,5 @@ export function useProfile(
 		})
 	);
 
-	return query;
+	return { profile, isLoading, refetch };
 }

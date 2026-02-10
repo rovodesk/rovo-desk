@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
+import { DomainList } from "@zero-heads-lab/auth/components/domains-list";
 import { ProfileDropdown } from "@zero-heads-lab/auth/components/profile-dropdown";
 import { hasOrganizationAccessRole } from "@zero-heads-lab/auth/helpers";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -35,7 +36,13 @@ export function AppSidebar() {
 		return null;
 	}
 
-	console.log(role);
+	const beforeQuickActions = sidebarData.navGroups.filter(
+		(g) => g.title !== "Quick Actions"
+	);
+
+	const quickActionsGroup = sidebarData.navGroups.find(
+		(g) => g.title === "Quick Actions"
+	);
 
 	return (
 		<Sidebar
@@ -47,7 +54,9 @@ export function AppSidebar() {
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
-				{hasOrganizationAccessRole(role) && <DomainSwitcher />}
+				{hasOrganizationAccessRole(role) && role !== "organizationOwner" && (
+					<DomainSwitcher />
+				)}
 			</SidebarHeader>
 
 			<SidebarContent>
@@ -93,9 +102,19 @@ export function AppSidebar() {
 						</SidebarMenu>
 					</SidebarMenu>
 				</SidebarGroup>
-				{sidebarData.navGroups.map((group) => (
+
+				{beforeQuickActions.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
+				{hasOrganizationAccessRole(role) && role === "organizationOwner" && (
+					<DomainList />
+				)}
+				{quickActionsGroup && (
+					<SidebarNavSection
+						items={quickActionsGroup.items}
+						title={quickActionsGroup.title}
+					/>
+				)}
 			</SidebarContent>
 
 			<SidebarFooter className="flex flex-col gap-8">
@@ -104,9 +123,9 @@ export function AppSidebar() {
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
-								className="bg-transparent! hover:bg-sidebar-accent!"
+								className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
 							>
-								<a href={item.url}>
+								<Link to={item.url}>
 									{item.icon && (
 										<>
 											<item.icon />
@@ -114,7 +133,7 @@ export function AppSidebar() {
 										</>
 									)}
 									{item.title}
-								</a>
+								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}

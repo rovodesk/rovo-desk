@@ -36,21 +36,22 @@ export function DomainList() {
 
 	const activeDomainId = session?.session?.activeOrganizationId;
 
-	const { switchDomain, isPending } = useSwitchDomain({
-		onError: () => {
-			toast.error("Error switching organization");
-		},
-	});
+	const { switchDomain, isPending } = useSwitchDomain();
 
 	const isLoaded = !(isAuthLoading || isDomainsLoading);
 	if (!isLoaded) return <DomainListSkeleton />;
 
 	const handleSwitchDomain = (domainId: string) => {
+		if (domainId === activeDomainId) return;
+
 		const domain = domains.find((d) => d.id === domainId);
 
 		switchDomain(domainId, {
 			onSuccess: () => {
 				toast.success(`Organization switched to ${domain?.name}`);
+			},
+			onError: () => {
+				toast.error("Error switching organization");
 			},
 		});
 	};

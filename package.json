@@ -19,7 +19,8 @@
     "zod": "^4.3.5",
     "@t3-oss/env-core": "^0.13.10",
     "motion": "^12.28.1",
-    "cmdk": "^1.1.1"
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0"
   },
   "catalogs": {
     "react19": {
