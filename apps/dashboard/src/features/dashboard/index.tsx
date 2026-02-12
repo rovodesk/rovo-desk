@@ -1,3 +1,4 @@
+import { useOnboarding } from "@onboardjs/react";
 import { IconBell } from "@tabler/icons-react";
 import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
 import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
@@ -20,6 +21,7 @@ import {
 import { Search } from "@/components/search";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
+import { OnboardingFlow } from "../onboarding";
 import { Overview } from "./_components/overview";
 import { RecentSales } from "./_components/recent-sales";
 
@@ -42,16 +44,20 @@ export function Dashboard() {
 	const { session, isLoading: isSessionLoading } = useSession();
 	const { domain, isLoading: isDomainLoading } = useDomainDetails();
 
-	// const { profile, isLoading: isProfileLoading } = useProfile();
+	const { isCompleted, loading: isOnboardingLoading } = useOnboarding();
 
 	const name = domain?.name ?? session?.user?.name ?? "User";
 	const plan = findPlan(domain?.metadata?.plan ?? "basic");
 	const role = determineAccessRole(session?.user?.role);
 
-	const isLoading = isSessionLoading || isDomainLoading;
-
+	const isLoading =
+		isSessionLoading || isDomainLoading || isOnboardingLoading.isAnyLoading;
 	if (isLoading) {
 		return <DashboardSkeleton />;
+	}
+
+	if (!isCompleted) {
+		return <OnboardingFlow />;
 	}
 
 	return (

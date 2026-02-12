@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-	boolean,
 	jsonb,
 	pgSchema,
 	primaryKey,
@@ -8,7 +7,7 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 import { subscription } from "schema";
-import { organization, team, user } from "./auth.schema";
+import { user } from "./auth.schema";
 
 export const profileSchema = pgSchema("profile");
 
@@ -16,20 +15,6 @@ export const profile = profileSchema.table("profile", {
 	userId: text("userId")
 		.primaryKey()
 		.references(() => user.id, { onDelete: "cascade" }),
-
-	currentOnboardingStep: text("currentOnboardingStep"),
-
-	onboardingStartedAt: timestamp("onboardingStartedAt", {
-		withTimezone: true,
-	}).defaultNow(),
-
-	onboardingCompletedAt: timestamp("onboardingCompletedAt", {
-		withTimezone: true,
-	}),
-
-	organizationId: text("organizationId").references(() => organization.id),
-
-	teamId: text("teamId").references(() => team.id),
 
 	subscriptionId: text("subscriptionId").references(() => subscription.id, {
 		onDelete: "set null",
@@ -55,52 +40,19 @@ export const profile = profileSchema.table("profile", {
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
 });
 
-export const onboardingProgress = profileSchema.table(
-	"onboarding_progress",
-	{
-		userId: text("userId")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-
-		step: text("step"),
-
-		completed: boolean("completed").notNull().default(false),
-		skipped: boolean("skipped").notNull().default(false),
-
-		completedAt: timestamp("completedAt", { withTimezone: true }),
-
-		metadata: jsonb("metadata")
-			.$type<Record<string, unknown>>()
-			.notNull()
-			.default({}),
-
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
-
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
-	},
-	(t) => [
-		primaryKey({
-			columns: [t.userId, t.step],
-		}),
-	]
-);
-
-export const onboardingContext = profileSchema.table("onboarding_context", {
+export const onboardingFlow = profileSchema.table("onboardingFlow", {
 	userId: text("userId")
 		.primaryKey()
 		.references(() => user.id, { onDelete: "cascade" }),
 
-	accountType: text("accountType"),
-	companySize: text("companySize"),
-	source: text("source"),
-	priorToolsUsed: boolean("priorToolsUsed"),
+	startedAt: timestamp("startedAt", { withTimezone: true }),
 
-	primaryGoal: text("primaryGoal"),
-	secondaryGoal: text("secondaryGoal"),
+	completedAt: timestamp("completedAt", { withTimezone: true }),
+
+	flowData: jsonb("flowData")
+		.$type<Record<string, unknown>>()
+		.notNull()
+		.default({}),
 
 	createdAt: timestamp("createdAt", { withTimezone: true })
 		.defaultNow()
@@ -111,6 +63,29 @@ export const onboardingContext = profileSchema.table("onboarding_context", {
 	),
 });
 
+export const onboardingStep = profileSchema.table(
+	"onboardingStep",
+	{
+		userId: text("userId")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+
+		stepId: text("stepId").notNull(),
+
+		metadata: jsonb("metadata")
+			.$type<Record<string, unknown>>()
+			.notNull()
+			.default({}),
+
+		startedAt: timestamp("startedAt", { withTimezone: true }),
+
+		completedAt: timestamp("completedAt", { withTimezone: true }),
+
+		skippedAt: timestamp("skippedAt", { withTimezone: true }),
+	},
+	(t) => [primaryKey({ columns: [t.userId, t.stepId] })]
+);
+
 export const profileRelations = relations(profile, ({ one, many }) => ({
 	user: one(user, {
 		fields: [profile.userId],
@@ -118,13 +93,13 @@ export const profileRelations = relations(profile, ({ one, many }) => ({
 		relationName: "userProfile",
 	}),
 
-	onboardingProgress: many(onboardingProgress, {
-		relationName: "userOnboardingProgress",
+	onboardingFlow: one(onboardingFlow, {
+		fields: [profile.userId],
+		references: [onboardingFlow.userId],
+		relationName: "userOnboardingFlow",
 	}),
 
-	onboardingContext: one(onboardingContext, {
-		fields: [profile.userId],
-		references: [onboardingContext.userId],
-		relationName: "userOnboardingContext",
+	onboardingSteps: many(onboardingStep, {
+		relationName: "userOnboardingSteps",
 	}),
 }));

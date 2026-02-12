@@ -1,4 +1,4 @@
-export const GithubIcon = (props: React.ComponentProps<"svg">) => (
+export const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 	<svg fill="currentColor" viewBox="0 0 1024 1024" {...props}>
 		<path
 			clipRule="evenodd"

@@ -23,6 +23,9 @@ export function useSession(): UseSessionResult {
 			}
 			return data ?? null;
 		},
+		staleTime: 0, // ← Important
+		refetchOnWindowFocus: true,
+		refetchOnReconnect: true,
 
 		// ❌ Don’t retry on auth failures
 		retry: (failureCount, error) => {

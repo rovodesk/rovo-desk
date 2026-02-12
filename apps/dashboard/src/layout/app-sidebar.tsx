@@ -1,3 +1,4 @@
+import { useOnboarding } from "@onboardjs/react";
 import { Link } from "@tanstack/react-router";
 import { DomainSwitcher } from "@zero-heads-lab/auth/components/domain-switcher";
 import { DomainList } from "@zero-heads-lab/auth/components/domains-list";
@@ -25,14 +26,23 @@ import { SidebarNavSection } from "./nav-section";
 
 export function AppSidebar() {
 	const { collapsible, variant } = useLayout();
+	const { isCompleted, loading: isOnboardingLoading } = useOnboarding();
 
-	const { sidebarData, role, isLoading } = useSidebarData(SIDEBAR_CONFIG);
+	const {
+		sidebarData,
+		role,
+		isLoading: isSidebarLoading,
+	} = useSidebarData(SIDEBAR_CONFIG);
 
+	const isLoading = isSidebarLoading || isOnboardingLoading.isAnyLoading;
 	if (isLoading) {
 		return <AppSidebarSkeleton />;
 	}
 
 	if (!sidebarData) {
+		return null;
+	}
+	if (!isCompleted) {
 		return null;
 	}
 

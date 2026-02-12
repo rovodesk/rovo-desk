@@ -18,7 +18,10 @@ import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
 import { AppErrorBoundary } from "@/lib/error-boundary";
 import { handleServerError } from "@/lib/utils";
+import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
+
+import "@tanstack/react-router";
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -89,7 +92,9 @@ if (!rootElement.innerHTML) {
 			<AppErrorBoundary>
 				<QueryClientProvider client={queryClient}>
 					<AuthProvider authClient={authClient}>
-						<App />
+						<OnboardingProvider>
+							<App />
+						</OnboardingProvider>
 					</AuthProvider>
 				</QueryClientProvider>
 			</AppErrorBoundary>
@@ -116,8 +121,6 @@ function App() {
 }
 
 // Register the router instance for type safety
-import "@tanstack/react-router";
-
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;

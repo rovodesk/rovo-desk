@@ -19,6 +19,7 @@ type ThemeProviderState = {
   resolvedTheme: ResolvedTheme
   theme: Theme
   setTheme: (theme: Theme) => void
+  setSystemTheme: () => void
   resetTheme: () => void
 }
 
@@ -28,6 +29,7 @@ const initialState: ThemeProviderState = {
   theme: DEFAULT_THEME,
   setTheme: () => null,
   resetTheme: () => null,
+  setSystemTheme: () => null,
 }
 
 const ThemeContext = createContext<ThemeProviderState>(initialState)
@@ -107,12 +109,17 @@ useEffect(() => {
     _setTheme(DEFAULT_THEME)
   }
 
+  const setSystemTheme = () => {
+    _setTheme(DEFAULT_THEME)
+  }
+
   const contextValue = {
     defaultTheme,
     resolvedTheme,
     resetTheme,
     theme,
     setTheme,
+    setSystemTheme
   }
 
   return (

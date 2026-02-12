@@ -1,42 +1,39 @@
-import { eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
-	subscription as billingSubscriptionSchema,
-	profile as profileSchema,
-} from "../../schema";
+	onboardingFlow,
+	onboardingStep,
+} from "../../drizzle/schemas/profile.schema";
 
-export type Profile = {
-	id: string;
-	currentOnboardingStep: string | null;
-	onboardingStartedAt: Date | null;
-	onboardingCompletedAt: Date | null;
-	organizationId: string | null;
-	teamId: string | null;
-	plan: string | null;
-};
-
-export async function getProfileByUserId(
-	userId: string
-): Promise<Profile | null> {
+export async function getOnboardingProgressByUserId(userId: string) {
 	const db = createDatabase();
 
-	const [result] = await db
-		.select({
-			id: profileSchema.userId,
-			currentOnboardingStep: profileSchema.currentOnboardingStep,
-			onboardingStartedAt: profileSchema.onboardingStartedAt,
-			onboardingCompletedAt: profileSchema.onboardingCompletedAt,
-			organizationId: profileSchema.organizationId,
-			teamId: profileSchema.teamId,
-			plan: billingSubscriptionSchema.plan,
-		})
-		.from(profileSchema)
-		.leftJoin(
-			billingSubscriptionSchema,
-			eq(profileSchema.subscriptionId, billingSubscriptionSchema.id)
-		)
-		.where(eq(profileSchema.userId, userId))
-		.limit(1);
+	// 1️⃣ Get flow-level data
+	const flow = await db
+		.select()
+		.from(onboardingFlow)
+		.where(eq(onboardingFlow.userId, userId))
+		.limit(1)
+		.then((res) => res[0]);
 
-	return result ?? null;
+	// 2️⃣ Get first incomplete step
+	const step = await db
+		.select()
+		.from(onboardingStep)
+		.where(
+			and(
+				eq(onboardingStep.userId, userId),
+				isNull(onboardingStep.completedAt),
+				isNull(onboardingStep.skippedAt)
+			)
+		)
+		.orderBy(asc(onboardingStep.startedAt))
+		.limit(1)
+		.then((res) => res[0]);
+
+	return {
+		currentStepId: step?.stepId ?? null,
+		flowData: flow?.flowData ?? {},
+		startedAt: flow?.startedAt ?? null,
+	};
 }
