@@ -11,7 +11,7 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/select";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { ArrowDownAZ, ArrowUpAZ, SlidersHorizontal } from "lucide-react";
-import React, { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { Search } from "@/components/search";
 import { apps } from "@/data/integrations";
 import { Header } from "@/layout/header";
@@ -37,7 +37,7 @@ export function IntegrationsHome() {
 	const navigate = route.useNavigate();
 
 	const [sort, setSort] = useState(initSort);
-	const [appType, setAppType] = useState(type);
+	const [appType, setAppType] = useState<AppType>(type);
 	const [searchTerm, setSearchTerm] = useState(filter);
 
 	const filteredApps = apps
@@ -156,9 +156,7 @@ export function IntegrationsHome() {
 										"flex size-10 items-center justify-center rounded-lg bg-muted p-2"
 									}
 								>
-									{React.cloneElement(
-										app.logo as unknown as React.ReactElement
-									)}
+									{app.logo}
 								</div>
 								<Button
 									className={`${app.connected ? "border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900" : ""}`}

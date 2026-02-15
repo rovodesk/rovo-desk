@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
 	member as memberSchema,
@@ -82,6 +82,45 @@ export async function getOrganizationBySlug(slug: string) {
 		})
 		.from(organizationSchema)
 		.where(eq(organizationSchema.slug, slug))
+		.limit(1)
+		.then((res) => res[0]);
+}
+
+export async function getUserOrganizations(userId: string) {
+	const db = createDatabase();
+	const [organizations] = await db
+		.select({
+			id: organizationSchema.id,
+			name: organizationSchema.name,
+			slug: organizationSchema.slug,
+			logo: organizationSchema.logo,
+			metadata: organizationSchema.metadata,
+		})
+		.from(userSchema)
+		.leftJoin(memberSchema, eq(memberSchema.userId, userSchema.id))
+		.leftJoin(
+			organizationSchema,
+			eq(memberSchema.organizationId, organizationSchema.id)
+		)
+		.where(eq(userSchema.id, userId))
+		.orderBy(desc(organizationSchema.createdAt));
+
+	return organizations;
+}
+
+export async function countUserOrganizations(userId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			count: sql<number>`count(*)`,
+		})
+		.from(userSchema)
+		.leftJoin(memberSchema, eq(memberSchema.userId, userSchema.id))
+		.leftJoin(
+			organizationSchema,
+			eq(memberSchema.organizationId, organizationSchema.id)
+		)
+		.where(eq(userSchema.id, userId))
 		.limit(1)
 		.then((res) => res[0]);
 }

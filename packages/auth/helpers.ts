@@ -11,7 +11,12 @@ import {
 	ORGANIZATION_MEMBER_ROLES,
 	PLATFORM_ROLES,
 } from "./access-control";
-import type { ClientPermissionMap, PermissionCheckMap, Session } from "./types";
+import type {
+	AuthClient,
+	ClientPermissionMap,
+	PermissionCheckMap,
+	Session,
+} from "./types";
 
 /**
  * Validated session result - discriminated union
@@ -198,3 +203,15 @@ export function generateSlug(value: string) {
 		.replace(/\s+/g, "-")
 		.replace(/[^a-z0-9-]/g, "");
 }
+
+// slug.api.ts
+export const checkDomainSlug = async (
+	authClient: AuthClient,
+	slug: string
+): Promise<boolean> => {
+	const { data, error } = await authClient.organization.checkSlug({ slug });
+
+	if (error) throw error;
+
+	return data.status;
+};

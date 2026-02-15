@@ -8,11 +8,22 @@ export function WorkspaceStep({
 	context,
 	...props
 }: React.ComponentProps<"div"> & StepComponentProps) {
-	const { updateContext, next, loading } = useOnboarding();
+	const { updateContext, next, loading: isOnboardingLoading } = useOnboarding();
 
 	const defaultValues = {
 		name: context.flowData?.name || "",
 		slug: context.flowData?.slug || "",
+	};
+
+	const pending = isOnboardingLoading.isAnyLoading;
+
+	const handleWorkspaceStepSubmit = (value: { name: string; slug: string }) => {
+		updateContext({
+			flowData: {
+				...value,
+			},
+		});
+		next();
 	};
 
 	return (
@@ -50,16 +61,9 @@ export function WorkspaceStep({
 						<DomainForm
 							cancelable
 							defaultValues={defaultValues}
-							isPending={loading.isAnyLoading}
+							isPending={pending}
 							onCancel={() => next()}
-							onSubmit={(value) => {
-								updateContext({
-									flowData: {
-										...value,
-									},
-								});
-								next();
-							}}
+							onSubmit={handleWorkspaceStepSubmit}
 						/>
 					</div>
 				</div>

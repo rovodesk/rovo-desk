@@ -44,7 +44,7 @@ const GOALS = [
 ];
 
 export function IdentityStep({ className }: React.ComponentProps<"div">) {
-	const { next, skip } = useOnboarding();
+	const { next, skip, state } = useOnboarding();
 	const [channel, setChannel] = useState<string | null>(null);
 	const [goal, setGoal] = useState<string | null>(null);
 
@@ -145,15 +145,16 @@ export function IdentityStep({ className }: React.ComponentProps<"div">) {
 					Continue
 					<ChevronRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
 				</Button>
-				<button
-					className="text-muted-foreground text-xs transition-colors hover:text-foreground"
-					onClick={() => {
-						skip();
-					}}
-					type="button"
-				>
-					Skip
-				</button>
+				{state?.isSkippable && (
+					<Button
+						className="group h-12 w-full max-w-sm font-bold shadow-primary/20 shadow-xl transition-all hover:scale-[1.02]"
+						onClick={() => skip()}
+						size="lg"
+					>
+						Skip
+						<ChevronRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+					</Button>
+				)}
 			</footer>
 		</div>
 	);

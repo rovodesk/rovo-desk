@@ -145,16 +145,7 @@ export function SubscribeStep({ className }: React.ComponentProps<"div">) {
 									size="xs"
 									variant="outline"
 								>
-									<span className="size-3">
-										{React.cloneElement(
-											social.icon as unknown as React.ReactElement<{
-												className?: string;
-											}>,
-											{
-												className: "size-4",
-											}
-										)}
-									</span>
+									{social.icon}
 									{social.name}
 								</Button>
 							</Link>

@@ -40,66 +40,42 @@ export const profile = profileSchema.table("profile", {
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
 });
 
-export const onboardingFlow = profileSchema.table("onboardingFlow", {
-	userId: text("userId")
-		.primaryKey()
-		.references(() => user.id, { onDelete: "cascade" }),
-
-	startedAt: timestamp("startedAt", { withTimezone: true }),
-
-	completedAt: timestamp("completedAt", { withTimezone: true }),
-
-	flowData: jsonb("flowData")
-		.$type<Record<string, unknown>>()
-		.notNull()
-		.default({}),
-
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-
-	updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-		() => new Date()
-	),
-});
-
-export const onboardingStep = profileSchema.table(
-	"onboardingStep",
+export const onboarding = profileSchema.table(
+	"onboarding",
 	{
 		userId: text("userId")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 
-		stepId: text("stepId").notNull(),
+		currentStepId: text("currentStepId").notNull().default("welcome"),
 
-		metadata: jsonb("metadata")
-			.$type<Record<string, unknown>>()
-			.notNull()
-			.default({}),
+		flowData: jsonb("flowData").$type<Record<string, unknown>>(),
 
 		startedAt: timestamp("startedAt", { withTimezone: true }),
 
 		completedAt: timestamp("completedAt", { withTimezone: true }),
 
 		skippedAt: timestamp("skippedAt", { withTimezone: true }),
+
+		updatedAt: timestamp("updatedAt", { withTimezone: true })
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+
+		deletedAt: timestamp("deletedAt", { withTimezone: true }),
 	},
-	(t) => [primaryKey({ columns: [t.userId, t.stepId] })]
+	(t) => [primaryKey({ columns: [t.userId, t.currentStepId] })]
 );
 
-export const profileRelations = relations(profile, ({ one, many }) => ({
+export const profileRelations = relations(profile, ({ one }) => ({
 	user: one(user, {
 		fields: [profile.userId],
 		references: [user.id],
 		relationName: "userProfile",
 	}),
 
-	onboardingFlow: one(onboardingFlow, {
+	onboarding: one(onboarding, {
 		fields: [profile.userId],
-		references: [onboardingFlow.userId],
-		relationName: "userOnboardingFlow",
-	}),
-
-	onboardingSteps: many(onboardingStep, {
-		relationName: "userOnboardingSteps",
+		references: [onboarding.userId],
+		relationName: "userOnboarding",
 	}),
 }));

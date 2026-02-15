@@ -4,10 +4,10 @@ import { StepNavigator } from "./_components/step-navigator";
 import { FinalStep } from "./_components/steps/final-step";
 
 export function OnboardingFlow() {
-	const { renderStep, currentStep } = useOnboarding();
+	const { renderStep, state } = useOnboarding();
 
 	// If onboarding is finished, render the celebration screen
-	if (currentStep === null) {
+	if (state?.isLastStep) {
 		return (
 			<div className="flex min-h-screen w-full items-center justify-center bg-background p-4 sm:p-8">
 				<FinalStep />

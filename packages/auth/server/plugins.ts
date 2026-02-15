@@ -1,9 +1,10 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
+import { countUserOrganizations } from "@zero-heads-lab/database/repositories/auth/queries";
 import { sendEmail } from "@zero-heads-lab/email";
 import { MagicLinkTemplate } from "@zero-heads-lab/email/templates";
-import type { BetterAuthPlugin } from "better-auth";
+import { APIError, type BetterAuthPlugin } from "better-auth";
 import {
 	admin as betterAuthAdmin,
 	lastLoginMethod,
@@ -75,6 +76,26 @@ export const AuthPlugins = () => {
 							input: false,
 						},
 					},
+				},
+			},
+			organizationHooks: {
+				afterCreateOrganization: async ({ organization }) => {
+					// Check if first organization of the user.
+					try {
+						const result = await countUserOrganizations(organization.userId);
+						if (!result) {
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Unable to count user organizations",
+							});
+						}
+						//TODO: Add analytics
+						console.log("User Organizations Count", result?.count);
+					} catch (error) {
+						console.error(error);
+						throw new APIError("INTERNAL_SERVER_ERROR", {
+							message: "Unable to count user organizations",
+						});
+					}
 				},
 			},
 		}),

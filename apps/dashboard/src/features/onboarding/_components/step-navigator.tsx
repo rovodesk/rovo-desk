@@ -1,9 +1,10 @@
 import { useOnboarding } from "@onboardjs/react";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { motion } from "motion/react";
 
 export function StepNavigator() {
-	const { state } = useOnboarding();
+	const { state, previous } = useOnboarding();
 
 	const totalSteps = state?.totalSteps ?? 0;
 	const currentStep = state?.currentStepNumber ?? 1;
@@ -55,6 +56,20 @@ export function StepNavigator() {
 			>
 				{currentStep === totalSteps ? "Final Step" : "Progressing"}
 			</motion.p>
+
+			{/* Develelopment Use */}
+			{import.meta.env.DEV && !state?.isFirstStep && (
+				<div className="flex gap-2">
+					<Button
+						disabled={currentStep === 1}
+						onClick={previous}
+						type="button"
+						variant="outline"
+					>
+						Previous
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

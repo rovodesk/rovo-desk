@@ -1,46 +1,65 @@
+import type { DataLoadFn, DataPersistFn } from "@onboardjs/core";
 import { OnboardingProvider as OnboardJSProvider } from "@onboardjs/react";
+import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { onboardingSteps } from "@/data/onboarding-steps";
+import { useOnboardingProgress } from "@/hooks/use-onboarding-progress";
 
 export function OnboardingProvider({
 	children,
 }: {
 	children?: React.ReactNode;
 }) {
-	// TODO: ADD DATABASE PERSISTANCE
-	// const handleDataLoad: DataLoadFn = async () => {
-	// 	// Api Call to load data
-	// 	const res = await fetch("/api/rpc/onboarding");
-	// 	return await res.json();
-	// };
+	const { onboardingProgress, persistAsync, clearAsync, isLoading } =
+		useOnboardingProgress();
 
-	// const handleDataPersist: DataPersistFn = async (context, currentStepId) => {
-	// 	console.log("Persisting Onboarding data:", context, currentStepId);
-	// 	const formData = new FormData();
-	// 	formData.append("context", JSON.stringify(context));
-	// 	formData.append("currentStepId", String(currentStepId));
-	// 	// API call to persist data
-	// 	await fetch("/api/rpc/onboarding", {
-	// 		method: "POST",
-	// 		body: formData,
-	// 	});
-	// };
+	/*
+	 * LOAD FROM DATABASE
+	 */
+	const handleDataLoad: DataLoadFn = () => {
+		if (!onboardingProgress) {
+			return {
+				context: {},
+				currentStepId: "welcome",
+			};
+		}
 
-	// const handleClearPersistedData: DataClearPersistFn = async () => {
-	// 	// Api Call to clear data
-	// 	await fetch("/api/rpc/onboarding", {
-	// 		method: "DELETE",
-	// 	});
-	// };
+		return {
+			context: onboardingProgress.flowData ?? {},
+			currentStepId: onboardingProgress.currentStepId ?? "welcome",
+		};
+	};
+
+	/*
+	 * PERSIST TO DATABASE
+	 */
+	const handleDataPersist: DataPersistFn = async (context, currentStepId) => {
+		await persistAsync({
+			currentStepId: String(currentStepId),
+			flowData: context,
+		});
+	};
+
+	/*
+	 * CLEAR DATABASE STATE
+	 */
+	const handleClearPersistedData = async () => {
+		await clearAsync();
+	};
+
+	if (isLoading) {
+		return (
+			<Loader
+				subtitle="Please wait while we start your onboarding"
+				title="Something Great is Cooking..."
+			/>
+		);
+	}
 
 	return (
 		<OnboardJSProvider
-			// customOnClearPersistedData={handleClearPersistedData}
-			// customOnDataLoad={handleDataLoad}
-			// customOnDataPersist={handleDataPersist}
-			localStoragePersistence={{
-				key: "zero-heads:onboarding-flow",
-				ttl: 7 * 24 * 60 * 60 * 1000, // 7 days in ms (optional)
-			}}
+			customOnClearPersistedData={handleClearPersistedData}
+			customOnDataLoad={handleDataLoad}
+			customOnDataPersist={handleDataPersist}
 			steps={onboardingSteps}
 		>
 			{children}

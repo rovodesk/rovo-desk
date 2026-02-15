@@ -1,11 +1,21 @@
 import { useOnboarding } from "@onboardjs/react";
 import { InviteMembersForm } from "@zero-heads-lab/auth/components/forms/invite-members-form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import type { Tag } from "@zero-heads-lab/design-system/components/ui/input-tag";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { ArrowRight, UserPlus, Users } from "lucide-react";
 
 export function InviteStep({ className }: React.ComponentProps<"div">) {
 	const { next, loading, updateContext, skip } = useOnboarding();
+
+	const handleInviteStepSubmit = (value: { emails: Tag[] }) => {
+		updateContext({
+			flowData: {
+				...value,
+			},
+		});
+		next();
+	};
 
 	return (
 		<div
@@ -43,19 +53,13 @@ export function InviteStep({ className }: React.ComponentProps<"div">) {
 								<span>Invite via email</span>
 							</div>
 							<span className="font-semibold text-muted-foreground text-xs uppercase tracking-widest">
-								Admin Access
+								Member Access
 							</span>
 						</div>
 
 						<InviteMembersForm
 							isPending={loading.isAnyLoading}
-							onCancel={() => skip()}
-							onSubmit={(value) => {
-								updateContext({
-									flowData: { ...value },
-								});
-								next();
-							}}
+							onSubmit={handleInviteStepSubmit}
 						/>
 					</div>
 				</div>

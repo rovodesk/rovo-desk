@@ -1,15 +1,19 @@
 import { implement } from "@orpc/server";
 import { healthProcedure } from "../procedures/health.procedure";
 import {
+	clearOnboardingProgress,
 	loadOnboardingProgress,
 	persistOnboardingProgress,
-} from "../procedures/onboarding.procedure";
+} from "../procedures/profile.procedure";
 
 export const routerContract = {
 	health: healthProcedure,
-	onboarding: {
-		load: loadOnboardingProgress,
-		persist: persistOnboardingProgress,
+	profile: {
+		onboarding: {
+			load: loadOnboardingProgress,
+			persist: persistOnboardingProgress,
+			clear: clearOnboardingProgress,
+		},
 	},
 };
 

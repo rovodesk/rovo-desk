@@ -12,6 +12,7 @@ import { Input } from "../ui/input";
 export type TextFieldProps = {
   label?: string;
   description?: string;
+  extraMessage?: string;
   icon?: React.ReactNode;
   iconAlignment?: "inline-start" | "inline-end" | "block-start" | "block-end";
 } & React.InputHTMLAttributes<HTMLInputElement>;
@@ -21,6 +22,7 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     {
       label,
       description,
+      extraMessage,
       icon,
       iconAlignment = "inline-start",
       ...props
@@ -73,6 +75,12 @@ export const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         )}
 
         <FormFieldError meta={meta} />
+
+        {extraMessage && (
+          <FieldDescription className="text-xs">
+            {extraMessage}
+          </FieldDescription>
+        )}
 
         {description && !isInvalid && (
           <FieldDescription id={descriptionId} className="text-xs">

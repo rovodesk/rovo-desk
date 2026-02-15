@@ -2,11 +2,11 @@ import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import type { Tag } from "@zero-heads-lab/design-system/components/ui/input-tag";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { InfoIcon } from "lucide-react";
-import { useState } from "react";
+import { batch } from "@zero-heads-lab/shared/utils";
+import { useMemo, useState } from "react";
 import { z } from "zod";
+import { useInviteMembers } from "../../hooks/use-invite-members";
 
-// 1. Update Schema to expect an array of Tag objects
 const FormSchema = z.object({
 	emails: z
 		.array(
@@ -39,10 +39,16 @@ export function InviteMembersForm({
 	defaultValues,
 	maxValues = 3,
 }: InviteMembersFormProps) {
+	const { inviteMembers, isPending: isInvitePending } = useInviteMembers();
+
+	const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
 	const form = useAppForm({
 		defaultValues: {
-			emails: defaultValues?.emails || ([] as Tag[]),
+			emails: defaultValues?.emails ?? ([] as Tag[]),
+			role: "organizationMember",
 		},
+
 		validators: {
 			onSubmit: ({ value }) => {
 				if (value.emails.length > maxValues) {
@@ -52,39 +58,61 @@ export function InviteMembersForm({
 						},
 					};
 				}
-				return FormSchema.parse(value);
+
+				const result = FormSchema.safeParse(value);
+
+				if (!result.success) {
+					const err = z.treeifyError(result.error);
+					return err.errors;
+				}
+
+				return undefined;
 			},
 		},
+
 		onSubmit: ({ value }) => {
-			// 3. Extract just the text (emails) from the tags
-			const emailList = value.emails.map((tag) => tag.text);
-
-			// Simulate API call or logic
-			console.log("Sending invites to:", emailList);
-
-			toast.success(
-				<span className="flex items-center gap-2">
-					<InfoIcon className="inline-block size-4" />{" "}
-					{`Sent ${emailList.length} invite(s)`}
-				</span>,
-				{
-					description: (
-						<div className="mt-2 flex flex-wrap gap-1">
-							{emailList.map((email) => (
-								<div className="font-medium text-primary" key={email}>
-									{email}
-								</div>
-							))}
-						</div>
-					),
-				}
-			);
-
-			onSubmit?.({ emails: value.emails });
+			// ✅ Push each email into the SAME batch
+			value.emails.forEach(({ text }) => {
+				inviteBatch(text);
+			});
 		},
 	});
 
-	const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+	/**
+	 * ✅ Create ONE batch instance
+	 * It will collect emails and send them grouped.
+	 */
+	const inviteBatch = useMemo(
+		() =>
+			batch<string>(
+				(emails) => {
+					for (const email of emails) {
+						inviteMembers(
+							{
+								email, // ✅ single email
+								role: "organizationMember",
+							},
+							{
+								onError: () => {
+									toast.error(`Failed to invite ${email}`);
+								},
+							}
+						);
+					}
+
+					onSubmit?.({
+						emails: form.state.values.emails,
+					});
+				},
+				{
+					maxSize: maxValues,
+					wait: 2000,
+				}
+			),
+		[inviteMembers, maxValues, onSubmit, form.state.values.emails]
+	);
+
+	const pending = isPending || isInvitePending;
 
 	return (
 		<form
@@ -101,19 +129,18 @@ export function InviteMembersForm({
 
 						return (
 							<div className="relative">
-								{/* Corner Counter */}
 								<div className="absolute top-2 right-3 font-medium text-muted-foreground text-xs">
 									{currentCount} / {maxValues}
 								</div>
 
 								<field.TagInputField
+									{...field}
 									activeTagIndex={activeTagIndex}
 									className="pr-16"
 									label="Invite team members"
 									maxTags={maxValues}
 									placeholder="Type email and press enter..."
 									setActiveTagIndex={setActiveTagIndex}
-									{...field}
 								/>
 							</div>
 						);
@@ -123,7 +150,7 @@ export function InviteMembersForm({
 				<div className="mt-6 flex w-full justify-end gap-2 pt-4">
 					{cancelable && (
 						<Button
-							disabled={isPending}
+							disabled={pending}
 							onClick={onCancel}
 							type="button"
 							variant="outline"
@@ -133,8 +160,8 @@ export function InviteMembersForm({
 					)}
 
 					<form.SubmitButton
-						disabled={isPending}
-						loading={isPending}
+						disabled={!form.state.isValid}
+						loading={pending}
 						loadingText="Sending..."
 					>
 						{submitText}

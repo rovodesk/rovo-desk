@@ -1,4 +1,5 @@
-import { useOnboarding as useOnboardJs } from "@onboardjs/react";
+import { useOnboarding } from "@onboardjs/react";
+import { useSession } from "@zero-heads-lab/auth/hooks";
 import Logo from "@zero-heads-lab/design-system/components/logo";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
@@ -8,10 +9,14 @@ export function WelcomeStep({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
-	const { next } = useOnboardJs();
+	const { next, updateContext } = useOnboarding();
+	const { session } = useSession();
 
 	const handleGetStarted = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
+		updateContext({
+			currentUser: session?.user,
+		});
 		next();
 	};
 

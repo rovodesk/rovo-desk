@@ -1,9 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Building2Icon, Globe } from "lucide-react";
 import { z } from "zod";
-import { generateSlug } from "../../helpers";
+import { useAuthContext } from "../../client/context";
+import { checkDomainSlug, generateSlug } from "../../helpers";
+import { useCreateDomain } from "../../hooks";
 
 type DomainFormProps = {
 	onSubmit: (value: { name: string; slug: string }) => void;
@@ -22,10 +24,15 @@ const createOrganizationSchema = z.object({
 		.string()
 		.min(3, "Name must be at least 3 characters long")
 		.max(50, "Name must be at most 50 characters long"),
+
 	slug: z
 		.string()
 		.min(3, "Slug must be at least 3 characters long")
-		.max(32, "Slug must be at most 32 characters long"),
+		.max(32, "Slug must be at most 32 characters long")
+		.regex(
+			/^[a-z0-9-]+$/,
+			"Slug can only contain lowercase letters, numbers, and hyphens"
+		),
 });
 
 export function DomainForm({
@@ -36,73 +43,127 @@ export function DomainForm({
 	submitText = "Create Domain",
 	defaultValues,
 }: DomainFormProps) {
+	const queryClient = useQueryClient();
+	const { authClient } = useAuthContext();
+	const { createDomain, isPending: isCreatingDomain } = useCreateDomain();
+
 	const form = useAppForm({
 		defaultValues: {
-			name: defaultValues?.name || "",
-			slug: defaultValues?.slug || "",
+			name: defaultValues?.name ?? "",
+			slug: defaultValues?.slug ?? "",
 		},
+
+		// ✅ Proper Zod validation wiring
 		validators: {
-			onSubmit: createOrganizationSchema,
+			onSubmit: ({ value }) => {
+				const result = createOrganizationSchema.safeParse(value);
+
+				if (!result.success) {
+					return result.error.flatten().fieldErrors;
+				}
+
+				return undefined;
+			},
 		},
+
 		onSubmit: ({ value }) => {
-			toast.success("Domain created successfully", {
-				description: `Your domain ${value.name} has been created successfully`,
+			createDomain(value, {
+				onSuccess: (newDomain) => {
+					onSubmit?.(newDomain);
+				},
 			});
-			onSubmit?.(value);
 		},
 	});
 
-	function handleNameChange(value: string) {
-		form.setFieldValue("slug", generateSlug(value));
-	}
+	const pending = isCreatingDomain || isPending;
 
 	return (
 		<form
 			onSubmit={(e) => {
 				e.preventDefault();
+				e.stopPropagation();
 				form.handleSubmit();
 			}}
 		>
 			<form.AppForm>
 				<div className="grid gap-4 py-4">
-					<div className="grid gap-2">
-						<form.AppField name="name">
-							{(field) => (
-								<field.TextField
-									autoFocus
-									description="This name will be displayed all across the application"
-									disabled={isPending}
-									icon={<Building2Icon />}
-									id="name"
-									label="Display Name"
-									onChange={(e) => {
-										handleNameChange(e.target.value);
-										field.handleChange(e.target.value);
-									}}
-								/>
-							)}
-						</form.AppField>
-					</div>
+					{/* Name */}
+					<form.AppField name="name">
+						{(field) => (
+							<field.TextField
+								autoFocus
+								description="This name will be displayed across the application"
+								disabled={pending}
+								icon={<Building2Icon />}
+								label="Display Name"
+								onBlur={field.handleBlur}
+								onChange={(e) => {
+									const val = e.target.value;
 
-					<div className="grid gap-2">
-						<form.AppField name="slug">
-							{(field) => (
-								<field.TextField
-									description="An Unique Slug to identify your organization."
-									disabled={isPending}
-									icon={<Globe />}
-									id="slug"
-									label="URL Slug"
-								/>
-							)}
-						</form.AppField>
-					</div>
+									field.handleChange(val);
+
+									// Auto-generate slug
+									form.setFieldValue("slug", generateSlug(val));
+								}}
+								value={field.state.value}
+							/>
+						)}
+					</form.AppField>
+
+					{/* Slug */}
+					<form.AppField
+						asyncDebounceMs={500}
+						name="slug"
+						validators={{
+							onChangeAsync: async ({ value }) => {
+								if (!value || value.length < 3) return;
+
+								try {
+									await queryClient.fetchQuery({
+										queryKey: ["auth", "domains", "check", value],
+										queryFn: () => checkDomainSlug(authClient, value),
+										staleTime: 0, // important for validation
+									});
+
+									// If request succeeds → slug is available
+									return undefined;
+									// biome-ignore lint/suspicious/noExplicitAny: Error Can be any type
+								} catch (error: any) {
+									if (error?.code === "SLUG_IS_TAKEN") {
+										return "This slug is already taken";
+									}
+
+									console.error("Unexpected slug validation error:", error);
+									return "Error checking availability";
+								}
+							},
+						}}
+					>
+						{(field) => (
+							<field.TextField
+								description="A unique slug to identify your organization."
+								disabled={pending}
+								extraMessage={
+									field.state.meta.isValidating
+										? "Checking availability..."
+										: undefined
+								}
+								icon={<Globe />}
+								label="URL Slug"
+								onBlur={field.handleBlur}
+								onChange={(e) => {
+									field.handleChange(e.target.value);
+								}}
+								value={field.state.value}
+							/>
+						)}
+					</form.AppField>
 				</div>
 
 				<div className="flex justify-end gap-2 pt-4">
 					{cancelable && (
 						<Button
-							disabled={isPending}
+							disabled={pending}
 							onClick={onCancel}
 							type="button"
 							variant="outline"
@@ -112,8 +173,8 @@ export function DomainForm({
 					)}
 
 					<form.SubmitButton
-						disabled={isPending}
-						loading={isPending}
+						disabled={form.state.isValidating || !form.state.isValid}
+						loading={pending}
 						loadingText="Creating..."
 					>
 						{submitText}

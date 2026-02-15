@@ -22,6 +22,7 @@ import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
 
 import "@tanstack/react-router";
+import { useOnboarding } from "@onboardjs/react";
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -104,12 +105,23 @@ if (!rootElement.innerHTML) {
 
 function App() {
 	const { session, isAuthenticated, isLoading } = useSession();
+	const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
 
-	if (isLoading) return <Loader fullScreen />;
+	if (isLoading)
+		return (
+			<Loader
+				subtitle="Something Great is Cooking..."
+				title="Loading your profile..."
+			/>
+		);
 
 	const authContext = {
 		session,
 		isAuthenticated,
+		onboarding: {
+			isCompleted: onboardingIsCompleted ?? false,
+			currentStep: String(currentStep?.id ?? ""),
+		},
 	};
 	console.log(authContext);
 
@@ -124,5 +136,8 @@ function App() {
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
+	}
+	interface StaticDataRouteOption {
+		breadcrumb?: string | ((params: Record<string, unknown>) => string);
 	}
 }

@@ -1,39 +1,38 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { createDatabase } from "../../conn";
-import {
-	onboardingFlow,
-	onboardingStep,
-} from "../../drizzle/schemas/profile.schema";
+import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
 
-export async function getOnboardingProgressByUserId(userId: string) {
+export type OnboardingProgress = {
+	currentStepId: string | null;
+	flowData: Record<string, unknown>;
+	startedAt: Date | null;
+	completedAt: Date | null;
+	skippedAt: Date | null;
+};
+
+export async function getOnboardingProgressByUserId(
+	userId: string
+): Promise<OnboardingProgress> {
 	const db = createDatabase();
 
-	// 1️⃣ Get flow-level data
 	const flow = await db
-		.select()
-		.from(onboardingFlow)
-		.where(eq(onboardingFlow.userId, userId))
-		.limit(1)
-		.then((res) => res[0]);
-
-	// 2️⃣ Get first incomplete step
-	const step = await db
-		.select()
-		.from(onboardingStep)
-		.where(
-			and(
-				eq(onboardingStep.userId, userId),
-				isNull(onboardingStep.completedAt),
-				isNull(onboardingStep.skippedAt)
-			)
-		)
-		.orderBy(asc(onboardingStep.startedAt))
+		.select({
+			currentStepId: onboardingSchema.currentStepId,
+			flowData: onboardingSchema.flowData,
+			startedAt: onboardingSchema.startedAt,
+			completedAt: onboardingSchema.completedAt,
+			skippedAt: onboardingSchema.skippedAt,
+		})
+		.from(onboardingSchema)
+		.where(eq(onboardingSchema.userId, userId))
 		.limit(1)
 		.then((res) => res[0]);
 
 	return {
-		currentStepId: step?.stepId ?? null,
+		currentStepId: flow?.currentStepId ?? null,
 		flowData: flow?.flowData ?? {},
 		startedAt: flow?.startedAt ?? null,
+		completedAt: flow?.completedAt ?? null,
+		skippedAt: flow?.skippedAt ?? null,
 	};
 }

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.2.0",
+    "@tanstack/react-pacer": "^0.19.4",
     "friendlier-words": "^1.1.3",
     "uuid": "^13.0.0",
     "zod": "catalog:"

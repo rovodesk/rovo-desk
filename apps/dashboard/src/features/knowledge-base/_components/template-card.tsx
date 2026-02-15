@@ -1,4 +1,3 @@
-import { Card } from "@zero-heads-lab/design-system/components/ui/card";
 import { PlusIcon } from "lucide-react";
 
 type TemplateCardProps = {
@@ -12,35 +11,39 @@ export function TemplateCard({
 	description,
 	banner,
 }: TemplateCardProps) {
-	const image = banner ? banner : `https://picsum.photos/seed/${title}/720/720`;
+	const image = banner || `https://picsum.photos/seed/${title}/200/280`;
 
 	return (
-		<Card className="relative mx-auto w-[180px] max-w-sm shrink-0 pt-0">
-			<img
-				alt={title}
-				className="relative z-20 w-full object-cover"
-				src={image}
-			/>
-			<p className="mt-2 text-center text-sm">{title}</p>
-			<p className="mt-2 text-center text-muted-foreground text-xs">
-				{description}
-			</p>
-		</Card>
+		<div className="group flex w-[150px] shrink-0 cursor-pointer flex-col gap-2">
+			<div className="relative aspect-3/4 overflow-hidden rounded-md border bg-muted shadow-sm transition-all group-hover:border-primary/50 group-hover:shadow-md">
+				<img alt={title} className="h-full w-full object-cover" src={image} />
+			</div>
+			<div className="space-y-0.5">
+				<p className="truncate font-medium text-xs">{title}</p>
+				<p className="truncate text-[10px] text-muted-foreground">
+					{description}
+				</p>
+			</div>
+		</div>
 	);
 }
 
 export function BlankTemplateCard() {
 	return (
-		<Card className="relative mx-auto w-[180px] max-w-sm shrink-0 pt-0">
-			<div className="relative z-20 aspect-video h-full w-full bg-black/35">
-				<PlusIcon className="absolute inset-0 m-auto h-12 w-12" />
+		<div className="group flex w-[150px] shrink-0 cursor-pointer flex-col gap-2">
+			<div className="relative aspect-3/4 overflow-hidden rounded-md border border-dashed bg-background transition-all group-hover:border-primary group-hover:bg-primary/5">
+				<div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground group-hover:text-primary">
+					<div className="flex size-10 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-primary/20">
+						<PlusIcon className="h-6 w-6" />
+					</div>
+				</div>
 			</div>
-			<p className="mt-2 text-center text-sm">Blank</p>
-			<p className="mt-2 text-center text-muted-foreground text-xs">
-				Blank template
-			</p>
-		</Card>
+			<div className="space-y-0.5">
+				<p className="font-medium text-xs">Blank</p>
+				<p className="text-center text-[10px] text-muted-foreground sm:text-left">
+					Start from scratch
+				</p>
+			</div>
+		</div>
 	);
 }
-
-export default TemplateCard;

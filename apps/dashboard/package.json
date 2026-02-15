@@ -32,6 +32,7 @@
     "motion": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "react-rnd": "^10.5.2",
     "recharts": "^3.7.0",
     "vite-tsconfig-paths": "catalog:vite",
     "zod": "catalog:"
