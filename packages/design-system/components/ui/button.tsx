@@ -34,7 +34,7 @@ const buttonVariants = cva(
   }
 )
 
-type ButtonProps =
+export type ButtonProps =
   HTMLMotionProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
