@@ -24,7 +24,8 @@
         "useBlockStatements": "off",
         "useNodejsImportProtocol": "off",
         "noHeadElement": "off",
-        "useConsistentTypeDefinitions": "off"
+        "useConsistentTypeDefinitions": "off",
+        "useFilenamingConvention": "off"
       },
       "performance": {
         "noBarrelFile": "off",
