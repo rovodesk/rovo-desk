@@ -22,6 +22,7 @@ import {
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { AUTH_ROLES } from "@/access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
@@ -354,19 +355,16 @@ export function createAuth(namespace: KVNamespace) {
 			},
 			user: {
 				create: {
-					// biome-ignore lint/suspicious/useAwait: No awaited value
+					// biome-ignore lint/suspicious/useAwait: No awaited function used
 					before: async (user) => {
-						if (!user.image) {
-							return {
-								data: {
-									...user,
-									image: Placeholder.avatar(user.email),
-								},
-							};
-						}
+						const avatar: string = user.image
+							? user.image
+							: Placeholder.avatar(user.email);
 						return {
 							data: {
 								...user,
+								image: avatar,
+								role: AUTH_ROLES.find((role) => role === "owner"),
 							},
 						};
 					},

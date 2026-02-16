@@ -1,50 +1,90 @@
 import { ORPCError, os } from "@orpc/server";
 import {
-	getProfileByUserId as getProfileQuery,
-	type Profile,
-} from "@zero-heads-lab/database/repositories/profile/queries";
+	clearOnboardingProgressByUserId,
+	updateOnboardingProgressByUserId,
+} from "@zero-heads-lab/database/repositories/profile/mutations";
+import { getOnboardingProgressByUserId } from "@zero-heads-lab/database/repositories/profile/queries";
+
 import {
-	GET_PROFILE_BY_USER_ID_INPUT_DTO,
-	GET_PROFILE_BY_USER_ID_OUTPUT_DTO,
+	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
+	UPDATE_ONBOARDING_PROGRESS_INPUT_DTO,
 } from "../dto/profile.dto";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
-export const getProfileByUserId = os
-	.input(GET_PROFILE_BY_USER_ID_INPUT_DTO)
-	.output(GET_PROFILE_BY_USER_ID_OUTPUT_DTO)
+export const loadOnboardingProgress = os
+	.output(GET_ONBOARDING_PROGRESS_OUTPUT_DTO)
 	.use(authMiddleware)
-	.handler(async ({ input, context }) => {
+	.handler(async ({ context }) => {
 		const { user } = context;
 
-		// 🔐 Enforce ownership
-		if (input.userId !== user.id) {
+		if (!user?.id) {
 			throw new ORPCError("UNAUTHORIZED", {
-				message: "You can only retrieve your own profile",
+				message: "You are not logged in",
 			});
 		}
 
-		let profile: Profile | null;
+		const onboardingProgress = await getOnboardingProgressByUserId(user.id);
+		if (!onboardingProgress) {
+			throw new ORPCError("NOT_FOUND", {
+				message: "Onboarding progress not found",
+			});
+		}
+
+		// TODO: Add Analytics
+
+		return onboardingProgress;
+	})
+	.callable();
+
+export const persistOnboardingProgress = os
+	.input(UPDATE_ONBOARDING_PROGRESS_INPUT_DTO)
+	.use(authMiddleware)
+	.handler(async ({ context, input }) => {
+		const { user } = context;
+
+		if (!user?.id) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "You are not logged in",
+			});
+		}
 
 		try {
-			profile = await getProfileQuery(input.userId);
+			await updateOnboardingProgressByUserId(
+				user.id,
+				input.currentStepId,
+				input.flowData
+			);
 		} catch (error) {
+			console.error(error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Error getting profile",
-				cause: error,
+				message: "Failed to update onboarding progress",
 			});
 		}
 
-		if (!profile) {
-			throw new ORPCError("NOT_FOUND", {
-				message: "Profile not found",
+		// TODO: Add Analytics
+	})
+	.callable();
+
+export const clearOnboardingProgress = os
+	.use(authMiddleware)
+	.handler(async ({ context }) => {
+		const { user } = context;
+
+		if (!user?.id) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "You are not logged in",
 			});
 		}
 
-		return {
-			...profile,
-			onboardingStartedAt: profile.onboardingStartedAt?.toISOString() ?? null,
-			onboardingCompletedAt:
-				profile.onboardingCompletedAt?.toISOString() ?? null,
-		};
+		try {
+			await clearOnboardingProgressByUserId(user.id);
+		} catch (error) {
+			console.error(error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to clear onboarding progress",
+			});
+		}
+
+		// TODO: Add Analytics
 	})
 	.callable();

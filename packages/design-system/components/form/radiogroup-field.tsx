@@ -16,6 +16,9 @@ export type RadioGroupFieldProps = {
   options: RadioOption[];
   renderOption?: (option: RadioOption) => React.ReactNode;
   className?: string;
+  defaultValue?: string;
+  /** Added: Callback for when the value changes, useful for immediate UI side-effects */
+  onValueChange?: (value: string) => void;
 };
 
 export const RadioGroupField = ({
@@ -24,6 +27,8 @@ export const RadioGroupField = ({
   options,
   renderOption,
   className,
+  defaultValue,
+  onValueChange, // Destructure the new prop
 }: RadioGroupFieldProps) => {
   const field = useFieldContext<string>();
   const meta = field.state.meta;
@@ -32,12 +37,16 @@ export const RadioGroupField = ({
   const errorId = isInvalid ? `${field.name}-error` : undefined;
   const descriptionId = description ? `${field.name}-description` : undefined;
 
+  // Handle value change by notifying both the form context and the optional prop
+  const handleValueChange = (value: string) => {
+    field.handleChange(value);
+    onValueChange?.(value);
+  };
+
   return (
     <Field data-invalid={isInvalid} className="space-y-2">
       {label && (
-        <FieldLabel
-          className={isInvalid ? "text-destructive" : undefined}
-        >
+        <FieldLabel className={isInvalid ? "text-destructive" : undefined}>
           {label}
         </FieldLabel>
       )}
@@ -49,23 +58,27 @@ export const RadioGroupField = ({
       )}
 
       <RadioGroup
-        value={field.state.value}
-        onValueChange={field.handleChange}
+        value={field.state.value ?? defaultValue}
+        onValueChange={handleValueChange} // Use the local handler
         aria-invalid={isInvalid}
         aria-describedby={errorId ?? descriptionId}
         className={className}
       >
         {options.map((option) => (
-          <Field key={option.value} className="flex items-center flex-col">
+          <Field key={option.value} className="flex items-center">
             {renderOption ? (
               renderOption(option)
             ) : (
-              <FieldLabel className="flex items-center gap-2 font-normal">
+              <FieldLabel className="flex items-center gap-2 font-normal cursor-pointer">
                 <RadioGroupItem
                   value={option.value}
                   disabled={option.disabled}
                 />
-                <span className={option.disabled ? "text-muted-foreground" : undefined}>
+                <span
+                  className={
+                    option.disabled ? "text-muted-foreground" : undefined
+                  }
+                >
                   {option.label}
                 </span>
               </FieldLabel>
@@ -78,3 +91,5 @@ export const RadioGroupField = ({
     </Field>
   );
 };
+
+RadioGroupField.displayName = "RadioGroupField";

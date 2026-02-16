@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 				{import.meta.env.DEV && (
 					<>
 						<TanStackDevtools
-							config={{ position: "bottom-right" }}
+							config={{ position: "bottom-left" }}
 							plugins={[
 								{
 									name: "Tanstack Router",
@@ -27,7 +27,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 								},
 							]}
 						/>
-						<ReactQueryDevtools buttonPosition="top-right" />
+						<ReactQueryDevtools buttonPosition="top-left" />
 					</>
 				)}
 			</>

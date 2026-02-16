@@ -8,6 +8,8 @@ import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { capitalize } from "@zero-heads-lab/shared/utils";
 import { TypeIcon } from "lucide-react";
 import { z } from "zod";
+import { LayoutPreview } from "@/components/layout-preview";
+import { ThemePreview } from "@/components/theme-preview";
 
 const appearanceFormSchema = z.object({
 	theme: z.enum(["light", "dark"]),
@@ -167,75 +169,5 @@ export function AppearanceForm() {
 				</div>
 			</form.AppForm>
 		</form>
-	);
-}
-
-function ThemePreview({ type }: { type: "light" | "dark" }) {
-	const isDark = type === "dark";
-	return (
-		<div
-			className={`flex h-24 w-full flex-col gap-2 rounded-md border-2 p-3 transition-colors ${
-				isDark
-					? "border-slate-800 bg-slate-950"
-					: "border-slate-200 bg-slate-100 data-[state=checked]:border-accent data-[state=checked]:ring-2 data-[state=checked]:ring-accent/20"
-			}`}
-		>
-			{/* Header */}
-			<div className="flex gap-2">
-				<div
-					className={`h-2 w-1/3 rounded-full ${
-						isDark ? "bg-slate-800" : "bg-white"
-					}`}
-				/>
-			</div>
-
-			{/* Body */}
-			<div className="flex flex-1 gap-2">
-				<div
-					className={`w-1/4 rounded-md ${
-						isDark ? "bg-slate-900" : "bg-white/50"
-					}`}
-				/>
-				<div
-					className={`flex-1 rounded-md shadow-sm ${
-						isDark ? "bg-slate-900" : "bg-white"
-					}`}
-				>
-					<div
-						className={`m-2 h-2 w-1/2 rounded-full ${
-							isDark ? "bg-slate-800" : "bg-slate-100"
-						}`}
-					/>
-					<div
-						className={`m-2 h-2 w-3/4 rounded-full ${
-							isDark ? "bg-slate-800" : "bg-slate-100"
-						}`}
-					/>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function LayoutPreview({ type }: { type: "sidebar" | "inset" | "floating" }) {
-	return (
-		<div className="flex h-10 w-12 items-center justify-center rounded-md border border-muted-foreground/20 bg-muted/50">
-			{type === "sidebar" && (
-				<div className="flex h-full w-full gap-1 p-1">
-					<div className="w-1/3 rounded-sm bg-primary/40" />
-					<div className="flex-1 rounded-sm bg-primary/10" />
-				</div>
-			)}
-			{type === "inset" && (
-				<div className="h-full w-full p-1">
-					<div className="h-full w-full rounded-sm border-2 border-primary/40 bg-primary/10" />
-				</div>
-			)}
-			{type === "floating" && (
-				<div className="h-full w-full p-2">
-					<div className="h-full w-full rounded-full bg-primary/40 shadow-md" />
-				</div>
-			)}
-		</div>
 	);
 }

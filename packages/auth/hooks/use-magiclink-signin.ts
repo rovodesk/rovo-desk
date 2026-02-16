@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { capitalize, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";
 import type { MutationOptions } from "../types";
@@ -8,6 +8,7 @@ export const useMagicLinkSignIn = (
 	options?: MutationOptions
 ) => {
 	const { authClient } = useAuthContext();
+	const queryClient = useQueryClient();
 
 	const { mutate: signInWithMagicLink, isPending } = useMutation({
 		mutationFn: async ({ email }: { email: string }) => {
@@ -17,7 +18,10 @@ export const useMagicLinkSignIn = (
 				callbackURL,
 			});
 		},
-		onSuccess: () => {
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ["auth", "session"],
+			});
 			options?.onSuccess?.();
 		},
 		onError: (error) => {

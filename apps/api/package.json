@@ -7,10 +7,14 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
-    "hono": "^4.11.7",
-    "@zero-heads-lab/transport": "workspace:*",
     "@zero-heads-lab/auth": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*"
+    "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/transport": "workspace:*",
+    "hono": "^4.11.7",
+    "hono-party": "^1.0.0",
+    "lib0": "^0.2.117",
+    "partyserver": "^0.1.5",
+    "y-protocols": "^1.0.7"
   },
   "devDependencies": {
     "wrangler": "^4.4.0",

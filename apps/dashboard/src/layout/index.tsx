@@ -1,4 +1,6 @@
+import { useOnboarding } from "@onboardjs/react";
 import { Outlet } from "@tanstack/react-router";
+import Loader from "@zero-heads-lab/design-system/components/loader";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -11,6 +13,16 @@ import { AppSidebar } from "./app-sidebar";
 
 export function AuthenticatedLayout() {
 	const sidebarOpen = getCookie("sidebar_state") !== "false";
+
+	const { loading } = useOnboarding();
+
+	if (loading.isHydrating) {
+		return <Loader title="Loading..." />;
+	}
+
+	// if (!state?.isCompleted) {
+	// 	return <OnboardingFlow />;
+	// }
 
 	return (
 		<SearchProvider>

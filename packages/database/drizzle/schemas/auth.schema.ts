@@ -239,7 +239,7 @@ export const memberRelations = relations(member, ({ one }) => ({
 	organization: one(organization, {
 		fields: [member.organizationId],
 		references: [organization.id],
-		relationName: "organizationMember",
+		relationName: "member",
 	}),
 }));
 

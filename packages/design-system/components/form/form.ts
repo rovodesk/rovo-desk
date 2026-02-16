@@ -9,10 +9,12 @@ import { TextareaField } from "./textarea-field";
 import { DatePickerField } from "./date-picker-field";
 import { SwitchField } from "./switch-field";
 import { FileUploadField } from "./file-upload-field";
+import { TagInputField } from "./tag-field";
 
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents: {
     TextField,
+    TagInputField,
     TextareaField,
     SelectField,
     SwitchField,

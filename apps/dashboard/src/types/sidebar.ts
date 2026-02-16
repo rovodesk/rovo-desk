@@ -63,6 +63,7 @@ export type NavItem = NavLink | NavCollapsible;
 export type NavGroup = {
 	title?: string;
 	items: NavItem[];
+	url?: TypedRoute;
 };
 
 export type SidebarConfig = {

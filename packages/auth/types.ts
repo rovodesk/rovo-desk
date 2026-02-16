@@ -50,7 +50,7 @@ export type MutationOptions = {
 
 export type OAuthProvider = "google" | "github";
 
-// "superAdmin" | "moderator" | "support" | "organizationOwner" | ...
+// "superAdmin" | "moderator" | "support" | "owner" | ...
 
 /**
  * All action strings: "create" | "read" | "list" | "update" | "delete"

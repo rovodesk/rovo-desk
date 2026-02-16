@@ -14,5 +14,21 @@
       "binding": "AUTH_CACHE",
       "id": "0173a3d4931d4ddaa5f140fda68639bc"
     }
-  ]
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "KNOWLEDGE_BASE",
+        "class_name": "Document"
+      }
+    ],
+  },
+  "migrations": [
+      {
+        "tag": "v1",
+        "new_classes": [
+          "Document"
+        ]
+      }
+    ]
 }

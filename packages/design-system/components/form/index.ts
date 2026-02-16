@@ -10,3 +10,4 @@ export * from "./field-error";
 export * from "./date-picker-field";
 export * from "./switch-field";
 export * from "./file-upload-field";
+export * from "./tag-field";

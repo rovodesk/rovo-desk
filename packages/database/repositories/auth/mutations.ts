@@ -43,7 +43,7 @@ export async function createNewUserWithProfile(userId: string) {
 	const orgName = "Default Workspace";
 	const db = createDatabase();
 
-	// 1. Check User exists
+	// 1️⃣ Ensure user exists
 	const [existingUser] = await db
 		.select()
 		.from(userSchema)
@@ -54,49 +54,64 @@ export async function createNewUserWithProfile(userId: string) {
 		throw new Error("User not found");
 	}
 
-	// 2. Generate a unique slug
-	const MAX_ATTEMPTS = 5;
-	let orgSlug = Placeholder.slug();
-
-	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-		const [existingOrg] = await db
-			.select()
-			.from(orgSchema)
-			.where(eq(orgSchema.slug, orgSlug))
-			.limit(1);
-
-		if (!existingOrg) break;
-
-		orgSlug = `${Placeholder.slug()}-${crypto.randomUUID().slice(0, 6)}`;
+	// Prevent duplicate profile creation (important for migrations)
+	const [existingProfile] = await db
+		.select()
+		.from(profileSchema)
+		.where(eq(profileSchema.userId, userId))
+		.limit(1);
+	if (existingProfile) {
+		throw new Error("Profile already exists");
 	}
 
-	if (!orgSlug) {
-		throw new Error("Failed to generate unique organization slug");
-	}
-
-	// 3. Transaction
+	// 2️⃣ Run everything inside ONE transaction
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Its ok
 	return db.transaction(async (tx) => {
-		// Create Organization
-		const [org] = await tx
-			.insert(orgSchema)
-			.values({
-				name: orgName,
-				slug: orgSlug,
-				logo: Placeholder.logo(orgName),
-			})
-			.returning();
+		// 3️⃣ Create org with guaranteed unique slug
+		const baseSlug = Placeholder.slug();
+		// biome-ignore lint/suspicious/noExplicitAny:Add type
+		let org: any;
+		let attempt = 0;
 
-		if (!org) {
-			throw new Error("Org creation failed");
+		while (!org && attempt < 10) {
+			const slug =
+				attempt === 0
+					? baseSlug
+					: `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`;
+
+			try {
+				[org] = await tx
+					.insert(orgSchema)
+					.values({
+						name: orgName,
+						slug,
+						logo: Placeholder.logo(orgName),
+					})
+					.returning();
+				// biome-ignore lint/suspicious/noExplicitAny: Database error
+			} catch (err: any) {
+				// If unique constraint fails, retry
+				if (err.code === "23505") {
+					attempt++;
+					continue;
+				}
+				throw err;
+			}
 		}
 
-		// Update User Role
-		await tx
-			.update(userSchema)
-			.set({ role: "organizationOwner" })
-			.where(eq(userSchema.id, userId));
+		if (!org) {
+			throw new Error("Failed to generate unique organization slug");
+		}
 
-		// Create Team
+		// 4️⃣ Update user role to owner if not already
+		if (existingUser.role !== "owner") {
+			await tx
+				.update(userSchema)
+				.set({ role: "owner" })
+				.where(eq(userSchema.id, userId));
+		}
+
+		// 5️⃣ Create team
 		const [team] = await tx
 			.insert(teamSchema)
 			.values({
@@ -109,21 +124,17 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Team creation failed");
 		}
 
-		// Create Team Member
+		// 6️⃣ Add team membership
 		await tx.insert(teamMemSchema).values({
 			userId,
 			teamId: team.id,
 		});
 
-		// Create Profile
+		// 7️⃣ Create profile
 		await tx.insert(profileSchema).values({
 			userId,
-			currentOnboardingStep: "account_context",
-			organizationId: org.id,
-			teamId: team.id,
 		});
 
-		// Return something useful
 		return {
 			organizationId: org.id,
 			teamId: team.id,

@@ -1,5 +1,4 @@
 import { AnyFieldMeta } from "@tanstack/react-form"
-import { ZodError } from "zod"
 import { FieldError as UiFieldError } from "../ui/field"
 
 type FormFieldErrorProps = {
@@ -11,9 +10,15 @@ export const FormFieldError = ({ meta }: FormFieldErrorProps) => {
 
   return (
     <>
-      {meta.errors.map((error: ZodError, index: number) => (
-        <UiFieldError key={index} errors={[{ message: error.message }]} />
-      ))}
+      {meta.errors.map((error: any, index: number) => {
+        const message = typeof error === "string" ? error : error?.message;
+
+        if (!message) return null;
+
+        return (
+          <UiFieldError key={index} errors={[{ message: message }]} />
+        );
+      })}
     </>
-  )
-}
+  );
+};

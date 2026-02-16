@@ -2,7 +2,10 @@ import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import { sendEmail } from "@zero-heads-lab/email";
-import { MagicLinkTemplate } from "@zero-heads-lab/email/templates";
+import {
+	MagicLinkTemplate,
+	OrganizationInviteTemplate,
+} from "@zero-heads-lab/email/templates";
 import type { BetterAuthPlugin } from "better-auth";
 import {
 	admin as betterAuthAdmin,
@@ -12,19 +15,7 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-import {
-	accessControl,
-	anonymous,
-	deleted,
-	moderator,
-	organizationAdmin,
-	organizationMember,
-	organizationOwner,
-	superAdmin,
-	support,
-	unverified,
-	verified,
-} from "../access-control";
+import { accessControl, PLATFORM_ROLES, Roles } from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 
@@ -48,19 +39,7 @@ export const AuthPlugins = () => {
 		organization({
 			accessControl,
 			roles: {
-				superAdmin,
-				moderator,
-				support,
-
-				organizationOwner,
-				organizationAdmin,
-				organizationMember,
-
-				verified,
-				unverified,
-				anonymous,
-
-				deleted,
+				...Roles,
 			},
 			teams: {
 				enabled: true,
@@ -75,6 +54,34 @@ export const AuthPlugins = () => {
 							input: false,
 						},
 					},
+				},
+			},
+			sendInvitationEmail: async ({ organization, invitation, inviter }) => {
+				await sendEmail({
+					to: invitation.email,
+					subject: "Invitation to join organization",
+					react: OrganizationInviteTemplate({
+						inviter: {
+							name: inviter.user.name,
+							email: inviter.user.email,
+						},
+						organization: {
+							name: organization.name,
+							slug: organization.slug,
+						},
+						email: invitation.email,
+						invitation: {
+							id: invitation.id,
+						},
+						acceptLink: "https://localhost:3001/accept-invite",
+					}),
+				});
+			},
+			organizationHooks: {
+				// biome-ignore lint/suspicious/useAwait: No awaited Function
+				afterCreateOrganization: async ({ organization }) => {
+					//TODO: Add analytics
+					console.log("New Organization Created", organization);
 				},
 			},
 		}),
@@ -116,21 +123,10 @@ export const AuthPlugins = () => {
 		}),
 		betterAuthAdmin({
 			roles: {
-				superAdmin,
-				moderator,
-				support,
-
-				organizationOwner,
-				organizationAdmin,
-				organizationMember,
-
-				verified,
-				unverified,
-				anonymous,
-
-				deleted,
+				...Roles,
 			},
-			adminRoles: ["superAdmin", "moderator", "support"],
+			defaultRole: "anonymous",
+			adminRoles: [...PLATFORM_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),

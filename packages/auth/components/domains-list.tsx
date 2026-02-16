@@ -17,40 +17,52 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
+import { useModal } from "@zero-heads-lab/design-system/hooks/use-modal";
 import {
-	ChevronDown,
-	Folder,
 	Forward,
+	IdCardLanyard,
 	Loader2,
 	MoreHorizontal,
 	Trash2,
 } from "lucide-react";
 import { useListDomains, useSession, useSwitchDomain } from "../hooks";
 import { AddDomainDialog } from "./add-domain-dialog";
+import { InviteMembersForm } from "./forms/invite-members-form";
 
 export function DomainList() {
 	const { isMobile } = useSidebar();
 
 	const { session, isLoading: isAuthLoading } = useSession();
 	const { domains = [], isLoading: isDomainsLoading } = useListDomains();
+	const { switchDomain, isPending } = useSwitchDomain();
+
+	const { openModal: openInviteMembersModal } = useModal<string>(
+		"invite-members",
+		<InviteMembersForm />,
+		"Invite Members",
+		"Invite members to your organization",
+		{
+			shouldAllowBackdropClick: false,
+		}
+	);
 
 	const activeDomainId = session?.session?.activeOrganizationId;
-
-	const { switchDomain, isPending } = useSwitchDomain({
-		onError: () => {
-			toast.error("Error switching organization");
-		},
-	});
 
 	const isLoaded = !(isAuthLoading || isDomainsLoading);
 	if (!isLoaded) return <DomainListSkeleton />;
 
 	const handleSwitchDomain = (domainId: string) => {
+		if (domainId === activeDomainId) return;
+
 		const domain = domains.find((d) => d.id === domainId);
 
 		switchDomain(domainId, {
 			onSuccess: () => {
 				toast.success(`Organization switched to ${domain?.name}`);
+				openInviteMembersModal();
+			},
+			onError: () => {
+				toast.error("Error switching organization");
 			},
 		});
 	};
@@ -89,9 +101,9 @@ export function DomainList() {
 								className="w-48 rounded-lg"
 								side={isMobile ? "bottom" : "right"}
 							>
-								<DropdownMenuItem>
-									<Folder className="text-muted-foreground" />
-									<span>View Project</span>
+								<DropdownMenuItem onClick={() => openInviteMembersModal()}>
+									<IdCardLanyard className="text-muted-foreground" />
+									<span>Invite Members</span>
 								</DropdownMenuItem>
 
 								<DropdownMenuItem>
@@ -109,14 +121,6 @@ export function DomainList() {
 						</DropdownMenu>
 					</SidebarMenuItem>
 				))}
-
-				{domains.length > 3 && (
-					<SidebarMenuItem className="mt-2">
-						<SidebarMenuButton className="items-center! justify-center bg-transparent!">
-							<ChevronDown className="text-sidebar-foreground/70" />
-						</SidebarMenuButton>
-					</SidebarMenuItem>
-				)}
 			</SidebarMenu>
 		</SidebarGroup>
 	);

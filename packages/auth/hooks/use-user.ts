@@ -1,6 +1,6 @@
 import { type QueryOptions, useQuery } from "@tanstack/react-query";
 import type { AuthUser } from "@zero-heads-lab/auth/types";
-import { getErrorStatus } from "@zero-heads-lab/shared/utils";
+import { getErrorStatus, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";
 
 export function useUser(options?: QueryOptions<AuthUser | null>) {
@@ -23,7 +23,11 @@ export function useUser(options?: QueryOptions<AuthUser | null>) {
 	});
 
 	return {
-		user: data ?? null,
+		user: {
+			...data,
+			name: data?.name ?? Placeholder.name(2, "-").toLowerCase(),
+			image: data?.image ?? Placeholder.avatar(data?.email),
+		} as AuthUser,
 		isLoading,
 		isAuthenticated: Boolean(data),
 		error,

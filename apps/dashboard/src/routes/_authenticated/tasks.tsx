@@ -20,4 +20,7 @@ const taskSearchSchema = z.object({
 export const Route = createFileRoute("/_authenticated/tasks")({
 	validateSearch: taskSearchSchema,
 	component: Tasks,
+	staticData: {
+		breadcrumb: () => "Tasks",
+	},
 });

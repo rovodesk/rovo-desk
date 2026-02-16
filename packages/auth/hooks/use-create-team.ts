@@ -18,11 +18,15 @@ export const useCreateTeam = (options?: MutationOptions) => {
 			if (error) throw error;
 			return data;
 		},
-		onSuccess: (res, variables) => {
+		onSuccess: async (res, variables) => {
 			queryClient.setQueriesData(
 				{ queryKey: ["auth", "teams"] },
 				(old: [] = []) => [...old, res]
 			);
+
+			await authClient.organization.setActiveTeam({
+				teamId: res.id,
+			});
 
 			options?.onSuccess?.(variables);
 		},

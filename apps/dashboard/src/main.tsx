@@ -18,7 +18,11 @@ import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
 import { AppErrorBoundary } from "@/lib/error-boundary";
 import { handleServerError } from "@/lib/utils";
+import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
+
+import "@tanstack/react-router";
+import { useOnboarding } from "@onboardjs/react";
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -89,7 +93,9 @@ if (!rootElement.innerHTML) {
 			<AppErrorBoundary>
 				<QueryClientProvider client={queryClient}>
 					<AuthProvider authClient={authClient}>
-						<App />
+						<OnboardingProvider>
+							<App />
+						</OnboardingProvider>
 					</AuthProvider>
 				</QueryClientProvider>
 			</AppErrorBoundary>
@@ -99,12 +105,23 @@ if (!rootElement.innerHTML) {
 
 function App() {
 	const { session, isAuthenticated, isLoading } = useSession();
+	const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
 
-	if (isLoading) return <Loader fullScreen />;
+	if (isLoading)
+		return (
+			<Loader
+				subtitle="Something Great is Cooking..."
+				title="Loading your profile..."
+			/>
+		);
 
 	const authContext = {
 		session,
 		isAuthenticated,
+		onboarding: {
+			isCompleted: onboardingIsCompleted ?? false,
+			currentStep: String(currentStep?.id ?? ""),
+		},
 	};
 	console.log(authContext);
 
@@ -116,10 +133,11 @@ function App() {
 }
 
 // Register the router instance for type safety
-import "@tanstack/react-router";
-
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
+	}
+	interface StaticDataRouteOption {
+		breadcrumb?: string | ((params: Record<string, unknown>) => string);
 	}
 }

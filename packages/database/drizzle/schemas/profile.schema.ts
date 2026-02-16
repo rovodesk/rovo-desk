@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-	boolean,
 	jsonb,
 	pgSchema,
 	primaryKey,
@@ -8,7 +7,7 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 import { subscription } from "schema";
-import { organization, team, user } from "./auth.schema";
+import { user } from "./auth.schema";
 
 export const profileSchema = pgSchema("profile");
 
@@ -16,20 +15,6 @@ export const profile = profileSchema.table("profile", {
 	userId: text("userId")
 		.primaryKey()
 		.references(() => user.id, { onDelete: "cascade" }),
-
-	currentOnboardingStep: text("currentOnboardingStep"),
-
-	onboardingStartedAt: timestamp("onboardingStartedAt", {
-		withTimezone: true,
-	}).defaultNow(),
-
-	onboardingCompletedAt: timestamp("onboardingCompletedAt", {
-		withTimezone: true,
-	}),
-
-	organizationId: text("organizationId").references(() => organization.id),
-
-	teamId: text("teamId").references(() => team.id),
 
 	subscriptionId: text("subscriptionId").references(() => subscription.id, {
 		onDelete: "set null",
@@ -55,76 +40,42 @@ export const profile = profileSchema.table("profile", {
 	deletedAt: timestamp("deletedAt", { withTimezone: true }),
 });
 
-export const onboardingProgress = profileSchema.table(
-	"onboarding_progress",
+export const onboarding = profileSchema.table(
+	"onboarding",
 	{
 		userId: text("userId")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
 
-		step: text("step"),
+		currentStepId: text("currentStepId").notNull().default("welcome"),
 
-		completed: boolean("completed").notNull().default(false),
-		skipped: boolean("skipped").notNull().default(false),
+		flowData: jsonb("flowData").$type<Record<string, unknown>>(),
+
+		startedAt: timestamp("startedAt", { withTimezone: true }),
 
 		completedAt: timestamp("completedAt", { withTimezone: true }),
 
-		metadata: jsonb("metadata")
-			.$type<Record<string, unknown>>()
-			.notNull()
-			.default({}),
+		skippedAt: timestamp("skippedAt", { withTimezone: true }),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
+		updatedAt: timestamp("updatedAt", { withTimezone: true })
 			.defaultNow()
-			.notNull(),
+			.$onUpdate(() => new Date()),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
+		deletedAt: timestamp("deletedAt", { withTimezone: true }),
 	},
-	(t) => [
-		primaryKey({
-			columns: [t.userId, t.step],
-		}),
-	]
+	(t) => [primaryKey({ columns: [t.userId, t.currentStepId] })]
 );
 
-export const onboardingContext = profileSchema.table("onboarding_context", {
-	userId: text("userId")
-		.primaryKey()
-		.references(() => user.id, { onDelete: "cascade" }),
-
-	accountType: text("accountType"),
-	companySize: text("companySize"),
-	source: text("source"),
-	priorToolsUsed: boolean("priorToolsUsed"),
-
-	primaryGoal: text("primaryGoal"),
-	secondaryGoal: text("secondaryGoal"),
-
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-
-	updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-		() => new Date()
-	),
-});
-
-export const profileRelations = relations(profile, ({ one, many }) => ({
+export const profileRelations = relations(profile, ({ one }) => ({
 	user: one(user, {
 		fields: [profile.userId],
 		references: [user.id],
 		relationName: "userProfile",
 	}),
 
-	onboardingProgress: many(onboardingProgress, {
-		relationName: "userOnboardingProgress",
-	}),
-
-	onboardingContext: one(onboardingContext, {
+	onboarding: one(onboarding, {
 		fields: [profile.userId],
-		references: [onboardingContext.userId],
-		relationName: "userOnboardingContext",
+		references: [onboarding.userId],
+		relationName: "userOnboarding",
 	}),
 }));

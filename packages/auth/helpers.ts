@@ -7,11 +7,15 @@ import type {
 } from "./access-control";
 import {
 	AUTH_ROLES,
-	LIFECYCLE_ROLES,
 	ORGANIZATION_MEMBER_ROLES,
 	PLATFORM_ROLES,
 } from "./access-control";
-import type { ClientPermissionMap, PermissionCheckMap, Session } from "./types";
+import type {
+	AuthClient,
+	ClientPermissionMap,
+	PermissionCheckMap,
+	Session,
+} from "./types";
 
 /**
  * Validated session result - discriminated union
@@ -102,14 +106,6 @@ export function hasAccess(session: Session | null): boolean {
 }
 
 /**
- * Lifecycle roles (anonymous, unverified, deleted)
- */
-export function isLifecycleRole(role: unknown): boolean {
-	// biome-ignore lint/suspicious/noExplicitAny: Anything can be a lifecycle role
-	return LIFECYCLE_ROLES.includes(role as any);
-}
-
-/**
  * Determine the access role for a user
  *
  * @param role
@@ -118,9 +114,9 @@ export function isLifecycleRole(role: unknown): boolean {
 export function determineAccessRole(role: unknown): AuthRole {
 	// 1. Normalize Better Auth internal roles to our AuthRole types
 	let normalizedRole = role;
-	if (role === "owner") normalizedRole = "organizationOwner";
-	if (role === "admin") normalizedRole = "organizationAdmin";
-	if (role === "member") normalizedRole = "organizationMember";
+	if (role === "owner") normalizedRole = "owner";
+	if (role === "admin") normalizedRole = "admin";
+	if (role === "member") normalizedRole = "member";
 
 	if (hasPlatformAccessRole(normalizedRole)) {
 		return normalizedRole;
@@ -128,10 +124,6 @@ export function determineAccessRole(role: unknown): AuthRole {
 
 	if (hasOrganizationAccessRole(normalizedRole)) {
 		return normalizedRole;
-	}
-
-	if (isLifecycleRole(normalizedRole)) {
-		return normalizedRole as AuthRole;
 	}
 
 	return "anonymous";
@@ -190,3 +182,23 @@ export function narrowToClientPermissions(
 
 	return result;
 }
+
+export function generateSlug(value: string) {
+	return value
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-")
+		.replace(/[^a-z0-9-]/g, "");
+}
+
+// slug.api.ts
+export const checkDomainSlug = async (
+	authClient: AuthClient,
+	slug: string
+): Promise<boolean> => {
+	const { data, error } = await authClient.organization.checkSlug({ slug });
+
+	if (error) throw error;
+
+	return data.status;
+};
