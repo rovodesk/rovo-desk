@@ -3,7 +3,7 @@
 import path from "node:path";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import tailwindcss from "@tailwindcss/vite";
-// import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react-swc";
 import { playwright } from "@vitest/browser-playwright";
 import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
@@ -26,7 +26,7 @@ export default defineConfig({
 			projects: ["./tsconfig.json"],
 		}),
 		tailwindcss(),
-		// react(),
+		react(),
 	],
 	test: {
 		projects: [

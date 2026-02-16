@@ -1,0 +1,45 @@
+{
+  "name": "docs",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite dev",
+    "generate-routes": "tsr generate",
+    "build": "vite build && mv .output/dist/client/ .output/public/",
+    "start": "serve .output/public --config ../../serve.json",
+    "preview": "vite preview",
+    "types:check": "fumadocs-mdx && tsc --noEmit",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@zero-heads-lab/design-system": "workspace:*",
+    "@orama/orama": "^3.1.18",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "@tanstack/start-static-server-functions": "catalog:tanstack",
+    "fumadocs-core": "16.6.2",
+    "fumadocs-mdx": "14.2.7",
+    "fumadocs-ui": "16.6.2",
+    "lucide-react": "catalog:",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "vite": "catalog:vite"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@tanstack/router-cli": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tailwindcss/vite": "catalog:vite",
+    "@types/mdx": "^2.0.13",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react-swc": "catalog:vite",
+    "nitro": "catalog:",
+    "serve": "^14.2.5",
+    "srvx": "^0.11.4",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:vite"
+  }
+}
