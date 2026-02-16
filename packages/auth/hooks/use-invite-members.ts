@@ -8,11 +8,7 @@ export const useInviteMembers = (options?: MutationOptions) => {
 	const { authClient } = useAuthContext();
 	const { session } = useSession();
 
-	const {
-		mutate: inviteMembers,
-		isPending,
-		variables,
-	} = useMutation({
+	const { mutate, mutateAsync, isPending, variables } = useMutation({
 		mutationFn: async ({ email, role }: { email: string; role: AuthRole }) => {
 			const { data, error } = await authClient.organization.inviteMember({
 				email,
@@ -32,7 +28,8 @@ export const useInviteMembers = (options?: MutationOptions) => {
 	});
 
 	return {
-		inviteMembers,
+		inviteMembers: mutate,
+		inviteMembersAsync: mutateAsync,
 		isPending,
 		variables,
 	};

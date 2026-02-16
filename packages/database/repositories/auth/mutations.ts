@@ -103,11 +103,11 @@ export async function createNewUserWithProfile(userId: string) {
 			throw new Error("Failed to generate unique organization slug");
 		}
 
-		// 4️⃣ Update user role to organizationOwner if not already
-		if (existingUser.role !== "organizationOwner") {
+		// 4️⃣ Update user role to owner if not already
+		if (existingUser.role !== "owner") {
 			await tx
 				.update(userSchema)
-				.set({ role: "organizationOwner" })
+				.set({ role: "owner" })
 				.where(eq(userSchema.id, userId));
 		}
 

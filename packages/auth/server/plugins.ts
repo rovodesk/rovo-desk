@@ -1,10 +1,12 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import { countUserOrganizations } from "@zero-heads-lab/database/repositories/auth/queries";
 import { sendEmail } from "@zero-heads-lab/email";
-import { MagicLinkTemplate } from "@zero-heads-lab/email/templates";
-import { APIError, type BetterAuthPlugin } from "better-auth";
+import {
+	MagicLinkTemplate,
+	OrganizationInviteTemplate,
+} from "@zero-heads-lab/email/templates";
+import type { BetterAuthPlugin } from "better-auth";
 import {
 	admin as betterAuthAdmin,
 	lastLoginMethod,
@@ -13,19 +15,7 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-import {
-	accessControl,
-	anonymous,
-	deleted,
-	moderator,
-	organizationAdmin,
-	organizationMember,
-	organizationOwner,
-	superAdmin,
-	support,
-	unverified,
-	verified,
-} from "../access-control";
+import { accessControl, PLATFORM_ROLES, Roles } from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 
@@ -49,19 +39,7 @@ export const AuthPlugins = () => {
 		organization({
 			accessControl,
 			roles: {
-				superAdmin,
-				moderator,
-				support,
-
-				organizationOwner,
-				organizationAdmin,
-				organizationMember,
-
-				verified,
-				unverified,
-				anonymous,
-
-				deleted,
+				...Roles,
 			},
 			teams: {
 				enabled: true,
@@ -78,24 +56,32 @@ export const AuthPlugins = () => {
 					},
 				},
 			},
+			sendInvitationEmail: async ({ organization, invitation, inviter }) => {
+				await sendEmail({
+					to: invitation.email,
+					subject: "Invitation to join organization",
+					react: OrganizationInviteTemplate({
+						inviter: {
+							name: inviter.user.name,
+							email: inviter.user.email,
+						},
+						organization: {
+							name: organization.name,
+							slug: organization.slug,
+						},
+						email: invitation.email,
+						invitation: {
+							id: invitation.id,
+						},
+						acceptLink: "https://localhost:3001/accept-invite",
+					}),
+				});
+			},
 			organizationHooks: {
+				// biome-ignore lint/suspicious/useAwait: No awaited Function
 				afterCreateOrganization: async ({ organization }) => {
-					// Check if first organization of the user.
-					try {
-						const result = await countUserOrganizations(organization.userId);
-						if (!result) {
-							throw new APIError("INTERNAL_SERVER_ERROR", {
-								message: "Unable to count user organizations",
-							});
-						}
-						//TODO: Add analytics
-						console.log("User Organizations Count", result?.count);
-					} catch (error) {
-						console.error(error);
-						throw new APIError("INTERNAL_SERVER_ERROR", {
-							message: "Unable to count user organizations",
-						});
-					}
+					//TODO: Add analytics
+					console.log("New Organization Created", organization);
 				},
 			},
 		}),
@@ -137,21 +123,10 @@ export const AuthPlugins = () => {
 		}),
 		betterAuthAdmin({
 			roles: {
-				superAdmin,
-				moderator,
-				support,
-
-				organizationOwner,
-				organizationAdmin,
-				organizationMember,
-
-				verified,
-				unverified,
-				anonymous,
-
-				deleted,
+				...Roles,
 			},
-			adminRoles: ["superAdmin", "moderator", "support"],
+			defaultRole: "anonymous",
+			adminRoles: [...PLATFORM_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),

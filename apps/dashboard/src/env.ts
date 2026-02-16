@@ -9,11 +9,13 @@ export const env = createEnv({
 	client: {
 		VITE_ALLOWED_REDIRECT_TO_URLS: z.string(),
 		VITE_ALLOWED_REDIRECT_FROM_URLS: z.string(),
+		VITE_PARTYKIT_URL: z.url(),
 	},
 	runtimeEnv: {
 		VITE_ALLOWED_REDIRECT_TO_URLS: import.meta.env
 			.VITE_ALLOWED_REDIRECT_TO_URLS,
 		VITE_ALLOWED_REDIRECT_FROM_URLS: import.meta.env
 			.VITE_ALLOWED_REDIRECT_FROM_URLS,
+		VITE_PARTYKIT_URL: import.meta.env.VITE_PARTYKIT_URL,
 	},
 });

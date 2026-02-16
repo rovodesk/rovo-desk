@@ -1,14 +1,15 @@
 import { DefaultReactGridSuggestionItem, GridSuggestionMenuProps } from "@blocknote/react";
 import { EmojiPicker as EmojiPickerComponent } from "frimousse";
 
-type EmojiPickerProps = GridSuggestionMenuProps<DefaultReactGridSuggestionItem>;
-
 export function EmojiPicker(
-  props: EmojiPickerProps,
+  props?: GridSuggestionMenuProps<DefaultReactGridSuggestionItem>,
 ) {
+
+  const { columns } = props ?? {};
+
   return (
     <div className="border rounded-lg shadow-lg p-2 gap-1 grid w-[200px]">
-   <EmojiPickerComponent.Root>
+   <EmojiPickerComponent.Root columns={columns}>
       <EmojiPickerComponent.Search />
       <EmojiPickerComponent.Viewport>
         <EmojiPickerComponent.Loading>Loading…</EmojiPickerComponent.Loading>

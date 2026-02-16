@@ -8,7 +8,7 @@ import { checkDomainSlug, generateSlug } from "../../helpers";
 import { useCreateDomain } from "../../hooks";
 
 type DomainFormProps = {
-	onSubmit: (value: { name: string; slug: string }) => void;
+	onSuccess?: (value: { name: string; slug: string }) => void;
 	isPending?: boolean;
 	cancelable?: boolean;
 	onCancel?: () => void;
@@ -17,6 +17,7 @@ type DomainFormProps = {
 		name: string;
 		slug: string;
 	};
+	onError?: (error: Error) => void;
 };
 
 const createOrganizationSchema = z.object({
@@ -36,12 +37,12 @@ const createOrganizationSchema = z.object({
 });
 
 export function DomainForm({
-	onSubmit,
-	isPending,
+	onSuccess,
 	cancelable = false,
 	onCancel,
 	submitText = "Create Domain",
 	defaultValues,
+	onError,
 }: DomainFormProps) {
 	const queryClient = useQueryClient();
 	const { authClient } = useAuthContext();
@@ -59,7 +60,8 @@ export function DomainForm({
 				const result = createOrganizationSchema.safeParse(value);
 
 				if (!result.success) {
-					return result.error.flatten().fieldErrors;
+					const err = z.treeifyError(result.error);
+					return err.errors;
 				}
 
 				return undefined;
@@ -69,13 +71,16 @@ export function DomainForm({
 		onSubmit: ({ value }) => {
 			createDomain(value, {
 				onSuccess: (newDomain) => {
-					onSubmit?.(newDomain);
+					onSuccess?.(newDomain);
+				},
+				onError: (error) => {
+					onError?.(error);
 				},
 			});
 		},
 	});
 
-	const pending = isCreatingDomain || isPending;
+	const pending = isCreatingDomain;
 
 	return (
 		<form
@@ -175,7 +180,7 @@ export function DomainForm({
 					<form.SubmitButton
 						disabled={form.state.isValidating || !form.state.isValid}
 						loading={pending}
-						loadingText="Creating..."
+						loadingText="Creating New Organization..."
 					>
 						{submitText}
 					</form.SubmitButton>

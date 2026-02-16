@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	type PartialBlock,
 	RichTextEditor,
@@ -6,30 +7,37 @@ import {
 import {
 	Avatar,
 	AvatarFallback,
+	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Checkbox } from "@zero-heads-lab/design-system/components/ui/checkbox";
 import {
 	InputGroup,
+	InputGroupButton,
 	InputGroupInput,
 } from "@zero-heads-lab/design-system/components/ui/input-group";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
+import * as Y from "@zero-heads-lab/shared/utils/yjs";
 import {
 	Calendar,
 	CheckSquare,
 	ImageIcon,
 	MoreHorizontal,
 	Proportions,
+	Send,
 	Smile,
 	Star,
 	X,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { avatars } from "@/data/active-avatars";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
+import { partyKitProvider } from "@/lib/partykit";
+import { pickUserColor } from "@/lib/utils";
 import { ActiveAvatars } from "./_components/active-avatars";
 
 const useKnowledgeById = (id: string) => {
@@ -53,6 +61,11 @@ export function Document({ id }: { id: string }) {
 	const [showBanner, setShowBanner] = useState(false);
 	const [showIcon, setShowIcon] = useState(false);
 
+	const { user } = useUser();
+	const name = user.name;
+	const userAvatar = user.image ?? Placeholder.avatar(user.email);
+	const userColor = pickUserColor(user.id);
+
 	const handleSave = () => {
 		setIsSaving(true);
 		setTimeout(() => {
@@ -68,12 +81,65 @@ export function Document({ id }: { id: string }) {
 		},
 		onSuccess: () => toast.success("Changes synced"),
 	});
+	const handleOnChange = (content: PartialBlock[]) => {
+		update.mutate({ content });
+	};
 
 	// Add to Favourite
 	function handleAddToFavorite() {
 		setIsFavourite((prev) => !prev);
 		toast.success("Added to favorites");
 	}
+
+	// Collaboration Options
+	const collaborationOptions = useMemo(
+		() => ({
+			// A Room exclusively for this document
+			provider: partyKitProvider(knowledge.id),
+			fragmentName: knowledge.id,
+			doc: new Y.Doc(),
+			user: {
+				id: user.id,
+				name,
+				color: userColor,
+				username: name,
+				avatarUrl: userAvatar,
+			},
+			resolveUsers: (userIds: string[]) => {
+				const states = collaborationOptions.provider.awareness.getStates();
+
+				const usersById = new Map<
+					string,
+					{
+						id: string;
+						name: string;
+						color: string;
+						username: string;
+						avatarUrl: string;
+					}
+				>();
+
+				states.forEach((state) => {
+					if (state?.user?.id) {
+						usersById.set(state.user.id, state.user);
+					}
+				});
+
+				return userIds.map((userId) => {
+					const user = usersById.get(userId);
+
+					return {
+						id: userId,
+						name: user?.name ?? "Unknown",
+						color: user?.color ?? "#000000",
+						username: user?.username ?? user?.name ?? "unknown",
+						avatarUrl: user?.avatarUrl ?? "",
+					};
+				});
+			},
+		}),
+		[knowledge.id, name, userColor, user.id, userAvatar]
+	);
 
 	if (isLoading) return <DocumentSkeleton />;
 
@@ -247,24 +313,31 @@ export function Document({ id }: { id: string }) {
 						</div>
 						<div className="flex items-center gap-3">
 							<Avatar className="size-7 border border-white/10">
-								<AvatarFallback className="bg-orange-600 text-[10px]">
-									D
+								<AvatarImage alt={name} src={userAvatar} />
+								<AvatarFallback
+									className={cn("text-[10px]", `bg-${userColor}-600`)}
+								>
+									{name.charAt(0).toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
-							<InputGroup className="border-none bg-transparent shadow-none focus-within:ring-0">
+							<InputGroup className="border-none bg-transparent p-2 shadow-none focus-within:ring-0">
 								<InputGroupInput
 									className="border-none bg-transparent p-0 text-sm focus-visible:ring-0"
 									placeholder="Add a comment..."
 								/>
+								<InputGroupButton onClick={handleSave}>
+									<Send className="size-4 text-muted-foreground" />
+								</InputGroupButton>
 							</InputGroup>
 						</div>
 					</div>
 
 					{/* Editor Area */}
 					<RichTextEditor
-						className="notion-editor min-h-[300px]"
+						className="min-h-[300px]"
+						collaborationOptions={collaborationOptions}
 						initialContent={knowledge.content}
-						onChange={(v) => update.mutate({ content: v })}
+						onChange={handleOnChange}
 						onSave={handleSave}
 					/>
 				</div>

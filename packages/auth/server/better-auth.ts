@@ -364,7 +364,7 @@ export function createAuth(namespace: KVNamespace) {
 							data: {
 								...user,
 								image: avatar,
-								role: AUTH_ROLES.find((role) => role === "organizationOwner"),
+								role: AUTH_ROLES.find((role) => role === "owner"),
 							},
 						};
 					},

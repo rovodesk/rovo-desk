@@ -6,6 +6,7 @@ export const Toolbar = () => {
     <div className="bg-background shadow-md rounded-md px-2 py-1">
       <FormattingToolbar>
         <BlockTypeSelect />
+        
 
         <BasicTextStyleButton basicTextStyle="bold" />
         <BasicTextStyleButton basicTextStyle="italic" />
@@ -16,6 +17,8 @@ export const Toolbar = () => {
         <ColorStyleButton />
 
         <CreateLinkButton />
+
+        <CommentButton />
       </FormattingToolbar>
     </div>
   );

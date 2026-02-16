@@ -51,11 +51,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/conversations",
 					icon: MessagesSquare,
 					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
+						roles: ["owner", "member", "admin"],
 					},
 				},
 				{
@@ -63,11 +59,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/tasks",
 					icon: ListTodo,
 					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationMember",
-							"organizationAdmin",
-						],
+						roles: ["owner", "member", "admin"],
 					},
 				},
 				{
@@ -75,7 +67,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					icon: SquareUserRound,
 					url: "/my-team",
 					visibility: {
-						roles: ["organizationMember"],
+						roles: ["member"],
 					},
 				},
 				{
@@ -83,7 +75,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/integrations",
 					icon: Package,
 					visibility: {
-						roles: ["organizationOwner", "organizationAdmin"],
+						roles: ["owner", "admin"],
 					},
 				},
 			],
@@ -101,7 +93,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Customise", url: "/workspace/customise" },
 					],
 					visibility: {
-						roles: ["organizationOwner", "organizationAdmin"],
+						roles: ["owner", "admin"],
 					},
 				},
 				{
@@ -113,11 +105,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Network", url: "/network" },
 					],
 					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationAdmin",
-							"organizationMember",
-						],
+						roles: ["owner", "admin", "member"],
 					},
 				},
 				{
@@ -129,11 +117,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						{ title: "Tags", url: "/knowledge-base/tags" },
 					],
 					visibility: {
-						roles: [
-							"organizationOwner",
-							"organizationAdmin",
-							"organizationMember",
-						],
+						roles: ["owner", "admin", "member"],
 					},
 				},
 			],
@@ -146,7 +130,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/settings/billing",
 					icon: CreditCard,
 					visibility: {
-						roles: ["organizationOwner"],
+						roles: ["owner"],
 					},
 				},
 				{
@@ -154,12 +138,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/settings",
 					icon: Settings,
 					visibility: {
-						roles: [
-							"superAdmin",
-							"moderator",
-							"organizationOwner",
-							"organizationAdmin",
-						],
+						roles: ["superAdmin", "moderator", "owner", "admin"],
 					},
 				},
 				{
@@ -167,7 +146,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					url: "/audit-logs",
 					icon: FileText,
 					visibility: {
-						roles: ["organizationOwner", "organizationAdmin"],
+						roles: ["owner", "admin"],
 					},
 				},
 			],
@@ -188,11 +167,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 				url: "/campaigns/create",
 				icon: Megaphone,
 				visibility: {
-					roles: [
-						"organizationOwner",
-						"organizationAdmin",
-						"organizationMember",
-					],
+					roles: ["owner", "admin", "member"],
 				},
 			},
 		],
@@ -210,11 +185,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 				url: "/funnel/create",
 				icon: FunnelPlus,
 				visibility: {
-					roles: [
-						"organizationOwner",
-						"organizationAdmin",
-						"organizationMember",
-					],
+					roles: ["owner", "admin", "member"],
 				},
 			},
 		],

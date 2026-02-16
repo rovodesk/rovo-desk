@@ -59,7 +59,7 @@ export function AppSidebar() {
 				<AppTitle />
 				<SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
-				{hasOrganizationAccessRole(role) && role !== "organizationOwner" && (
+				{hasOrganizationAccessRole(role) && role !== "owner" && (
 					<DomainSwitcher />
 				)}
 			</SidebarHeader>
@@ -111,9 +111,7 @@ export function AppSidebar() {
 				{beforeQuickActions.map((group) => (
 					<SidebarNavSection key={group.title} {...group} />
 				))}
-				{hasOrganizationAccessRole(role) && role === "organizationOwner" && (
-					<DomainList />
-				)}
+				{hasOrganizationAccessRole(role) && role === "owner" && <DomainList />}
 				{quickActionsGroup && (
 					<SidebarNavSection
 						items={quickActionsGroup.items}
