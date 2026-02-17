@@ -13,7 +13,7 @@ import { cn } from "../lib/utils";
 import { Loader2 } from "lucide-react";
 
 interface ConfirmDialogProps {
-	onOpenChange: (open: boolean) => void;
+	onOpenChange?: (open: boolean) => void;
 	title: React.ReactNode;
 	disabled?: boolean;
 	desc: React.JSX.Element | string;
@@ -66,7 +66,7 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
 					>
 						{isLoading ? (
 							<span className="inline-flex items-center gap-2">
-								<Loader2 className="animate-spin" />
+								<Loader2 className="animate-spin text-white" />
 								Processing…
 							</span>
 						) : (

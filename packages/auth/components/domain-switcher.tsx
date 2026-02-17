@@ -18,39 +18,27 @@ import {
 	useSidebar,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
 import { useMemo } from "react";
-import { useListDomains, useSession, useSwitchDomain } from "../hooks";
+import { useOrganization } from "../hooks";
 import { AddDomainDialog } from "./add-domain-dialog";
 
 export function DomainSwitcher() {
 	const { isMobile } = useSidebar();
 
-	// 1. Fetch Data
-	const { session, isLoading: isAuthLoading } = useSession();
-	const { domains, isLoading: isOrgsLoading } = useListDomains();
+	const {
+		allOrganizations,
+		activeOrganizationId,
+		switchOrganization,
+		loading,
+	} = useOrganization();
 
-	// 2. Mutation for switching the active organization
-	const { switchDomain, isPending, switchingId } = useSwitchDomain({
-		onSuccess: () => {
-			toast.success(`Organization switched to ${activeDomain?.name}`);
-		},
-		onError: () => {
-			toast.error("Error switching organization");
-		},
-	});
+	const activeDomain = useMemo(
+		() => allOrganizations.find((org) => org.id === activeOrganizationId),
+		[allOrganizations, activeOrganizationId]
+	);
 
-	// 3. Derive active organization from cached data
-	const activeDomain = useMemo(() => {
-		return domains?.find(
-			(org) => org.id === session?.session?.activeOrganizationId
-		);
-	}, [domains, session?.session?.activeOrganizationId]);
-
-	const isLoaded = !(isAuthLoading || isOrgsLoading);
-
-	if (!isLoaded) return <DomainSwitcherSkeleton />;
+	if (loading) return <DomainSwitcherSkeleton />;
 
 	return (
 		<SidebarMenu className="group-data-[collapsible=icon]:hidden">
@@ -59,7 +47,7 @@ export function DomainSwitcher() {
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
 							className="bg-transparent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-							disabled={isPending}
+							disabled={loading}
 							size="lg"
 						>
 							<Avatar className="size-8 rounded-lg">
@@ -98,19 +86,20 @@ export function DomainSwitcher() {
 							</DropdownMenuLabel>
 						</div>
 
-						{domains?.map((domain) => {
+						{allOrganizations?.map((domain) => {
 							// Check if THIS specific item is the one currently being switched to
-							const isSwitchingThis = isPending && switchingId === domain.id;
-							const isActive = activeDomain?.id === domain.id;
+							const isSwitchingThis =
+								loading && activeOrganizationId === domain.id;
+							const isActive = activeOrganizationId === domain.id;
 
 							return (
 								<DropdownMenuItem
 									className={`mt-2 cursor-pointer gap-2 p-2 ${isActive ? "bg-sidebar-accent" : "bg-transparent"}`}
-									disabled={isPending}
+									disabled={loading}
 									key={domain.id}
 									onSelect={(e) => {
 										e.preventDefault();
-										if (!isActive) switchDomain(domain.id);
+										if (!isActive) switchOrganization(domain.id);
 									}}
 								>
 									<Avatar className="size-6 rounded-sm">

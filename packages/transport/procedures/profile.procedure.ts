@@ -1,27 +1,23 @@
-import { ORPCError, os } from "@orpc/server";
+import { ORPCError } from "@orpc/server";
 import {
 	clearOnboardingProgressByUserId,
 	updateOnboardingProgressByUserId,
 } from "@zero-heads-lab/database/repositories/profile/mutations";
 import { getOnboardingProgressByUserId } from "@zero-heads-lab/database/repositories/profile/queries";
-
+import { BaseMiddleware } from "@/middlewares/base.middleware";
+import { base } from "../context";
 import {
 	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
 	UPDATE_ONBOARDING_PROGRESS_INPUT_DTO,
 } from "../dto/profile.dto";
-import { authMiddleware } from "../middlewares/auth.middleware";
+import { AuthGuard } from "../middlewares/auth.middleware";
 
-export const loadOnboardingProgress = os
+export const loadOnboardingProgress = base
+	.use(BaseMiddleware)
+	.use(AuthGuard)
 	.output(GET_ONBOARDING_PROGRESS_OUTPUT_DTO)
-	.use(authMiddleware)
 	.handler(async ({ context }) => {
-		const { user } = context;
-
-		if (!user?.id) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "You are not logged in",
-			});
-		}
+		const user = context.user;
 
 		const onboardingProgress = await getOnboardingProgressByUserId(user.id);
 		if (!onboardingProgress) {
@@ -36,18 +32,12 @@ export const loadOnboardingProgress = os
 	})
 	.callable();
 
-export const persistOnboardingProgress = os
+export const persistOnboardingProgress = base
 	.input(UPDATE_ONBOARDING_PROGRESS_INPUT_DTO)
-	.use(authMiddleware)
+	.use(BaseMiddleware)
+	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
-		const { user } = context;
-
-		if (!user?.id) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "You are not logged in",
-			});
-		}
-
+		const user = context.user;
 		try {
 			await updateOnboardingProgressByUserId(
 				user.id,
@@ -65,17 +55,11 @@ export const persistOnboardingProgress = os
 	})
 	.callable();
 
-export const clearOnboardingProgress = os
-	.use(authMiddleware)
+export const clearOnboardingProgress = base
+	.use(BaseMiddleware)
+	.use(AuthGuard)
 	.handler(async ({ context }) => {
-		const { user } = context;
-
-		if (!user?.id) {
-			throw new ORPCError("UNAUTHORIZED", {
-				message: "You are not logged in",
-			});
-		}
-
+		const user = context.user;
 		try {
 			await clearOnboardingProgressByUserId(user.id);
 		} catch (error) {

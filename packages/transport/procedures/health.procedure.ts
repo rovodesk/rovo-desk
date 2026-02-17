@@ -1,7 +1,9 @@
-import { os } from "@orpc/server";
 import z from "zod";
+import { base } from "../context";
+import { BaseMiddleware } from "../middlewares/base.middleware";
 
-export const healthProcedure = os
+export const healthProcedure = base
+	.use(BaseMiddleware)
 	.route({ method: "GET" })
 	.output(
 		z.object({

@@ -39,6 +39,12 @@ export type Organization = {
 	__optimistic?: boolean;
 };
 
+export type Team = {
+	id: string;
+	name: string;
+	__optimistic?: boolean;
+};
+
 export type NavigateFn = (href: string) => void;
 
 export type ReplaceFn = (href: string) => void;

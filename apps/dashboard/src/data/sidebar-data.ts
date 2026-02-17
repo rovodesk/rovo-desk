@@ -1,5 +1,6 @@
 import {
 	Book,
+	BotIcon,
 	CreditCard,
 	FileText,
 	Funnel,
@@ -16,7 +17,6 @@ import {
 	SendIcon,
 	Settings,
 	SquareUserRound,
-	Users2,
 } from "lucide-react";
 import type { SidebarConfig } from "@/types/sidebar";
 
@@ -84,13 +84,11 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 			title: "Workspace",
 			items: [
 				{
-					title: "Manage Workspace",
-					icon: Users2,
+					title: "Bot",
+					icon: BotIcon,
 					items: [
-						{ title: "Overview", url: "/workspace" },
-						{ title: "Members", url: "/workspace/members" },
-						{ title: "Teams", url: "/workspace/teams" },
-						{ title: "Customise", url: "/workspace/customise" },
+						{ title: "Overview", url: "/bot" },
+						{ title: "Customise", url: "/bot/customise" },
 					],
 					visibility: {
 						roles: ["owner", "admin"],
@@ -114,7 +112,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 					items: [
 						{ title: "All Contents", url: "/knowledge-base" },
 						{ title: "Categories", url: "/knowledge-base/categories" },
-						{ title: "Tags", url: "/knowledge-base/tags" },
+						{ title: "Labels", url: "/knowledge-base/labels" },
 					],
 					visibility: {
 						roles: ["owner", "admin", "member"],

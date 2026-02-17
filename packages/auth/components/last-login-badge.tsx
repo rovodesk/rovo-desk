@@ -3,9 +3,10 @@ import {
 	GoogleIcon,
 } from "@zero-heads-lab/design-system/assets/icons";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
+import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { CircleQuestionMark, KeyRound, Mail } from "lucide-react";
-import { useLastLoginMethod } from "../hooks";
+import { useSignIn } from "../hooks";
 
 const METHOD_CONFIG: Record<
 	string,
@@ -51,17 +52,10 @@ export function LastLoginBadge({
 	compact = false,
 	className,
 }: LastLoginBadgeProps) {
-	const { lastLoginMethod, isLoading } = useLastLoginMethod();
+	const { lastLoginMethod, loading } = useSignIn();
 
-	if (isLoading) {
-		return (
-			<div
-				className={cn(
-					"h-6 w-24 animate-pulse rounded-full bg-muted/20",
-					className
-				)}
-			/>
-		);
+	if (loading) {
+		return <Skeleton className="h-6 w-24 rounded-full" />;
 	}
 
 	const config =

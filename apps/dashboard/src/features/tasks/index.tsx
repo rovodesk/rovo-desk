@@ -8,6 +8,8 @@ import {
 import { Search } from "@/components/search";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
+import { TaskCardGrid } from "./_components/task-card-grid";
+import { RoadmapCalendar } from "./_components/task-roadmap-calender";
 import { TasksDialogs } from "./_components/tasks-dialog";
 import { TasksPrimaryButtons } from "./_components/tasks-primary-buttons";
 import { TasksProvider } from "./_components/tasks-provider";
@@ -46,10 +48,10 @@ export function Tasks() {
 							<TasksTable data={tasks} />
 						</TabsContent>
 						<TabsContent value="kanban">
-							<h1 className="text-3xl">Kanban</h1>
+							<TaskCardGrid data={tasks} />
 						</TabsContent>
 						<TabsContent value="roadmap">
-							<h1 className="text-3xl">Roadmap</h1>
+							<RoadmapCalendar data={tasks} />
 						</TabsContent>
 					</div>
 				</Tabs>

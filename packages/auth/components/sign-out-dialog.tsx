@@ -36,11 +36,13 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 			title="Sign out"
 			trigger={
 				<button
-					className="group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-destructive/30 hover:bg-destructive/20 hover:shadow-sm"
+					className="group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-white/30 hover:bg-destructive/20 hover:shadow-sm"
 					type="button"
 				>
-					<LogOut className="h-4 w-4 text-destructive" />
-					<span className="font-medium text-destructive text-sm">Sign Out</span>
+					<LogOut className="h-4 w-4 text-muted-foreground" />
+					<span className="font-medium text-muted-foreground text-sm">
+						Sign Out
+					</span>
 				</button>
 			}
 		/>

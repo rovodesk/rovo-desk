@@ -4,9 +4,9 @@ import {
 	RequestHeadersPlugin,
 	SimpleCsrfProtectionHandlerPlugin,
 } from "@orpc/server/plugins";
-import { routerContract } from "./router";
+import { RouterContract } from "../contract";
 
-export const orpcHandler = new RPCHandler(routerContract, {
+export const orpcHandler = new RPCHandler(RouterContract, {
 	plugins: [
 		new RequestHeadersPlugin(),
 		new SimpleCsrfProtectionHandlerPlugin(),

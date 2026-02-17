@@ -1,6 +1,6 @@
 import { IconBell } from "@tabler/icons-react";
 import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
-import { useDomainDetails, useSession } from "@zero-heads-lab/auth/hooks";
+import { useOrganization, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
@@ -39,14 +39,14 @@ const findPlan = (plan: string) => {
 };
 
 export function Dashboard() {
-	const { session, isLoading: isSessionLoading } = useSession();
-	const { domain, isLoading: isDomainLoading } = useDomainDetails();
+	const { session, loading: isSessionLoading } = useSession();
+	const { organization, loading: isOrganizationLoading } = useOrganization();
 
-	const name = domain?.name ?? session?.user?.name ?? "User";
-	const plan = findPlan(domain?.metadata?.plan ?? "basic");
+	const name = organization?.name ?? "Unknown";
+	const plan = findPlan(organization?.metadata?.plan ?? "basic");
 	const role = determineAccessRole(session?.user?.role);
 
-	const isLoading = isSessionLoading || isDomainLoading;
+	const isLoading = isSessionLoading || isOrganizationLoading;
 	if (isLoading) {
 		return <DashboardSkeleton />;
 	}

@@ -4,7 +4,8 @@ import { rpcMiddleware } from "./middlewares/rpc.middleware";
 import { authRoute } from "./routes/auth.route";
 import type { Bindings } from "./types";
 
-export { Document } from "./lib/document";
+export { ChatRoom } from "./lib/partykit/chat-room";
+export { Document } from "./lib/partykit/document";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -15,28 +16,50 @@ app.use("/*", corsMiddleware);
 app.use("/rpc/*", rpcMiddleware);
 
 // WebSocket
-app.all("/ws/:roomId", async (c) => {
-	const roomId = c.req.param("roomId");
-	const id = c.env.KNOWLEDGE_BASE.idFromName(roomId);
+app.all("/ws/document/:documentId?", async (c) => {
+	console.log("WS DOCUMENT REQUEST", c.req.url, c.req.query());
+	const documentId =
+		c.req.param("documentId") ??
+		c.req.query("documentId") ??
+		c.req.query("_pk");
+
+	if (!documentId) {
+		console.error("MISSING DOCUMENT ID");
+		return c.text("Missing documentId", 400);
+	}
+
+	const id = c.env.KNOWLEDGE_BASE.idFromName(documentId);
 	const stub = c.env.KNOWLEDGE_BASE.get(id);
 
-	// 1. Create a new set of headers based on the original request
 	const headers = new Headers(c.req.raw.headers);
+	headers.set("x-partykit-room", documentId);
+	headers.set("x-partykit-namespace", "Document");
 
-	// 2. Add the headers that 'partyserver' expects to see
+	return await stub.fetch(new Request(c.req.raw, { headers }));
+});
+
+app.all("/ws/chat-room/:roomId?", async (c) => {
+	console.log("WS CHAT REQUEST", c.req.url, c.req.query());
+	const roomId =
+		c.req.param("roomId") ?? c.req.query("roomId") ?? c.req.query("_pk");
+
+	if (!roomId) {
+		console.error("MISSING ROOM ID");
+		return c.text("Missing roomId", 400);
+	}
+
+	const id = c.env.CHAT_ROOM.idFromName(roomId);
+	const stub = c.env.CHAT_ROOM.get(id);
+
+	const headers = new Headers(c.req.raw.headers);
 	headers.set("x-partykit-room", roomId);
-	headers.set("x-partykit-namespace", "chat"); // Usually matches your binding name or DO class
+	headers.set("x-partykit-namespace", "ChatRoom");
 
-	// 3. Create a new Request object with these headers
-	const newRequest = new Request(c.req.raw, {
-		headers,
-	});
-
-	// 4. Forward this "enriched" request to the Durable Object
-	const response = await stub.fetch(newRequest as unknown as Request);
-
-	// 5.  Re-wrap response for Hono
-	return response as unknown as Response;
+	return await stub.fetch(
+		new Request(c.req.raw, {
+			headers,
+		})
+	);
 });
 
 // Auth Routes

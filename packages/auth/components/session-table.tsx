@@ -18,11 +18,7 @@ import {
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { Loader2Icon, Trash2Icon } from "lucide-react";
 import { getDeviceInfo } from "../helpers";
-import {
-	useDeleteDeviceSession,
-	useListDeviceSessions,
-	useSession,
-} from "../hooks";
+import { useSession } from "../hooks";
 import type { DeviceSession } from "../types";
 
 type DeviceSessionWithCurrent = DeviceSession & {
@@ -30,9 +26,8 @@ type DeviceSessionWithCurrent = DeviceSession & {
 };
 
 export function SessionTable() {
-	const { deviceSessions, isLoading: isSessionsLoading } =
-		useListDeviceSessions();
-	const { session, isLoading: isSessionLoading } = useSession();
+	const { session, deviceSessions, deleteDeviceSession, loading } =
+		useSession();
 	const currentSessionId = session?.session?.id;
 
 	const sessionsWithCurrent: DeviceSessionWithCurrent[] = deviceSessions.map(
@@ -42,22 +37,7 @@ export function SessionTable() {
 		})
 	);
 
-	const {
-		deleteSession,
-		isPending: isDeletingSession,
-		pendingToken,
-	} = useDeleteDeviceSession({
-		onSuccess: () => {
-			toast.success("Session revoked");
-		},
-		onError: () => {
-			toast.error("Failed to revoke session", {
-				description: "Please try again later",
-			});
-		},
-	});
-
-	if (isSessionsLoading || isSessionLoading) {
+	if (loading) {
 		return (
 			<div className="space-y-2">
 				<Skeleton className="h-12 w-full" />
@@ -95,9 +75,6 @@ export function SessionTable() {
 						const device = getDeviceInfo(session?.session?.userAgent);
 
 						const DeviceIcon = device.Icon;
-
-						const isDeleting =
-							pendingToken === session.session.token && isDeletingSession;
 
 						const lastActiveDate = new Date(
 							session.session.lastActiveAt ?? session.session.createdAt
@@ -156,13 +133,23 @@ export function SessionTable() {
 											<TooltipTrigger asChild>
 												<Button
 													className="text-destructive hover:bg-destructive/10 disabled:opacity-40"
-													disabled={session.isCurrent || isDeleting}
-													onClick={() => deleteSession(session.session.token)}
+													disabled={session.isCurrent || loading}
+													onClick={() =>
+														deleteDeviceSession(session.session.token, {
+															onSuccess: () => {
+																toast.success("Session revoked");
+															},
+															onError: () => {
+																toast.error("Failed to revoke session", {
+																	description: "Please try again later",
+																});
+															},
+														})
+													}
 													size="icon"
 													variant="ghost"
 												>
-													{isDeleting &&
-													pendingToken === session.session.token ? (
+													{loading ? (
 														<Loader2Icon
 															className={cn(
 																"size-4",

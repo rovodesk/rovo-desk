@@ -41,7 +41,7 @@ export function useOnboardingProgress(
 	>
 ) {
 	const queryClient = useQueryClient();
-	const { session, isLoading: isSessionLoading } = useSession();
+	const { session, loading: isSessionLoading } = useSession();
 
 	/*
 	 * Base query options (computed once)

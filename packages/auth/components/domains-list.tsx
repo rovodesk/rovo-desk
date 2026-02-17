@@ -1,3 +1,4 @@
+import { ConfirmDialog } from "@zero-heads-lab/design-system/components/confirm-dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -19,26 +20,30 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useModal } from "@zero-heads-lab/design-system/hooks/use-modal";
 import {
-	Forward,
+	Glasses,
 	IdCardLanyard,
 	Loader2,
 	MoreHorizontal,
 	Trash2,
 } from "lucide-react";
-import { useListDomains, useSession, useSwitchDomain } from "../hooks";
+import { useOrganization } from "../hooks";
 import { AddDomainDialog } from "./add-domain-dialog";
 import { InviteMembersForm } from "./forms/invite-members-form";
 
 export function DomainList() {
 	const { isMobile } = useSidebar();
 
-	const { session, isLoading: isAuthLoading } = useSession();
-	const { domains = [], isLoading: isDomainsLoading } = useListDomains();
-	const { switchDomain, isPending } = useSwitchDomain();
+	const {
+		allOrganizations = [],
+		activeOrganizationId,
+		loading,
+		switchOrganization,
+		deleteOrganization,
+	} = useOrganization();
 
 	const { openModal: openInviteMembersModal } = useModal<string>(
 		"invite-members",
-		<InviteMembersForm />,
+		<InviteMembersForm maxValues={30} />,
 		"Invite Members",
 		"Invite members to your organization",
 		{
@@ -46,23 +51,30 @@ export function DomainList() {
 		}
 	);
 
-	const activeDomainId = session?.session?.activeOrganizationId;
-
-	const isLoaded = !(isAuthLoading || isDomainsLoading);
-	if (!isLoaded) return <DomainListSkeleton />;
+	if (loading) return <DomainListSkeleton />;
 
 	const handleSwitchDomain = (domainId: string) => {
-		if (domainId === activeDomainId) return;
+		if (domainId === activeOrganizationId) return;
 
-		const domain = domains.find((d) => d.id === domainId);
+		const domain = allOrganizations.find((d) => d.id === domainId);
 
-		switchDomain(domainId, {
+		switchOrganization(domainId, {
 			onSuccess: () => {
 				toast.success(`Organization switched to ${domain?.name}`);
-				openInviteMembersModal();
 			},
 			onError: () => {
 				toast.error("Error switching organization");
+			},
+		});
+	};
+
+	const handleDeleteDomain = (domainId: string) => {
+		deleteOrganization(domainId, {
+			onSuccess: () => {
+				toast.success("Organization deleted");
+			},
+			onError: () => {
+				toast.error("Error deleting organization");
 			},
 		});
 	};
@@ -76,22 +88,21 @@ export function DomainList() {
 			</SidebarGroupAction>
 
 			<SidebarMenu>
-				{domains.map((item) => (
+				{allOrganizations.map((item) => (
 					<SidebarMenuItem key={item.id}>
 						<SidebarMenuButton
 							className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
-							data-active={item.id === activeDomainId}
-							disabled={isPending}
+							data-active={item.id === activeOrganizationId}
+							disabled={loading}
 							onClick={() => handleSwitchDomain(item.id)}
 						>
-							{item.icon && <item.icon />}
 							<span>{item.name}</span>
 						</SidebarMenuButton>
 
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuAction showOnHover>
-									{isPending ? <Loader2 /> : <MoreHorizontal />}
+									{loading ? <Loader2 /> : <MoreHorizontal />}
 									<span className="sr-only">More</span>
 								</SidebarMenuAction>
 							</DropdownMenuTrigger>
@@ -101,22 +112,39 @@ export function DomainList() {
 								className="w-48 rounded-lg"
 								side={isMobile ? "bottom" : "right"}
 							>
+								<DropdownMenuItem>
+									<Glasses className="text-muted-foreground" />
+									<span>Manage</span>
+								</DropdownMenuItem>
+
 								<DropdownMenuItem onClick={() => openInviteMembersModal()}>
 									<IdCardLanyard className="text-muted-foreground" />
 									<span>Invite Members</span>
 								</DropdownMenuItem>
 
-								<DropdownMenuItem>
-									<Forward className="text-muted-foreground" />
-									<span>Share Project</span>
-								</DropdownMenuItem>
-
 								<DropdownMenuSeparator />
 
-								<DropdownMenuItem>
-									<Trash2 className="text-muted-foreground" />
-									<span>Delete Project</span>
-								</DropdownMenuItem>
+								<div className="rounded border-destructive/20 p-1">
+									<ConfirmDialog
+										className="sm:max-w-sm"
+										confirmText="Delete"
+										desc="Are you sure you want to delete this domain?"
+										destructive
+										handleConfirm={() => handleDeleteDomain(item.id)}
+										isLoading={loading}
+										title="Delete Domain"
+										trigger={
+											<DropdownMenuItem
+												onSelect={(e) => {
+													e.preventDefault(); // 🚨 critical
+												}}
+											>
+												<Trash2 className="h-4 w-4 text-base" />
+												<span className="font-medium text-white">Delete</span>
+											</DropdownMenuItem>
+										}
+									/>
+								</div>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</SidebarMenuItem>

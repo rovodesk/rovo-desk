@@ -21,6 +21,7 @@
         "noArrayIndexKey": "off"
       },
       "style": {
+        "noNonNullAssertion": "off",
         "useBlockStatements": "off",
         "useNodejsImportProtocol": "off",
         "noHeadElement": "off",

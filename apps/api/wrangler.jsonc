@@ -20,6 +20,10 @@
       {
         "name": "KNOWLEDGE_BASE",
         "class_name": "Document"
+      },
+      {
+        "name": "CHAT_ROOM",
+        "class_name": "ChatRoom"
       }
     ],
   },

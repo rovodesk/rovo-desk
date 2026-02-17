@@ -1,8 +1,7 @@
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { WandSparklesIcon } from "lucide-react";
 import { z } from "zod";
-import { useLastLoginMethod, useMagicLinkSignIn } from "../hooks";
+import { useSignIn } from "../hooks";
 import { LastLoginBadge } from "./last-login-badge";
 
 const emailSchema = z.object({
@@ -11,13 +10,9 @@ const emailSchema = z.object({
 
 type MagicLinkFormProps = {
 	isAnyLoading?: boolean;
-	callbackURL: string;
 };
 
-export default function MagicLinkForm({
-	isAnyLoading,
-	callbackURL = window.location.origin,
-}: MagicLinkFormProps) {
+export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
 	const form = useAppForm({
 		defaultValues: {
 			email: "",
@@ -30,19 +25,9 @@ export default function MagicLinkForm({
 		},
 	});
 
-	const { signInWithMagicLink, isPending } = useMagicLinkSignIn(callbackURL, {
-		onSuccess: () => {
-			toast.success("Magic link sent successfully");
-		},
-		onError: () => {
-			toast.error("Could not send magic link", {
-				description: "Please try again later.",
-			});
-		},
-	});
+	const { signInWithMagicLink, loading, lastLoginMethod } = useSignIn();
 
-	const isLoading = isPending || isAnyLoading;
-	const { lastLoginMethod } = useLastLoginMethod();
+	const isLoading = loading || isAnyLoading;
 
 	return (
 		<form

@@ -115,12 +115,10 @@ function ProfileDropdown() {
 						<DropdownMenuSeparator />
 
 						{/* Sign Out Trigger */}
-						<div className="rounded border-destructive/20 p-1">
-							<SignOutDialog
-								onOpenChange={setSignOutDialogOpen}
-								open={signOutDialogOpen}
-							/>
-						</div>
+						<SignOutDialog
+							onOpenChange={setSignOutDialogOpen}
+							open={signOutDialogOpen}
+						/>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>

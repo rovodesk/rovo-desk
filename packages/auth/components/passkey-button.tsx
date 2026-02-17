@@ -1,23 +1,16 @@
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { KeyRoundIcon, Loader2Icon } from "lucide-react";
-import { usePasskeySignIn } from "../hooks/use-passkey-signin";
+import { useSignIn } from "../hooks";
 
 type PasskeyButtonProps = {
 	isAnyLoading?: boolean;
 };
 
 export function PasskeyButton({ isAnyLoading }: PasskeyButtonProps) {
-	const { signInWithPasskey, isPending } = usePasskeySignIn({
-		onError: (error: Error) => {
-			toast.error("Authentication Error", {
-				description: error.message,
-			});
-		},
-	});
+	const { signInWithPasskey, loading } = useSignIn();
 
-	const isLoading = isPending || isAnyLoading;
+	const isLoading = loading || isAnyLoading;
 
 	return (
 		<div className="flex w-full flex-col gap-4">

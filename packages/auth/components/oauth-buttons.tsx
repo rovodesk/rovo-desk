@@ -3,78 +3,71 @@ import {
 	GoogleIcon,
 } from "@zero-heads-lab/design-system/assets/icons";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Loader2Icon } from "lucide-react";
-import { useLastLoginMethod, useOauthSignIn } from "../hooks";
+import { useState } from "react";
+import { useSignIn } from "../hooks";
 import { LastLoginBadge } from "./last-login-badge";
 
 type OauthButtonsProps = {
 	isAnyLoading?: boolean;
-	callbackURL: string;
 };
 
-const OauthButtons = ({
-	isAnyLoading,
-	callbackURL = window.location.origin,
-}: OauthButtonsProps) => {
-	const { signInWithOAuth, isPending, variables } = useOauthSignIn(
-		callbackURL,
-		{
-			onError: () => {
-				toast.error("Error signing in", {
-					description: "Please try again later.",
-				});
-			},
-		}
-	);
+const OauthButtons = ({ isAnyLoading }: OauthButtonsProps) => {
+	const { signInWithOAuth, loading, lastLoginMethod } = useSignIn();
 
-	const { lastLoginMethod } = useLastLoginMethod();
+	const [activeProvider, setActiveProvider] = useState<
+		"google" | "github" | null
+	>(null);
 
-	const loadingProvider = isPending ? variables : null;
+	const handleSignIn = (provider: "google" | "github") => {
+		setActiveProvider(provider);
+		signInWithOAuth(provider);
+	};
+
+	const isGoogleLoading = loading && activeProvider === "google";
+	const isGithubLoading = loading && activeProvider === "github";
 
 	return (
 		<div className="flex w-full flex-col gap-4">
-			{/* Google SignIn Button */}
-
+			{/* Google */}
 			<Button
 				className="relative"
-				disabled={isAnyLoading || isPending}
-				onClick={() => {
-					signInWithOAuth("google");
-				}}
+				disabled={isAnyLoading || loading}
+				onClick={() => handleSignIn("google")}
 				size="lg"
 				type="button"
 			>
-				{loadingProvider === "google" ? (
+				{isGoogleLoading ? (
 					<Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
 				) : (
 					<GoogleIcon className="mr-2 h-4 w-4" />
 				)}
 				Continue with Google
 				{lastLoginMethod === "google" && (
-					<div className="absolute -top-[1/2] right-3">
+					<span className="absolute top-1/2 right-3 -translate-y-1/2">
 						<LastLoginBadge compact />
-					</div>
+					</span>
 				)}
 			</Button>
 
-			{/* GitHub SignIn Button */}
+			{/* GitHub */}
 			<Button
-				disabled={isAnyLoading || isPending}
-				onClick={() => signInWithOAuth("github")}
+				className="relative"
+				disabled={isAnyLoading || loading}
+				onClick={() => handleSignIn("github")}
 				size="lg"
 				type="button"
 			>
-				{loadingProvider === "github" ? (
+				{isGithubLoading ? (
 					<Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
 				) : (
 					<GithubIcon className="mr-2 h-4 w-4" />
 				)}
 				Continue with GitHub
 				{lastLoginMethod === "github" && (
-					<div className="absolute -top-[1/2] right-3">
+					<span className="absolute top-1/2 right-3 -translate-y-1/2">
 						<LastLoginBadge compact />
-					</div>
+					</span>
 				)}
 			</Button>
 		</div>
@@ -82,5 +75,4 @@ const OauthButtons = ({
 };
 
 export default OauthButtons;
-
 export { OauthButtons };

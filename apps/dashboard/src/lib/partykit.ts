@@ -1,25 +1,18 @@
-import { generateUUID } from "@zero-heads-lab/shared/utils";
-import * as Y from "@zero-heads-lab/shared/utils/yjs";
+import type * as Y from "@zero-heads-lab/shared/utils/yjs";
 import YPartyKitProvider from "y-partykit/provider";
 import { env } from "@/env";
 
 declare const PARTYKIT_HOST: string;
 
-const doc = new Y.Doc();
-
-export const partyKitProvider = (fragmentName: string) =>
+export const partyKitProvider = (room: string, doc: Y.Doc) =>
 	new YPartyKitProvider(
-		// Host
 		env.VITE_PARTYKIT_URL,
-		// Room
-		fragmentName,
-		// YJS doc
+		room, // only the ID
 		doc,
-		// PartyKit Options
 		{
+			prefix: "ws/document", // full prefix
 			params: {
-				connectionId: generateUUID(`${fragmentName}_`),
+				documentId: room,
 			},
-			prefix: "/ws/knowledge-base",
 		}
 	);

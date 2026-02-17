@@ -77,14 +77,12 @@ export const queryClient = new QueryClient({
 const router = createRouter({
 	routeTree,
 	defaultPreload: "intent",
-	// biome-ignore lint/style/noNonNullAssertion: Auth is always provided
 	context: { queryClient, auth: undefined! },
 	defaultNotFoundComponent: () => <NotFoundError />,
 	defaultErrorComponent: () => <GeneralError />,
 	scrollRestoration: true,
 });
 
-// biome-ignore lint/style/noNonNullAssertion: Root Element is always present
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
 	const root = createRoot(rootElement);
@@ -104,10 +102,10 @@ if (!rootElement.innerHTML) {
 }
 
 function App() {
-	const { session, isAuthenticated, isLoading } = useSession();
+	const { session, isAuthenticated, loading } = useSession();
 	const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
 
-	if (isLoading)
+	if (loading)
 		return (
 			<Loader
 				subtitle="Something Great is Cooking..."

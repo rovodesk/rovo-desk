@@ -6,17 +6,13 @@ import { Logo } from "@zero-heads-lab/design-system/components/logo";
 import { Particles } from "@zero-heads-lab/design-system/components/particles";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
-import { safelyRedirectTo } from "@/lib/redirects";
 
 type AuthProps = {
 	variant: "sign-in" | "sign-up";
 	redirectFrom?: string;
-	redirectTo: string;
 };
 
-export function Auth({ variant, redirectTo, redirectFrom }: AuthProps) {
-	const safeRedirect = safelyRedirectTo(redirectTo);
-
+export function Auth({ variant, redirectFrom }: AuthProps) {
 	return (
 		<div className="relative w-full md:h-screen md:overflow-hidden">
 			<Particles
@@ -46,10 +42,10 @@ export function Auth({ variant, redirectTo, redirectFrom }: AuthProps) {
 						</p>
 					</div>
 
-					<OauthButtons callbackURL={safeRedirect} />
+					<OauthButtons />
 					{/* FIXME: NEED TO FIX */}
 					{/* <PasskeyButton /> */}
-					<MagicLinkForm callbackURL={safeRedirect} />
+					<MagicLinkForm />
 
 					<p className="mt-8 text-muted-foreground text-sm">
 						By clicking continue, you agree to our{" "}

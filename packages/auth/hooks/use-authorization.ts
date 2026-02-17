@@ -49,10 +49,11 @@ export function useAuthorization({
 		},
 	});
 
+	const loading = query.isLoading || query.isFetching;
+
 	return {
 		permissions: query.data ?? {},
-		isLoading: query.isLoading,
-		isFetching: query.isFetching,
+		loading,
 		error: query.error,
 		refetch: query.refetch,
 	};

@@ -5,7 +5,7 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useState } from "react";
 import { z } from "zod";
 import type { OrganizationRole } from "@/access-control";
-import { useInviteMembers } from "../../hooks/use-invite-members";
+import { useOrganization } from "../../hooks";
 
 const FormSchema = z.object({
 	emails: z
@@ -39,11 +39,13 @@ export function InviteMembersForm({
 	onError,
 	submitText = "Send Invites",
 	defaultValues,
-	maxValues = 3,
+	maxValues,
 }: InviteMembersFormProps) {
-	const { inviteMembersAsync } = useInviteMembers();
+	const { inviteMemberAsync } = useOrganization();
 	const [submitting, setSubmitting] = useState(false);
 	const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
+	const maxEmails = maxValues ?? 30;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -52,8 +54,8 @@ export function InviteMembersForm({
 		},
 		validators: {
 			onChange: ({ value }) => {
-				if (value.emails.length > maxValues) {
-					return { emails: `Add at most ${maxValues} emails` };
+				if (value.emails.length > maxEmails) {
+					return { emails: `Add at most ${maxEmails} emails` };
 				}
 				const result = FormSchema.safeParse(value);
 				if (!result.success) {
@@ -68,7 +70,7 @@ export function InviteMembersForm({
 			try {
 				const results = await Promise.allSettled(
 					value.emails.map(({ text }) =>
-						inviteMembersAsync({ email: text, role: value.role })
+						inviteMemberAsync({ email: text, role: value.role })
 					)
 				);
 
@@ -110,14 +112,14 @@ export function InviteMembersForm({
 					{(field) => (
 						<div className="relative">
 							<div className="absolute top-2 right-3 text-muted-foreground text-xs">
-								{field.state.value?.length ?? 0} / {maxValues}
+								{field.state.value?.length ?? 0} / {maxEmails}
 							</div>
 							<field.TagInputField
 								{...field}
 								activeTagIndex={activeTagIndex}
 								className="pr-16"
 								label="Invite team members"
-								maxTags={maxValues}
+								maxTags={maxEmails}
 								placeholder="Type email and press enter..."
 								setActiveTagIndex={setActiveTagIndex}
 							/>

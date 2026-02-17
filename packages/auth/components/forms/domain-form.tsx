@@ -5,7 +5,7 @@ import { Building2Icon, Globe } from "lucide-react";
 import { z } from "zod";
 import { useAuthContext } from "../../client/context";
 import { checkDomainSlug, generateSlug } from "../../helpers";
-import { useCreateDomain } from "../../hooks";
+import { useOrganization } from "../../hooks";
 
 type DomainFormProps = {
 	onSuccess?: (value: { name: string; slug: string }) => void;
@@ -46,7 +46,7 @@ export function DomainForm({
 }: DomainFormProps) {
 	const queryClient = useQueryClient();
 	const { authClient } = useAuthContext();
-	const { createDomain, isPending: isCreatingDomain } = useCreateDomain();
+	const { createOrganization, loading } = useOrganization();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -69,7 +69,7 @@ export function DomainForm({
 		},
 
 		onSubmit: ({ value }) => {
-			createDomain(value, {
+			createOrganization(value, {
 				onSuccess: (newDomain) => {
 					onSuccess?.(newDomain);
 				},
@@ -79,8 +79,6 @@ export function DomainForm({
 			});
 		},
 	});
-
-	const pending = isCreatingDomain;
 
 	return (
 		<form
@@ -98,7 +96,7 @@ export function DomainForm({
 							<field.TextField
 								autoFocus
 								description="This name will be displayed across the application"
-								disabled={pending}
+								disabled={loading}
 								icon={<Building2Icon />}
 								label="Display Name"
 								onBlur={field.handleBlur}
@@ -147,7 +145,7 @@ export function DomainForm({
 						{(field) => (
 							<field.TextField
 								description="A unique slug to identify your organization."
-								disabled={pending}
+								disabled={loading}
 								extraMessage={
 									field.state.meta.isValidating
 										? "Checking availability..."
@@ -168,7 +166,7 @@ export function DomainForm({
 				<div className="flex justify-end gap-2 pt-4">
 					{cancelable && (
 						<Button
-							disabled={pending}
+							disabled={loading}
 							onClick={onCancel}
 							type="button"
 							variant="outline"
@@ -179,7 +177,7 @@ export function DomainForm({
 
 					<form.SubmitButton
 						disabled={form.state.isValidating || !form.state.isValid}
-						loading={pending}
+						loading={loading}
 						loadingText="Creating New Organization..."
 					>
 						{submitText}

@@ -3,11 +3,11 @@ import { RPCLink } from "@orpc/client/fetch";
 import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
 import type { ContractRouterClient } from "@orpc/contract";
 import type { ORPCContext } from "context";
-import type { routerContract } from "../server/router";
+import type { RouterContract } from "../contract";
 import { keys } from "./keys";
 
 declare global {
-	var $client: ContractRouterClient<typeof routerContract> | undefined;
+	var $client: ContractRouterClient<typeof RouterContract> | undefined;
 }
 
 const link = new RPCLink<ORPCContext>({
@@ -30,5 +30,5 @@ const link = new RPCLink<ORPCContext>({
 	],
 });
 
-export const client: ContractRouterClient<typeof routerContract> =
+export const client: ContractRouterClient<typeof RouterContract> =
 	createORPCClient(link);

@@ -50,7 +50,7 @@ const formSchema = z.object({
 });
 
 export function ProfileForm() {
-	const { session, isLoading } = useSession();
+	const { session, loading } = useSession();
 
 	const form = useAppForm({
 		defaultValues: {
@@ -86,7 +86,7 @@ export function ProfileForm() {
 		}
 	}, [session, form.reset]);
 
-	if (isLoading) return <ProfileSkeleton />;
+	if (loading) return <ProfileSkeleton />;
 
 	return (
 		<form
@@ -247,7 +247,7 @@ export function ProfileForm() {
 							</div>
 
 							<Button
-								className="bg-destructive hover:bg-destructive/90"
+								className="bg-destructive text-white hover:bg-destructive/90"
 								variant="destructive"
 							>
 								Delete Account

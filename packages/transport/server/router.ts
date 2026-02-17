@@ -1,21 +1,7 @@
 import { implement } from "@orpc/server";
-import { healthProcedure } from "../procedures/health.procedure";
-import {
-	clearOnboardingProgress,
-	loadOnboardingProgress,
-	persistOnboardingProgress,
-} from "../procedures/profile.procedure";
+import { RouterContract } from "../contract";
 
-export const routerContract = {
-	health: healthProcedure,
-	profile: {
-		onboarding: {
-			load: loadOnboardingProgress,
-			persist: persistOnboardingProgress,
-			clear: clearOnboardingProgress,
-		},
-	},
-};
+export const os = implement(RouterContract);
+export const router = os.router(RouterContract);
 
-export const os = implement(routerContract);
-export const router = os.router(routerContract);
+export type AppRouter = typeof router;

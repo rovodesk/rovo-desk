@@ -16,6 +16,7 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from "@zero-heads-lab/design-system/components/ui/input-group";
+import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
@@ -23,7 +24,7 @@ import * as Y from "@zero-heads-lab/shared/utils/yjs";
 import {
 	Calendar,
 	CheckSquare,
-	ImageIcon,
+	CloudUpload,
 	MoreHorizontal,
 	Proportions,
 	Send,
@@ -58,7 +59,6 @@ export function Document({ id }: { id: string }) {
 	const [wideLayout, setWideLayout] = useState(false);
 
 	// Page Decorative States
-	const [showBanner, setShowBanner] = useState(false);
 	const [showIcon, setShowIcon] = useState(false);
 
 	const { user } = useUser();
@@ -91,13 +91,20 @@ export function Document({ id }: { id: string }) {
 		toast.success("Added to favorites");
 	}
 
+	const ydoc = useMemo(() => new Y.Doc(), []);
+
+	const provider = useMemo(
+		() => partyKitProvider(knowledge.id, ydoc),
+		[knowledge.id, ydoc]
+	);
+
 	// Collaboration Options
+
 	const collaborationOptions = useMemo(
 		() => ({
-			// A Room exclusively for this document
-			provider: partyKitProvider(knowledge.id),
+			provider,
 			fragmentName: knowledge.id,
-			doc: new Y.Doc(),
+			doc: ydoc,
 			user: {
 				id: user.id,
 				name,
@@ -106,18 +113,9 @@ export function Document({ id }: { id: string }) {
 				avatarUrl: userAvatar,
 			},
 			resolveUsers: (userIds: string[]) => {
-				const states = collaborationOptions.provider.awareness.getStates();
+				const states = provider.awareness.getStates();
 
-				const usersById = new Map<
-					string,
-					{
-						id: string;
-						name: string;
-						color: string;
-						username: string;
-						avatarUrl: string;
-					}
-				>();
+				const usersById = new Map();
 
 				states.forEach((state) => {
 					if (state?.user?.id) {
@@ -126,101 +124,78 @@ export function Document({ id }: { id: string }) {
 				});
 
 				return userIds.map((userId) => {
-					const user = usersById.get(userId);
+					const u = usersById.get(userId);
 
 					return {
 						id: userId,
-						name: user?.name ?? "Unknown",
-						color: user?.color ?? "#000000",
-						username: user?.username ?? user?.name ?? "unknown",
-						avatarUrl: user?.avatarUrl ?? "",
+						name: u?.name ?? "Unknown",
+						color: u?.color ?? "#000000",
+						username: u?.username ?? u?.name ?? "unknown",
+						avatarUrl: u?.avatarUrl ?? "",
 					};
 				});
 			},
 		}),
-		[knowledge.id, name, userColor, user.id, userAvatar]
+		[provider, ydoc, knowledge.id, name, userColor, user.id, userAvatar]
 	);
 
 	if (isLoading) return <DocumentSkeleton />;
 
 	return (
-		<div className="flex min-h-screen flex-col bg-[#191919] text-[#E0E0E0] selection:bg-blue-500/30">
+		<div className="flex min-h-screen flex-col bg-background/50">
 			{/* Header */}
-			<Header className="sticky top-0 z-50 flex h-12 w-full items-center justify-between border-white/5 border-b bg-[#191919]/95 px-4 backdrop-blur-sm">
-				{/* LEFT SIDE */}
-				<div className="flex items-center gap-2">
+			<Header>
+				<div className="flex items-center space-x-4">
 					<Breadcrumbs />
 				</div>
-
-				{/* Active Avatars */}
-				<div className="mx-auto hidden w-full max-w-md md:block">
+				<div className="ms-auto flex items-center justify-between space-x-6">
 					<ActiveAvatars avatarUrls={avatars} />
-				</div>
-
-				{/* Buttons */}
-				<div className="flex items-center gap-1 border-white/10 border-l pl-3">
-					<Button
-						className="h-8 px-2 text-muted-foreground text-xs hover:bg-white/5 hover:text-foreground"
-						onClick={handleSave}
-						variant="ghost"
-					>
-						{isSaving ? "Syncing..." : "Save"}
-					</Button>
-
-					<Button
-						className="size-8 text-muted-foreground hover:bg-white/5 hover:text-foreground"
-						onClick={() => setWideLayout(!wideLayout)}
-						size="icon"
-						variant="ghost"
-					>
-						<Proportions className="size-4" />
-					</Button>
-
-					<Button
-						className="size-8 text-muted-foreground hover:bg-white/5 hover:text-foreground"
-						onClick={handleAddToFavorite}
-						size="icon"
-						variant="ghost"
-					>
-						<Star
-							className={cn(
-								"size-4",
-								isFavourite && "fill-yellow-500 text-yellow-500"
+					<div className="flex items-center space-x-4">
+						<Button
+							className="flex items-center space-x-2"
+							onClick={handleSave}
+							size="icon"
+							variant="ghost"
+						>
+							{isSaving ? (
+								<>
+									<CloudUpload />
+									<span className="text-muted-foreground text-xs">
+										Syncing...
+									</span>
+								</>
+							) : (
+								<CloudUpload />
 							)}
-						/>
-					</Button>
-
-					<Button
-						className="size-8 text-muted-foreground hover:bg-white/5 hover:text-foreground"
-						size="icon"
-						variant="ghost"
-					>
-						<MoreHorizontal className="size-4" />
-					</Button>
+						</Button>
+						<Button onClick={handleAddToFavorite} size="icon" variant="ghost">
+							<Star
+								className={cn(
+									isFavourite
+										? "fill-yellow-500 text-yellow-500"
+										: "text-muted-foreground"
+								)}
+							/>
+						</Button>
+						<Button
+							onClick={() => setWideLayout((prev) => !prev)}
+							size="icon"
+							variant="ghost"
+						>
+							<Proportions />
+						</Button>
+						<Button size="icon" variant="ghost">
+							<MoreHorizontal />
+						</Button>
+					</div>
 				</div>
 			</Header>
 
 			<MainContent className="flex flex-1 flex-col overflow-y-auto p-0" fixed>
-				{/* Banner Section */}
-				{showBanner && (
-					<div className="group relative h-[25vh] w-full overflow-hidden">
-						<div className="h-full w-full bg-linear-to-r from-blue-600 via-purple-500 to-red-500" />
-						<Button
-							className="absolute right-8 bottom-4 h-7 bg-black/30 text-white text-xs opacity-0 backdrop-blur-md transition-opacity hover:bg-black/50 group-hover:opacity-100"
-							onClick={() => setShowBanner(false)}
-							size="sm"
-							variant="ghost"
-						>
-							Change cover
-						</Button>
-					</div>
-				)}
 				<div
 					className={cn(
-						"mx-auto w-full pb-[20vh] transition-all duration-300 ease-in-out",
-						wideLayout ? "max-w-full px-24" : "max-w-[900px] px-12",
-						/* Dynamic padding: If there's a banner, we need less top padding inside the container */
-						showBanner ? "pt-12" : "pt-24"
+						"mx-auto mt-10 w-full pb-[20vh] transition-all duration-300 ease-in-out",
+						wideLayout ? "max-w-full px-24" : "max-w-[900px] px-12"
 					)}
 				>
 					{/* Icon & Title Group */}
@@ -242,32 +217,16 @@ export function Document({ id }: { id: string }) {
 									<Smile className="mr-2 size-4" /> Add icon
 								</Button>
 							)}
-							{!showBanner && (
-								<Button
-									className="px-2 text-muted-foreground text-xs"
-									onClick={() => setShowBanner(true)}
-									size="sm"
-									variant="outline"
-								>
-									<ImageIcon className="mr-2 size-4" /> Add cover
-								</Button>
-							)}
 						</div>
 
-						{/* Page Icon: Offset logic for when it sits on the banner line */}
 						{showIcon && (
-							<div
-								className={cn(
-									"relative mb-4 w-fit text-7xl transition-all",
-									showBanner
-										? "-mt-24 rounded-xl bg-[#191919] p-3 shadow-lg" // Pops over the banner
-										: ""
-								)}
-							>
+							<div className="relative mb-4 w-fit text-7xl transition-all">
 								<div className="select-none">⚱️</div>
 								<Button
-									className="absolute -top-3 -right-4 size-6 rounded-full border border-white/10 bg-[#333] p-0 opacity-0 shadow-xl hover:bg-[#444] group-hover:opacity-100"
+									className="absolute -top-3 -right-4 size-6 rounded-full border p-0 opacity-0 shadow-xl group-hover:opacity-100"
 									onClick={() => setShowIcon(false)}
+									size="icon"
+									variant="ghost"
 								>
 									<X className="size-3" />
 								</Button>
@@ -275,7 +234,7 @@ export function Document({ id }: { id: string }) {
 						)}
 
 						{/* Title: Removed absolute positioning so it stays in the flow */}
-						<h1 className="font-bold text-[40px] text-white leading-[1.2] tracking-tight outline-none">
+						<h1 className="font-bold text-[40px] leading-[1.2] tracking-tight outline-none">
 							{knowledge.title}
 						</h1>
 					</div>
@@ -320,7 +279,7 @@ export function Document({ id }: { id: string }) {
 									{name.charAt(0).toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
-							<InputGroup className="border-none bg-transparent p-2 shadow-none focus-within:ring-0">
+							<InputGroup className="border-none bg-muted-foreground/10 p-2 shadow-none focus-within:ring-0">
 								<InputGroupInput
 									className="border-none bg-transparent p-0 text-sm focus-visible:ring-0"
 									placeholder="Add a comment..."
@@ -332,9 +291,11 @@ export function Document({ id }: { id: string }) {
 						</div>
 					</div>
 
+					<Separator className="h-10" />
+
 					{/* Editor Area */}
 					<RichTextEditor
-						className="min-h-[300px]"
+						className="mt-5"
 						collaborationOptions={collaborationOptions}
 						initialContent={knowledge.content}
 						onChange={handleOnChange}

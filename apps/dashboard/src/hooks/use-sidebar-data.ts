@@ -42,7 +42,7 @@ function injectBadges(
 }
 
 export function useSidebarData(config: SidebarConfig) {
-	const { session, isLoading: sessionLoading } = useSession();
+	const { session, loading: sessionLoading } = useSession();
 
 	const counts: BadgeCounts = {
 		conversations: 3,

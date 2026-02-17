@@ -9,9 +9,9 @@ import {
 } from "partyserver";
 import * as awareness from "y-protocols/awareness";
 import * as sync from "y-protocols/sync";
-import type { Bindings } from "../types";
+import type { Bindings } from "../../types";
 
-export class Document extends Server {
+export class Document extends Server<Bindings> {
 	doc = new Y.Doc();
 	awareness = new awareness.Awareness(this.doc);
 

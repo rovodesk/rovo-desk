@@ -1,6 +1,7 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
+import { createChatbotWithDefaults } from "@zero-heads-lab/database/repositories/chatbot/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
@@ -78,8 +79,16 @@ export const AuthPlugins = () => {
 				});
 			},
 			organizationHooks: {
-				// biome-ignore lint/suspicious/useAwait: No awaited Function
 				afterCreateOrganization: async ({ organization }) => {
+					// Create A Chatbot for Organization
+					try {
+						await createChatbotWithDefaults({
+							organizationId: organization.id,
+							name: "Default Chatbot",
+						});
+					} catch (error) {
+						console.error("Failed to create chatbot", error);
+					}
 					//TODO: Add analytics
 					console.log("New Organization Created", organization);
 				},
