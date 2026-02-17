@@ -38,7 +38,7 @@ app.all("/ws/document/:documentId?", async (c) => {
 	return await stub.fetch(new Request(c.req.raw, { headers }));
 });
 
-app.all("/ws/chat-room/:roomId?", async (c) => {
+app.all("/ws/chatroom/:roomId?", async (c) => {
 	console.log("WS CHAT REQUEST", c.req.url, c.req.query());
 	const roomId =
 		c.req.param("roomId") ?? c.req.query("roomId") ?? c.req.query("_pk");

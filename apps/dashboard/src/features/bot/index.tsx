@@ -117,7 +117,7 @@ export const BotHome = () => {
 							<div className="mb-6 flex items-center justify-between">
 								<h2 className="font-semibold text-lg">Sources</h2>
 								<Button asChild size="sm">
-									<Link to="/integrations">
+									<Link to="/bot/add-source">
 										<Plus />
 										Add Source
 									</Link>
@@ -166,6 +166,7 @@ export const BotHome = () => {
 
 					{/* Sidebar Actions */}
 					<div className="space-y-6">
+						{/* Pro Tip */}
 						<div className="rounded-xl bg-indigo-900 p-6 text-white shadow-indigo-200 shadow-lg">
 							<h3 className="mb-2 font-bold text-lg">Pro Tip 💡</h3>
 							<p className="text-indigo-200 text-sm leading-relaxed">
@@ -177,6 +178,7 @@ export const BotHome = () => {
 							</button>
 						</div>
 
+						{/* Health */}
 						<div className="rounded-xl border p-6">
 							<h2 className="mb-4 font-semibold">Widget Health</h2>
 							<div className="space-y-4">

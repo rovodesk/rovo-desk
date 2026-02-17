@@ -29,6 +29,7 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedBotCustomiseRouteImport } from './routes/_authenticated/bot/customise'
+import { Route as AuthenticatedBotAddSourceRouteImport } from './routes/_authenticated/bot/add-source'
 import { Route as AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport } from './routes/_authenticated/knowledge-base/knowledge.$knowledgeId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -140,6 +141,12 @@ const AuthenticatedBotCustomiseRoute =
     path: '/bot/customise',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBotAddSourceRoute =
+  AuthenticatedBotAddSourceRouteImport.update({
+    id: '/bot/add-source',
+    path: '/bot/add-source',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute =
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport.update({
     id: '/knowledge-base/knowledge/$knowledgeId',
@@ -157,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/conversations': typeof AuthenticatedConversationsRoute
   '/tasks': typeof AuthenticatedTasksRoute
+  '/bot/add-source': typeof AuthenticatedBotAddSourceRoute
   '/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -178,6 +186,7 @@ export interface FileRoutesByTo {
   '/conversations': typeof AuthenticatedConversationsRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/': typeof AuthenticatedIndexRoute
+  '/bot/add-source': typeof AuthenticatedBotAddSourceRoute
   '/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -202,6 +211,7 @@ export interface FileRoutesById {
   '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/bot/add-source': typeof AuthenticatedBotAddSourceRoute
   '/_authenticated/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/conversations'
     | '/tasks'
+    | '/bot/add-source'
     | '/bot/customise'
     | '/settings/appearance'
     | '/settings/billing'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/conversations'
     | '/tasks'
     | '/'
+    | '/bot/add-source'
     | '/bot/customise'
     | '/settings/appearance'
     | '/settings/billing'
@@ -270,6 +282,7 @@ export interface FileRouteTypes {
     | '/_authenticated/conversations'
     | '/_authenticated/tasks'
     | '/_authenticated/'
+    | '/_authenticated/bot/add-source'
     | '/_authenticated/bot/customise'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/billing'
@@ -434,6 +447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBotCustomiseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bot/add-source': {
+      id: '/_authenticated/bot/add-source'
+      path: '/bot/add-source'
+      fullPath: '/bot/add-source'
+      preLoaderRoute: typeof AuthenticatedBotAddSourceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/knowledge-base/knowledge/$knowledgeId': {
       id: '/_authenticated/knowledge-base/knowledge/$knowledgeId'
       path: '/knowledge-base/knowledge/$knowledgeId'
@@ -472,6 +492,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedBotAddSourceRoute: typeof AuthenticatedBotAddSourceRoute
   AuthenticatedBotCustomiseRoute: typeof AuthenticatedBotCustomiseRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedBotIndexRoute: typeof AuthenticatedBotIndexRoute
@@ -485,6 +506,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedBotAddSourceRoute: AuthenticatedBotAddSourceRoute,
   AuthenticatedBotCustomiseRoute: AuthenticatedBotCustomiseRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedBotIndexRoute: AuthenticatedBotIndexRoute,

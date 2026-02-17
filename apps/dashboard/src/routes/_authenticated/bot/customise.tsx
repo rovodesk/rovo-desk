@@ -4,6 +4,6 @@ import { CustomiseBot } from "@/features/bot/customise";
 export const Route = createFileRoute("/_authenticated/bot/customise")({
 	component: CustomiseBot,
 	staticData: {
-		breadcrumb: () => "Appearance",
+		breadcrumb: () => "Bot / Customise",
 	},
 });
