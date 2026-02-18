@@ -13,6 +13,7 @@ function Home() {
 		<HomeLayout {...baseOptions()}>
 			<main className="fade-in flex animate-in flex-col duration-700">
 				{/* HERO */}
+
 				<section className="mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-32 pb-28 text-center">
 					<h1 className="font-serif text-[56px] leading-tight tracking-tight sm:text-[64px]">
 						Zero Heads for Developers
@@ -50,6 +51,7 @@ function Home() {
 				</section>
 
 				{/* FEATURES */}
+
 				<section className="mx-auto w-full max-w-6xl px-6 pb-32">
 					<div className="grid gap-20 md:grid-cols-3">
 						<Feature
@@ -73,6 +75,7 @@ function Home() {
 				</section>
 
 				{/* Grid */}
+
 				<section className="mx-auto w-full max-w-6xl px-6 pb-32">
 					<div className="grid gap-16 md:grid-cols-2">
 						{/* Left side */}
@@ -99,7 +102,6 @@ function Home() {
 								</Link>
 							</div>
 						</div>
-
 						{/* Right side testimonial */}
 						<div className="rounded-xl border-2 p-10 shadow-sm">
 							<p className="leading-relaxed">
@@ -120,9 +122,7 @@ function Home() {
 					</div>
 				</section>
 
-				{/* =============================== */}
 				{/* GUIDES SECTION */}
-				{/* =============================== */}
 
 				<section className="mx-auto w-full max-w-6xl px-6 pb-28 text-center">
 					<h2 className="font-serif text-4xl">Guides for developers</h2>
@@ -168,9 +168,7 @@ function Home() {
 					</div>
 				</section>
 
-				{/* =============================== */}
 				{/* NEED HELP SECTION */}
-				{/* =============================== */}
 
 				<section className="mx-auto h-full w-full max-w-5xl px-6 pb-32">
 					<div className="flex flex-col items-start justify-between gap-6 rounded-xl border-2 px-10 py-12 md:flex-row md:items-center">
@@ -190,9 +188,7 @@ function Home() {
 					</div>
 				</section>
 
-				{/* =============================== */}
 				{/* FOOTER */}
-				{/* =============================== */}
 
 				<footer className="border-t py-10 text-center text-muted-foreground text-sm">
 					© {new Date().getFullYear()} Zero Heads
