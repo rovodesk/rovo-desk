@@ -1,14 +1,12 @@
-import renderChatbot from "./renderer";
-import type { ChatbotActionProvider, IUpdater } from "./types";
-import {
-	createBotMessage,
-	createClientMessage,
-	createUserMessage,
-} from "./utils";
+import type {
+	ChatbotActionProvider,
+	ChatbotConfig,
+	IMessageParser,
+	IUpdater,
+} from "./types";
+import renderChatbot, { injectGlobalStyles } from "./ui";
+import { createBotMessage, createUserMessage, onDomReady } from "./utils";
 
-/**
- * Declare global typing FIRST
- */
 declare global {
 	interface Window {
 		vanillaJsChatbot?: {
@@ -18,47 +16,36 @@ declare global {
 	}
 }
 
-console.log("Started Chatbot");
+// Scrollbar
+if (!document.getElementById("zh-scroll-style")) {
+	const style = document.createElement("style");
+	style.id = "zh-scroll-style";
+	style.innerHTML = `
+    .zh-widget-chat-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .zh-widget-chat-container::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+  `;
+	document.head.appendChild(style);
+}
 
 /**
- * Attach to window (for classic <script> usage)
- */
-window.vanillaJsChatbot = {
-	renderChatbot,
-	createBotMessage,
-};
-
-/**
- * Wait for DOM to be ready
+ * Load the chatbot when the DOM is ready.
  */
 document.addEventListener("DOMContentLoaded", () => {
-	const root = document.getElementById("chatbot-root");
+	let root: HTMLElement;
 
-	if (!root) {
-		console.error("chatbot-root element not found");
-		return;
-	}
-
-	const config = {
+	// Bot configuration
+	const config: ChatbotConfig = {
 		botName: "ZeroHeadsBot",
 		initialMessages: [createBotMessage("Hi! Type 'hello' to test me.")],
 	};
 
-	class ActionProvider implements ChatbotActionProvider {
-		createBotMessage: typeof createBotMessage;
-		createClientMessage: typeof createClientMessage;
-		createUserMessage: typeof createUserMessage;
-		stateUpdater: IUpdater;
-
-		constructor(createbotMessage: typeof createBotMessage, setState: IUpdater) {
-			this.createBotMessage = createbotMessage;
-			this.createClientMessage = createClientMessage;
-			this.createUserMessage = createUserMessage;
-			this.stateUpdater = setState;
-		}
-	}
-
-	class MessageParser {
+	// Message parser class
+	class MessageParser implements IMessageParser {
 		private readonly actionProvider: ChatbotActionProvider;
 
 		constructor(actionProvider: ChatbotActionProvider) {
@@ -78,5 +65,34 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		}
 	}
-	renderChatbot(root, config, MessageParser, ActionProvider);
+
+	// Action provider class
+	class ActionProvider implements ChatbotActionProvider {
+		createBotMessage: typeof createBotMessage;
+		createUserMessage: typeof createUserMessage;
+		stateUpdater: IUpdater;
+
+		constructor(createbotMessage: typeof createBotMessage, setState: IUpdater) {
+			this.createBotMessage = createbotMessage;
+			this.createUserMessage = createUserMessage;
+			this.stateUpdater = setState;
+		}
+	}
+
+	// Wait for the DOM to be ready.
+	onDomReady(() => {
+		console.log("Started Chatbot");
+		// Get the root element.
+		root = document.getElementById("chatbot-root")!;
+		if (!root) {
+			// If not found, create the root Element.
+			root = document.createElement("div");
+			root.id = "chatbot-root";
+			document.body.appendChild(root);
+		}
+		// Render the chatbot once the DOM is ready.
+		renderChatbot(root, config, MessageParser, ActionProvider);
+		//Apply Global Styles
+		injectGlobalStyles();
+	});
 });

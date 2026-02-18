@@ -10,5 +10,13 @@ export default defineConfig({
 		},
 		outDir: "dist",
 		emptyOutDir: true,
+		watch: {
+			include: ["src"],
+			exclude: ["node_modules"],
+			clearScreen: true,
+			onInvalidate: (id) => {
+				console.log(`File ${id} has changed. Rebuilding...`);
+			},
+		},
 	},
 });

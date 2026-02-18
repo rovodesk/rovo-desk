@@ -1,4 +1,5 @@
 import type {
+	BotState,
 	ChatbotConfig,
 	ChatMessage,
 	MessageParserConstructor,
@@ -38,10 +39,6 @@ export const createUserMessage = (message: string): ChatMessage => {
 	return createChatMessage(message, "user");
 };
 
-export const createClientMessage = (message: string): ChatMessage => {
-	return createChatMessage(message, "external");
-};
-
 // biome-ignore lint/suspicious/noExplicitAny: Dont know
 export const callIfExists = <T extends (...args: any[]) => any>(
 	func: T | undefined,
@@ -52,11 +49,11 @@ export const callIfExists = <T extends (...args: any[]) => any>(
 	}
 };
 
-export const getObject = (object: unknown): Record<string, unknown> => {
+export const getObject = (object: unknown): Record<string, unknown> | null => {
 	if (object && typeof object === "object") {
 		return object as Record<string, unknown>;
 	}
-	return {};
+	return null;
 };
 
 export const getWidgets = (config: ChatbotConfig): WidgetConfig[] => {
@@ -97,3 +94,33 @@ export const validateProps = (
 
 	return errors;
 };
+
+/**
+ * Execute a callback function when the DOM is ready.
+ * This function will only execute the callback once when the DOM is ready.
+ * @param callback Callback function to execute
+ */
+export function onDomReady(callback: () => void) {
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", callback, { once: true });
+	} else {
+		callback();
+	}
+}
+
+export function getTabTitle(tab: BotState["activeTab"]) {
+	switch (tab) {
+		case "home":
+			return "Home";
+		case "conversations":
+			return "Conversations";
+		case "chats":
+			return "Chats";
+		case "help":
+			return "Help";
+		case "updates":
+			return "Updates";
+		default:
+			return "";
+	}
+}

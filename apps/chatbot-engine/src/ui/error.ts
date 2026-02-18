@@ -1,14 +1,25 @@
 import { createBotMessage } from "../utils";
 
+/**
+ * Creates an error message for the chat interface.
+ * @param message Error message
+ * @returns Error message container
+ */
 export const createErrorMessage = (message: string) => {
 	const container = document.createElement("div");
-	container.classList.add("zero-heads-chatbot-error");
+	Object.assign(container.style, {
+		backgroundColor: "#fff",
+		borderRadius: "3px",
+		padding: "15px",
+	});
 
 	const header = document.createElement("h1");
 	header.textContent = "Ooops. Something is missing.";
 
 	const innerContainer = document.createElement("div");
-	innerContainer.classList.add("zero-heads-chatbot-error-container");
+	Object.assign(innerContainer.style, {
+		width: "260px",
+	});
 
 	const botMessage = createBotMessage(message);
 	const messageElement = document.createElement("p");
@@ -19,7 +30,17 @@ export const createErrorMessage = (message: string) => {
 	link.href = "https://fredrikoseberg.github.io/react-chatbot-kit-docs/";
 	link.rel = "noopener norefferer";
 	link.target = "_blank";
-	link.classList.add("zero-heads-chatbot-error-docs");
+	Object.assign(link.style, {
+		display: "block",
+		margin: "25px auto",
+		color: "rgb(56, 104, 139)",
+		padding: "8px",
+		border: "1px solid rgb(40, 152, 236)",
+		width: "130px",
+		textAlign: "center",
+		textDecoration: "none",
+		fontSize: "1rem",
+	});
 	link.textContent = "View the docs";
 
 	container.appendChild(header);

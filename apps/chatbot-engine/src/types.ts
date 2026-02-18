@@ -17,18 +17,8 @@ export type MessageParserConstructor = new (
 ) => IMessageParser;
 
 export type IUpdater = (
-	updater: Partial<ChatState> | ((state: ChatState) => ChatState)
+	updater: Partial<BotState> | ((state: BotState) => BotState)
 ) => void;
-
-export interface ChatbotActionProvider {
-	createBotMessage: (
-		message: string,
-		options?: Record<string, unknown>
-	) => ChatMessage;
-	createClientMessage: (message: string) => ChatMessage;
-	createUserMessage: (message: string) => ChatMessage;
-	stateUpdater: IUpdater;
-}
 
 export interface ChatbotConfig {
 	botName: string;
@@ -44,14 +34,22 @@ export interface WidgetConfig {
 	props?: Record<string, unknown>;
 }
 
+export interface ChatbotActionProvider {
+	createBotMessage: (
+		message: string,
+		options?: Record<string, unknown>
+	) => ChatMessage;
+	createUserMessage: (message: string) => ChatMessage;
+	stateUpdater: IUpdater;
+}
+
 export type ActionProviderConstructor = new (
 	createBotMessage: (
 		message: string,
 		options?: Record<string, unknown>
 	) => ChatMessage,
 	setState: IUpdater,
-	createUserMessage: (message: string) => ChatMessage,
-	createClientMessage: (message: string) => ChatMessage
+	createUserMessage: (message: string) => ChatMessage
 ) => ChatbotActionProvider;
 
 export interface WidgetDefinition {
@@ -60,7 +58,24 @@ export interface WidgetDefinition {
 	mapStateToProps?: string[];
 }
 
-export interface ChatState {
-	messages: ChatMessage[];
+export type Tab = "home" | "conversations" | "chats" | "help" | "updates";
+export type View = {
+	header: HTMLElement;
+	content: HTMLElement;
+};
+export interface BotState {
 	[key: string]: unknown;
+	botName: string;
+	/**
+	 * The messages
+	 */
+	messages: ChatMessage[];
+	/**
+	 * Is the Bot Widget is open
+	 */
+	isOpen: boolean;
+	/**
+	 * The active tab
+	 */
+	activeTab: Tab;
 }

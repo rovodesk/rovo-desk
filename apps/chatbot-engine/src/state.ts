@@ -1,4 +1,4 @@
-import type { ChatState } from "./types";
+import type { BotState } from "./types";
 
 /**
  * 1. Keep an overview over the state
@@ -7,7 +7,7 @@ import type { ChatState } from "./types";
  * @param initialState
  * @returns
  */
-export const stateManager = <T extends ChatState>(initialState: T) => {
+export const stateManager = <T extends BotState>(initialState: T) => {
 	let state = initialState;
 	const listeners: Array<(state: T) => void> = [];
 

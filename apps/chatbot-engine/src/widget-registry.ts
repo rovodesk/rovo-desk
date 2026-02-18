@@ -1,6 +1,6 @@
 import type {
+	BotState,
 	ChatbotActionProvider,
-	ChatState,
 	IUpdater,
 	WidgetDefinition,
 } from "./types";
@@ -15,7 +15,7 @@ export interface AddWidgetParams {
 
 export interface IWidgetRegistry {
 	addWidget(params: AddWidgetParams): void;
-	getWidget(widgetName: string, state: ChatState): HTMLElement | undefined;
+	getWidget(widgetName: string, state: BotState): HTMLElement | undefined;
 }
 
 export class WidgetRegistry implements IWidgetRegistry {
@@ -49,7 +49,7 @@ export class WidgetRegistry implements IWidgetRegistry {
 		};
 	}
 
-	getWidget(widgetName: string, state: ChatState): HTMLElement | undefined {
+	getWidget(widgetName: string, state: BotState): HTMLElement | undefined {
 		const widgetObject = this.widgets[widgetName];
 		if (!widgetObject) return;
 
@@ -71,7 +71,7 @@ export class WidgetRegistry implements IWidgetRegistry {
 
 	private mapStateToProps(
 		props: string[] | undefined,
-		state: ChatState
+		state: BotState
 	): Record<string, unknown> {
 		if (!props || props.length === 0) return {};
 
