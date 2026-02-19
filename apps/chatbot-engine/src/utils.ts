@@ -1,13 +1,11 @@
+import type { ChatMessage, MessageType } from "@zero-heads-lab/shared/types";
+import { generateUUID } from "@zero-heads-lab/shared/utils";
 import type {
 	BotState,
 	ChatbotConfig,
-	ChatMessage,
 	MessageParserConstructor,
-	MessageType,
 	WidgetConfig,
 } from "./types";
-
-export const uniqueId = () => crypto.randomUUID();
 
 export const botMessage = (message: ChatMessage): boolean => {
 	return message.type === "bot";
@@ -20,13 +18,16 @@ export const createChatMessage = (
 	return {
 		message,
 		type,
-		id: uniqueId(),
+		id: generateUUID(),
+		timestamp: Date.now(),
 	};
 };
 
 export const createBotMessage = (
 	message: string,
-	options?: Partial<Omit<ChatMessage, "id" | "type" | "message">>
+	options?: Partial<
+		Omit<ChatMessage, "id" | "type" | "message" | "userId" | "username">
+	>
 ): ChatMessage => {
 	return {
 		...createChatMessage(message, "bot"),
@@ -35,18 +36,16 @@ export const createBotMessage = (
 	};
 };
 
-export const createUserMessage = (message: string): ChatMessage => {
-	return createChatMessage(message, "user");
-};
-
-// biome-ignore lint/suspicious/noExplicitAny: Dont know
-export const callIfExists = <T extends (...args: any[]) => any>(
-	func: T | undefined,
-	...args: Parameters<T>
-): ReturnType<T> | undefined => {
-	if (func) {
-		return func(...args);
-	}
+export const createUserMessage = (
+	message: string,
+	userId: string,
+	username?: string
+): ChatMessage => {
+	return {
+		...createChatMessage(message, "user"),
+		userId,
+		username,
+	};
 };
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {

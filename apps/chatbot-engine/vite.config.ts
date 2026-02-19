@@ -4,7 +4,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: "src/index.ts", // your library entry
-			name: "vanillaJsChatbot", // becomes window.vanillaJsChatbot
+			name: "zeroHeadsChatbot", // becomes window.zeroHeadsChatbot
 			fileName: "index",
 			formats: ["umd"], // UMD for <script>
 		},

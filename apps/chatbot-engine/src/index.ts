@@ -9,7 +9,7 @@ import { createBotMessage, createUserMessage, onDomReady } from "./utils";
 
 declare global {
 	interface Window {
-		vanillaJsChatbot?: {
+		zeroHeadsChatbot?: {
 			renderChatbot: typeof renderChatbot;
 			createBotMessage: typeof createBotMessage;
 		};

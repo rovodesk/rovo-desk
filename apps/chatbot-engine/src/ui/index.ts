@@ -53,6 +53,7 @@ const renderWidget = (
 	const initialState: BotState = {
 		botName: config.botName,
 		isOpen: false,
+		isElevated: false,
 		activeTab: "home",
 		messages: [...config.initialMessages],
 		...config.state,
@@ -158,6 +159,14 @@ export function injectGlobalStyles() {
 	style.id = "zh-widget-global";
 
 	style.innerHTML = `
+	    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    .zh-widget-wrapper,
+    .zh-widget-panel,
+    .zh-widget-panel * {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+      box-sizing: border-box;
+    }
+
     .zh-widget-panel {
       width: 380px;
       height: min(640px, 80vh);

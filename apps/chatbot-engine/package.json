@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
+    "dev": "vite build && vite",
     "preview": "vite preview"
+  },
+  "dependencies": {
+    "@zero-heads-lab/shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",

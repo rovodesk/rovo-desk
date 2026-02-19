@@ -1,13 +1,14 @@
 import type { BotState } from "./types";
 
-/**
- * 1. Keep an overview over the state
- * 2. Expose methods for interacting with the state
- * 3. Re render our application when state changes
- * @param initialState
- * @returns
- */
-export const stateManager = <T extends BotState>(initialState: T) => {
+export type StateManager<T extends BotState> = [
+	T,
+	(updater: Partial<T> | ((state: T) => T)) => void,
+	(listenerFunc: (state: T) => void) => void,
+];
+
+export const stateManager = <T extends BotState>(
+	initialState: T
+): StateManager<T> => {
 	let state = initialState;
 	const listeners: Array<(state: T) => void> = [];
 

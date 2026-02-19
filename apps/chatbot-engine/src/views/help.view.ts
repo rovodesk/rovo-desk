@@ -52,15 +52,17 @@ function createHelpHeader(updater: IUpdater): HTMLElement {
 
 function createHelpInnerContainer(): HTMLElement {
 	const container = document.createElement("div");
-
 	Object.assign(container.style, {
 		display: "flex",
 		flexDirection: "column",
 		flex: "1",
 		overflowY: "auto",
+		overflowX: "hidden",
 		padding: "20px",
 		gap: "20px",
 		background: "#0f172a",
+		boxSizing: "border-box",
+		minWidth: "0",
 	});
 
 	// ===== Search =====
@@ -72,7 +74,6 @@ function createHelpInnerContainer(): HTMLElement {
 
 	const input = document.createElement("input");
 	input.placeholder = "Search for help";
-
 	Object.assign(input.style, {
 		width: "100%",
 		padding: "14px 40px 14px 16px",
@@ -82,6 +83,8 @@ function createHelpInnerContainer(): HTMLElement {
 		color: "#ffffff",
 		fontSize: "14px",
 		outline: "none",
+		boxSizing: "border-box",
+		minWidth: "0",
 	});
 
 	const icon = document.createElement("div");
@@ -142,7 +145,6 @@ function createHelpInnerContainer(): HTMLElement {
 
 	collections.forEach((item, index) => {
 		const row = document.createElement("div");
-
 		Object.assign(row.style, {
 			padding: "16px 0",
 			borderBottom:
@@ -150,6 +152,7 @@ function createHelpInnerContainer(): HTMLElement {
 					? "none"
 					: "1px solid rgba(255,255,255,0.06)",
 			cursor: "pointer",
+			minWidth: "0",
 		});
 
 		const topRow = document.createElement("div");
@@ -157,6 +160,8 @@ function createHelpInnerContainer(): HTMLElement {
 			display: "flex",
 			justifyContent: "space-between",
 			alignItems: "center",
+			gap: "8px",
+			minWidth: "0",
 		});
 
 		const title = document.createElement("div");

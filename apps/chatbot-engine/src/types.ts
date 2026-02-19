@@ -1,12 +1,4 @@
-export type MessageType = "bot" | "user" | "external";
-
-export interface ChatMessage {
-	id: string;
-	message: string;
-	type: MessageType;
-	loading?: boolean;
-	widget?: string;
-}
+import type { ChatMessage } from "@zero-heads-lab/shared/types";
 
 export interface IMessageParser {
 	parse(message: string): void;
@@ -39,7 +31,11 @@ export interface ChatbotActionProvider {
 		message: string,
 		options?: Record<string, unknown>
 	) => ChatMessage;
-	createUserMessage: (message: string) => ChatMessage;
+	createUserMessage: (
+		message: string,
+		userId: string,
+		username?: string
+	) => ChatMessage;
 	stateUpdater: IUpdater;
 }
 
@@ -49,7 +45,11 @@ export type ActionProviderConstructor = new (
 		options?: Record<string, unknown>
 	) => ChatMessage,
 	setState: IUpdater,
-	createUserMessage: (message: string) => ChatMessage
+	createUserMessage: (
+		message: string,
+		userId: string,
+		username?: string
+	) => ChatMessage
 ) => ChatbotActionProvider;
 
 export interface WidgetDefinition {
@@ -78,4 +78,8 @@ export interface BotState {
 	 * The active tab
 	 */
 	activeTab: Tab;
+	/**
+	 * Is the Chatbot Elevated to Team
+	 */
+	isElevated: boolean;
 }

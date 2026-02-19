@@ -1,10 +1,6 @@
-import type {
-	BotState,
-	ChatMessage,
-	IMessageParser,
-	IUpdater,
-	View,
-} from "../types";
+import type { ChatMessage } from "@zero-heads-lab/shared/types";
+import { generateUUID } from "@zero-heads-lab/shared/utils";
+import type { BotState, IMessageParser, IUpdater, View } from "../types";
 import { createUserMessage } from "../utils";
 import type WidgetRegistry from "../widget-registry";
 
@@ -34,7 +30,6 @@ export const createChatInnerContainer = (
 	widgetRegistry: WidgetRegistry
 ): HTMLElement => {
 	const container = document.createElement("div");
-
 	Object.assign(container.style, {
 		display: "flex",
 		flexDirection: "column",
@@ -102,7 +97,6 @@ export function createChatHeader(
 	updater: IUpdater
 ): HTMLElement {
 	const header = document.createElement("div");
-
 	Object.assign(header.style, {
 		padding: "14px 16px",
 		display: "flex",
@@ -136,8 +130,40 @@ export function createChatHeader(
 		color: "#fff",
 		boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
 	});
-
 	avatar.textContent = "AI";
+
+	if (state.isElevated) {
+		// 👤 Human Avatar
+		Object.assign(avatar.style, {
+			background: "#1f2937",
+		});
+
+		avatar.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24"
+        fill="none" stroke="white"
+        stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="7" r="4"/>
+        <path d="M5.5 21a7 7 0 0 1 13 0"/>
+      </svg>
+    `;
+	} else {
+		// 🤖 AI Avatar (SVG Logo)
+		Object.assign(avatar.style, {
+			background: "linear-gradient(135deg, #6366f1, #4f46e5)",
+		});
+
+		avatar.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24"
+        fill="none" stroke="white"
+        stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a7.8 7.8 0 0 0 .1-6"/>
+        <path d="M4.6 9a7.8 7.8 0 0 0 0 6"/>
+      </svg>
+    `;
+	}
 
 	// Title Container
 	const textContainer = document.createElement("div");
@@ -147,7 +173,9 @@ export function createChatHeader(
 	});
 
 	const title = document.createElement("span");
-	title.textContent = state.botName ?? "Assistant";
+	title.textContent = state.isElevated
+		? "Human Support" // TODO: Use real name
+		: (state.botName ?? "AI Assistant");
 
 	Object.assign(title.style, {
 		fontSize: "14px",
@@ -156,16 +184,65 @@ export function createChatHeader(
 	});
 
 	const status = document.createElement("span");
-	status.textContent = "Online";
+	status.textContent = state.isElevated ? "Connected" : "AI Online";
 
 	Object.assign(status.style, {
 		fontSize: "12px",
-		color: "#22c55e",
+		color: state.isElevated ? "#22c55e" : "#6366f1",
 		opacity: "0.9",
 	});
 
 	textContainer.append(title, status);
 	left.append(avatar, textContainer);
+
+	/* ================= RIGHT ACTIONS ================= */
+	const actions = document.createElement("div");
+	Object.assign(actions.style, {
+		display: "flex",
+		alignItems: "center",
+		gap: "10px",
+	});
+
+	// ==== Elevate Button =====
+	if (!state.isElevated) {
+		const elevateBtn = document.createElement("button");
+		elevateBtn.innerHTML = state.isElevated ? "Back to AI" : "Elevate";
+
+		Object.assign(elevateBtn.style, {
+			background: state.isElevated
+				? "rgba(255,255,255,0.06)"
+				: "linear-gradient(135deg, #6366f1, #4f46e5)",
+			color: "#ffffff",
+			border: "none",
+			padding: "8px 14px",
+			fontSize: "12px",
+			fontWeight: "600",
+			borderRadius: "999px",
+			cursor: "pointer",
+			transition: "all 0.2s ease",
+			boxShadow: state.isElevated ? "none" : "0 10px 25px rgba(79,70,229,0.35)",
+		});
+
+		elevateBtn.onmouseenter = () => {
+			elevateBtn.style.transform = "translateY(-1px)";
+			elevateBtn.style.boxShadow = "0 14px 30px rgba(79,70,229,0.45)";
+		};
+
+		elevateBtn.onmouseleave = () => {
+			elevateBtn.style.transform = "translateY(0)";
+			elevateBtn.style.boxShadow = state.isElevated
+				? "none"
+				: "0 10px 25px rgba(79,70,229,0.35)";
+		};
+
+		elevateBtn.onclick = () =>
+			updater((prev) => ({
+				...prev,
+				isElevated: !prev.isElevated,
+			}));
+
+		actions.append(elevateBtn);
+	}
 
 	// ===== Close Button =====
 	const close = document.createElement("button");
@@ -200,7 +277,8 @@ export function createChatHeader(
 
 	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
 
-	header.append(left, close);
+	actions.append(close);
+	header.append(left, actions);
 
 	return header;
 }
@@ -346,13 +424,15 @@ const createForm = (
 		inputWrapper.style.boxShadow = "none";
 	};
 
+	const userId = generateUUID();
+
 	// ===== Submit Logic =====
 	form.onsubmit = (e) => {
 		e.preventDefault();
 
 		if (!input.value.trim()) return;
 
-		const message = createUserMessage(input.value);
+		const message = createUserMessage(input.value, userId);
 
 		updater((state) => ({
 			...state,

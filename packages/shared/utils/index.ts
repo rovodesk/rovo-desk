@@ -1,7 +1,5 @@
-export * from "./batcher";
 export * from "./capitalize";
 export * from "./cookies";
-export * from "./debounce";
 export * from "./error";
 export * from "./extract-origins";
 export * from "./faker";
