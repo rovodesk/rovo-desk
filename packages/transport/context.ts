@@ -17,6 +17,8 @@ export interface ORPCContext extends RequestHeadersPluginContext {
 	session?: AuthSession;
 	user?: AuthUser;
 	organizationId?: string;
+	chatbotId?: string;
+	chatbotConnectionId?: string;
 }
 
 export const base = os.$context<ORPCContext>();

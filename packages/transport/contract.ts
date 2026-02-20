@@ -1,5 +1,12 @@
 import {
+	createChatbotConnection,
+	deleteChatbotConnection,
+	findChatbotConnection,
 	findChatbotWithSettings,
+	listConnections,
+	rotateChatbotConnectionKeys,
+	toggleChatbotConnection,
+	updateChatbotConnection,
 	updateChatbotSettings,
 } from "./procedures/chatbot.procedure";
 import { healthProcedure } from "./procedures/health.procedure";
@@ -21,5 +28,14 @@ export const RouterContract = {
 	chatbot: {
 		find: findChatbotWithSettings,
 		updateSettings: updateChatbotSettings,
+		connection: {
+			create: createChatbotConnection,
+			update: updateChatbotConnection,
+			delete: deleteChatbotConnection,
+			toggle: toggleChatbotConnection,
+			list: listConnections,
+			find: findChatbotConnection,
+			rotateKeys: rotateChatbotConnectionKeys,
+		},
 	},
 };

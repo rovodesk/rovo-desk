@@ -25,6 +25,7 @@
     "@zero-heads-lab/design-system": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/crypto": "workspace:*",
     "axios": "^1.13.4",
     "canvas-confetti": "^1.9.4",
     "date-fns": "catalog:",

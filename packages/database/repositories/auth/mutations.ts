@@ -39,7 +39,7 @@ export async function markSessionAsRevoked(sessionId: string) {
 		.where(eq(sessionSchema.id, sessionId));
 }
 
-export async function createNewUserWithProfile(userId: string) {
+export async function createNewUserWithProfileTransaction(userId: string) {
 	const orgName = "Default Workspace";
 	const db = createDatabase();
 

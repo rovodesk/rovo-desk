@@ -1,40 +1,39 @@
-import { IconBrandShopee, IconBrandWhatsapp } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
-	BarChart3,
-	MessageSquare,
-	Plus,
-	Settings,
-	Users,
-	Zap,
-} from "lucide-react";
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@zero-heads-lab/design-system/components/empty";
+import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { Switch } from "@zero-heads-lab/design-system/components/ui/switch";
+import { format } from "date-fns";
+import { Calendar, MessageSquarePlus, Plus, Settings2 } from "lucide-react";
+import { useMemo } from "react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { useChatbot } from "@/hooks/use-chatbot";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
-
-const integrations: {
-	id: string;
-	name: string;
-	icon: React.ComponentType;
-	active: boolean;
-}[] = [
-	{
-		id: "asdasdasdasd",
-		name: "WhatsApp",
-		icon: IconBrandWhatsapp,
-		active: true,
-	},
-	{
-		id: "asdasdasdasdsdffgfg",
-		name: "Shopee",
-		icon: IconBrandShopee,
-		active: true,
-	},
-];
+import { BotHealthItem } from "./_components/bot-health";
+import { ConnectionIcon } from "./_components/connection-icon";
 
 export const BotHome = () => {
+	const { connections, toggleConnectionAsync } = useChatbot();
+
+	const toggleActive = async (connectionId: string) => {
+		await toggleConnectionAsync({ connectionId });
+	};
+
+	const filteredConnections = useMemo(() => {
+		return (connections ?? []).filter((connection) => !connection.deletedAt);
+	}, [connections]);
+
+	const hasConnections = filteredConnections.length > 0;
+
 	return (
 		<>
 			<Header>
@@ -42,151 +41,130 @@ export const BotHome = () => {
 					<Breadcrumbs />
 				</div>
 				<div className="ms-auto flex items-center space-x-4">
+					<Button asChild>
+						<Link to="/bot/customise">Customise</Link>
+					</Button>
 					<ThemeSwitch />
 				</div>
 			</Header>
 
-			{/* Stats Overview */}
 			<MainContent>
-				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
-					{[
-						{
-							label: "Active Chats",
-							value: "124",
-							icon: MessageSquare,
-							color: "text-blue-600",
-						},
-						{
-							label: "Success Rate",
-							value: "92%",
-							icon: Zap,
-							color: "text-yellow-500",
-						},
-						{
-							label: "Total Users",
-							value: "1,205",
-							icon: Users,
-							color: "text-purple-600",
-						},
-						{
-							label: "Avg Response",
-							value: "1.2s",
-							icon: BarChart3,
-							color: "text-green-600",
-						},
-					].map((stat, i) => (
-						<div className="rounded-xl border p-6 shadow-sm" key={i}>
-							<div className="flex items-start justify-between">
-								<stat.icon className={`${stat.color} mb-4`} size={24} />
-								<span className="rounded bg-green-50 px-2 py-1 font-medium text-green-600 text-xs">
-									+12%
-								</span>
-							</div>
-							<p className="font-medium text-gray-500 text-sm">{stat.label}</p>
-							<h3 className="mt-1 font-bold text-2xl">{stat.value}</h3>
-						</div>
-					))}
-				</div>
-
 				<div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-					{/* Main Customization Panel */}
-					<div className="space-y-6 lg:col-span-2">
-						{/* Sync */}
-						<section className="rounded-xl border p-6">
-							<h2 className="mb-4 font-semibold text-lg">Sync Knowledge</h2>
-							<div className="flex gap-4">
-								<div className="flex flex-1 flex-col items-center justify-center rounded-lg border-2 border-gray-200 border-dashed p-8 text-center">
-									<div className="mb-3 rounded-full bg-indigo-50 p-3 text-indigo-600">
-										<Settings size={24} />
-									</div>
-									<p className="font-medium">Sync Website</p>
-									<p className="text-xs">Fetch data from your URL</p>
+					{/* Main Connections Table */}
+					<div className="lg:col-span-2">
+						<section className="rounded-xl border bg-card">
+							<div className="flex items-center justify-between border-b p-6">
+								<div>
+									<h2 className="font-semibold text-lg">Connections</h2>
+									<p className="text-muted-foreground text-sm">
+										Manage your chatbot integrations and platforms.
+									</p>
 								</div>
-								<div className="flex flex-1 flex-col items-center justify-center rounded-lg border-2 border-gray-200 border-dashed p-8 text-center">
-									<div className="mb-3 rounded-full bg-green-50 p-3 text-green-600">
-										<Plus size={24} />
-									</div>
-									<p className="font-medium">Upload PDF</p>
-									<p className="text-gray-400 text-xs">Max size 10MB</p>
-								</div>
-							</div>
-						</section>
-
-						{/* Sources */}
-						<section className="rounded-xl border bg-background p-6">
-							<div className="mb-6 flex items-center justify-between">
-								<h2 className="font-semibold text-lg">Sources</h2>
-								<Button asChild size="sm">
-									<Link to="/bot/add-source">
-										<Plus />
-										Add Source
-									</Link>
-								</Button>
+								{hasConnections && (
+									<Button asChild size="sm">
+										<Link to="/bot/connection/add">
+											<Plus className="mr-2 h-4 w-4" />
+											Add New
+										</Link>
+									</Button>
+								)}
 							</div>
 
-							<ul className="divide-y">
-								{integrations.map((integration) => (
-									<li
-										className="flex items-center justify-between py-4"
-										key={integration.id}
-									>
-										{/* LEFT SIDE */}
-										<div className="flex items-center gap-4">
-											<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-												{integration.icon && <integration.icon />}
+							{hasConnections ? (
+								<div className="divide-y">
+									{filteredConnections.map((connection) => (
+										<div
+											className="group flex flex-col justify-between p-6 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center"
+											key={connection.id}
+										>
+											<div className="flex items-start gap-4">
+												<ConnectionIcon
+													fallbackText={connection.connectionName}
+													iconKey={connection.connectionIcon}
+												/>
+												<div className="space-y-1">
+													<div className="flex items-center gap-2">
+														<p className="font-semibold leading-none">
+															{connection.connectionName}
+														</p>
+														<Badge
+															className="text-[10px] uppercase tracking-wider"
+															variant="secondary"
+														>
+															{connection.connectionType}
+														</Badge>
+													</div>
+													<div className="flex items-center text-muted-foreground text-xs">
+														<Calendar className="mr-1 h-3 w-3" />
+														Added{" "}
+														{format(
+															new Date(connection.createdAt),
+															"MMM d, yyyy"
+														)}
+													</div>
+												</div>
 											</div>
 
-											<p className="font-medium">{integration.name}</p>
-										</div>
+											<div className="mt-4 flex items-center justify-between gap-6 sm:mt-0">
+												<div className="flex items-center gap-3">
+													<span
+														className={`font-medium text-xs ${connection.isActive ? "text-green-600" : "text-muted-foreground"}`}
+													>
+														{connection.isActive ? "Active" : "Paused"}
+													</span>
+													<Switch
+														checked={connection.isActive}
+														onCheckedChange={() => toggleActive(connection.id)}
+													/>
+												</div>
 
-										{/* RIGHT SIDE */}
-										<div className="flex items-center gap-4">
-											<span
-												className={`rounded-full px-3 py-1 font-medium text-xs ${
-													integration.active
-														? "bg-emerald-50 text-emerald-600"
-														: "bg-muted text-muted-foreground"
-												}`}
-											>
-												{integration.active ? "Active" : "Inactive"}
-											</span>
-
-											<button
-												className="font-medium text-primary text-sm hover:underline"
-												type="button"
-											>
-												{integration.active ? "Manage" : "Connect"}
-											</button>
+												<Button
+													asChild
+													className="h-8 w-8"
+													size="icon"
+													variant="ghost"
+												>
+													<Link
+														params={{ connectionId: connection.id }}
+														to={"/bot/connection/manage/$connectionId"}
+													>
+														<Settings2 className="h-4 w-4" />
+														<span className="sr-only">Manage</span>
+													</Link>
+												</Button>
+											</div>
 										</div>
-									</li>
-								))}
-							</ul>
+									))}
+								</div>
+							) : (
+								<Empty className="py-20">
+									<EmptyHeader>
+										<EmptyMedia variant="icon">
+											<MessageSquarePlus className="h-12 w-12 text-muted-foreground/50" />
+										</EmptyMedia>
+										<EmptyTitle>No active connections</EmptyTitle>
+										<EmptyDescription>
+											Connect your bot to WhatsApp, Slack, or Discord to start
+											chatting with your users.
+										</EmptyDescription>
+									</EmptyHeader>
+									<EmptyContent>
+										<Button asChild>
+											<Link to="/bot/connection/add">
+												<Plus className="mr-2 h-4 w-4" />
+												Add Your First Connection
+											</Link>
+										</Button>
+									</EmptyContent>
+								</Empty>
+							)}
 						</section>
 					</div>
 
-					{/* Sidebar Actions */}
+					{/* Sidebar */}
 					<div className="space-y-6">
-						{/* Pro Tip */}
-						<div className="rounded-xl bg-indigo-900 p-6 text-white shadow-indigo-200 shadow-lg">
-							<h3 className="mb-2 font-bold text-lg">Pro Tip 💡</h3>
-							<p className="text-indigo-200 text-sm leading-relaxed">
-								Bots with a custom "Welcome Message" see a 40% higher engagement
-								rate.
-							</p>
-							<button className="mt-4 w-full rounded-lg bg-white py-2 font-semibold text-indigo-900 text-sm transition hover:bg-indigo-50">
-								Upgrade Greeting
-							</button>
-						</div>
-
-						{/* Health */}
-						<div className="rounded-xl border p-6">
-							<h2 className="mb-4 font-semibold">Widget Health</h2>
-							<div className="space-y-4">
-								<HealthItem label="API Connection" status="Healthy" />
-								<HealthItem label="Database Latency" status="Low" />
-								<HealthItem label="Script Integration" status="Active" />
-							</div>
-						</div>
+						<HealthSection hasConnections={hasConnections} />
+						{hasConnections && <ProTipSection />}
 					</div>
 				</div>
 			</MainContent>
@@ -194,14 +172,52 @@ export const BotHome = () => {
 	);
 };
 
-const HealthItem = ({ label, status }: { label: string; status: string }) => (
-	<div className="flex items-center justify-between text-sm">
-		<span className="text-gray-500">{label}</span>
-		<div className="flex items-center gap-2">
-			<div className="h-2 w-2 rounded-full bg-green-500" />
-			<span className="font-medium">{status}</span>
+export const HealthSection = ({
+	hasConnections,
+}: {
+	hasConnections: boolean;
+}) => {
+	return (
+		<div
+			className={`rounded-xl border p-6 ${hasConnections ? "bg-muted/30" : "opacity-50 grayscale"}`}
+		>
+			<h2 className="mb-4 font-semibold text-muted-foreground text-sm uppercase tracking-wider">
+				Widget Health
+			</h2>
+			{hasConnections ? (
+				<div className="space-y-4">
+					<BotHealthItem label="API Connection" status="Healthy" />
+					<BotHealthItem label="Database Latency" status="Low" />
+					<BotHealthItem label="Script Integration" status="Active" />
+				</div>
+			) : (
+				<p className="text-xs italic">Connect a source to monitor health.</p>
+			)}
 		</div>
-	</div>
-);
+	);
+};
+
+export const ProTipSection = () => {
+	return (
+		<div className="relative overflow-hidden rounded-xl bg-primary p-6 text-primary-foreground shadow-xl">
+			{/* Subtle background decoration */}
+			<div className="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+
+			<h3 className="mb-2 flex items-center gap-2 font-bold text-lg">
+				Pro Tip 💡
+			</h3>
+			<p className="text-sm leading-relaxed opacity-90">
+				Remove Branding and add your brand assets to make your bot unique and
+				increase engagement.
+			</p>
+			<Button
+				className="mt-4 w-full font-semibold shadow-sm transition-all hover:scale-[1.02]"
+				variant="secondary"
+			>
+				Upgrade to Pro
+			</Button>
+		</div>
+	);
+};
 
 export default BotHome;

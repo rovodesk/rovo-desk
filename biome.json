@@ -31,7 +31,8 @@
       "performance": {
         "noBarrelFile": "off",
         "noNamespaceImport": "off",
-        "noImgElement": "off"
+        "noImgElement": "off",
+        "useTopLevelRegex": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",

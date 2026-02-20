@@ -44,7 +44,7 @@ export function RoadmapCalendar({ data }: RoadmapCalendarProps) {
 					return (
 						<Card
 							className="flex min-h-[120px] flex-col gap-2 p-3"
-							key={day.toISOString()}
+							key={day.toDateString()}
 						>
 							<p className="text-muted-foreground text-xs">
 								{format(day, "d")}

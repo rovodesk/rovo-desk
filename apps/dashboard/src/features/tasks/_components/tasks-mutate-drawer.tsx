@@ -137,7 +137,7 @@ export function TasksMutateDrawer({
 						<Button variant="outline">Close</Button>
 					</SheetClose>
 					<form.AppForm>
-						<form.SubmitButton>Save changes</form.SubmitButton>
+						<form.SubmitButton label="Save changes" />
 					</form.AppForm>
 				</SheetFooter>
 			</SheetContent>

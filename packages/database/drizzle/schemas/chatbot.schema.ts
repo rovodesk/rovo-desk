@@ -43,16 +43,18 @@ export const chatbotRelations = relations(chatbot, ({ one, many }) => ({
 		references: [organization.id],
 	}),
 
-	settings: one(botSettings, {
+	settings: one(chatbotSettings, {
 		fields: [chatbot.id],
-		references: [botSettings.chatbotId],
+		references: [chatbotSettings.chatbotId],
 	}),
 
 	conversations: many(conversations),
+
+	connections: many(chatbotConnections),
 }));
 
-export const botSettings = chatbotSchema.table(
-	"bot_settings",
+export const chatbotSettings = chatbotSchema.table(
+	"chatbot_settings",
 	{
 		chatbotId: text("chatbotId")
 			.primaryKey()
@@ -76,12 +78,56 @@ export const botSettings = chatbotSchema.table(
 	(t) => [index("bot_settings_chatbot_idx").on(t.chatbotId)]
 );
 
-export const botSettingsRelations = relations(botSettings, ({ one }) => ({
-	chatbot: one(chatbot, {
-		fields: [botSettings.chatbotId],
-		references: [chatbot.id],
-	}),
-}));
+export const chatbotSettingsRelations = relations(
+	chatbotSettings,
+	({ one }) => ({
+		chatbot: one(chatbot, {
+			fields: [chatbotSettings.chatbotId],
+			references: [chatbot.id],
+		}),
+	})
+);
+
+export const chatbotConnections = chatbotSchema.table(
+	"chatbot_connections",
+	{
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		chatbotId: text("chatbotId")
+			.notNull()
+			.references(() => chatbot.id, { onDelete: "cascade" }),
+
+		connectionName: text("connectionName").notNull(),
+		connectionType: text("connectionType").notNull(),
+		connectionSource: text("connectionSource").notNull(),
+		connectionIcon: text("connectionIcon").notNull(),
+
+		isActive: boolean("isActive").notNull().default(true),
+
+		privateKey: text("privateKey").notNull(),
+		publicKey: text("publicKey").notNull(),
+
+		createdAt: timestamp("createdAt", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updatedAt", { withTimezone: true })
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+		deletedAt: timestamp("deletedAt", { withTimezone: true }),
+	},
+	(t) => [index("chatbot_connections_chatbot_idx").on(t.chatbotId)]
+);
+
+export const chatbotConnectionsRelations = relations(
+	chatbotConnections,
+	({ one }) => ({
+		chatbot: one(chatbot, {
+			fields: [chatbotConnections.chatbotId],
+			references: [chatbot.id],
+		}),
+	})
+);
 
 export const conversations = chatbotSchema.table(
 	"conversations",

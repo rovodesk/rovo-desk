@@ -52,11 +52,11 @@ export default function MagicLinkForm({ isAnyLoading }: MagicLinkFormProps) {
 
 				<form.SubmitButton
 					className="relative w-full"
+					icon={<WandSparklesIcon className="h-5 w-5" />}
 					loading={isLoading}
 					loadingText="Sending magic link..."
 					size="lg"
 				>
-					<WandSparklesIcon className="h-5 w-5" />
 					Continue With Email
 					{lastLoginMethod === "magic-link" && (
 						<div className="absolute -top-[1/2] right-3">

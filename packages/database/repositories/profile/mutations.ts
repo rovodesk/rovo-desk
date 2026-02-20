@@ -1,5 +1,5 @@
-import { createDatabase } from "conn";
 import { eq } from "drizzle-orm";
+import { createDatabase } from "../../conn";
 import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
 
 export async function updateOnboardingProgressByUserId(

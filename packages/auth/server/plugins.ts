@@ -1,7 +1,7 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import { createChatbotWithDefaults } from "@zero-heads-lab/database/repositories/chatbot/mutations";
+import { createChatbotWithDefaultsTransaction } from "@zero-heads-lab/database/repositories/chatbot/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
@@ -9,6 +9,7 @@ import {
 } from "@zero-heads-lab/email/templates";
 import type { BetterAuthPlugin } from "better-auth";
 import {
+	apiKey,
 	admin as betterAuthAdmin,
 	lastLoginMethod,
 	magicLink,
@@ -54,6 +55,16 @@ export const AuthPlugins = () => {
 							required: false,
 							input: false,
 						},
+						publicKey: {
+							type: "string",
+							required: false,
+							input: false,
+						},
+						privateKey: {
+							type: "string",
+							required: false,
+							input: false,
+						},
 					},
 				},
 			},
@@ -80,9 +91,10 @@ export const AuthPlugins = () => {
 			},
 			organizationHooks: {
 				afterCreateOrganization: async ({ organization }) => {
+					// Create Public and Private Keys
 					// Create A Chatbot for Organization
 					try {
-						await createChatbotWithDefaults({
+						await createChatbotWithDefaultsTransaction({
 							organizationId: organization.id,
 							name: "Default Chatbot",
 						});
@@ -139,5 +151,6 @@ export const AuthPlugins = () => {
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
+		apiKey(),
 	].filter(Boolean) as BetterAuthPlugin[];
 };

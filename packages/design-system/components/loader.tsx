@@ -43,7 +43,7 @@ export function Loader({
     return (
         <div
             className={cn(
-                "flex flex-col items-center justify-center gap-8 p-8",
+                "min-h-screen w-full flex items-center justify-center",
                 className
             )}
             {...props}

@@ -1,5 +1,5 @@
 import { useOnboarding } from "@onboardjs/react";
-import { Outlet } from "@tanstack/react-router";
+import { Outlet, useLocation } from "@tanstack/react-router";
 import Loader from "@zero-heads-lab/design-system/components/loader";
 import {
 	SidebarInset,
@@ -11,10 +11,17 @@ import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
 import { SearchProvider } from "@/providers/search";
 import { AppSidebar } from "./app-sidebar";
 
+const HIDE_SIDEBAR_ROUTES: string[] = ["/bot/connection/add"];
+
 export function AuthenticatedLayout() {
+	const location = useLocation();
+	const { loading } = useOnboarding();
 	const sidebarOpen = getCookie("sidebar_state") !== "false";
 
-	const { loading } = useOnboarding();
+	const fullUrl = location.publicHref;
+	if (HIDE_SIDEBAR_ROUTES.includes(fullUrl)) {
+		return <Outlet />;
+	}
 
 	if (loading.isHydrating) {
 		return <Loader title="Loading..." />;

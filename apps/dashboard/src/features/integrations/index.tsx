@@ -12,7 +12,6 @@ import {
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { ArrowDownAZ, ArrowUpAZ, SlidersHorizontal } from "lucide-react";
 import { type ChangeEvent, useState } from "react";
-import { Search } from "@/components/search";
 import { apps } from "@/data/integrations";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
@@ -85,7 +84,6 @@ export function IntegrationsHome() {
 		<>
 			{/* ===== Top Heading ===== */}
 			<Header>
-				<Search />
 				<div className="ms-auto flex items-center gap-4">
 					<ThemeSwitch />
 				</div>

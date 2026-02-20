@@ -260,9 +260,7 @@ export function ProfileForm() {
 						<p className="text-muted-foreground text-xs">
 							Last updated on {session?.user.updatedAt.toLocaleDateString()}
 						</p>
-						<form.SubmitButton className="min-w-[120px]">
-							Save Changes
-						</form.SubmitButton>
+						<form.SubmitButton className="min-w-[120px]" label="Save Changes" />
 					</div>
 				</div>
 			</form.AppForm>

@@ -153,9 +153,11 @@ export function NotificationsForm() {
 					<p className="text-muted-foreground text-xs">
 						Looking for Desktop notifications? Check your browser settings.
 					</p>
-					<form.SubmitButton className="px-10" size="lg">
-						Save Preferences
-					</form.SubmitButton>
+					<form.SubmitButton
+						className="px-10"
+						label="Save Preferences"
+						size="lg"
+					/>
 				</div>
 			</form.AppForm>
 		</form>

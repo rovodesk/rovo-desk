@@ -86,10 +86,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 				{
 					title: "Bot",
 					icon: BotIcon,
-					items: [
-						{ title: "Overview", url: "/bot" },
-						{ title: "Customise", url: "/bot/customise" },
-					],
+					url: "/bot",
 					visibility: {
 						roles: ["owner", "admin"],
 					},

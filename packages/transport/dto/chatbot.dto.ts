@@ -47,6 +47,59 @@ export const CHATBOT_WITH_SETTINGS_DTO = CHATBOT_DTO.extend({
 	settings: BOT_SETTINGS_DTO.nullable().optional(),
 });
 
+export const CREATE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionType: z.enum(["CLIENT", "SERVER", "PLUGIN"]),
+	connectionIcon: z.string(),
+	connectionName: z.string().min(1, "Connection name is required"),
+	connectionSource: z.string().min(1, "Connection source is required"),
+});
+
+export const CREATE_CHATBOT_CONNECTION_OUTPUT_DTO = z.object({
+	privateKey: z.string().nullable(),
+	publicKey: z.string().nullable(),
+});
+
+export const CHATBOT_CONNECTION_DTO = z.object({
+	id: z.string(),
+	connectionName: z.string(),
+	connectionType: z.string(),
+	connectionIcon: z.string(),
+	connectionSource: z.string(),
+	privateKey: z.string().nullable(),
+	publicKey: z.string().nullable(),
+	isActive: z.boolean(),
+	createdAt: z.coerce.date(),
+	updatedAt: z.coerce.date().nullable(),
+	deletedAt: z.coerce.date().nullable().optional(),
+});
+
+export const CHATBOT_CONNECTIONS_DTO = z.array(CHATBOT_CONNECTION_DTO);
+
+export const FIND_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const DELETE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const TOGGLE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const ROTATE_CHATBOT_CONNECTION_KEYS_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const UPDATE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+	connectionName: z.string().min(1, "Connection name is required").optional(),
+	connectionSource: z
+		.string()
+		.min(1, "Connection source is required")
+		.optional(),
+});
+
 export const CONVERSATION_DTO = z.object({
 	id: z.string(),
 	chatbotId: z.string(),

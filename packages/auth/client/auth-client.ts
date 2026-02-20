@@ -3,6 +3,7 @@ import { stripeClient } from "@better-auth/stripe/client";
 import type { BetterAuthClientPlugin } from "better-auth";
 import {
 	adminClient,
+	apiKeyClient,
 	inferAdditionalFields,
 	inferOrgAdditionalFields,
 	lastLoginMethodClient,
@@ -35,6 +36,7 @@ const Plugins = [
 	}),
 	adminClient(),
 	lastLoginMethodClient(),
+	apiKeyClient(),
 ] satisfies BetterAuthClientPlugin[];
 
 export const authClient = createBetterAuthClient({

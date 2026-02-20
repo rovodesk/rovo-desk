@@ -1,7 +1,7 @@
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
-	createNewUserWithProfile,
+	createNewUserWithProfileTransaction,
 	deleteSession,
 	markSessionAsRevoked,
 	markUserAsDeleted,
@@ -224,7 +224,7 @@ export function createAuth(namespace: KVNamespace) {
 			log: (level, message, ...args) => {
 				// TODO: Add Logger from observability
 				console.log(
-					["AUTH", new Date().toISOString(), level.toUpperCase()].join(" "),
+					["AUTH", new Date().toDateString(), level.toUpperCase()].join(" "),
 					message,
 					...args
 				);
@@ -319,7 +319,7 @@ export function createAuth(namespace: KVNamespace) {
 									react: LoginAlertTemplate({
 										ipAddress: session.ipAddress || "Unknown",
 										userAgent: session.userAgent || "Unknown",
-										time: session.createdAt.toISOString(),
+										time: session.createdAt.toDateString(),
 										securityUrl: `${keys.END_USER_DASHBOARD_URL}/settings/security`,
 									}),
 								});
@@ -371,7 +371,7 @@ export function createAuth(namespace: KVNamespace) {
 					after: async (user) => {
 						try {
 							// Create A New User Profile
-							await createNewUserWithProfile(user.id);
+							await createNewUserWithProfileTransaction(user.id);
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);

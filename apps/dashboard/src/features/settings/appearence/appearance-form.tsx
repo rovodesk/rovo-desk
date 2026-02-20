@@ -1,6 +1,4 @@
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
-import { FieldLabel } from "@zero-heads-lab/design-system/components/ui/field";
-import { RadioGroupItem } from "@zero-heads-lab/design-system/components/ui/radio-group";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { fonts, useFont } from "@zero-heads-lab/design-system/context/font";
 import { useLayout } from "@zero-heads-lab/design-system/context/layout";
@@ -72,13 +70,7 @@ export function AppearanceForm() {
 										{ label: "Dark", value: "dark" },
 									]}
 									renderOption={(option) => (
-										<FieldLabel className="cursor-pointer [&:has([data-state=checked])>div]:border-primary [&:has([data-state=checked])>div]:ring-2 [&:has([data-state=checked])>div]:ring-primary/20">
-											<RadioGroupItem
-												className="sr-only"
-												value={option.value}
-											/>
-											<ThemePreview type={option.value as "light" | "dark"} />
-										</FieldLabel>
+										<ThemePreview type={option.value as "light" | "dark"} />
 									)}
 								/>
 							)}
@@ -122,32 +114,24 @@ export function AppearanceForm() {
 										{ label: "Floating", value: "floating" },
 									]}
 									renderOption={(option) => (
-										<FieldLabel className="relative cursor-pointer [&:has([data-state=checked])>div]:border-primary [&:has([data-state=checked])>div]:bg-primary/5">
-											<RadioGroupItem
-												className="sr-only"
-												value={option.value}
+										<div className="flex items-center gap-4 rounded-xl border-2 border-muted p-4 transition-all hover:bg-accent/50">
+											<LayoutPreview
+												type={option.value as "sidebar" | "inset" | "floating"}
 											/>
-											<div className="flex items-center gap-4 rounded-xl border-2 border-muted p-4 transition-all hover:bg-accent/50">
-												<LayoutPreview
-													type={
-														option.value as "sidebar" | "inset" | "floating"
-													}
-												/>
-												<div className="flex flex-col">
-													<span className="font-semibold text-sm">
-														{option.label}
-													</span>
-													<span className="text-muted-foreground text-xs">
-														{option.value === "sidebar" &&
-															"Classic, reliable, efficient."}
-														{option.value === "inset" &&
-															"Modern, contained, focused."}
-														{option.value === "floating" &&
-															"Airy, spacious, experimental."}
-													</span>
-												</div>
+											<div className="flex flex-col">
+												<span className="font-semibold text-sm">
+													{option.label}
+												</span>
+												<span className="text-muted-foreground text-xs">
+													{option.value === "sidebar" &&
+														"Classic, reliable, efficient."}
+													{option.value === "inset" &&
+														"Modern, contained, focused."}
+													{option.value === "floating" &&
+														"Airy, spacious, experimental."}
+												</span>
 											</div>
-										</FieldLabel>
+										</div>
 									)}
 								/>
 							)}
@@ -162,10 +146,9 @@ export function AppearanceForm() {
 					</p>
 					<form.SubmitButton
 						className="px-8 shadow-lg shadow-primary/20"
+						label="Apply Aesthetics"
 						size="lg"
-					>
-						Apply Aesthetics
-					</form.SubmitButton>
+					/>
 				</div>
 			</form.AppForm>
 		</form>

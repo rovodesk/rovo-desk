@@ -34,7 +34,7 @@ export const Default: Story = {
 			<button
 				onClick={() =>
 					toast("Event has been created", {
-						description: new Date().toLocaleString(),
+						description: new Date().toDateString(),
 						action: {
 							label: "Undo",
 							onClick: action("Undo clicked"),

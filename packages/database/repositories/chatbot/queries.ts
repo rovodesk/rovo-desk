@@ -1,13 +1,14 @@
-import { eq, type InferSelectModel } from "drizzle-orm";
+import { desc, eq, type InferSelectModel } from "drizzle-orm";
 import { createDatabase } from "../../conn";
 import {
-	type botSettings,
 	chatbot,
+	chatbotConnections,
+	type chatbotSettings,
 } from "../../drizzle/schemas/chatbot.schema";
 
 export type Chatbot = Omit<InferSelectModel<typeof chatbot>, "chatbotId">;
 
-export type Settings = InferSelectModel<typeof botSettings>;
+export type Settings = InferSelectModel<typeof chatbotSettings>;
 
 export type ChatbotWithSettings = Chatbot & {
 	settings: Settings | null;
@@ -44,4 +45,42 @@ export async function getChatbotWithSettingsByOrganizationId(
 	}
 
 	return bot;
+}
+
+export async function getChatbotConnectionById(connectionId: string) {
+	const db = createDatabase();
+	return await db.query.chatbotConnections.findFirst({
+		where: eq(chatbotConnections.id, connectionId),
+	});
+}
+
+export async function listChatbotConnections(chatbotId: string) {
+	const db = createDatabase();
+	return await db
+		.select()
+		.from(chatbotConnections)
+		.where(eq(chatbotConnections.chatbotId, chatbotId))
+		.orderBy(desc(chatbotConnections.createdAt));
+}
+
+export async function getChatbotConnectionPrivateKey(connectionId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			privateKey: chatbotConnections.privateKey,
+		})
+		.from(chatbotConnections)
+		.where(eq(chatbotConnections.id, connectionId))
+		.then((res) => res[0]);
+}
+
+export async function getChatbotConnectionPublicKey(connectionId: string) {
+	const db = createDatabase();
+	return await db
+		.select({
+			publicKey: chatbotConnections.publicKey,
+		})
+		.from(chatbotConnections)
+		.where(eq(chatbotConnections.id, connectionId))
+		.then((res) => res[0]);
 }

@@ -260,9 +260,11 @@ export const AppearanceForm = () => {
 						Reset
 					</Button>
 
-					<form.SubmitButton loading={loading} size="lg">
-						Save Settings
-					</form.SubmitButton>
+					<form.SubmitButton
+						className="px-8 shadow-lg shadow-primary/20"
+						label="Apply Aesthetics"
+						size="lg"
+					/>
 				</div>
 			</form.AppForm>
 		</form>

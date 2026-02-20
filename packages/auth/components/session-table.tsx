@@ -79,13 +79,13 @@ export function SessionTable() {
 						const lastActiveDate = new Date(
 							session.session.lastActiveAt ?? session.session.createdAt
 						)
-							.toLocaleString()
+							.toDateString()
 							.split(",")[0];
 
 						const lastActiveTime = new Date(
 							session.session.lastActiveAt ?? session.session.createdAt
 						)
-							.toLocaleString()
+							.toDateString()
 							.split(",")[1];
 
 						return (
