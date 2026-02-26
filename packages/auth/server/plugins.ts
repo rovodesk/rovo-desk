@@ -1,7 +1,12 @@
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import { createChatbotWithDefaultsTransaction } from "@zero-heads-lab/database/repositories/chatbot/mutations";
+import type { KvCacheStore } from "@zero-heads-lab/cache";
+import type { Database } from "@zero-heads-lab/database/conn";
+import {
+	createSDKWithDefaultsTransaction,
+	deleteSDK,
+} from "@zero-heads-lab/database/repositories/sdk/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
@@ -11,6 +16,8 @@ import type { BetterAuthPlugin } from "better-auth";
 import {
 	apiKey,
 	admin as betterAuthAdmin,
+	type Jwk,
+	jwt,
 	lastLoginMethod,
 	magicLink,
 	multiSession,
@@ -21,8 +28,9 @@ import { accessControl, PLATFORM_ROLES, Roles } from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 
-export const AuthPlugins = () => {
+export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 	// const products = getProducts();
+	const cacheStore = cache;
 
 	return [
 		// Magic Link Plugin
@@ -94,15 +102,25 @@ export const AuthPlugins = () => {
 					// Create Public and Private Keys
 					// Create A Chatbot for Organization
 					try {
-						await createChatbotWithDefaultsTransaction({
+						await createSDKWithDefaultsTransaction({
 							organizationId: organization.id,
-							name: "Default Chatbot",
+							name: "Default Widget",
 						});
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
 					}
 					//TODO: Add analytics
 					console.log("New Organization Created", organization);
+				},
+				afterDeleteOrganization: async ({ organization }) => {
+					// Delete Chatbot
+					try {
+						await deleteSDK(database, { sdkId: organization.id });
+					} catch (error) {
+						console.error("Failed to delete chatbot", error);
+					}
+					//TODO: Add Analytics
+					console.log("Organization Deleted", organization);
 				},
 			},
 		}),
@@ -152,5 +170,54 @@ export const AuthPlugins = () => {
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
 		apiKey(),
+		jwt({
+			jwks: {
+				keyPairConfig: {
+					alg: AUTH_CONFIG.JWT_ALGORITHM,
+				},
+			},
+			jwt: {
+				issuer: AUTH_CONFIG.JWT_ISSUER,
+				expirationTime: "1h",
+				getSubject: (session) => session.user.id,
+				definePayload: ({ user }) => ({
+					id: user.id,
+					email: user.email,
+					verified: user.emailVerified,
+					role: user.role,
+					anonymous: user.isAnonymous,
+					deleted: !!user.deletedAt,
+				}),
+			},
+			adapter: {
+				async getJwks() {
+					const keys = await cacheStore.get<Jwk[]>("jwks");
+
+					return keys ?? [];
+				},
+
+				async createJwk(data) {
+					const id = crypto.randomUUID();
+
+					const newKey: Jwk = {
+						id,
+						...data,
+					};
+
+					const existing = await cacheStore.get<Jwk[]>("jwks");
+					const keys = existing ?? [];
+
+					const updated = [newKey, ...keys].slice(0, 2); // keep last 2
+
+					await cacheStore.set(
+						"jwks",
+						updated,
+						AUTH_CONFIG.JWT_EXPIRATION_TIME_IN_SECS
+					);
+
+					return newKey;
+				},
+			},
+		}),
 	].filter(Boolean) as BetterAuthPlugin[];
 };

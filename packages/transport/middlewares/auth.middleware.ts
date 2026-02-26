@@ -2,7 +2,8 @@ import { ORPCError } from "@orpc/server";
 import { base } from "../context";
 
 export const AuthGuard = base.middleware(async ({ context, next }) => {
-	if (!context.auth) {
+	const auth = context.auth;
+	if (!auth) {
 		// This should NEVER happen if wired correctly
 		throw new ORPCError("INTERNAL_SERVER_ERROR", {
 			message: "Auth not initialized",
@@ -15,14 +16,18 @@ export const AuthGuard = base.middleware(async ({ context, next }) => {
 			message: "No headers provided",
 		});
 	}
-	const sessionData = await context.auth.api.getSession({ headers });
+
+	const sessionData = await auth.api.getSession({ headers });
 
 	if (!(sessionData?.session && sessionData?.user)) {
-		throw new ORPCError("UNAUTHORIZED");
+		throw new ORPCError("UNAUTHORIZED", {
+			message: "No session or user found",
+		});
 	}
 
 	return next({
 		context: {
+			auth,
 			session: sessionData.session,
 			user: sessionData.user,
 		},

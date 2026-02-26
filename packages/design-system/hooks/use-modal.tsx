@@ -9,7 +9,7 @@ type ModalOptions = {
 
 export function useModal<T extends string>(
     key: T,
-    content: ReactNode,
+    content?: ReactNode,
     title?: string,
     description?: string,
     options?: ModalOptions

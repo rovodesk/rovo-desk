@@ -13,24 +13,21 @@ import { useState } from "react";
 import { z } from "zod";
 import { useChatbot } from "@/hooks/use-chatbot";
 import {
-	CONNECTION_ICONS_MAP,
+	CONNECTION_MAP,
 	CONNECTIONS,
-	type ConnectionIconKey,
+	type ConnectionKey,
 } from "../_components/connection-map";
 
 const baseSchema = z.object({
 	connectionName: z.string().min(1, "Name is required").max(100),
 	connectionIcon: z.enum(
-		Object.keys(CONNECTION_ICONS_MAP) as [
-			ConnectionIconKey,
-			...ConnectionIconKey[],
-		]
+		Object.keys(CONNECTION_MAP) as [ConnectionKey, ...ConnectionKey[]]
 	),
 	connectionSource: z.string(),
 });
 
-export const formSchema = baseSchema.superRefine((data, ctx) => {
-	const config = CONNECTION_ICONS_MAP[data.connectionIcon];
+const formSchema = baseSchema.superRefine((data, ctx) => {
+	const config = CONNECTION_MAP[data.connectionIcon];
 
 	if (!config) return;
 
@@ -38,9 +35,9 @@ export const formSchema = baseSchema.superRefine((data, ctx) => {
 
 	switch (config.source) {
 		case "url":
-			if (!z.string().url().safeParse(source).success) {
+			if (!z.url().safeParse(source).success) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: "custom",
 					message: "Please enter a valid URL (https://...)",
 					path: ["connectionSource"],
 				});
@@ -50,7 +47,7 @@ export const formSchema = baseSchema.superRefine((data, ctx) => {
 		case "phone":
 			if (!/^\+?[1-9]\d{1,14}$/.test(source)) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: "custom",
 					message: "Enter a valid E.164 phone number",
 					path: ["connectionSource"],
 				});
@@ -60,7 +57,7 @@ export const formSchema = baseSchema.superRefine((data, ctx) => {
 		case "email":
 			if (!z.string().email().safeParse(source).success) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: "custom",
 					message: "Enter a valid email",
 					path: ["connectionSource"],
 				});
@@ -90,11 +87,13 @@ const sourceMeta = {
 	},
 };
 
+type GeneratedKey = { value: string; type: "public" | "private" } | null;
+
 type Step = 1 | 2 | 3; // Step 1: Platform, Step 2: Details, Step 3: Secret Reveal
 
 export const AddConnection = () => {
 	const [step, setStep] = useState<Step>(1);
-	const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+	const [generatedKey, setGeneratedKey] = useState<GeneratedKey>(null);
 	const [copied, setCopied] = useState(false);
 
 	const router = useRouter();
@@ -114,7 +113,7 @@ export const AddConnection = () => {
 
 				if (!iconKey) return;
 
-				const config = CONNECTION_ICONS_MAP[iconKey];
+				const config = CONNECTION_MAP[iconKey];
 				if (!config) return;
 
 				const payload = {
@@ -124,8 +123,11 @@ export const AddConnection = () => {
 
 				const data = await createConnectionAsync(payload);
 
-				if (data?.privateKey || data?.publicKey) {
-					setGeneratedKey(data.privateKey ?? data.publicKey ?? null);
+				if (data?.key && typeof data.key === "string") {
+					setGeneratedKey({
+						value: data.key,
+						type: "public",
+					});
 					setStep(3);
 					return;
 				}
@@ -143,7 +145,7 @@ export const AddConnection = () => {
 	/* ------------------------------------------------ */
 
 	const selectedIconKey = form.state.values.connectionIcon;
-	const iconConfig = CONNECTION_ICONS_MAP[selectedIconKey];
+	const iconConfig = CONNECTION_MAP[selectedIconKey];
 
 	const sourceUI = iconConfig ? sourceMeta[iconConfig.source] : sourceMeta.url;
 
@@ -214,43 +216,39 @@ export const AddConnection = () => {
 								<form.AppField name="connectionIcon">
 									{(field) => (
 										<div className="grid grid-cols-3 gap-3">
-											{Object.entries(CONNECTION_ICONS_MAP).map(
-												([key, config]) => {
-													const selected = field.state.value === key;
+											{Object.entries(CONNECTION_MAP).map(([key, config]) => {
+												const selected = field.state.value === key;
 
-													return (
-														<button
-															className={`relative flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl border transition-all ${
-																selected
-																	? "border-indigo-500 bg-indigo-500/10"
-																	: "border-white/5 bg-white/2 hover:border-white/10"
+												return (
+													<button
+														className={`relative flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl border transition-all ${
+															selected
+																? "border-indigo-500 bg-indigo-500/10"
+																: "border-white/5 bg-white/2 hover:border-white/10"
+														}`}
+														key={key}
+														onClick={() => {
+															field.handleChange(key);
+															setTimeout(handleNext, 100);
+														}}
+														type="button"
+													>
+														<config.icon
+															className={`h-8 w-8 ${
+																selected ? "text-indigo-400" : "text-slate-400"
 															}`}
-															key={key}
-															onClick={() => {
-																field.handleChange(key);
-																setTimeout(handleNext, 100);
-															}}
-															type="button"
-														>
-															<config.icon
-																className={`h-8 w-8 ${
-																	selected
-																		? "text-indigo-400"
-																		: "text-slate-400"
-																}`}
-															/>
+														/>
 
-															<span className="font-bold text-[10px] uppercase tracking-widest">
-																{config.label}
-															</span>
+														<span className="font-bold text-[10px] uppercase tracking-widest">
+															{config.label}
+														</span>
 
-															{selected && (
-																<IconCircleCheckFilled className="absolute top-2 right-2 h-4 w-4 text-indigo-500" />
-															)}
-														</button>
-													);
-												}
-											)}
+														{selected && (
+															<IconCircleCheckFilled className="absolute top-2 right-2 h-4 w-4 text-indigo-500" />
+														)}
+													</button>
+												);
+											})}
 										</div>
 									)}
 								</form.AppField>
@@ -325,12 +323,12 @@ export const AddConnection = () => {
 
 								<div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-6">
 									<code className="block break-all text-left font-mono text-indigo-300 text-sm">
-										{generatedKey}
+										{generatedKey.value}
 									</code>
 
 									<button
 										className="absolute top-3 right-3 rounded-lg bg-white/10 p-2 transition-colors hover:bg-white/20"
-										onClick={() => copyToClipboard(generatedKey)}
+										onClick={() => copyToClipboard(generatedKey.value)}
 										type="button"
 									>
 										{copied ? (

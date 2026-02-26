@@ -6,6 +6,7 @@ import {
 	apiKeyClient,
 	inferAdditionalFields,
 	inferOrgAdditionalFields,
+	jwtClient,
 	lastLoginMethodClient,
 	magicLinkClient,
 	multiSessionClient,
@@ -37,6 +38,7 @@ const Plugins = [
 	adminClient(),
 	lastLoginMethodClient(),
 	apiKeyClient(),
+	jwtClient(),
 ] satisfies BetterAuthClientPlugin[];
 
 export const authClient = createBetterAuthClient({

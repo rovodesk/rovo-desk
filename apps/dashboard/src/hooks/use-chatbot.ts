@@ -35,6 +35,10 @@ type CreateConnectionResponse = Awaited<
 	ReturnType<typeof orpcQuery.chatbot.connection.create.call>
 >;
 
+type RotateConnectionKeysResponse = Awaited<
+	ReturnType<typeof orpcQuery.chatbot.connection.rotateKeys.call>
+>;
+
 type UpdateSettingsInput = z.infer<typeof UPDATE_CHATBOT_SETTINGS_INPUT_DTO>;
 
 type UpdateConnectionInput = z.infer<
@@ -88,6 +92,7 @@ export function useChatbot(
 		chatbot: ["chatbot", organizationId],
 		connections: ["chatbot-connections", organizationId],
 		connection: ["chatbot-connection", organizationId],
+		connectionKeys: ["chatbot-connection-keys", organizationId],
 	};
 
 	const enabled = Boolean(organizationId) && !isSessionLoading;
@@ -103,6 +108,7 @@ export function useChatbot(
 		}),
 		...connectionQueryOptions,
 	});
+
 	const chatbotQuery = useQuery<ChatbotData>({
 		...orpcQuery.chatbot.find.queryOptions({
 			enabled,
@@ -321,23 +327,94 @@ export function useChatbot(
 			}),
 	});
 
-	/* ---------- ROTATE KEYS (NO OPTIMISTIC) ---------- */
+	/* ---------- ROTATE KEYS ---------- */
 
 	const rotateConnectionKeys = useMutation<
-		void,
+		RotateConnectionKeysResponse,
 		Error,
-		RotateConnectionKeysInput
+		RotateConnectionKeysInput,
+		{
+			previousConnection?: ConnectionData;
+			previousConnections?: ConnectionListData;
+		}
 	>({
 		mutationFn: (input) => orpcQuery.chatbot.connection.rotateKeys.call(input),
 
-		onSuccess: (_data, variables) => {
-			Promise.all([
-				queryClient.invalidateQueries({
-					queryKey: [...keys.connection, variables.connectionId],
-				}),
-				queryClient.invalidateQueries({ queryKey: keys.chatbot }),
-				queryClient.invalidateQueries({ queryKey: keys.connections }),
+		onMutate: async (variables) => {
+			const singleKey = [...keys.connection, variables.connectionId];
+			const listKey = keys.connections;
+
+			await Promise.all([
+				queryClient.cancelQueries({ queryKey: singleKey }),
+				queryClient.cancelQueries({ queryKey: listKey }),
 			]);
+
+			const previousConnection =
+				queryClient.getQueryData<ConnectionData>(singleKey);
+
+			const previousConnections =
+				queryClient.getQueryData<ConnectionListData>(listKey);
+
+			return {
+				previousConnection,
+				previousConnections,
+			};
+		},
+
+		onSuccess: (data, variables) => {
+			if (!(data?.publicKey || data?.privateKey)) return;
+
+			const singleKey = [...keys.connection, variables.connectionId];
+			const listKey = keys.connections;
+
+			const applyUpdate = <T extends { keys?: any }>(item: T): T => {
+				if (!item) return item;
+
+				const existingKeys = item.keys;
+
+				return {
+					...item,
+					keys: existingKeys
+						? {
+								...existingKeys,
+								// Only overwrite if returned
+								...(data.publicKey ? { publicKey: data.publicKey } : {}),
+								...(data.privateKey ? { privateKey: data.privateKey } : {}),
+								status: existingKeys.status, // preserve required field
+							}
+						: {
+								...(data.publicKey ? { publicKey: data.publicKey } : {}),
+								...(data.privateKey ? { privateKey: data.privateKey } : {}),
+								status: "active",
+							},
+				};
+			};
+
+			// 🔥 Update single connection
+			queryClient.setQueryData<ConnectionData>(singleKey, (old) =>
+				old ? applyUpdate(old) : old
+			);
+
+			// 🔥 Update list cache
+			queryClient.setQueryData<ConnectionListData>(listKey, (old) =>
+				old
+					? old.map((conn) =>
+							conn.id === variables.connectionId ? applyUpdate(conn) : conn
+						)
+					: old
+			);
+		},
+		onError: (_err, variables, context) => {
+			const singleKey = [...keys.connection, variables.connectionId];
+			const listKey = keys.connections;
+
+			if (context?.previousConnection) {
+				queryClient.setQueryData(singleKey, context.previousConnection);
+			}
+
+			if (context?.previousConnections) {
+				queryClient.setQueryData(listKey, context.previousConnections);
+			}
 		},
 	});
 

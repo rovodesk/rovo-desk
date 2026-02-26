@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { createDatabase } from "../../conn";
+import type { Database } from "../../conn";
 import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
 
 export type OnboardingProgress = {
@@ -11,11 +11,12 @@ export type OnboardingProgress = {
 };
 
 export async function getOnboardingProgressByUserId(
-	userId: string
+	database: Database,
+	params: {
+		userId: string;
+	}
 ): Promise<OnboardingProgress> {
-	const db = createDatabase();
-
-	const flow = await db
+	const flow = await database
 		.select({
 			currentStepId: onboardingSchema.currentStepId,
 			flowData: onboardingSchema.flowData,
@@ -24,7 +25,7 @@ export async function getOnboardingProgressByUserId(
 			skippedAt: onboardingSchema.skippedAt,
 		})
 		.from(onboardingSchema)
-		.where(eq(onboardingSchema.userId, userId))
+		.where(eq(onboardingSchema.userId, params.userId))
 		.limit(1)
 		.then((res) => res[0]);
 

@@ -13,8 +13,8 @@ export type IUpdater = (
 ) => void;
 
 export interface ChatbotConfig {
-	botName: string;
-	initialMessages: ChatMessage[];
+	secretKey: string;
+	connectionId?: string;
 	state?: Record<string, unknown>;
 	widgets?: WidgetConfig[];
 }

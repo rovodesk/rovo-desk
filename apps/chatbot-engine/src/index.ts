@@ -5,7 +5,7 @@ import type {
 	IUpdater,
 } from "./types";
 import renderChatbot, { injectGlobalStyles } from "./ui";
-import { createBotMessage, createUserMessage, onDomReady } from "./utils";
+import { type createBotMessage, createUserMessage, onDomReady } from "./utils";
 
 declare global {
 	interface Window {
@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// Bot configuration
 	const config: ChatbotConfig = {
-		botName: "ZeroHeadsBot",
-		initialMessages: [createBotMessage("Hi! Type 'hello' to test me.")],
+		secretKey: "1234",
+		connectionId: "http://localhost:3000",
 	};
 
 	// Message parser class

@@ -1,22 +1,23 @@
 import { eq } from "drizzle-orm";
-import { createDatabase } from "../../conn";
+import type { Database } from "../../conn";
 import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
 
 export async function updateOnboardingProgressByUserId(
-	userId: string,
-	currentStepId: string,
-	flowData: Record<string, unknown>
+	database: Database,
+	params: {
+		userId: string;
+		currentStepId: string;
+		flowData: Record<string, unknown>;
+	}
 ): Promise<void> {
-	const db = createDatabase();
-
 	try {
-		await db
+		await database
 			.update(onboardingSchema)
 			.set({
-				currentStepId,
-				flowData,
+				currentStepId: params.currentStepId,
+				flowData: params.flowData,
 			})
-			.where(eq(onboardingSchema.userId, userId))
+			.where(eq(onboardingSchema.userId, params.userId))
 			.then((res) => res[0]);
 		return;
 	} catch (error) {
@@ -25,11 +26,12 @@ export async function updateOnboardingProgressByUserId(
 	}
 }
 
-export const clearOnboardingProgressByUserId = async (userId: string) => {
-	const db = createDatabase();
-
+export const clearOnboardingProgressByUserId = async (
+	database: Database,
+	params: { userId: string }
+) => {
 	try {
-		await db
+		await database
 			.update(onboardingSchema)
 			.set({
 				currentStepId: "welcome",
@@ -39,7 +41,7 @@ export const clearOnboardingProgressByUserId = async (userId: string) => {
 				startedAt: null,
 				deletedAt: new Date(),
 			})
-			.where(eq(onboardingSchema.userId, userId))
+			.where(eq(onboardingSchema.userId, params.userId))
 			.then((res) => res[0]);
 		return;
 	} catch (error) {

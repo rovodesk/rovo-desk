@@ -43,7 +43,8 @@
         "noChildrenProp": "off"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noExcessiveCognitiveComplexity": "off"
       }
     }
   },

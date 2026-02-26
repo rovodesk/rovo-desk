@@ -1,5 +1,5 @@
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
-import { createDatabase } from "../../conn";
+import type { Database } from "../../conn";
 import {
 	member as memberSchema,
 	organization as organizationSchema,
@@ -9,22 +9,29 @@ import {
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
 
-export async function getUserEmailVerificationStatus(userId: string) {
-	const db = createDatabase();
-	return await db
+export async function getUserEmailVerificationStatus(
+	database: Database,
+	params: {
+		userId: string;
+	}
+) {
+	return await database
 		.select({
 			emailVerified: userSchema.emailVerified,
 		})
 		.from(userSchema)
-		.where(eq(userSchema.id, userId))
+		.where(eq(userSchema.id, params.userId))
 		.limit(1)
 		.then((res) => res[0]);
 }
 
-export async function getUserSessionBootstrap(userId: string) {
-	const db = createDatabase();
-
-	return await db
+export async function getUserSessionBootstrap(
+	database: Database,
+	params: {
+		userId: string;
+	}
+) {
+	return await database
 		.select({
 			email: userSchema.email,
 
@@ -46,13 +53,16 @@ export async function getUserSessionBootstrap(userId: string) {
 		)
 		.leftJoin(teamMemberSchema, eq(teamMemberSchema.userId, userSchema.id))
 		.leftJoin(teamSchema, eq(teamMemberSchema.teamId, teamSchema.id))
-		.where(eq(userSchema.id, userId));
+		.where(eq(userSchema.id, params.userId));
 }
 
-export async function getUserSessions(userId: string) {
-	const db = createDatabase();
-
-	return await db
+export async function getUserSessions(
+	database: Database,
+	params: {
+		userId: string;
+	}
+) {
+	return await database
 		.select({
 			id: sessionSchema.id,
 			userId: sessionSchema.userId,
@@ -66,13 +76,17 @@ export async function getUserSessions(userId: string) {
 			activeTeamId: sessionSchema.activeTeamId,
 		})
 		.from(sessionSchema)
-		.where(eq(sessionSchema.userId, userId))
+		.where(eq(sessionSchema.userId, params.userId))
 		.orderBy(desc(sessionSchema.createdAt));
 }
 
-export async function getOrganizationBySlug(slug: string) {
-	const db = createDatabase();
-	return await db
+export async function getOrganizationBySlug(
+	database: Database,
+	params: {
+		slug: string;
+	}
+) {
+	return await database
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -81,14 +95,16 @@ export async function getOrganizationBySlug(slug: string) {
 			metadata: organizationSchema.metadata,
 		})
 		.from(organizationSchema)
-		.where(eq(organizationSchema.slug, slug))
+		.where(eq(organizationSchema.slug, params.slug))
 		.limit(1)
 		.then((res) => res[0]);
 }
 
-export async function getUserOrganizations(userId: string) {
-	const db = createDatabase();
-	const [organizations] = await db
+export async function getUserOrganizations(
+	database: Database,
+	params: { userId: string }
+) {
+	const [organizations] = await database
 		.select({
 			id: organizationSchema.id,
 			name: organizationSchema.name,
@@ -102,15 +118,17 @@ export async function getUserOrganizations(userId: string) {
 			organizationSchema,
 			eq(memberSchema.organizationId, organizationSchema.id)
 		)
-		.where(eq(userSchema.id, userId))
+		.where(eq(userSchema.id, params.userId))
 		.orderBy(desc(organizationSchema.createdAt));
 
 	return organizations;
 }
 
-export async function countUserOrganizations(userId: string) {
-	const db = createDatabase();
-	return await db
+export async function countUserOrganizations(
+	database: Database,
+	params: { userId: string }
+) {
+	return await database
 		.select({
 			count: sql<number>`count(*)`,
 		})
@@ -120,25 +138,22 @@ export async function countUserOrganizations(userId: string) {
 			organizationSchema,
 			eq(memberSchema.organizationId, organizationSchema.id)
 		)
-		.where(eq(userSchema.id, userId))
+		.where(eq(userSchema.id, params.userId))
 		.limit(1)
 		.then((res) => res[0]);
 }
 
-export async function findReusableSession({
-	userId,
-	userAgent,
-	deviceId,
-}: {
-	userId: string;
-	userAgent?: string;
-	deviceId?: string;
-}) {
-	if (!(userAgent && deviceId)) return null;
+export async function findReusableSession(
+	database: Database,
+	params: {
+		userId: string;
+		userAgent?: string;
+		deviceId?: string;
+	}
+) {
+	if (!(params.userAgent && params.deviceId)) return null;
 
-	const db = createDatabase();
-
-	const [session] = await db
+	const [session] = await database
 		.select({
 			id: sessionSchema.id,
 			userId: sessionSchema.userId,
@@ -154,9 +169,9 @@ export async function findReusableSession({
 		.from(sessionSchema)
 		.where(
 			and(
-				eq(sessionSchema.userId, userId),
-				eq(sessionSchema.userAgent, userAgent),
-				eq(sessionSchema.deviceId, deviceId),
+				eq(sessionSchema.userId, params.userId),
+				eq(sessionSchema.userAgent, params.userAgent),
+				eq(sessionSchema.deviceId, params.deviceId),
 				isNull(sessionSchema.revokedAt)
 			)
 		)

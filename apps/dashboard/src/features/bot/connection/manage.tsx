@@ -3,26 +3,15 @@ import { getRouteApi, Link, useRouter } from "@tanstack/react-router";
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import { Input } from "@zero-heads-lab/design-system/components/ui/input";
-import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import {
-	ChevronLeft,
-	Copy,
-	Eye,
-	EyeOff,
-	Info,
-	RefreshCw,
-	Save,
-	Trash2,
-} from "lucide-react";
-import { useMemo, useState } from "react";
+import { ChevronLeft, Save, Trash2 } from "lucide-react";
 import { z } from "zod";
 import { useChatbot } from "@/hooks/use-chatbot";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 import { ConnectionIcon } from "../_components/connection-icon";
+import { KeyManager } from "../_components/key-manager";
 
 const route = getRouteApi(
 	"/_authenticated/bot/connection/manage/$connectionId"
@@ -31,17 +20,19 @@ const route = getRouteApi(
 const connectionFormSchema = z.object({
 	connectionName: z.string().min(1, "Connection name is required"),
 	connectionSource: z.string().min(1, "Connection source is required"),
+	connectionType: z.enum(["CLIENT", "SERVER"]),
 });
 
 const ManageConnection = () => {
 	const { connectionId } = route.useParams();
 	const router = useRouter();
+
 	const {
 		getConnectionQueryOptions,
 		deleteConnectionAsync,
-		rotateConnectionKeysAsync,
 		updateConnectionAsync,
 	} = useChatbot();
+
 	const { data: connection, isLoading } = useQuery(
 		getConnectionQueryOptions(connectionId)
 	);
@@ -50,6 +41,7 @@ const ManageConnection = () => {
 		defaultValues: {
 			connectionName: connection?.connectionName,
 			connectionSource: connection?.connectionSource,
+			connectionType: connection?.connectionType,
 		},
 		validators: {
 			onSubmit: connectionFormSchema,
@@ -63,28 +55,6 @@ const ManageConnection = () => {
 			toast.success("Connection updated successfully");
 		},
 	});
-
-	const [showKey, setShowKey] = useState(false);
-
-	const connectionToken = useMemo(() => {
-		return connection?.privateKey || connection?.publicKey || "";
-	}, [connection?.privateKey, connection?.publicKey]);
-
-	const handleCopy = (text: string) => {
-		navigator.clipboard.writeText(text);
-		toast.success("Copied to clipboard");
-	};
-
-	const handleRotateKeys = async () => {
-		try {
-			setShowKey(false);
-			await rotateConnectionKeysAsync({ connectionId });
-			toast.success("Keys rotated successfully");
-		} catch {
-			toast.error("Failed to rotate keys");
-		}
-	};
-
 	const handleDelete = async () => {
 		try {
 			await deleteConnectionAsync({ connectionId });
@@ -136,15 +106,27 @@ const ManageConnection = () => {
 						>
 							<form.AppForm>
 								<div className="grid gap-6 md:grid-cols-2">
-									<form.AppField
-										children={(field) => (
-											<field.TextField
-												defaultValue={connection?.connectionName}
-												label="Connection Name"
-											/>
-										)}
-										name="connectionName"
-									/>
+									<div className="space-y-4">
+										<form.AppField
+											children={(field) => (
+												<field.TextField
+													defaultValue={connection?.connectionName}
+													label="Connection Name"
+												/>
+											)}
+											name="connectionName"
+										/>
+										<form.AppField
+											children={(field) => (
+												<field.TextField
+													defaultValue={connection?.connectionType}
+													disabled
+													label="Connection Type"
+												/>
+											)}
+											name="connectionType"
+										/>
+									</div>
 
 									<form.AppField
 										children={(field) => (
@@ -172,79 +154,19 @@ const ManageConnection = () => {
 					</section>
 
 					{/* 2. Security & API Keys Section */}
-					<section className="rounded-2xl border bg-card p-6 shadow-sm">
-						<div className="mb-6 flex items-center justify-between">
-							<div>
-								<h2 className="font-semibold text-lg">API Credentials</h2>
-								<p className="text-muted-foreground text-sm">
-									Use this key to authenticate your requests.
-								</p>
-							</div>
-							{isLoading ? (
-								<Skeleton className="h-10 w-32" />
-							) : (
-								<Button
-									className="text-amber-500 hover:text-amber-600"
-									onClick={handleRotateKeys}
-									size="sm"
-									variant="outline"
-								>
-									<RefreshCw className="mr-2 h-4 w-4" /> Rotate Key
-								</Button>
-							)}
-						</div>
-
-						<div className="space-y-4">
-							<div className="rounded-xl border border-dashed bg-muted/50 p-4">
-								<Label className="mb-2 block font-bold text-muted-foreground text-xs uppercase tracking-wider">
-									Private Access Token
-								</Label>
-								<div className="flex items-center gap-2">
-									<div className="relative flex-1">
-										<Input
-											className="pr-10 font-mono"
-											readOnly
-											type={showKey ? "text" : "password"}
-											value={connectionToken}
-										/>
-										<button
-											className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-primary"
-											onClick={() => setShowKey(!showKey)}
-										>
-											{showKey ? (
-												<EyeOff className="h-4 w-4" />
-											) : (
-												<Eye className="h-4 w-4" />
-											)}
-										</button>
-									</div>
-									<Button
-										onClick={() => handleCopy(connectionToken)}
-										size="icon"
-										variant="secondary"
-									>
-										<Copy className="h-4 w-4" />
-									</Button>
-								</div>
-								<div className="mt-3 flex items-start gap-2 text-[12px] text-muted-foreground">
-									<Info className="mt-0.5 h-3 w-3" />
-									<p>
-										Rotating your key will immediately invalidate the current
-										one. Use with caution.
-									</p>
-								</div>
-							</div>
-						</div>
-					</section>
+					<KeyManager
+						connectionId={connectionId}
+						connectionType={connection?.connectionType}
+					/>
 
 					{/* 3. Danger Zone */}
 					<section className="rounded-2xl border border-destructive/20 bg-destructive/5 p-6">
 						<div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
 							<div>
-								<h2 className="font-semibold text-lg text-red-600">
+								<h2 className="font-semibold text-md text-white">
 									Danger Zone
 								</h2>
-								<p className="text-muted-foreground text-sm">
+								<p className="text-muted-foreground text-xs">
 									Permanently remove this connection and all associated data.
 								</p>
 							</div>
@@ -262,5 +184,4 @@ const ManageConnection = () => {
 		</div>
 	);
 };
-
 export default ManageConnection;

@@ -1,6 +1,6 @@
 import type { IconProps } from "@tabler/icons-react";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { CONNECTION_ICONS_MAP } from "./connection-map";
+import { CONNECTION_MAP } from "./connection-map";
 
 interface ConnectionIconProps extends IconProps {
 	iconKey?: string;
@@ -15,7 +15,7 @@ export const ConnectionIcon = ({
 	...props
 }: ConnectionIconProps) => {
 	// Look up the component in your map
-	const IconComponent = iconKey ? CONNECTION_ICONS_MAP[iconKey] : null;
+	const IconComponent = iconKey ? CONNECTION_MAP[iconKey] : null;
 
 	return (
 		<div

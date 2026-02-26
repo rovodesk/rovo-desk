@@ -5,12 +5,14 @@ import {
 	index,
 	integer,
 	jsonb,
+	numeric,
 	pgSchema,
 	text,
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
-import { organization } from "schema";
+import { organization } from "./auth.schema";
+import { sdk } from "./sdk.schema";
 
 export const billingSchema = pgSchema("billing");
 
@@ -80,5 +82,35 @@ export const subscriptionRelations = relations(subscription, ({ one }) => ({
 		fields: [subscription.planId],
 		references: [plan.id],
 		relationName: "subscriptionPlan",
+	}),
+}));
+
+export const usageEvents = billingSchema.table("usage_events", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	organizationId: text("organizationId")
+		.notNull()
+		.references(() => organization.id),
+	sdkId: text("sdkId")
+		.notNull()
+		.references(() => sdk.id),
+	tokens: integer("tokens").notNull(),
+	cost: numeric("cost").notNull(),
+	createdAt: timestamp("createdAt", { withTimezone: true })
+		.defaultNow()
+		.notNull(),
+	deletedAt: timestamp("deletedAt", { withTimezone: true }),
+});
+
+export const usageEventsRelations = relations(usageEvents, ({ one }) => ({
+	organization: one(organization, {
+		fields: [usageEvents.organizationId],
+		references: [organization.id],
+	}),
+
+	sdk: one(sdk, {
+		fields: [usageEvents.sdkId],
+		references: [sdk.id],
 	}),
 }));

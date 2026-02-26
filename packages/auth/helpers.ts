@@ -1,3 +1,4 @@
+import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
 import { z } from "zod";
 import type {
@@ -10,6 +11,7 @@ import {
 	ORGANIZATION_MEMBER_ROLES,
 	PLATFORM_ROLES,
 } from "./access-control";
+import { AUTH_CONFIG } from "./config";
 import type {
 	AuthClient,
 	ClientPermissionMap,
@@ -202,3 +204,20 @@ export const checkDomainSlug = async (
 
 	return data.status;
 };
+
+const JWKS = createRemoteJWKSet(new URL(AUTH_CONFIG.JWKS_URL));
+
+export async function validateAuthToken(token: string): Promise<JWTPayload> {
+	try {
+		const { payload } = await jwtVerify(token, JWKS, {
+			issuer: AUTH_CONFIG.JWT_ISSUER,
+			audience: AUTH_CONFIG.JWT_AUDIENCE,
+			algorithms: [AUTH_CONFIG.JWT_ALGORITHM], // restrict allowed alg
+		});
+
+		return payload;
+	} catch (error) {
+		console.error("Token validation failed:", error);
+		throw new Error("Unauthorized");
+	}
+}

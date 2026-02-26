@@ -482,3 +482,13 @@ export const apiKeyRelations = relations(apiKey, ({ one }) => ({
 		relationName: "userApiKey",
 	}),
 }));
+
+export const jwksSchema = authSchema.table("jwks", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	publicKey: text("publicKey").notNull(),
+	privateKey: text("privateKey").notNull(),
+	createdAt: timestamp("createdAt").notNull().defaultNow(),
+	expiresAt: timestamp("expiresAt"),
+});

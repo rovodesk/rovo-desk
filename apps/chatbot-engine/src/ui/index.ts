@@ -49,6 +49,8 @@ const renderWidget = (
 		return;
 	}
 
+	// Fetch from database
+
 	// The Initial State of the Bot
 	const initialState: BotState = {
 		botName: config.botName,

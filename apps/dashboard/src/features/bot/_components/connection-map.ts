@@ -8,18 +8,18 @@ import {
 	type TablerIcon,
 } from "@tabler/icons-react";
 
-type ConnectionIcon = {
+type Connection = {
 	label: string;
 	icon: TablerIcon;
-	type: "CLIENT" | "SERVER" | "PLUGIN";
+	type: "CLIENT" | "SERVER";
 	source: "url" | "email" | "phone";
 };
 
-export const CONNECTION_ICONS_MAP: Record<string, ConnectionIcon> = {
+export const CONNECTION_MAP: Record<string, Connection> = {
 	whatsapp: {
 		label: "WhatsApp",
 		icon: IconBrandWhatsappFilled,
-		type: "PLUGIN",
+		type: "SERVER",
 		source: "phone",
 	},
 	react: {
@@ -37,28 +37,26 @@ export const CONNECTION_ICONS_MAP: Record<string, ConnectionIcon> = {
 	shopify: {
 		label: "Shopify",
 		icon: IconBrandShopee,
-		type: "PLUGIN",
+		type: "SERVER",
 		source: "url",
 	},
 	wordpress: {
 		label: "WordPress",
 		icon: IconBrandWordpress,
-		type: "PLUGIN",
+		type: "SERVER",
 		source: "url",
 	},
 	wix: {
 		label: "Wix",
 		icon: IconBrandWix,
-		type: "PLUGIN",
+		type: "SERVER",
 		source: "url",
 	},
 };
 
-export const CONNECTIONS = Object.keys(CONNECTION_ICONS_MAP);
-export type ConnectionIconKey = keyof typeof CONNECTION_ICONS_MAP;
+export const CONNECTIONS = Object.keys(CONNECTION_MAP);
+export type ConnectionKey = keyof typeof CONNECTION_MAP;
 
-export type SourceType =
-	(typeof CONNECTION_ICONS_MAP)[ConnectionIconKey]["source"];
-
-export type ConnectionType =
-	(typeof CONNECTION_ICONS_MAP)[ConnectionIconKey]["type"];
+export type SourceType = (typeof CONNECTION_MAP)[ConnectionKey]["source"];
+export type ConnectionType = (typeof CONNECTION_MAP)[ConnectionKey]["type"];
+export type ConnectionIconType = (typeof CONNECTION_MAP)[ConnectionKey]["icon"];

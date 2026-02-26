@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import {
 	Empty,
 	EmptyContent,
@@ -33,6 +33,8 @@ export const BotHome = () => {
 	}, [connections]);
 
 	const hasConnections = filteredConnections.length > 0;
+
+	const router = useRouter();
 
 	return (
 		<>
@@ -73,9 +75,17 @@ export const BotHome = () => {
 							{hasConnections ? (
 								<div className="divide-y">
 									{filteredConnections.map((connection) => (
+										// biome-ignore lint/a11y/noStaticElementInteractions: Clickable element
+										// biome-ignore lint/a11y/useKeyWithClickEvents: Clickable element
+										// biome-ignore lint/a11y/noNoninteractiveElementInteractions: Clickable element
 										<div
-											className="group flex flex-col justify-between p-6 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center"
+											className="group flex cursor-pointer flex-col justify-between p-6 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center"
 											key={connection.id}
+											onClick={() => {
+												router.navigate({
+													to: `/bot/connection/manage/${connection.id}`,
+												});
+											}}
 										>
 											<div className="flex items-start gap-4">
 												<ConnectionIcon

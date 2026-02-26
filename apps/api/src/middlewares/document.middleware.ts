@@ -4,11 +4,7 @@ import { partyserverMiddleware } from "hono-party";
 import { getAllowedOrigins } from "../lib/utils";
 import type { Bindings } from "../types";
 
-/**
- * PartyKit middleware
- * Handles all /ws/* requests
- */
-export const partyKitMiddleware: MiddlewareHandler<{
+export const documenttMiddleware: MiddlewareHandler<{
 	Bindings: Bindings;
 	// biome-ignore lint/suspicious/useAwait: No Awaited Funcrion
 }> = async (c, _next) => {
@@ -16,7 +12,6 @@ export const partyKitMiddleware: MiddlewareHandler<{
 
 	const handler = partyserverMiddleware({
 		options: {
-			prefix: "/party",
 			onBeforeConnect: async (req) => {
 				const res = await auth.api.getSession({
 					headers: req.headers,

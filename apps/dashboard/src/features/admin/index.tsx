@@ -22,7 +22,7 @@ import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 
 export function AdminDashboard() {
-	const { session, isLoading: isSessionLoading } = useSession();
+	const { session, loading: isSessionLoading } = useSession();
 
 	const role = determineAccessRole(session?.user.role);
 

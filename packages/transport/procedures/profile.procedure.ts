@@ -18,8 +18,11 @@ export const loadOnboardingProgress = base
 	.output(GET_ONBOARDING_PROGRESS_OUTPUT_DTO)
 	.handler(async ({ context }) => {
 		const user = context.user;
+		const database = context.database;
 
-		const onboardingProgress = await getOnboardingProgressByUserId(user.id);
+		const onboardingProgress = await getOnboardingProgressByUserId(database, {
+			userId: user.id,
+		});
 		if (!onboardingProgress) {
 			throw new ORPCError("NOT_FOUND", {
 				message: "Onboarding progress not found",
@@ -38,12 +41,13 @@ export const persistOnboardingProgress = base
 	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
 		const user = context.user;
+		const database = context.database;
 		try {
-			await updateOnboardingProgressByUserId(
-				user.id,
-				input.currentStepId,
-				input.flowData
-			);
+			await updateOnboardingProgressByUserId(database, {
+				userId: user.id,
+				currentStepId: input.currentStepId,
+				flowData: input.flowData,
+			});
 		} catch (error) {
 			console.error(error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -60,8 +64,9 @@ export const clearOnboardingProgress = base
 	.use(AuthGuard)
 	.handler(async ({ context }) => {
 		const user = context.user;
+		const database = context.database;
 		try {
-			await clearOnboardingProgressByUserId(user.id);
+			await clearOnboardingProgressByUserId(database, { userId: user.id });
 		} catch (error) {
 			console.error(error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {

@@ -12,6 +12,7 @@ import {
 	getUserSessionBootstrap,
 	getUserSessions,
 } from "@zero-heads-lab/database/repositories/auth/queries";
+import * as schema from "@zero-heads-lab/database/schema";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	ChangeEmailConfirmationTemplate,
@@ -35,11 +36,12 @@ export function createAuth(namespace: KVNamespace) {
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
 	console.log(trustedAuthOrigins);
 
-	const Plugins = AuthPlugins();
+	const Plugins = AuthPlugins(cacheStore, database);
 
 	return betterAuth({
 		database: drizzleAdapter(database, {
 			provider: "pg",
+			schema,
 		}),
 		trustedOrigins: trustedAuthOrigins,
 		secondaryStorage: {
@@ -63,7 +65,9 @@ export function createAuth(namespace: KVNamespace) {
 			sendVerificationEmail: async ({ user, url }) => {
 				// Find If already verified
 				const userEmailVerificationStatus =
-					await getUserEmailVerificationStatus(user.id);
+					await getUserEmailVerificationStatus(database, {
+						userId: user.id,
+					});
 				if (userEmailVerificationStatus?.emailVerified) {
 					return;
 				}
@@ -259,14 +263,18 @@ export function createAuth(namespace: KVNamespace) {
 						// }
 
 						// Enforce maximum sessions (only if creating a new one)
-						const sessions = await getUserSessions(session.userId);
+						const sessions = await getUserSessions(database, {
+							userId: session.userId,
+						});
 						if (sessions && sessions.length >= AUTH_CONFIG.MAXIMUM_SESSIONS) {
 							// If All available session of the user are greater than the max session value then delete the oldest session
 							const oldestSession = sessions.at(-1);
 							if (oldestSession) {
 								try {
 									// 1. Delete from DB
-									await deleteSession(oldestSession.id);
+									await deleteSession(database, {
+										sessionId: oldestSession.id,
+									});
 
 									// 2. Manual Cache Invalidation
 									// Better-Auth uses specific keys for sessions.
@@ -289,7 +297,9 @@ export function createAuth(namespace: KVNamespace) {
 					},
 					after: async (session) => {
 						try {
-							const rows = await getUserSessionBootstrap(session.userId);
+							const rows = await getUserSessionBootstrap(database, {
+								userId: session.userId,
+							});
 
 							if (!rows.length) {
 								throw new APIError("BAD_REQUEST", {
@@ -337,7 +347,7 @@ export function createAuth(namespace: KVNamespace) {
 						console.log(`Session  ${session.id} is being revoked`);
 						try {
 							try {
-								await markSessionAsRevoked(session.id);
+								await markSessionAsRevoked(database, { sessionId: session.id });
 							} catch {
 								// Ignore
 							}
@@ -371,7 +381,9 @@ export function createAuth(namespace: KVNamespace) {
 					after: async (user) => {
 						try {
 							// Create A New User Profile
-							await createNewUserWithProfileTransaction(user.id);
+							await createNewUserWithProfileTransaction(database, {
+								userId: user.id,
+							});
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);
@@ -403,9 +415,11 @@ export function createAuth(namespace: KVNamespace) {
 					before: async (user) => {
 						console.log(`User ${user.email} is being deleted`);
 						try {
-							await markUserAsDeleted(user.id);
+							await markUserAsDeleted(database, { userId: user.id });
 							// Delete from Cache
-							const userSessions = await getUserSessions(user.id);
+							const userSessions = await getUserSessions(database, {
+								userId: user.id,
+							});
 							userSessions.forEach((session) => {
 								cacheStore.delete(`session:${session.id}`);
 							});
