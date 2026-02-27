@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
 	Empty,
 	EmptyContent,
@@ -12,12 +12,13 @@ import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Switch } from "@zero-heads-lab/design-system/components/ui/switch";
 import { format } from "date-fns";
-import { Calendar, MessageSquarePlus, Plus, Settings2 } from "lucide-react";
+import { Calendar, MessageSquarePlus, Settings2 } from "lucide-react";
 import { useMemo } from "react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { useChatbot } from "@/hooks/use-chatbot";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
+import { AddConnectionDrawer } from "./_components/add-connection-drawer";
 import { BotHealthItem } from "./_components/bot-health";
 import { ConnectionIcon } from "./_components/connection-icon";
 
@@ -33,8 +34,6 @@ export const BotHome = () => {
 	}, [connections]);
 
 	const hasConnections = filteredConnections.length > 0;
-
-	const router = useRouter();
 
 	return (
 		<>
@@ -62,57 +61,48 @@ export const BotHome = () => {
 										Manage your chatbot integrations and platforms.
 									</p>
 								</div>
-								{hasConnections && (
-									<Button asChild size="sm">
-										<Link to="/bot/connection/add">
-											<Plus className="mr-2 h-4 w-4" />
-											Add New
-										</Link>
-									</Button>
-								)}
+								{hasConnections && <AddConnectionDrawer />}
 							</div>
 
 							{hasConnections ? (
 								<div className="divide-y">
 									{filteredConnections.map((connection) => (
-										// biome-ignore lint/a11y/noStaticElementInteractions: Clickable element
-										// biome-ignore lint/a11y/useKeyWithClickEvents: Clickable element
-										// biome-ignore lint/a11y/noNoninteractiveElementInteractions: Clickable element
 										<div
-											className="group flex cursor-pointer flex-col justify-between p-6 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center"
+											className="group flex flex-col justify-between p-6 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center"
 											key={connection.id}
-											onClick={() => {
-												router.navigate({
-													to: `/bot/connection/manage/${connection.id}`,
-												});
-											}}
 										>
 											<div className="flex items-start gap-4">
-												<ConnectionIcon
-													fallbackText={connection.connectionName}
-													iconKey={connection.connectionIcon}
-												/>
-												<div className="space-y-1">
-													<div className="flex items-center gap-2">
-														<p className="font-semibold leading-none">
-															{connection.connectionName}
-														</p>
-														<Badge
-															className="text-[10px] uppercase tracking-wider"
-															variant="secondary"
-														>
-															{connection.connectionType}
-														</Badge>
+												<Link
+													className="flex cursor-pointer items-start gap-4"
+													params={{ connectionId: connection.id }}
+													to={"/bot/connection/manage/$connectionId"}
+												>
+													<ConnectionIcon
+														fallbackText={connection.connectionName}
+														iconKey={connection.connectionIcon}
+													/>
+													<div className="space-y-1">
+														<div className="flex items-center gap-2">
+															<p className="font-semibold leading-none">
+																{connection.connectionName}
+															</p>
+															<Badge
+																className="text-[10px] uppercase tracking-wider"
+																variant="secondary"
+															>
+																{connection.connectionType}
+															</Badge>
+														</div>
+														<div className="flex items-center text-muted-foreground text-xs">
+															<Calendar className="mr-1 h-3 w-3" />
+															Added{" "}
+															{format(
+																new Date(connection.createdAt),
+																"MMM d, yyyy"
+															)}
+														</div>
 													</div>
-													<div className="flex items-center text-muted-foreground text-xs">
-														<Calendar className="mr-1 h-3 w-3" />
-														Added{" "}
-														{format(
-															new Date(connection.createdAt),
-															"MMM d, yyyy"
-														)}
-													</div>
-												</div>
+												</Link>
 											</div>
 
 											<div className="mt-4 flex items-center justify-between gap-6 sm:mt-0">
@@ -159,12 +149,7 @@ export const BotHome = () => {
 										</EmptyDescription>
 									</EmptyHeader>
 									<EmptyContent>
-										<Button asChild>
-											<Link to="/bot/connection/add">
-												<Plus className="mr-2 h-4 w-4" />
-												Add Your First Connection
-											</Link>
-										</Button>
+										<AddConnectionDrawer triggerText="Add Your First Connection" />
 									</EmptyContent>
 								</Empty>
 							)}

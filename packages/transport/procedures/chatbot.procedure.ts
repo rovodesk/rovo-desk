@@ -323,6 +323,7 @@ export const updateChatbotConnection = base
 				connectionId: input.connectionId,
 				connectionName: input.connectionName,
 				connectionSource: input.connectionSource,
+				connectionActive: input.connectionActive,
 			});
 		} catch (error) {
 			console.error(error);

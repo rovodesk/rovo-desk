@@ -53,7 +53,12 @@ export function TasksMultiDeleteDialog<TData>({
 	return (
 		<ConfirmDialog
 			confirmText="Delete"
-			desc={
+			destructive
+			disabled={value.trim() !== CONFIRM_WORD}
+			onConfirm={handleDelete}
+			onOpenChange={onOpenChange}
+			open={open}
+			subtitle={
 				<div className="space-y-4">
 					<p className="mb-2">
 						Are you sure you want to delete the selected tasks? <br />
@@ -77,11 +82,6 @@ export function TasksMultiDeleteDialog<TData>({
 					</Alert>
 				</div>
 			}
-			destructive
-			disabled={value.trim() !== CONFIRM_WORD}
-			handleConfirm={handleDelete}
-			onOpenChange={onOpenChange}
-			open={open}
 			title={
 				<span className="text-destructive">
 					<AlertTriangle

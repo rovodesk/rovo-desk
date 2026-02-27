@@ -1,4 +1,4 @@
-import { createBotMessage } from "../utils";
+import { createChatMessage } from "../core/message-parser";
 
 /**
  * Creates an error message for the chat interface.
@@ -21,7 +21,7 @@ export const createErrorMessage = (message: string) => {
 		width: "260px",
 	});
 
-	const botMessage = createBotMessage(message);
+	const botMessage = createChatMessage(message, "error");
 	const messageElement = document.createElement("p");
 	messageElement.textContent = botMessage.message;
 	innerContainer.appendChild(messageElement);
@@ -49,3 +49,8 @@ export const createErrorMessage = (message: string) => {
 
 	return container;
 };
+
+export function renderError(rootEl: HTMLElement, message: string) {
+	rootEl.replaceChildren();
+	rootEl.appendChild(createErrorMessage(message));
+}

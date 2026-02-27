@@ -1,13 +1,14 @@
-import type { BotState, IUpdater, View } from "../types";
+import type { ChatbotEngine } from "core/engine";
+import type { BotState, View } from "../types";
 
-export function createHelpView(_state: BotState, _updater: IUpdater): View {
+export function createHelpView(engine: ChatbotEngine<BotState>): View {
 	return {
-		header: createHelpHeader(_updater),
+		header: createHelpHeader(engine),
 		content: createHelpInnerContainer(),
 	};
 }
 
-function createHelpHeader(updater: IUpdater): HTMLElement {
+function createHelpHeader(engine: ChatbotEngine<BotState>): HTMLElement {
 	const header = document.createElement("div");
 
 	Object.assign(header.style, {
@@ -43,7 +44,7 @@ function createHelpHeader(updater: IUpdater): HTMLElement {
 		color: "#94a3b8",
 	});
 
-	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
+	close.onclick = () => engine.setState((prev) => ({ ...prev, isOpen: false }));
 
 	header.appendChild(close);
 

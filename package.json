@@ -83,7 +83,9 @@
     "lint": "ultracite fix",
     "clean": "rm -rf node_modules bun.lock && bun pm cache rm",
     "infra:up": "docker-compose up -d",
-    "infra:down": "docker-compose down"
+    "infra:down": "docker-compose down",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260130.0",
@@ -98,5 +100,8 @@
   },
   "peerDependencies": {
     "typescript": "catalog:typescript"
+  },
+  "dependencies": {
+    "vitest": "^4.0.18"
   }
 }

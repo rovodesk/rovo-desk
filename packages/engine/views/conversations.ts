@@ -1,16 +1,16 @@
-import type { BotState, IUpdater, View } from "../types";
+import type { ChatbotEngine } from "core/engine";
+import type { BotState, View } from "../types";
 
-export function createConversationsView(
-	_state: BotState,
-	updater: IUpdater
-): View {
+export function createConversationsView(engine: ChatbotEngine<BotState>): View {
 	return {
-		header: createConversationsHeader(updater),
-		content: createConversationsInnerContainer(updater),
+		header: createConversationsHeader(engine),
+		content: createConversationsInnerContainer(engine),
 	};
 }
 
-function createConversationsHeader(updater: IUpdater): HTMLElement {
+function createConversationsHeader(
+	engine: ChatbotEngine<BotState>
+): HTMLElement {
 	const header = document.createElement("div");
 
 	Object.assign(header.style, {
@@ -46,14 +46,16 @@ function createConversationsHeader(updater: IUpdater): HTMLElement {
 		color: "#94a3b8",
 	});
 
-	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
+	close.onclick = () => engine.setState((prev) => ({ ...prev, isOpen: false }));
 
 	header.appendChild(close);
 
 	return header;
 }
 
-function createConversationsInnerContainer(updater: IUpdater): HTMLElement {
+function createConversationsInnerContainer(
+	engine: ChatbotEngine<BotState>
+): HTMLElement {
 	const container = document.createElement("div");
 
 	Object.assign(container.style, {
@@ -122,7 +124,7 @@ function createConversationsInnerContainer(updater: IUpdater): HTMLElement {
 	});
 
 	button.onclick = () =>
-		updater((prev) => ({
+		engine.setState((prev) => ({
 			...prev,
 			activeTab: "chats",
 		}));

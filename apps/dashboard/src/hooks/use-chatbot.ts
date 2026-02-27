@@ -217,39 +217,64 @@ export function useChatbot(
 		void,
 		Error,
 		ToggleConnectionInput,
-		{ previous?: ConnectionListData }
+		{ previousList?: ConnectionListData; previousSingle?: ConnectionData }
 	>({
 		mutationFn: (input) => orpcQuery.chatbot.connection.toggle.call(input),
 
 		onMutate: async (input) => {
-			await queryClient.cancelQueries({
-				queryKey: keys.connections,
-			});
+			const singleKey = [...keys.connection, input.connectionId];
+			const listKey = keys.connections;
 
-			const previous = queryClient.getQueryData<ConnectionListData>(
-				keys.connections
+			await Promise.all([
+				queryClient.cancelQueries({ queryKey: listKey }),
+				queryClient.cancelQueries({ queryKey: singleKey }),
+			]);
+
+			// snapshot
+			const previousList =
+				queryClient.getQueryData<ConnectionListData>(listKey);
+
+			const previousSingle =
+				queryClient.getQueryData<ConnectionData>(singleKey);
+
+			// ✅ optimistic update list
+			queryClient.setQueryData<ConnectionListData>(
+				listKey,
+				(old) =>
+					old?.map((conn) =>
+						conn.id === input.connectionId
+							? { ...conn, isActive: !conn.isActive }
+							: conn
+					) ?? old
 			);
 
-			optimisticListUpdate((old) =>
-				old.map((conn: any) =>
-					conn.id === input.connectionId
-						? { ...conn, enabled: !conn.enabled }
-						: conn
-				)
+			// ✅ optimistic update single
+			queryClient.setQueryData<ConnectionData>(singleKey, (old) =>
+				old ? { ...old, isActive: !old.isActive } : old
 			);
 
-			return { previous };
+			return { previousList, previousSingle };
 		},
 
-		onError: (_err, _input, ctx) => {
-			if (ctx?.previous)
-				queryClient.setQueryData(keys.connections, ctx.previous);
+		onError: (_err, input, ctx) => {
+			const singleKey = [...keys.connection, input.connectionId];
+			const listKey = keys.connections;
+
+			if (ctx?.previousList) {
+				queryClient.setQueryData(listKey, ctx.previousList);
+			}
+
+			if (ctx?.previousSingle) {
+				queryClient.setQueryData(singleKey, ctx.previousSingle);
+			}
 		},
 
-		onSettled: () =>
+		// 🔥 ONLY refetch the single connection
+		onSettled: (_data, _err, input) => {
 			queryClient.invalidateQueries({
-				queryKey: keys.connections,
-			}),
+				queryKey: [...keys.connection, input.connectionId],
+			});
+		},
 	});
 
 	/* --------- Update Connection ---------- */
@@ -355,14 +380,11 @@ export function useChatbot(
 			const previousConnections =
 				queryClient.getQueryData<ConnectionListData>(listKey);
 
-			return {
-				previousConnection,
-				previousConnections,
-			};
+			return { previousConnection, previousConnections };
 		},
 
 		onSuccess: (data, variables) => {
-			if (!(data?.publicKey || data?.privateKey)) return;
+			if (!data) return;
 
 			const singleKey = [...keys.connection, variables.connectionId];
 			const listKey = keys.connections;
@@ -370,40 +392,32 @@ export function useChatbot(
 			const applyUpdate = <T extends { keys?: any }>(item: T): T => {
 				if (!item) return item;
 
-				const existingKeys = item.keys;
-
 				return {
 					...item,
-					keys: existingKeys
-						? {
-								...existingKeys,
-								// Only overwrite if returned
-								...(data.publicKey ? { publicKey: data.publicKey } : {}),
-								...(data.privateKey ? { privateKey: data.privateKey } : {}),
-								status: existingKeys.status, // preserve required field
-							}
-						: {
-								...(data.publicKey ? { publicKey: data.publicKey } : {}),
-								...(data.privateKey ? { privateKey: data.privateKey } : {}),
-								status: "active",
-							},
+					keys: {
+						...item.keys,
+						...(data.publicKey ? { publicKey: data.publicKey } : {}),
+						...(data.privateKey ? { privateKey: data.privateKey } : {}),
+						status: item.keys?.status ?? "active",
+					},
 				};
 			};
 
-			// 🔥 Update single connection
+			// ✅ update single cache
 			queryClient.setQueryData<ConnectionData>(singleKey, (old) =>
 				old ? applyUpdate(old) : old
 			);
 
-			// 🔥 Update list cache
-			queryClient.setQueryData<ConnectionListData>(listKey, (old) =>
-				old
-					? old.map((conn) =>
-							conn.id === variables.connectionId ? applyUpdate(conn) : conn
-						)
-					: old
+			// ✅ update list cache (no refetch)
+			queryClient.setQueryData<ConnectionListData>(
+				listKey,
+				(old) =>
+					old?.map((conn) =>
+						conn.id === variables.connectionId ? applyUpdate(conn) : conn
+					) ?? old
 			);
 		},
+
 		onError: (_err, variables, context) => {
 			const singleKey = [...keys.connection, variables.connectionId];
 			const listKey = keys.connections;
@@ -415,6 +429,13 @@ export function useChatbot(
 			if (context?.previousConnections) {
 				queryClient.setQueryData(listKey, context.previousConnections);
 			}
+		},
+
+		// 🔥 Do nothing
+		onSettled: (_data, _err, _variables) => {
+			// queryClient.invalidateQueries({
+			// 	queryKey: [...keys.connection, variables.connectionId],
+			// });
 		},
 	});
 

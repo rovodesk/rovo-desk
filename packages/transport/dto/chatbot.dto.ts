@@ -110,6 +110,7 @@ export const UPDATE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
 		.string()
 		.min(1, "Connection source is required")
 		.optional(),
+	connectionActive: z.boolean().optional(),
 });
 
 export const CONVERSATION_DTO = z.object({

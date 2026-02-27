@@ -123,9 +123,11 @@ export async function updateSDKConnectionTransaction(
 		connectionId: string;
 		connectionName?: string;
 		connectionSource?: string;
+		connectionActive?: boolean;
 	}
 ) {
-	const { connectionId, connectionName, connectionSource } = params;
+	const { connectionId, connectionName, connectionSource, connectionActive } =
+		params;
 
 	return await database.transaction(async (tx) => {
 		const existingConnection = await tx.query.sdkConnections.findFirst({
@@ -142,6 +144,7 @@ export async function updateSDKConnectionTransaction(
 			.set({
 				connectionName,
 				connectionSource,
+				isActive: connectionActive,
 				updatedAt: new Date(),
 			})
 			.where(eq(sdkConnections.id, connectionId))

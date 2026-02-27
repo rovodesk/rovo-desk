@@ -1,6 +1,10 @@
-import type { BotState, IUpdater } from "../types";
+import type { ChatbotEngine } from "../core/engine";
+import type { BotState } from "../types";
 
-export function createLauncher(state: BotState, updater: IUpdater) {
+export function createLauncher(
+	state: BotState,
+	engine: ChatbotEngine<BotState>
+) {
 	const btn = document.createElement("button");
 	btn.className = "zh-widget-launcher";
 
@@ -67,7 +71,7 @@ export function createLauncher(state: BotState, updater: IUpdater) {
 	btn.appendChild(iconWrapper);
 
 	btn.onclick = () => {
-		updater((prev) => ({ ...prev, isOpen: !prev.isOpen }));
+		engine.setState((prev) => ({ ...prev, isOpen: !prev.isOpen }));
 	};
 
 	return btn;

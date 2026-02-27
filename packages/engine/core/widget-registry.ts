@@ -1,49 +1,39 @@
-import type {
-	BotState,
-	ChatbotActionProvider,
-	IUpdater,
-	WidgetDefinition,
-} from "./types";
-import { getObject, scrollIntoView } from "./utils";
+import type { BotState, IUpdater } from "../types";
+import { getObject, scrollIntoView } from "../utils";
+import type { IActionProvider } from "./action-provider.js";
 
-export interface AddWidgetParams {
+interface Widget {
 	widgetName: string;
-	widgetFunc: (props: Record<string, unknown>) => HTMLElement;
-	mapStateToProps?: string[];
+	element: (props: Record<string, unknown>) => HTMLElement;
 	props?: Record<string, unknown>;
+	mapStateToProps?: string[];
 }
 
-export interface IWidgetRegistry {
-	addWidget(params: AddWidgetParams): void;
+interface IWidgetRegistry {
+	addWidget(params: Widget): void;
 	getWidget(widgetName: string, state: BotState): HTMLElement | undefined;
 }
 
-export class WidgetRegistry implements IWidgetRegistry {
-	private readonly setState: IUpdater;
-
-	private readonly actionProvider: ChatbotActionProvider;
-
-	private readonly widgets: Record<string, WidgetDefinition> = {};
+class WidgetRegistry<T extends BotState> implements IWidgetRegistry {
+	private readonly setState: IUpdater<T>;
+	private readonly actionProvider: IActionProvider;
+	private readonly widgets: Record<string, Widget> = {};
 
 	constructor({
 		setStateFunc,
 		actionProvider,
 	}: {
-		setStateFunc: IUpdater;
-		actionProvider: ChatbotActionProvider;
+		setStateFunc: IUpdater<T>;
+		actionProvider: IActionProvider;
 	}) {
 		this.setState = setStateFunc;
 		this.actionProvider = actionProvider;
 	}
 
-	addWidget({
-		widgetName,
-		widgetFunc,
-		mapStateToProps,
-		props,
-	}: AddWidgetParams): void {
+	addWidget({ widgetName, element, mapStateToProps, props }: Widget): void {
 		this.widgets[widgetName] = {
-			widget: widgetFunc,
+			widgetName,
+			element,
 			props,
 			mapStateToProps,
 		};
@@ -66,7 +56,7 @@ export class WidgetRegistry implements IWidgetRegistry {
 			actionProvider: this.actionProvider,
 		};
 
-		return widgetObject.widget(widgetProps);
+		return widgetObject.element(widgetProps);
 	}
 
 	private mapStateToProps(
@@ -82,4 +72,4 @@ export class WidgetRegistry implements IWidgetRegistry {
 	}
 }
 
-export default WidgetRegistry;
+export { type Widget, type IWidgetRegistry, WidgetRegistry };

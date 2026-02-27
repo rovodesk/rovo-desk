@@ -1,13 +1,14 @@
-import type { BotState, IUpdater, View } from "../types";
+import type { ChatbotEngine } from "core/engine";
+import type { BotState, View } from "../types";
 
-export function createNewsView(_state: BotState, updater: IUpdater): View {
+export function createNewsView(engine: ChatbotEngine<BotState>): View {
 	return {
-		header: createNewsHeader(updater),
+		header: createNewsHeader(engine),
 		content: createNewsInnerContainer(),
 	};
 }
 
-export function createNewsHeader(updater: IUpdater): HTMLElement {
+export function createNewsHeader(engine: ChatbotEngine<BotState>): HTMLElement {
 	const header = document.createElement("div");
 
 	Object.assign(header.style, {
@@ -43,7 +44,7 @@ export function createNewsHeader(updater: IUpdater): HTMLElement {
 		color: "#94a3b8",
 	});
 
-	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
+	close.onclick = () => engine.setState((prev) => ({ ...prev, isOpen: false }));
 
 	header.appendChild(close);
 

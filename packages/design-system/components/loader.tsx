@@ -8,7 +8,7 @@ interface LoaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Loader({
-    title = "Configuring your account...",
+    title = "Loading...",
     subtitle = "Please wait while we prepare everything for you",
     size = "md",
     className,
@@ -43,7 +43,7 @@ export function Loader({
     return (
         <div
             className={cn(
-                "min-h-screen w-full bg-slate-700 flex items-center justify-center",
+                "min-h-screen w-full bg-slate-200 flex items-center justify-center",
                 className
             )}
             {...props}

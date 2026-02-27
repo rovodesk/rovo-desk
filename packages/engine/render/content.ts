@@ -1,39 +1,31 @@
-import type { BotState, IMessageParser, IUpdater, Tab } from "../types";
+import type { ChatbotEngine } from "../core/engine";
+import type { BotState, Tab } from "../types";
 import { createChatView } from "../views/chats";
 import { createConversationsView } from "../views/conversations";
 import { createHelpView } from "../views/help.view";
 import { createHomeView } from "../views/home.view";
 import { createNewsView } from "../views/news.view";
-import type WidgetRegistry from "../widget-registry";
 
-type ViewRenderer = (
-	state: BotState,
-	updater: IUpdater,
-	messageParser: IMessageParser,
-	widgetRegistry: WidgetRegistry
-) => {
+type ViewRenderer = (engine: ChatbotEngine<BotState>) => {
 	header: HTMLElement;
 	content: HTMLElement;
 };
 
 const VIEW_MAP: Record<Tab, ViewRenderer> = {
-	home: (state, updater) => createHomeView(state, updater),
+	home: (engine) => createHomeView(engine),
 
-	chats: (state, updater, messageParser, widgetRegistry) =>
-		createChatView(state, updater, messageParser, widgetRegistry),
+	chats: (engine) => createChatView(engine),
 
-	conversations: (state, updater) => createConversationsView(state, updater),
+	conversations: (engine) => createConversationsView(engine),
 
-	help: (state, updater) => createHelpView(state, updater),
+	help: (engine) => createHelpView(engine),
 
-	updates: (state, updater) => createNewsView(state, updater),
+	updates: (engine) => createNewsView(engine),
 };
 
 export function createContent(
 	state: BotState,
-	messageParser: IMessageParser,
-	updater: IUpdater,
-	widgetRegistry: WidgetRegistry
+	engine: ChatbotEngine<BotState>
 ) {
 	const container = document.createElement("div");
 
@@ -52,7 +44,7 @@ export function createContent(
 		throw new Error(`No view found for tab: ${state.activeTab}`);
 	}
 
-	const view = renderer(state, updater, messageParser, widgetRegistry);
+	const view = renderer(engine);
 
 	Object.assign(view.content.style, {
 		flex: "1",

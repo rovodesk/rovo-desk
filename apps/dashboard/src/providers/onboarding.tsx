@@ -49,8 +49,8 @@ export function OnboardingProvider({
 	if (isLoading) {
 		return (
 			<Loader
-				subtitle="Please wait while we start your onboarding"
-				title="Something Great is Cooking..."
+				subtitle="Please wait while we prepare your workspace"
+				title="Speeding things up..."
 			/>
 		);
 	}

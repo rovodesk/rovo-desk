@@ -1,13 +1,16 @@
-import type { BotState, IUpdater, View } from "../types";
+import type { ChatbotEngine } from "core/engine";
+import type { BotState, View } from "../types";
 
-export function createHomeView(_state: BotState, updater: IUpdater): View {
+export function createHomeView(engine: ChatbotEngine<BotState>): View {
 	return {
-		header: createHomeHeader(updater),
-		content: createHomeInnerContainer(updater),
+		header: createHomeHeader(engine),
+		content: createHomeInnerContainer(engine),
 	};
 }
 
-export function createHomeInnerContainer(updater: IUpdater): HTMLElement {
+export function createHomeInnerContainer(
+	engine: ChatbotEngine<BotState>
+): HTMLElement {
 	const container = document.createElement("div");
 
 	Object.assign(container.style, {
@@ -81,7 +84,7 @@ export function createHomeInnerContainer(updater: IUpdater): HTMLElement {
 	};
 
 	cta.onclick = () =>
-		updater((prev) => ({
+		engine.setState((prev) => ({
 			...prev,
 			activeTab: "conversations",
 		}));
@@ -144,7 +147,7 @@ export function createHomeInnerContainer(updater: IUpdater): HTMLElement {
 	return container;
 }
 
-export function createHomeHeader(updater: IUpdater): HTMLElement {
+export function createHomeHeader(engine: ChatbotEngine<BotState>): HTMLElement {
 	const header = document.createElement("div");
 
 	Object.assign(header.style, {
@@ -195,7 +198,7 @@ export function createHomeHeader(updater: IUpdater): HTMLElement {
 		borderRadius: "8px",
 	});
 
-	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
+	close.onclick = () => engine.setState((prev) => ({ ...prev, isOpen: false }));
 
 	header.append(logo, close);
 

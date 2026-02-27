@@ -1,33 +1,18 @@
-import type { ChatMessage } from "@zero-heads-lab/shared/types";
-import { generateUUID } from "@zero-heads-lab/shared/utils";
-import type { BotState, IMessageParser, IUpdater, View } from "../types";
-import { createUserMessage } from "../utils";
-import type WidgetRegistry from "../widget-registry";
+import type { ChatbotEngine } from "../core/engine";
+import type { Message } from "../core/message-parser";
+import type { BotState, View } from "../types";
 
 const DEFAULT_MESSAGE_LOADING_TIME = 750;
 
-export function createChatView(
-	state: BotState,
-	updater: IUpdater,
-	messageParserInstance: IMessageParser,
-	widgetRegistry: WidgetRegistry
-): View {
+export function createChatView(engine: ChatbotEngine<BotState>): View {
 	return {
-		header: createChatHeader(state, updater),
-		content: createChatInnerContainer(
-			state,
-			messageParserInstance,
-			updater,
-			widgetRegistry
-		),
+		header: createChatHeader(engine),
+		content: createChatInnerContainer(engine),
 	};
 }
 
 export const createChatInnerContainer = (
-	state: BotState,
-	messageParserInstance: IMessageParser,
-	updater: IUpdater,
-	widgetRegistry: WidgetRegistry
+	engine: ChatbotEngine<BotState>
 ): HTMLElement => {
 	const container = document.createElement("div");
 	Object.assign(container.style, {
@@ -46,12 +31,7 @@ export const createChatInnerContainer = (
 	});
 
 	// ===== Messages Area =====
-	const messages = createMessageContainer(
-		state.messages,
-		widgetRegistry,
-		state,
-		updater
-	);
+	const messages = createMessageContainer(engine);
 
 	Object.assign(messages.style, {
 		padding: "20px 16px",
@@ -85,17 +65,16 @@ export const createChatInnerContainer = (
 		zIndex: "2",
 	});
 
-	const form = createForm(messageParserInstance, updater);
+	const form = createForm(engine);
 
 	container.append(topFade, messages, bottomFade, form);
 
 	return container;
 };
 
-export function createChatHeader(
-	state: BotState,
-	updater: IUpdater
-): HTMLElement {
+export function createChatHeader(engine: ChatbotEngine<BotState>): HTMLElement {
+	const state = engine.getState();
+
 	const header = document.createElement("div");
 	Object.assign(header.style, {
 		padding: "14px 16px",
@@ -175,7 +154,7 @@ export function createChatHeader(
 	const title = document.createElement("span");
 	title.textContent = state.isElevated
 		? "Human Support" // TODO: Use real name
-		: (state.botName ?? "AI Assistant");
+		: "AI Assistant";
 
 	Object.assign(title.style, {
 		fontSize: "14px",
@@ -236,7 +215,7 @@ export function createChatHeader(
 		};
 
 		elevateBtn.onclick = () =>
-			updater((prev) => ({
+			engine.setState((prev) => ({
 				...prev,
 				isElevated: !prev.isElevated,
 			}));
@@ -275,7 +254,7 @@ export function createChatHeader(
 		close.style.color = "#94a3b8";
 	};
 
-	close.onclick = () => updater((prev) => ({ ...prev, isOpen: false }));
+	close.onclick = () => engine.setState((prev) => ({ ...prev, isOpen: false }));
 
 	actions.append(close);
 	header.append(left, actions);
@@ -284,12 +263,10 @@ export function createChatHeader(
 }
 
 const createMessageContainer = (
-	messages: ChatMessage[],
-	widgetRegistry: WidgetRegistry,
-	state: BotState,
-	updater: IUpdater
+	engine: ChatbotEngine<BotState>
 ): HTMLElement => {
 	const container = document.createElement("div");
+	const { messages } = engine.getState();
 
 	Object.assign(container.style, {
 		flex: "1",
@@ -300,13 +277,11 @@ const createMessageContainer = (
 		gap: "12px",
 	});
 
-	messages.forEach((mes) => {
-		if (mes.type === "bot") {
-			container.appendChild(
-				createBotChatMessage(mes, widgetRegistry, state, updater)
-			);
+	messages.forEach((payload) => {
+		if (payload.type === "bot") {
+			container.appendChild(createBotChatMessage(payload, engine));
 		} else {
-			container.appendChild(createUserChatMessage(mes.message));
+			container.appendChild(createUserChatMessage(payload));
 		}
 	});
 
@@ -315,10 +290,7 @@ const createMessageContainer = (
 	return container;
 };
 
-const createForm = (
-	messageParserInstance: IMessageParser,
-	updater: IUpdater
-): HTMLElement => {
+const createForm = (engine: ChatbotEngine<BotState>): HTMLElement => {
 	const container = document.createElement("div");
 
 	Object.assign(container.style, {
@@ -424,22 +396,16 @@ const createForm = (
 		inputWrapper.style.boxShadow = "none";
 	};
 
-	const userId = generateUUID();
+	const userId = crypto.randomUUID();
 
 	// ===== Submit Logic =====
-	form.onsubmit = (e) => {
+	form.onsubmit = async (e) => {
 		e.preventDefault();
 
 		if (!input.value.trim()) return;
 
-		const message = createUserMessage(input.value, userId);
+		await engine.handleUserMessage(input.value, { userId });
 
-		updater((state) => ({
-			...state,
-			messages: [...state.messages, message],
-		}));
-
-		messageParserInstance.parse(input.value);
 		input.value = "";
 	};
 
@@ -450,7 +416,7 @@ const createForm = (
 	return container;
 };
 
-const createUserChatMessage = (message: string): HTMLElement => {
+const createUserChatMessage = (payload: Message): HTMLElement => {
 	const container = document.createElement("div");
 
 	Object.assign(container.style, {
@@ -473,7 +439,7 @@ const createUserChatMessage = (message: string): HTMLElement => {
 		boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
 	});
 
-	bubble.textContent = message;
+	bubble.textContent = payload.message;
 
 	container.appendChild(bubble);
 
@@ -481,12 +447,10 @@ const createUserChatMessage = (message: string): HTMLElement => {
 };
 
 const createBotChatMessage = (
-	mes: ChatMessage,
-	widgetRegistry: WidgetRegistry,
-	state: BotState,
-	updater: IUpdater
+	payload: Message,
+	engine: ChatbotEngine<BotState>
 ): HTMLElement => {
-	const { message, widget, loading, id } = mes;
+	const { message, widget, loading, id } = payload;
 
 	const outer = document.createElement("div");
 
@@ -534,9 +498,9 @@ const createBotChatMessage = (
 		bubble.appendChild(createLoader());
 
 		setTimeout(() => {
-			updater((prev) => ({
+			engine.setState((prev) => ({
 				...prev,
-				messages: prev.messages.map((msg) =>
+				messages: prev.messages.map((msg: Message) =>
 					msg.id === id ? { ...msg, loading: false } : msg
 				),
 			}));
@@ -548,7 +512,7 @@ const createBotChatMessage = (
 	outer.append(avatar, bubble);
 
 	if (widget) {
-		const widgetMarkup = widgetRegistry.getWidget(widget, state);
+		const widgetMarkup = engine.getWidget(widget);
 		if (widgetMarkup) {
 			outer.appendChild(widgetMarkup);
 		}

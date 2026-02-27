@@ -1,0 +1,22 @@
+{
+  "name": "@zero-heads-lab/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsup"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "tsup": "^8.5.1"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

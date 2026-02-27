@@ -93,7 +93,7 @@ export function Dashboard() {
 						{plan === "basic" ||
 							(plan !== "enterprise" && (
 								<button className="relative p-[3px]">
-									<div className="absolute inset-0 rounded-lg bg-linear-to-r from-indigo-500 to-purple-500" />
+									<div className="absolute inset-0 rounded-lg bg-linear-to-r from-[#0c2218] to-[#72e3ad]" />
 									<div className="group relative rounded-[6px] bg-black px-4 py-2 font-medium text-white transition duration-200 hover:bg-transparent">
 										Upgrade Plan ✨
 									</div>

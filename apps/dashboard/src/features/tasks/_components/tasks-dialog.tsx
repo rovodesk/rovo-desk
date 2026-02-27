@@ -37,15 +37,9 @@ export function TasksDialogs() {
 					<ConfirmDialog
 						className="max-w-md"
 						confirmText="Delete"
-						desc={
-							<>
-								You are about to delete a task with the ID{" "}
-								<strong>{currentRow.id}</strong>. <br />
-								This action cannot be undone.
-							</>
-						}
 						destructive
-						handleConfirm={() => {
+						key="task-delete"
+						onConfirm={() => {
 							setOpen(null);
 							setTimeout(() => {
 								setCurrentRow(null);
@@ -54,7 +48,6 @@ export function TasksDialogs() {
 								description: <pre>{JSON.stringify(currentRow, null, 2)}</pre>,
 							});
 						}}
-						key="task-delete"
 						onOpenChange={(open) => {
 							setOpen(open ? "delete" : null);
 							setTimeout(() => {
@@ -62,6 +55,13 @@ export function TasksDialogs() {
 							}, 500);
 						}}
 						open={open === "delete"}
+						subtitle={
+							<>
+								You are about to delete a task with the ID{" "}
+								<strong>{currentRow.id}</strong>. <br />
+								This action cannot be undone.
+							</>
+						}
 						title={`Delete this task: ${currentRow.id} ?`}
 					/>
 				</>

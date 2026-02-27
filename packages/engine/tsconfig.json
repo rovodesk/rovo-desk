@@ -5,9 +5,6 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strictNullChecks": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "outDir": "dist",
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
   },

@@ -1,7 +1,10 @@
-import type { BotState, IUpdater, Tab } from "../types";
-import { getTabTitle } from "../utils";
+import type { ChatbotEngine } from "../core/engine";
+import type { BotState, Tab } from "../types";
 
-export function createBottomNav(state: BotState, updater: IUpdater) {
+export function createNavigation(
+	state: BotState,
+	engine: ChatbotEngine<BotState>
+) {
 	const nav = document.createElement("div");
 
 	Object.assign(nav.style, {
@@ -53,7 +56,7 @@ export function createBottomNav(state: BotState, updater: IUpdater) {
 		};
 
 		btn.onclick = () =>
-			updater((prev) => ({
+			engine.setState((prev) => ({
 				...prev,
 				activeTab: tab,
 			}));
@@ -64,4 +67,21 @@ export function createBottomNav(state: BotState, updater: IUpdater) {
 	nav.appendChild(inner);
 
 	return nav;
+}
+
+export function getTabTitle(tab: BotState["activeTab"]) {
+	switch (tab) {
+		case "home":
+			return "Home";
+		case "conversations":
+			return "Conversations";
+		case "chats":
+			return "Chats";
+		case "help":
+			return "Help";
+		case "updates":
+			return "Updates";
+		default:
+			return "";
+	}
 }

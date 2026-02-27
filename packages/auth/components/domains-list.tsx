@@ -26,6 +26,7 @@ import {
 	MoreHorizontal,
 	Trash2,
 } from "lucide-react";
+import { useCallback } from "react";
 import { useOrganization } from "../hooks";
 import { AddDomainDialog } from "./add-domain-dialog";
 import { InviteMembersForm } from "./forms/invite-members-form";
@@ -41,14 +42,17 @@ export function DomainList() {
 		deleteOrganization,
 	} = useOrganization();
 
-	const { openModal: openInviteMembersModal } = useModal<string>(
+	const InviteModalContent = useCallback(
+		() => <InviteMembersForm maxValues={30} />,
+		[]
+	);
+
+	const { openModal: openInviteMembersModal } = useModal(
 		"invite-members",
-		<InviteMembersForm maxValues={30} />,
+		InviteModalContent,
 		"Invite Members",
 		"Invite members to your organization",
-		{
-			shouldAllowBackdropClick: false,
-		}
+		{ shouldAllowBackdropClick: false }
 	);
 
 	if (loading) return <DomainListSkeleton />;
@@ -124,27 +128,24 @@ export function DomainList() {
 
 								<DropdownMenuSeparator />
 
-								<div className="rounded border-destructive/20 p-1">
+								<DropdownMenuItem
+									asChild
+									className="rounded border-destructive/20 p-1"
+								>
 									<ConfirmDialog
-										className="sm:max-w-sm"
 										confirmText="Delete"
-										desc="Are you sure you want to delete this domain?"
 										destructive
-										handleConfirm={() => handleDeleteDomain(item.id)}
-										isLoading={loading}
+										onConfirm={() => handleDeleteDomain(item.id)}
+										subtitle="Are you sure you want to delete this domain?"
 										title="Delete Domain"
 										trigger={
-											<DropdownMenuItem
-												onSelect={(e) => {
-													e.preventDefault(); // 🚨 critical
-												}}
-											>
-												<Trash2 className="h-4 w-4 text-base" />
-												<span className="font-medium text-white">Delete</span>
-											</DropdownMenuItem>
+											<div className="flex h-8 w-full items-center p-2">
+												<Trash2 className="mr-2 h-4 w-4" />
+												Delete
+											</div>
 										}
 									/>
-								</div>
+								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</SidebarMenuItem>
