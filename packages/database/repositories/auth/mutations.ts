@@ -72,7 +72,6 @@ export async function createNewUserWithProfileTransaction(
 	}
 
 	// 2️⃣ Run everything inside ONE transaction
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Its ok
 	return database.transaction(async (tx) => {
 		// 3️⃣ Create org with guaranteed unique slug
 		const baseSlug = Placeholder.slug();
