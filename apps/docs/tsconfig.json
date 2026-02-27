@@ -1,5 +1,5 @@
 {
-  "extends": "@zero-heads-lab/typescript-config/vite.json",
+  "extends": "@zero-heads-lab/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

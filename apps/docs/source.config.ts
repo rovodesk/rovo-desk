@@ -1,12 +1,27 @@
-import { defineConfig, defineDocs } from "fumadocs-mdx/config";
+import { metaSchema, pageSchema } from "fumadocs-core/source/schema";
+import {
+	type DocsCollection,
+	defineConfig,
+	defineDocs,
+} from "fumadocs-mdx/config";
 
-export const docs = defineDocs({
+// You can customise Zod schemas for frontmatter and `meta.json` here
+// see https://fumadocs.dev/docs/mdx/collections
+export const docs: DocsCollection = defineDocs({
 	dir: "content/docs",
 	docs: {
+		schema: pageSchema,
 		postprocess: {
 			includeProcessedMarkdown: true,
 		},
 	},
+	meta: {
+		schema: metaSchema,
+	},
 });
 
-export default defineConfig();
+export default defineConfig({
+	mdxOptions: {
+		// MDX options
+	},
+});
