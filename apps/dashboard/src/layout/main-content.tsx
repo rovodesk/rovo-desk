@@ -1,61 +1,98 @@
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import type { HTMLMotionProps } from "motion/react";
 import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { RightSidebar } from "@/components/sidebar/right-sidebar";
+import {
+	type SecondaryNavSection,
+	SecondarySidebar,
+} from "@/components/sidebar/secondary-sidebar";
+import { Header, type HeaderProps } from "./header";
 
 type MainContentProps = {
-	fixed?: boolean;
-	fluid?: boolean;
-	ref?: React.Ref<HTMLElement>;
 	className?: string;
-	children?: React.ReactNode;
+	children: React.ReactNode;
 	animate?: boolean;
-};
+
+	secondaryHeader?: React.ReactNode;
+	secondarySections?: SecondaryNavSection[];
+	activeSecondary?: string;
+	setActiveSecondary?: (item: string) => void;
+	secondarySearchable?: boolean;
+
+	rightSidebarContent?: React.ReactNode;
+	showHeader?: boolean;
+} & HeaderProps;
 
 export function MainContent({
-	children,
 	className,
-	fixed,
-	fluid,
-	animate,
-	...props
+	showHeader = true,
+	children,
+	animate = false,
+
+	secondaryHeader,
+	secondarySections,
+	activeSecondary,
+	setActiveSecondary,
+	secondarySearchable,
+	rightSidebarContent,
+
+	headerLeftContent,
+	headerRightContent,
 }: MainContentProps) {
+	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState<boolean>(
+		!!rightSidebarContent
+	);
+
 	if (!animate)
 		return (
-			<main
-				className={cn(
-					"space-y-8 px-4 py-6",
-
-					// If layout is fixed, make the main container flex and grow
-					fixed && "flex grow flex-col overflow-hidden",
-
-					// If layout is not fluid, set the max-width
-					!fluid &&
-						"@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl",
-					className
+			<>
+				{/* Secondary Sidebar (only if provided) */}
+				{secondarySections && (
+					<SecondarySidebar
+						activeItem={activeSecondary}
+						header={secondaryHeader}
+						onItemClick={setActiveSecondary}
+						searchable={secondarySearchable}
+						sections={secondarySections}
+					/>
 				)}
-				data-layout={fixed ? "fixed" : "auto"}
-				{...props}
-			>
-				{children}
-			</main>
+
+				<div className="flex min-w-0 flex-1 flex-col">
+					{showHeader && (
+						<Header
+							headerLeftContent={headerLeftContent}
+							headerRightContent={headerRightContent}
+							isRightSidebarOpen={isRightSidebarOpen}
+							onToggleRightSidebar={() => setIsRightSidebarOpen((p) => !p)}
+							showRightSidebarToggle={!!rightSidebarContent}
+						/>
+					)}
+					<main
+						className={cn(
+							"flex h-svh grow flex-col space-y-6 overflow-hidden",
+							className
+						)}
+					>
+						{children}
+					</main>
+				</div>
+
+				{!!rightSidebarContent && (
+					<RightSidebar
+						isOpen={isRightSidebarOpen}
+						onClose={() => setIsRightSidebarOpen(false)}
+					>
+						{rightSidebarContent}
+					</RightSidebar>
+				)}
+			</>
 		);
 
-	// Otherwise animate
 	return (
 		<AnimatePresence mode="wait">
 			<motion.main
 				animate={{ y: 0, opacity: 1 }}
-				className={cn(
-					"space-y-8 px-4 py-6",
-
-					// If layout is fixed, make the main container flex and grow
-					fixed && "flex grow flex-col overflow-hidden",
-
-					// If layout is not fluid, set the max-width
-					!fluid &&
-						"@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl",
-					className
-				)}
+				className={cn("flex-1 overflow-hidden", className)}
 				exit={{ y: 32, opacity: 0 }}
 				initial={{ y: 32, opacity: 0 }}
 				key={location.pathname}
@@ -64,7 +101,6 @@ export function MainContent({
 					ease: "easeOut",
 					delay: 0.6, // wait for sidebar animation
 				}}
-				{...(props as HTMLMotionProps<"main">)}
 			>
 				{children}
 			</motion.main>

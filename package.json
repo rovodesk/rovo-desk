@@ -5,7 +5,8 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "tools/*"
+    "tools/*",
+    "examples/*"
   ],
   "packageManager": "bun@1.3.5",
   "engines": {

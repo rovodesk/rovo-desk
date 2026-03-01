@@ -23,6 +23,7 @@ import { routeTree } from "@/routeTree.gen";
 
 import "@tanstack/react-router";
 import { useOnboarding } from "@onboardjs/react";
+import { SearchProvider } from "./providers/search";
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -92,7 +93,9 @@ if (!rootElement.innerHTML) {
 				<QueryClientProvider client={queryClient}>
 					<AuthProvider authClient={authClient}>
 						<OnboardingProvider>
-							<App />
+							<SearchProvider>
+								<App />
+							</SearchProvider>
 						</OnboardingProvider>
 					</AuthProvider>
 				</QueryClientProvider>

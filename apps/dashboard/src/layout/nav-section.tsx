@@ -164,6 +164,7 @@ function SidebarNavCollapsible({
 					<SidebarMenuButton
 						className="bg-transparent! hover:bg-sidebar-accent! data-[active=true]:bg-sidebar-accent! data-[active=true]:text-sidebar-accent-foreground!"
 						isActive={isActive}
+						size="lg"
 						tooltip={item.title}
 					>
 						{item.icon && <item.icon />}
@@ -186,6 +187,7 @@ function SidebarNavCollapsible({
 									className="bg-transparent! hover:bg-sidebar-accent!"
 									isActive={isActive}
 									onClick={() => setOpenMobile(false)}
+									size="md"
 								>
 									<Link to={sub.url}>
 										{sub.icon && <sub.icon />}

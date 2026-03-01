@@ -1,7 +1,6 @@
 import { MoonStarIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/theme";
 import { Button } from "./ui/button";
-import { cn } from "../lib/utils";
 
 export function runThemeTransition(
   next: "light" | "dark" | "system",
@@ -55,7 +54,6 @@ const { resolvedTheme, setTheme } = useTheme()
   <Button
       variant="ghost"
       size="icon"
-      className={cn("scale-95 rounded-full hover:bg-transparent!", className)}
       onClick={toggleTheme}>
       <SunIcon className="size-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <MoonStarIcon className="absolute size-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

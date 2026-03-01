@@ -1,59 +1,64 @@
-import { useOnboarding } from "@onboardjs/react";
-import { Outlet, useLocation } from "@tanstack/react-router";
-import Loader from "@zero-heads-lab/design-system/components/loader";
-import {
-	SidebarInset,
-	SidebarProvider,
-} from "@zero-heads-lab/design-system/components/ui/sidebar";
-import { LayoutProvider } from "@zero-heads-lab/design-system/context/layout";
-import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
-import { SearchProvider } from "@/providers/search";
-import { AppSidebar } from "./app-sidebar";
+import { Outlet } from "@tanstack/react-router";
+import { createContext, useContext, useState } from "react";
+import { PrimarySidebar } from "@/components/sidebar/primary-sidebar";
 
-const HIDE_SIDEBAR_ROUTES: string[] = ["/bot/connection/add"];
+interface DashboardLayoutContextType {
+	secondarySidebarOpen: boolean;
+	setSecondarySidebarOpen: (open: boolean) => void;
+	activeSecondarySidebar: string;
+	setActiveSecondarySidebar: (id: string) => void;
 
-export function AuthenticatedLayout() {
-	const location = useLocation();
-	const { loading } = useOnboarding();
-	const sidebarOpen = getCookie("sidebar_state") !== "false";
+	pinnedSecondarySidebar: boolean;
+	setPinnedSecondarySidebar: (pinned: boolean) => void;
 
-	const fullUrl = location.publicHref;
-	if (HIDE_SIDEBAR_ROUTES.includes(fullUrl)) {
-		return <Outlet />;
-	}
+	rightSidebarOpen: boolean;
+	setRightSidebarOpen: (open: boolean) => void;
+	activeRightSidebar: string;
+	setActiveRightSidebar: (id: string) => void;
+}
 
-	if (loading.isHydrating) {
-		return <Loader title="Loading..." />;
-	}
+const DashboardLayoutContext = createContext<DashboardLayoutContextType | null>(
+	null
+);
 
-	// if (!state?.isCompleted) {
-	// 	return <OnboardingFlow />;
-	// }
+export function useDashboardLayout() {
+	const ctx = useContext(DashboardLayoutContext);
+	if (!ctx)
+		throw new Error("useDashboardLayout must be used within DashboardLayout");
+	return ctx;
+}
+
+export function DashboardLayout() {
+	const [activeSecondarySidebar, setActiveSecondarySidebar] = useState("");
+	const [activeRightSidebar, setActiveRightSidebar] = useState("");
+
+	const [secondarySidebarOpen, setSecondarySidebarOpen] = useState(false);
+	const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
+	const [pinnedSecondarySidebar, setPinnedSecondarySidebar] = useState(false);
+
+	const value: DashboardLayoutContextType = {
+		pinnedSecondarySidebar,
+		setPinnedSecondarySidebar,
+		secondarySidebarOpen,
+		setSecondarySidebarOpen,
+		activeSecondarySidebar,
+		setActiveSecondarySidebar,
+		rightSidebarOpen,
+		setRightSidebarOpen,
+		activeRightSidebar,
+		setActiveRightSidebar,
+	};
 
 	return (
-		<SearchProvider>
-			<LayoutProvider>
-				<SidebarProvider defaultOpen={sidebarOpen}>
-					<AppSidebar />
-					<SidebarInset
-						className={cn(
-							// Set content container, so we can use container queries
-							"@container/content",
+		<div className="flex max-h-dvh w-full overflow-hidden">
+			<DashboardLayoutContext.Provider value={value}>
+				<div className="flex h-screen w-full overflow-hidden">
+					{/* Primary Sidebar (always visible) */}
+					<PrimarySidebar />
 
-							// If layout is fixed, set the height
-							// to 100svh to prevent overflow
-							"has-data-[layout=fixed]:h-svh",
-
-							// If layout is fixed and sidebar is inset,
-							// set the height to 100svh - spacing (total margins) to prevent overflow
-							"peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]"
-						)}
-					>
-						<Outlet />
-					</SidebarInset>
-				</SidebarProvider>
-			</LayoutProvider>
-		</SearchProvider>
+					<Outlet />
+				</div>
+			</DashboardLayoutContext.Provider>
+		</div>
 	);
 }

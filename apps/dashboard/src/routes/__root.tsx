@@ -1,5 +1,4 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "@zero-heads-lab/design-system/components/ui/toast";
@@ -27,7 +26,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 								},
 							]}
 						/>
-						<ReactQueryDevtools buttonPosition="top-left" />
+						{/* <ReactQueryDevtools
+							buttonPosition="top-left"
+							initialIsOpen={false}
+						/> */}
 					</>
 				)}
 			</>
