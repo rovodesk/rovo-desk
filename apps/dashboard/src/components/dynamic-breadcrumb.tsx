@@ -50,7 +50,7 @@ export function DynamicBreadcrumb() {
 								) : (
 									<BreadcrumbLink asChild>
 										<Link
-											className="text-muted-foreground text-sm transition-colors hover:text-foreground"
+											className="truncate text-muted-foreground text-sm transition-colors hover:text-foreground"
 											to={to}
 										>
 											{formatSegment(segment)}

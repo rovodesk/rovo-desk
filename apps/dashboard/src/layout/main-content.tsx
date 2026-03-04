@@ -1,11 +1,14 @@
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import { setCookie } from "@zero-heads-lab/shared/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { RightSidebar } from "@/components/sidebar/right-sidebar";
+import { RightSidebar } from "@/layout/sidebar/right-sidebar";
 import {
 	type SecondaryNavSection,
 	SecondarySidebar,
-} from "@/components/sidebar/secondary-sidebar";
+	type SecondarySidebarProps,
+} from "@/layout/sidebar/secondary-sidebar";
+import { useDashboardLayout } from ".";
 import { Header, type HeaderProps } from "./header";
 
 type MainContentProps = {
@@ -15,24 +18,21 @@ type MainContentProps = {
 
 	secondaryHeader?: React.ReactNode;
 	secondarySections?: SecondaryNavSection[];
-	activeSecondary?: string;
-	setActiveSecondary?: (item: string) => void;
+
 	secondarySearchable?: boolean;
 
 	rightSidebarContent?: React.ReactNode;
-	showHeader?: boolean;
-} & HeaderProps;
+} & HeaderProps &
+	SecondarySidebarProps;
 
 export function MainContent({
 	className,
-	showHeader = true,
 	children,
 	animate = false,
 
 	secondaryHeader,
 	secondarySections,
-	activeSecondary,
-	setActiveSecondary,
+
 	secondarySearchable,
 	rightSidebarContent,
 
@@ -43,30 +43,35 @@ export function MainContent({
 		!!rightSidebarContent
 	);
 
+	const { secondarySidebarOpen } = useDashboardLayout();
+
 	if (!animate)
 		return (
 			<>
 				{/* Secondary Sidebar (only if provided) */}
 				{secondarySections && (
 					<SecondarySidebar
-						activeItem={activeSecondary}
 						header={secondaryHeader}
-						onItemClick={setActiveSecondary}
+						onItemClick={() =>
+							setCookie(
+								"secondary-sidebar-state",
+								secondarySidebarOpen ? "closed" : "open"
+							)
+						}
 						searchable={secondarySearchable}
 						sections={secondarySections}
 					/>
 				)}
 
 				<div className="flex min-w-0 flex-1 flex-col">
-					{showHeader && (
-						<Header
-							headerLeftContent={headerLeftContent}
-							headerRightContent={headerRightContent}
-							isRightSidebarOpen={isRightSidebarOpen}
-							onToggleRightSidebar={() => setIsRightSidebarOpen((p) => !p)}
-							showRightSidebarToggle={!!rightSidebarContent}
-						/>
-					)}
+					<Header
+						headerLeftContent={headerLeftContent}
+						headerRightContent={headerRightContent}
+						isRightSidebarOpen={isRightSidebarOpen}
+						onToggleRightSidebar={() => setIsRightSidebarOpen((p) => !p)}
+						showRightSidebarToggle={!!rightSidebarContent}
+					/>
+
 					<main
 						className={cn(
 							"flex h-svh grow flex-col space-y-6 overflow-hidden",

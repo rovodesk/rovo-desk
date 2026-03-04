@@ -12,3 +12,7 @@ export const GET_ONBOARDING_PROGRESS_OUTPUT_DTO = z.object({
 	completedAt: z.date().nullable(),
 	skippedAt: z.date().nullable(),
 });
+
+export const UPDATE_WORKSPACE_SETTINGS_INPUT_DTO = z.object({
+	settings: z.record(z.string(), z.unknown()),
+});

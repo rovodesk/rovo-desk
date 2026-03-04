@@ -50,3 +50,14 @@ export function onDomReady(callback: () => void) {
 		callback();
 	}
 }
+
+export function resolveRadius(radius?: "sm" | "md" | "lg") {
+	switch (radius) {
+		case "sm":
+			return "14px";
+		case "lg":
+			return "28px";
+		default:
+			return "22px";
+	}
+}

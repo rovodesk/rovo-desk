@@ -1,12 +1,9 @@
-import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import {
 	Tabs,
 	TabsContent,
 	TabsList,
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
-import { Search } from "@/components/search";
-import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 import { TaskCardGrid } from "./_components/task-card-grid";
 import { RoadmapCalendar } from "./_components/task-roadmap-calender";
@@ -19,13 +16,6 @@ import { tasks } from "./data";
 export function Tasks() {
 	return (
 		<TasksProvider>
-			<Header fixed>
-				<Search />
-				<div className="ms-auto flex items-center space-x-4">
-					<ThemeSwitch />
-				</div>
-			</Header>
-
 			<MainContent className="flex flex-1 flex-col">
 				<div className="flex flex-wrap items-end justify-between">
 					<div>

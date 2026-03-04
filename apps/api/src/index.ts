@@ -3,7 +3,7 @@ import { corsMiddleware } from "./middlewares/cors.middleware";
 import { rpcMiddleware } from "./middlewares/rpc.middleware";
 import { authRoute } from "./routes/auth.route";
 import { documentRoute } from "./routes/document.route";
-import { sdkRoute } from "./routes/sdk.route";
+import { widgetRoute } from "./routes/widget.route";
 import type { Bindings } from "./types";
 
 export { default as ChatRoom } from "./lib/partykit/chatroom";
@@ -11,11 +11,12 @@ export { default as Document } from "./lib/partykit/document";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.use("/*", corsMiddleware);
-app.use("/rpc/*", rpcMiddleware);
+app.use("/rpc/*", corsMiddleware, rpcMiddleware);
 
+//TODO: Add cors middleware to these routes
 app.route("/ws/document", documentRoute);
-app.route("/sdk", sdkRoute);
 app.route("/auth", authRoute);
+
+app.route("/widget", widgetRoute);
 
 export default app;

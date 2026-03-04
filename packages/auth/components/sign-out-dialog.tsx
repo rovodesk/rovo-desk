@@ -27,12 +27,12 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 		<ConfirmDialog
 			className="sm:max-w-sm"
 			confirmText="Sign out"
-			desc="Are you sure you want to sign out? You will need to sign in again to access your account."
 			destructive
-			handleConfirm={signOut}
-			isLoading={isPending}
+			disabled={isPending}
+			onConfirm={signOut}
 			onOpenChange={onOpenChange}
 			open={open}
+			subtitle="Are you sure you want to sign out? You will need to sign in again to access your account."
 			title="Sign out"
 			trigger={
 				<button

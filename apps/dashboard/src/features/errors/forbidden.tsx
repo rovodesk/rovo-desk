@@ -7,7 +7,7 @@ export function ForbiddenError() {
 
 	return (
 		<ForbiddenErrorComponent
-			onGoBack={() => history.go(-1)}
+			onGoBack={() => history.back()}
 			onGoHome={() => navigate({ to: "/" })}
 		/>
 	);

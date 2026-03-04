@@ -1,19 +1,10 @@
-import {
-	createChatbotConnection,
-	deleteChatbotConnection,
-	findChatbotConnection,
-	findChatbotWithSettings,
-	listConnections,
-	rotateChatbotConnectionKeys,
-	toggleChatbotConnection,
-	updateChatbotConnection,
-	updateChatbotSettings,
-} from "./procedures/chatbot.procedure";
 import { healthProcedure } from "./procedures/health.procedure";
 import {
 	clearOnboardingProgress,
+	getWorkspaceProfile,
 	loadOnboardingProgress,
 	persistOnboardingProgress,
+	updateWorkspaceSettings,
 } from "./procedures/profile.procedure";
 
 export const RouterContract = {
@@ -24,18 +15,9 @@ export const RouterContract = {
 			persist: persistOnboardingProgress,
 			clear: clearOnboardingProgress,
 		},
-	},
-	chatbot: {
-		find: findChatbotWithSettings,
-		updateSettings: updateChatbotSettings,
-		connection: {
-			create: createChatbotConnection,
-			update: updateChatbotConnection,
-			delete: deleteChatbotConnection,
-			toggle: toggleChatbotConnection,
-			list: listConnections,
-			find: findChatbotConnection,
-			rotateKeys: rotateChatbotConnectionKeys,
+		workspace: {
+			get: getWorkspaceProfile,
+			update: updateWorkspaceSettings,
 		},
 	},
 };

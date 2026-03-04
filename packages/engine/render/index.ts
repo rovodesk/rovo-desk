@@ -1,7 +1,7 @@
+import { resolveRadius } from "utils";
 import type { ChatbotConfig } from "../core/config";
 import type { ChatbotEngine } from "../core/engine";
 import type { BotState } from "../types";
-import { createContent } from "./content.js";
 import { renderError } from "./error.js";
 import { createLauncher } from "./launcher.js";
 import { createNavigation } from "./navigation.js";
@@ -25,11 +25,14 @@ export const render = (
 	if (state.isOpen) {
 		const panel = document.createElement("div");
 		panel.className = "zh-widget-panel";
+
+		const theme = state.canvas?.theme;
+
 		Object.assign(panel.style, {
 			width: "380px",
 			height: "min(640px, 80vh)",
-			background: "#0f172a",
-			borderRadius: "22px",
+			background: theme?.colors?.background ?? "#0f172a",
+			borderRadius: resolveRadius(theme?.radius),
 			boxShadow: "0 40px 100px rgba(0,0,0,0.45), 0 10px 30px rgba(0,0,0,0.25)",
 			display: "flex",
 			flexDirection: "column",
@@ -37,9 +40,15 @@ export const render = (
 			animation: "zh-widget-fade-in 0.25s ease",
 		});
 
-		panel.appendChild(createContent(state, engine));
+		// Render Canvas
+		panel.appendChild(engine.renderCanvas(state));
 
-		panel.appendChild(createNavigation(state, engine));
+		// Render Navigation only if multiple labeled views
+		const labeledViews = state.canvas?.views.filter((v) => v.label) ?? [];
+
+		if (labeledViews.length > 1) {
+			panel.appendChild(createNavigation(state, engine));
+		}
 
 		wrapper.appendChild(panel);
 	}
@@ -56,11 +65,11 @@ export const renderWidget = (
 	rootEl: HTMLElement,
 	config: ChatbotConfig,
 	engine: ChatbotEngine<BotState>
-): void => {
+): (() => void) => {
 	// If the required props are not provided, render an error message
 	if (!(config && engine)) {
 		renderError(rootEl, "Missing required props: config or engine.");
-		return;
+		return () => null;
 	}
 	// Validate the Props
 	// const propsErrors = validateProps(config, engine);
@@ -70,11 +79,16 @@ export const renderWidget = (
 	// 	return;
 	// }
 
-	// Subscribe to engine state changes
-	engine.subscribe((newState) => {
-		render(rootEl, newState, engine);
-	});
+	const renderFromState = (state: BotState) => {
+		render(rootEl, state, engine);
+	};
+
+	// Subscribe once
+	const unsubscribe = engine.subscribe(renderFromState);
 
 	// Initial render
-	render(rootEl, engine.getState(), engine);
+	renderFromState(engine.getState());
+
+	// Optional: return cleanup for unmounting
+	return () => unsubscribe();
 };

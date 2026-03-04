@@ -51,21 +51,19 @@ export function decodeJwtToken(token: string): JWTPayload {
 
 export async function issueAnonymousSDKToken(
 	orgId: string,
-	connectionId: string,
 	masterSecret: string
 ): Promise<string> {
 	return await signJWTToken(
 		{
 			keyId: crypto.randomUUID(),
 			orgId,
-			connectionId,
 			role: "anonymous",
 		},
 		masterSecret,
 		"15m",
 		"http://localhost:5001",
-		connectionId,
-		`organization:${orgId},connection:${connectionId},role:anonymous`
+		"",
+		`organization:${orgId},role:anonymous`
 	);
 }
 

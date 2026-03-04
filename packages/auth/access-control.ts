@@ -18,6 +18,7 @@ export const permissions = {
 		"set-password",
 	],
 	session: ["list", "revoke", "delete"],
+	apiKey: ["create", "read", "update", "delete"],
 } as const;
 
 export const accessControl = createAccessControl(permissions);
@@ -40,19 +41,6 @@ export const superAdmin = accessControl.newRole({
 	session: ["list", "revoke", "delete"],
 });
 
-// Can view/moderate content across orgs, manage users, but can't
-// restructure orgs or touch role/permission definitions
-export const moderator = accessControl.newRole({
-	user: ["list", "set-role", "ban", "impersonate", "delete", "set-password"],
-	session: ["list", "revoke", "delete"],
-});
-
-// Read-only across the platform — answers questions, doesn't change things
-export const support = accessControl.newRole({
-	user: ["list"],
-	session: ["list", "revoke"],
-});
-
 // ─────────────────────────────────────────────
 // ORGANIZATION-LEVEL ROLES (scoped to their org)
 // ─────────────────────────────────────────────
@@ -69,15 +57,17 @@ export const owner = accessControl.newRole({
 export const admin = accessControl.newRole({
 	...defaultStatements,
 	...adminAc.statements,
+	apiKey: ["read"],
 });
 
 // Regular worker — does their job, sees their team, no admin tasks
 export const member = accessControl.newRole({
 	...defaultStatements,
 	...memberAc.statements,
+	apiKey: [],
 });
 
-export const anonymous = accessControl.newRole({
+export const guest = accessControl.newRole({
 	user: [],
 	session: [],
 	organization: [],
@@ -88,13 +78,11 @@ export const anonymous = accessControl.newRole({
 
 export const Roles = {
 	superAdmin,
-	moderator,
-	support,
 
 	owner,
 	admin,
 	member,
-	anonymous,
+	guest,
 } as const;
 
 /**
@@ -139,11 +127,8 @@ export type FeatureResource = Extract<
 	"funnels" | "folders" | "files"
 >;
 
-export const PLATFORM_ROLES: PlatformRole[] = [
-	"superAdmin",
-	"moderator",
-	"support",
-];
+export const PLATFORM_ROLES: PlatformRole[] = ["superAdmin"];
+
 export const ORGANIZATION_ADMIN_ROLES: (PlatformRole | "owner" | "admin")[] = [
 	...PLATFORM_ROLES,
 	"owner",
@@ -159,8 +144,6 @@ export const ORGANIZATION_MEMBER_ROLES: (
 
 export const AUTH_ROLES: readonly AuthRole[] = [
 	"superAdmin",
-	"moderator",
-	"support",
 	"owner",
 	"admin",
 	"member",

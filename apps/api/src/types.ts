@@ -7,4 +7,5 @@ export type Bindings = {
 	CHAT_ROOM: DurableObjectNamespace;
 	SDK_CACHE: KVNamespace;
 	SDK_JWT_SECRET: string;
+	ALLOWED_ORIGINS: string;
 };

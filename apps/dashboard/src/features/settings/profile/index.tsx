@@ -1,13 +1,10 @@
-import { ContentSection } from "../_components/content-section";
-import { ProfileForm } from "./profile-form";
+import { SectionMain } from "../_components/section-main";
+import { ProfilePage } from "./profile-form";
 
-export function SettingsProfile() {
+export function ProfileSettings() {
 	return (
-		<ContentSection
-			desc="This is how others will see you on the site."
-			title="Profile"
-		>
-			<ProfileForm />
-		</ContentSection>
+		<SectionMain>
+			<ProfilePage />
+		</SectionMain>
 	);
 }

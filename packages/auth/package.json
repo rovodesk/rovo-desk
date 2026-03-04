@@ -8,8 +8,9 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.4.18",
-    "@better-auth/stripe": "^1.4.18",
+    "@better-auth/api-key": "^1.5.1",
+    "@better-auth/passkey": "^1.5.1",
+    "@better-auth/stripe": "^1.5.1",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",
     "@zero-heads-lab/billing": "workspace:*",
@@ -18,7 +19,7 @@
     "@zero-heads-lab/design-system": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
-    "better-auth": "^1.4.17",
+    "better-auth": "^1.5.1",
     "jose": "^6.1.3",
     "lucide-react": "catalog:",
     "react": "catalog:react19",

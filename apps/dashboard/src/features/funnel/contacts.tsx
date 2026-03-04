@@ -17,11 +17,11 @@ import {
 	Users,
 } from "lucide-react";
 import { useState } from "react";
+import { MainContent } from "@/layout/main-content";
 import {
 	type SecondaryNavSection,
 	SecondarySidebarTitleHeader,
-} from "@/components/sidebar/secondary-sidebar";
-import { MainContent } from "@/layout/main-content";
+} from "@/layout/sidebar/secondary-sidebar";
 
 const contactsSections: SecondaryNavSection[] = [
 	{

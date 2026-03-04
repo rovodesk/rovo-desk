@@ -57,8 +57,15 @@ export function SessionTable() {
 
 	return (
 		<div className="w-full rounded-xl border bg-card shadow-sm">
+			{/* Header */}
+			<div className="border-b px-6 py-4">
+				<h3 className="font-semibold text-sm">Sessions</h3>
+				<p className="text-muted-foreground text-xs">
+					Manage sessions used to access your API.
+				</p>
+			</div>
+			{/* Table */}
 			<Table>
-				{/* Header */}
 				<TableHeader>
 					<TableRow className="hover:bg-transparent">
 						<TableHead className="text-center">Device</TableHead>
@@ -69,7 +76,6 @@ export function SessionTable() {
 					</TableRow>
 				</TableHeader>
 
-				{/* Body */}
 				<TableBody>
 					{sessionsWithCurrent.map((session) => {
 						const device = getDeviceInfo(session?.session?.userAgent);

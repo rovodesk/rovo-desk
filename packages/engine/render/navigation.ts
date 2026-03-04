@@ -1,5 +1,5 @@
 import type { ChatbotEngine } from "../core/engine";
-import type { BotState, Tab } from "../types";
+import type { BotState } from "../types";
 
 export function createNavigation(
 	state: BotState,
@@ -8,7 +8,7 @@ export function createNavigation(
 	const nav = document.createElement("div");
 
 	Object.assign(nav.style, {
-		padding: "14px 16px 18px", // more breathing room
+		padding: "14px 16px 18px",
 		background: "#0f172a",
 		borderTop: "1px solid rgba(255,255,255,0.06)",
 	});
@@ -20,13 +20,15 @@ export function createNavigation(
 		gap: "8px",
 	});
 
-	const tabs: Tab[] = ["home", "conversations", "help", "updates"];
+	const views = state.canvas?.views ?? [];
 
-	tabs.forEach((tab) => {
+	views.forEach((view) => {
+		if (!view.label) return; // only show views that have labels
+
 		const btn = document.createElement("button");
-		const isActive = state.activeTab === tab;
+		const isActive = state.activeViewId === view.id;
 
-		btn.textContent = getTabTitle(tab);
+		btn.textContent = view.label;
 
 		Object.assign(btn.style, {
 			flex: "1",
@@ -56,10 +58,9 @@ export function createNavigation(
 		};
 
 		btn.onclick = () =>
-			engine.setState((prev) => ({
-				...prev,
-				activeTab: tab,
-			}));
+			engine.updateState({
+				activeViewId: view.id,
+			});
 
 		inner.appendChild(btn);
 	});
@@ -67,21 +68,4 @@ export function createNavigation(
 	nav.appendChild(inner);
 
 	return nav;
-}
-
-export function getTabTitle(tab: BotState["activeTab"]) {
-	switch (tab) {
-		case "home":
-			return "Home";
-		case "conversations":
-			return "Conversations";
-		case "chats":
-			return "Chats";
-		case "help":
-			return "Help";
-		case "updates":
-			return "Updates";
-		default:
-			return "";
-	}
 }

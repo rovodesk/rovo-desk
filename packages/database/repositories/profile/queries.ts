@@ -1,6 +1,9 @@
 import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
-import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
+import {
+	onboarding as onboardingSchema,
+	workspaceProfile,
+} from "../../drizzle/schemas/profile.schema";
 
 export type OnboardingProgress = {
 	currentStepId: string | null;
@@ -36,4 +39,23 @@ export async function getOnboardingProgressByUserId(
 		completedAt: flow?.completedAt ?? null,
 		skippedAt: flow?.skippedAt ?? null,
 	};
+}
+
+export async function getWorkspaceProfileByOrganizationId(
+	database: Database,
+	params: {
+		organizationId: string;
+	}
+) {
+	return await database
+		.select({
+			settings: workspaceProfile.settings,
+		})
+		.from(workspaceProfile)
+		.where(eq(workspaceProfile.organizationId, params.organizationId))
+		.limit(1)
+		.then((res) => res[0])
+		.catch(() => {
+			throw new Error("Failed to get workspace profile");
+		});
 }

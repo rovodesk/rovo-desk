@@ -1,6 +1,8 @@
 import { Outlet } from "@tanstack/react-router";
+import { SidebarProvider } from "@zero-heads-lab/design-system/components/ui/sidebar";
+import { getCookie, setCookie } from "@zero-heads-lab/shared/utils";
 import { createContext, useContext, useState } from "react";
-import { PrimarySidebar } from "@/components/sidebar/primary-sidebar";
+import { PrimarySidebar } from "@/layout/sidebar/primary-sidebar";
 
 interface DashboardLayoutContextType {
 	secondarySidebarOpen: boolean;
@@ -34,13 +36,19 @@ export function DashboardLayout() {
 
 	const [secondarySidebarOpen, setSecondarySidebarOpen] = useState(false);
 	const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
-	const [pinnedSecondarySidebar, setPinnedSecondarySidebar] = useState(false);
+
+	const [pinnedSecondarySidebar, setPinnedSecondarySidebar] = useState<boolean>(
+		getCookie("secondary-sidebar-state") === "open"
+	);
 
 	const value: DashboardLayoutContextType = {
 		pinnedSecondarySidebar,
 		setPinnedSecondarySidebar,
 		secondarySidebarOpen,
-		setSecondarySidebarOpen,
+		setSecondarySidebarOpen: (open: boolean) => {
+			setSecondarySidebarOpen(open);
+			setCookie("secondary-sidebar-state", open ? "open" : "closed");
+		},
 		activeSecondarySidebar,
 		setActiveSecondarySidebar,
 		rightSidebarOpen,
@@ -52,12 +60,14 @@ export function DashboardLayout() {
 	return (
 		<div className="flex max-h-dvh w-full overflow-hidden">
 			<DashboardLayoutContext.Provider value={value}>
-				<div className="flex h-screen w-full overflow-hidden">
-					{/* Primary Sidebar (always visible) */}
-					<PrimarySidebar />
+				<SidebarProvider open={false}>
+					<div className="flex h-screen w-full overflow-hidden">
+						{/* Primary Sidebar (always visible) */}
+						<PrimarySidebar />
 
-					<Outlet />
-				</div>
+						<Outlet />
+					</div>
+				</SidebarProvider>
 			</DashboardLayoutContext.Provider>
 		</div>
 	);

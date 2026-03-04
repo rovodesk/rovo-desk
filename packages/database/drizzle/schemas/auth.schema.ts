@@ -9,6 +9,7 @@ import {
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
+import { userProfile, workspaceProfile } from "schema";
 
 export const authSchema = pgSchema("auth");
 
@@ -55,6 +56,11 @@ export const userRelations = relations(user, ({ many, one }) => ({
 		references: [passkey.userId],
 		relationName: "userPasskey",
 	}),
+	profile: one(userProfile, {
+		fields: [user.id],
+		references: [userProfile.userId],
+		relationName: "userProfile",
+	}),
 }));
 
 export const organization = authSchema.table("organization", {
@@ -76,6 +82,29 @@ export const organization = authSchema.table("organization", {
 		.$onUpdate(() => new Date()),
 	deletedAt: timestamp("deletedAt"),
 });
+
+export const organizationRelations = relations(
+	organization,
+	({ many, one }) => ({
+		members: many(member, {
+			relationName: "organizationMembers",
+		}),
+		teams: many(team, {
+			relationName: "organizationTeams",
+		}),
+		invitations: many(invitation, {
+			relationName: "organizationInvitations",
+		}),
+		roles: many(organizationRole, {
+			relationName: "organizationRoles",
+		}),
+		profile: one(workspaceProfile, {
+			fields: [organization.id],
+			references: [workspaceProfile.organizationId],
+			relationName: "organizationWorkspaceProfile",
+		}),
+	})
+);
 
 export const organizationRole = authSchema.table("organizationRole", {
 	id: text("id")
@@ -196,21 +225,6 @@ export const teamMember = authSchema.table(
 		index("teamMemberTeamIdx").on(t.teamId),
 	]
 );
-
-export const organizationRelations = relations(organization, ({ many }) => ({
-	members: many(member, {
-		relationName: "organizationMembers",
-	}),
-	teams: many(team, {
-		relationName: "organizationTeams",
-	}),
-	invitations: many(invitation, {
-		relationName: "organizationInvitations",
-	}),
-	roles: many(organizationRole, {
-		relationName: "organizationRoles",
-	}),
-}));
 
 export const memberRelations = relations(member, ({ one }) => ({
 	user: one(user, {
@@ -442,46 +456,43 @@ export const accountRelations = relations(account, ({ one }) => ({
 	}),
 }));
 
-export const apiKey = authSchema.table(
-	"apiKey",
-	{
-		id: text("id")
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
-
-		name: text("name"),
-		start: text("start"),
-		prefix: text("prefix"),
-		key: text("key").notNull(),
-		userId: text("userId")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		refillInterval: integer("refillInterval"),
-		refillAmount: integer("refillAmount"),
-		lastRefillAt: timestamp("lastRefillAt"),
-		enabled: boolean("enabled").notNull().default(true),
-		rateLimitEnabled: boolean("rateLimitEnabled").notNull().default(true),
-		rateLimitTimeWindow: integer("rateLimitTimeWindow"),
-		rateLimitMax: integer("rateLimitMax"),
-		requestCount: integer("requestCount").notNull().default(0),
-		remaining: integer("remaining"),
-		lastRequestAt: timestamp("lastRequestAt"),
-		expiresAt: timestamp("expiresAt"),
-		createdAt: timestamp("createdAt").notNull().defaultNow(),
-		updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
-		permissions: text("permissions"),
-		metadata: jsonb("metadata"),
-	},
-	(t) => [index("apiKeyUserIdx").on(t.userId)]
-);
-
-export const apiKeyRelations = relations(apiKey, ({ one }) => ({
-	user: one(user, {
-		fields: [apiKey.userId],
-		references: [user.id],
-		relationName: "userApiKey",
+export const apiKey = authSchema.table("apiKey", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	configId: text("configId").notNull(),
+	name: text("name"),
+	start: text("start"),
+	prefix: text("prefix"),
+	key: text("key").notNull(),
+	referenceId: text("referenceId").notNull(),
+	refillInterval: integer("refillInterval"),
+	refillAmount: integer("refillAmount"),
+	lastRefillAt: timestamp("lastRefillAt", {
+		precision: 6,
+		withTimezone: true,
 	}),
-}));
+	enabled: boolean("enabled").notNull().default(true),
+	rateLimitEnabled: boolean("rateLimitEnabled").notNull().default(true),
+	rateLimitTimeWindow: integer("rateLimitTimeWindow"),
+	rateLimitMax: integer("rateLimitMax"),
+	requestCount: integer("requestCount").notNull().default(0),
+	remaining: integer("remaining"),
+	lastRequestAt: timestamp("lastRequestAt", {
+		precision: 6,
+		withTimezone: true,
+	}),
+	expiresAt: timestamp("expiresAt", { precision: 6, withTimezone: true }),
+	createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updatedAt", {
+		precision: 6,
+		withTimezone: true,
+	}).$onUpdate(() => new Date()),
+	permissions: text("permissions"),
+	metadata: jsonb("metadata"),
+});
 
 export const jwksSchema = authSchema.table("jwks", {
 	id: text("id")

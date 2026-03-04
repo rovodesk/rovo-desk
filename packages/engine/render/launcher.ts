@@ -71,7 +71,7 @@ export function createLauncher(
 	btn.appendChild(iconWrapper);
 
 	btn.onclick = () => {
-		engine.setState((prev) => ({ ...prev, isOpen: !prev.isOpen }));
+		engine.updateState({ isOpen: !state.isOpen });
 	};
 
 	return btn;

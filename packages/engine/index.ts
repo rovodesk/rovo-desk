@@ -1,83 +1,83 @@
 import type { ChatbotConfig } from "./core/config";
 import { ChatbotEngine } from "./core/engine";
-import { type render, renderWidget } from "./render";
+import { renderWidget } from "./render";
 import { injectGlobalStyles } from "./render/style";
 import type { BotState } from "./types";
-import { onDomReady } from "./utils";
 
 declare global {
 	interface Window {
-		zeroHeadsChatbot?: {
-			renderChatbot: typeof render;
-		};
+		zeroHeadsSettings?: ChatbotConfig;
 	}
 }
 
-// Inject scrollbar style once
-if (!document.getElementById("zh-scroll-style")) {
-	const style = document.createElement("style");
-	style.id = "zh-scroll-style";
-	style.innerHTML = `
-    .zh-widget-chat-container::-webkit-scrollbar {
-      width: 6px;
-    }
-    .zh-widget-chat-container::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-    }
-  `;
-	document.head.appendChild(style);
-}
+/* ------------------------------------------
+   SDK Init Entry Point
+------------------------------------------ */
 
-const config: ChatbotConfig = {
-	organizationId: "1234",
-	connectionId: "http://localhost:3000",
-	publicKey: "1234",
-	chatbot: {
-		welcomeMessages: [
-			{
-				id: "1",
-				message: "Hello! How can I help you today?",
-				type: "system",
-				timestamp: Date.now(),
-			},
-		],
-	},
-};
+function init(config: ChatbotConfig) {
+	if (!(config?.organizationId && config?.accessKey)) {
+		console.error("ZeroHeads: Missing organizationId or publicKey.");
+		return;
+	}
 
-document.addEventListener("DOMContentLoaded", () => {
+	injectGlobalStyles();
+
 	const initialState: BotState = {
-		isOpen: false,
+		isOpen: config.display?.defaultOpen ?? false,
 		isElevated: false,
-		activeTab: "home",
 		messages: [...(config.chatbot?.welcomeMessages ?? [])],
+		canvas: undefined,
+		activeViewId: "",
 	};
 
 	const engine = new ChatbotEngine({ initialState });
 
-	onDomReady(() => {
-		let root = document.getElementById("chatbot-root");
+	let root = document.getElementById("chatbot-root");
 
-		if (!root) {
-			root = document.createElement("div");
-			root.id = "chatbot-root";
-			document.body.appendChild(root);
-		}
+	if (!root) {
+		root = document.createElement("div");
+		root.id = "chatbot-root";
+		document.body.appendChild(root);
+	}
 
-		renderWidget(root, config, engine);
-		injectGlobalStyles();
-	});
+	renderWidget(root, config, engine);
 
-	onDomReady(() => {
-		let root = document.getElementById("chatbot-root");
+	// Fetch canvas
+	if (!config.apiBaseUrl) {
+		console.warn("ZeroHeads: apiBaseUrl not provided.");
+		return;
+	}
 
-		if (!root) {
-			root = document.createElement("div");
-			root.id = "chatbot-root";
-			document.body.appendChild(root);
-		}
+	fetch(`${config.apiBaseUrl}/init`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"x-access-key": config.accessKey,
+		},
+		body: JSON.stringify({
+			workspaceId: config.organizationId,
+			user: config.user,
+			accessKey: config.accessKey,
+		}),
+	})
+		.then((res) => res.json())
+		.then((data) => {
+			if (!data.canvas) return;
 
-		renderWidget(root, config, engine);
-		injectGlobalStyles();
-	});
-});
+			engine.updateState({
+				canvas: data.canvas,
+				activeViewId: data.canvas.views[0]?.id ?? "",
+			});
+		})
+		.catch((err) => {
+			console.error("ZeroHeads: Failed to initialize.", err);
+		});
+}
+
+/* ------------------------------------------
+   Expose Global SDK
+------------------------------------------ */
+
+if (window.zeroHeadsSettings) {
+	init(window.zeroHeadsSettings);
+}

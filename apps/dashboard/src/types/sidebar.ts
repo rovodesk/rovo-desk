@@ -1,9 +1,9 @@
 import type { AuthRole } from "@zero-heads-lab/auth/access-control";
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon, LucideProps } from "lucide-react";
 
 export type NavRoute = string & {};
 
-export type IconComponent = LucideIcon & unknown;
+export type IconComponent = LucideIcon & React.ElementType;
 
 /**
  * Optional: allow apps to narrow routes
@@ -34,9 +34,10 @@ export type NavItemVisibility = {
 };
 
 export type BaseNavItem = {
-	title: string;
+	id: string;
+	label: string;
 	badge?: number;
-	icon?: IconComponent;
+	icon?: LucideProps & React.ElementType;
 	visibility?: NavItemVisibility;
 };
 

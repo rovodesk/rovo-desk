@@ -8,7 +8,7 @@ import {
 	team as teamSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
-import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
+import { userProfile } from "../../drizzle/schemas/profile.schema";
 
 export async function markUserAsDeleted(
 	database: Database,
@@ -64,8 +64,8 @@ export async function createNewUserWithProfileTransaction(
 	// Prevent duplicate profile creation (important for migrations)
 	const [existingProfile] = await database
 		.select()
-		.from(profileSchema)
-		.where(eq(profileSchema.userId, params.userId))
+		.from(userProfile)
+		.where(eq(userProfile.userId, params.userId))
 		.limit(1);
 	if (existingProfile) {
 		throw new Error("Profile already exists");
@@ -137,7 +137,7 @@ export async function createNewUserWithProfileTransaction(
 		});
 
 		// 7️⃣ Create profile
-		await tx.insert(profileSchema).values({
+		await tx.insert(userProfile).values({
 			userId: params.userId,
 		});
 

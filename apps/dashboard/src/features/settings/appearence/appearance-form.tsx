@@ -1,12 +1,10 @@
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { fonts, useFont } from "@zero-heads-lab/design-system/context/font";
-import { useLayout } from "@zero-heads-lab/design-system/context/layout";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { capitalize } from "@zero-heads-lab/shared/utils";
 import { TypeIcon } from "lucide-react";
 import { z } from "zod";
-import { LayoutPreview } from "@/components/layout-preview";
 import { ThemePreview } from "@/components/theme-preview";
 
 const appearanceFormSchema = z.object({
@@ -17,7 +15,6 @@ const appearanceFormSchema = z.object({
 
 export function AppearanceForm() {
 	const { font, setFont } = useFont();
-	const { variant: layout, setVariant: setLayout } = useLayout();
 	const { theme, setTheme } = useTheme();
 
 	const form = useAppForm({
@@ -25,12 +22,10 @@ export function AppearanceForm() {
 		defaultValues: {
 			theme: "dark" as "light" | "dark",
 			font,
-			layout,
 		},
 		onSubmit: ({ value }) => {
 			if (value.font !== font) setFont(value.font);
 			if (value.theme !== theme) setTheme(value.theme);
-			if (value.layout !== layout) setLayout(value.layout);
 
 			form.reset();
 
@@ -101,42 +96,6 @@ export function AppearanceForm() {
 								How do you want to navigate your digital empire?
 							</p>
 						</div>
-
-						<form.AppField
-							children={(field) => (
-								<field.RadioGroupField
-									className="grid grid-cols-1 gap-4"
-									description="Select the structural skeleton of the app."
-									label="Dashboard Layout"
-									options={[
-										{ label: "Sidebar", value: "sidebar" },
-										{ label: "Inset", value: "inset" },
-										{ label: "Floating", value: "floating" },
-									]}
-									renderOption={(option) => (
-										<div className="flex items-center gap-4 rounded-xl border-2 border-muted p-4 transition-all hover:bg-accent/50">
-											<LayoutPreview
-												type={option.value as "sidebar" | "inset" | "floating"}
-											/>
-											<div className="flex flex-col">
-												<span className="font-semibold text-sm">
-													{option.label}
-												</span>
-												<span className="text-muted-foreground text-xs">
-													{option.value === "sidebar" &&
-														"Classic, reliable, efficient."}
-													{option.value === "inset" &&
-														"Modern, contained, focused."}
-													{option.value === "floating" &&
-														"Airy, spacious, experimental."}
-												</span>
-											</div>
-										</div>
-									)}
-								/>
-							)}
-							name="layout"
-						/>
 					</div>
 				</div>
 

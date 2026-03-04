@@ -17,12 +17,12 @@ import {
 	Star,
 } from "lucide-react";
 import { useState } from "react";
-import { RightSidebar } from "@/components/sidebar/right-sidebar";
+import { MainContent } from "@/layout/main-content";
+import { RightSidebar } from "@/layout/sidebar/right-sidebar";
 import {
 	type SecondaryNavSection,
 	SecondarySidebarTitleHeader,
-} from "@/components/sidebar/secondary-sidebar";
-import { MainContent } from "@/layout/main-content";
+} from "@/layout/sidebar/secondary-sidebar";
 import ConversationInput from "./_components/conversation-input";
 import { InfoPanel } from "./_components/info-pannel";
 

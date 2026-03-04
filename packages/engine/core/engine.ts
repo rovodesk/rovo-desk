@@ -1,4 +1,9 @@
-import type { BotState } from "../types";
+import type {
+	BotState,
+	NewState,
+	StateListener,
+	StateSubscriber,
+} from "../types";
 import { ActionProvider } from "./action-provider.js";
 import { MessageParser } from "./message-parser.js";
 import { initialStore, type Store } from "./state-manager.js";
@@ -6,10 +11,23 @@ import { type Widget, WidgetRegistry } from "./widget-registry.js";
 
 export interface ChatbotEngineOptions<T extends BotState> {
 	initialState: T;
-	widgets?: Widget[];
+	widgets?: Widget<T>[];
 }
 
-export class ChatbotEngine<T extends BotState> {
+interface IChatbotEngine<T extends BotState> {
+	getState: () => T;
+	updateState: (updater: NewState<T>) => void;
+	subscribe: StateSubscriber<T>;
+
+	handleUserMessage(message: string, options?: Record<string, unknown>): void;
+	clearMessages(): void;
+
+	addWidget(widget: Widget<T>): void;
+	setCanvas(canvas: T["canvas"]): void;
+	renderCanvas(state: T): HTMLElement | undefined;
+}
+
+export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
 	private readonly store: Store<T>;
 	private readonly actionProvider: ActionProvider<T>;
 	private readonly parser: MessageParser;
@@ -44,25 +62,56 @@ export class ChatbotEngine<T extends BotState> {
     -------------------------- */
 
 	getState = () => this.store.getState();
-	setState = (updater: Partial<T> | ((state: T) => T)) =>
-		this.store.setState(updater);
 
-	subscribe = (listener: (state: T) => void) => this.store.subscribe(listener);
+	updateState = (updater: NewState<T>) => this.store.setState(updater);
 
-	async handleUserMessage(message: string, options?: Record<string, unknown>) {
+	subscribe = (listener: StateListener<T>) => this.store.subscribe(listener);
+
+	handleUserMessage(message: string, options?: Record<string, unknown>) {
 		// Add user message
 		this.actionProvider.addUserMessage(message, options);
 
 		// Parse message (can be async later)
-		await this.parser.parse(message);
+		this.parser.parse(message);
 	}
 
-	addWidget(widget: Widget) {
+	addWidget(widget: Widget<T>) {
 		this.widgetRegistry.addWidget(widget);
 	}
 
-	getWidget(widgetName: string) {
-		return this.widgetRegistry.getWidget(widgetName, this.store.getState());
+	setCanvas(canvas: T["canvas"]) {
+		const firstViewId = canvas?.views[0]?.id;
+
+		this.store.setState({
+			canvas,
+			activeViewId: firstViewId,
+		} as Partial<T>);
+	}
+
+	renderCanvas(state: T) {
+		const container = document.createElement("div");
+		container.className = "zh-canvas";
+		container.style.display = "flex";
+		container.style.flexDirection = "column";
+		container.style.gap = "12px";
+		container.style.padding = "16px";
+		container.style.overflowY = "auto";
+		container.style.flex = "1";
+
+		if (!state.canvas) return container;
+
+		const currentView =
+			state.canvas.views.find((v) => v.id === state.activeViewId) ??
+			state.canvas.views[0];
+
+		if (!currentView) return container;
+
+		currentView.components.forEach((component) => {
+			const el = this.widgetRegistry.renderComponent(component, state);
+			if (el) container.appendChild(el);
+		});
+
+		return container;
 	}
 
 	clearMessages() {

@@ -1,4 +1,4 @@
-import type { BotState, IUpdater } from "../types";
+import type { BotState, StateUpdater } from "../types";
 import { createChatMessage, type Message } from "./message-parser.js";
 
 interface IActionProvider {
@@ -20,9 +20,9 @@ interface IActionProvider {
 }
 
 class ActionProvider<T extends BotState> implements IActionProvider {
-	private readonly setState: IUpdater<T>;
+	private readonly setState: StateUpdater<T>;
 
-	constructor(setState: IUpdater<T>) {
+	constructor(setState: StateUpdater<T>) {
 		this.setState = setState;
 	}
 

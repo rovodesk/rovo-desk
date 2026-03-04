@@ -17,11 +17,11 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { Terminal } from "lucide-react";
+import { BarChart3, Target, Terminal } from "lucide-react";
 import { Search } from "@/components/search";
-import type { SecondaryNavSection } from "@/components/sidebar/secondary-sidebar";
 import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
+import type { SecondaryNavSection } from "@/layout/sidebar/secondary-sidebar";
 import { Overview } from "./_components/overview";
 import { RecentSales } from "./_components/recent-sales";
 
@@ -42,28 +42,12 @@ const findPlan = (plan: string) => {
 
 const dashboardSections: SecondaryNavSection[] = [
 	{
-		title: "General",
+		title: "Overview",
 		collapsible: false,
-		items: [{ id: "overview", label: "Overview", icon: Terminal }],
-	},
-	{
-		title: "Recent Conversations",
-		collapsible: true,
 		items: [
-			{ id: "email", label: "Email", dotColor: "hsl(38, 92%, 50%)", count: 18 },
-			{
-				id: "chat",
-				label: "Live Chat",
-				dotColor: "hsl(142, 71%, 45%)",
-				count: 9,
-			},
-			{
-				id: "social",
-				label: "Social Media",
-				dotColor: "hsl(215, 90%, 56%)",
-				count: 14,
-			},
-			{ id: "phone", label: "Phone", dotColor: "hsl(280, 65%, 55%)", count: 7 },
+			{ id: "overview", label: "Overview", icon: Terminal, path: "/" },
+			{ id: "reports", icon: BarChart3, label: "Reports", path: "/reports" },
+			{ id: "outreach", icon: Target, label: "Outreach", path: "/outreach" },
 		],
 	},
 ];
@@ -83,7 +67,7 @@ export function Dashboard() {
 
 	return (
 		<MainContent
-			activeSecondary="overview"
+			activeItem="overview"
 			// animate
 			headerRightContent={
 				<div className="ms-auto flex items-center space-x-4">

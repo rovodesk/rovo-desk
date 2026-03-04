@@ -1,6 +1,7 @@
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
+	apiKey as apiKeySchema,
 	member as memberSchema,
 	organization as organizationSchema,
 	session as sessionSchema,
@@ -178,4 +179,21 @@ export async function findReusableSession(
 		.limit(1);
 
 	return session ?? null;
+}
+
+export async function getApiKeyByWorkspaceId(
+	database: Database,
+	params: {
+		workspaceId: string;
+	}
+) {
+	return await database
+		.select()
+		.from(apiKeySchema)
+		.where(eq(apiKeySchema.referenceId, params.workspaceId))
+		.limit(1)
+		.then((res) => res[0])
+		.catch(() => {
+			throw new Error("Failed to get API Key");
+		});
 }

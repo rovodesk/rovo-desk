@@ -1,20 +1,18 @@
+import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import type { KvCacheStore } from "@zero-heads-lab/cache";
 import type { Database } from "@zero-heads-lab/database/conn";
-import {
-	createSDKWithDefaultsTransaction,
-	deleteSDK,
-} from "@zero-heads-lab/database/repositories/sdk/mutations";
+import { createWorkspaceProfile } from "@zero-heads-lab/database/repositories/profile/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
 	OrganizationInviteTemplate,
 } from "@zero-heads-lab/email/templates";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import type { BetterAuthPlugin } from "better-auth";
 import {
-	apiKey,
 	admin as betterAuthAdmin,
 	type Jwk,
 	jwt,
@@ -98,13 +96,28 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				});
 			},
 			organizationHooks: {
+				// biome-ignore lint/suspicious/useAwait: No AWaited function
+				beforeCreateOrganization: async ({ organization }) => {
+					return {
+						data: {
+							...organization,
+							logo:
+								organization.logo ||
+								Placeholder.logo(organization.name, "glass"),
+						},
+					};
+				},
 				afterCreateOrganization: async ({ organization }) => {
-					// Create Public and Private Keys
-					// Create A Chatbot for Organization
+					// Create Profile
 					try {
-						await createSDKWithDefaultsTransaction({
+						await createWorkspaceProfile(database, {
 							organizationId: organization.id,
-							name: "Default Widget",
+							settings: {
+								branding: {
+									logo: organization.logo,
+									favicon: organization.logo,
+								},
+							},
 						});
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
@@ -112,13 +125,8 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 					//TODO: Add analytics
 					console.log("New Organization Created", organization);
 				},
+				// biome-ignore lint/suspicious/useAwait: No Awaited Function
 				afterDeleteOrganization: async ({ organization }) => {
-					// Delete Chatbot
-					try {
-						await deleteSDK(database, { sdkId: organization.id });
-					} catch (error) {
-						console.error("Failed to delete chatbot", error);
-					}
 					//TODO: Add Analytics
 					console.log("Organization Deleted", organization);
 				},
@@ -169,7 +177,17 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
-		apiKey(),
+		apiKey({
+			defaultPrefix: AUTH_CONFIG.API_KEY_DEFAULT_PREFIX,
+			references: "organization", // Owned by organizations
+			rateLimit: {
+				enabled: true,
+				maxRequests: AUTH_CONFIG.API_KEY_RATE_LIMIT_MAX_REQUESTS,
+				timeWindow: AUTH_CONFIG.API_KEY_RATE_LIMIT_TIME_WINDOW,
+			},
+			storage: "secondary-storage",
+			enableMetadata: true,
+		}),
 		jwt({
 			jwks: {
 				keyPairConfig: {

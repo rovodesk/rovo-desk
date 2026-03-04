@@ -1,11 +1,15 @@
-import type { BotState } from "../types";
-
-type listenerFunc<T> = (state: T) => void;
+import type {
+	BotState,
+	NewState,
+	StateListener,
+	StateSubscriber,
+	StateUpdater,
+} from "../types";
 
 /**
  * Store Interface used to interact with the current state of the application.
  */
-interface Store<T> {
+export interface Store<T extends BotState> {
 	/**
 	 * Get the current state.
 	 */
@@ -13,41 +17,44 @@ interface Store<T> {
 	/**
 	 * Update the current state.
 	 */
-	setState: (updater: Partial<T> | ((state: T) => T)) => void;
+	setState: StateUpdater<T>;
 	/**
 	 * Subscribe to the state changes.
 	 */
-	subscribe: (listener: listenerFunc<T>) => () => void;
+	subscribe: StateSubscriber<T>;
 }
 
-const initialStore = <T extends BotState>(initialState: T): Store<T> => {
+export const initialStore = <T extends BotState>(initialState: T): Store<T> => {
 	// Create a deep copy of the initial state to avoid mutating the original object.
 	let state = structuredClone(initialState);
 	// Use a Set to store the listeners to avoid duplicate listeners.
-	const listeners: Set<listenerFunc<T>> = new Set<listenerFunc<T>>();
+	const listeners: Set<StateListener<T>> = new Set<StateListener<T>>();
 
 	const getState = () => state;
 
-	const setState = (updater: Partial<T> | ((state: T) => T)) => {
-		const nextState =
-			typeof updater === "function"
-				? (updater as (state: T) => T)(state)
-				: { ...state, ...updater };
+	const setState = (updater: NewState<T>) => {
+		const partialState =
+			typeof updater === "function" ? updater(state) : updater;
 
-		if (Object.is(nextState, state)) return;
+		if (!partialState || typeof partialState !== "object") return;
 
+		const nextState = { ...state, ...partialState };
+
+		// Shallow equality check
+		const hasChanged = Object.keys(partialState).some(
+			(key) => !Object.is(state[key as keyof T], nextState[key as keyof T])
+		);
+		if (!hasChanged) return;
+
+		// Change state and notify listeners
 		state = nextState;
 		listeners.forEach((listener) => listener(state));
 	};
 
-	const subscribe = (listener: listenerFunc<T>) => {
+	const subscribe = (listener: StateListener<T>) => {
 		listeners.add(listener);
-		return () => {
-			listeners.delete(listener);
-		};
+		return () => listeners.delete(listener);
 	};
 
 	return { getState, setState, subscribe };
 };
-
-export { initialStore, type Store };

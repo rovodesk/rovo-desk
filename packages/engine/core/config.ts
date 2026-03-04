@@ -2,8 +2,16 @@ import type { Message } from "./message-parser.js";
 
 export interface ChatbotConfig {
 	organizationId: string;
-	connectionId: string;
-	publicKey: string;
+	accessKey: string;
+	apiBaseUrl?: string;
+
+	user?: {
+		id: string;
+		name: string;
+		email: string;
+		createdAt: string;
+		signature: string;
+	};
 
 	chatbot?: ChatbotOptions;
 	display?: DisplayOptions;
@@ -23,6 +31,7 @@ export interface DisplayOptions {
 		horizontal?: number;
 		vertical?: number;
 	};
+	defaultOpen?: boolean;
 }
 
 export type Alignment =

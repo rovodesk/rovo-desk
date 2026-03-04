@@ -1,75 +1,77 @@
-import type { BotState, IUpdater } from "../types";
-import { getObject, scrollIntoView } from "../utils";
+import type { BotState, CanvasComponent, StateUpdater } from "../types";
+import { scrollIntoView } from "../utils";
 import type { IActionProvider } from "./action-provider.js";
 
-interface Widget {
-	widgetName: string;
-	element: (props: Record<string, unknown>) => HTMLElement;
-	props?: Record<string, unknown>;
-	mapStateToProps?: string[];
+export interface Widget<
+	T extends BotState,
+	C extends CanvasComponent = CanvasComponent,
+> {
+	type: C["type"];
+	render: (params: {
+		component: C;
+		state: T;
+		setState: StateUpdater<T>;
+		actionProvider: IActionProvider;
+		scrollIntoView: typeof scrollIntoView;
+	}) => HTMLElement;
 }
 
-interface IWidgetRegistry {
-	addWidget(params: Widget): void;
-	getWidget(widgetName: string, state: BotState): HTMLElement | undefined;
+export interface IWidgetRegistry<
+	T extends BotState,
+	C extends CanvasComponent = CanvasComponent,
+> {
+	addWidget(widget: Widget<T, C>): void;
+	renderComponent(
+		component: CanvasComponent,
+		state: T
+	): HTMLElement | undefined;
 }
 
-class WidgetRegistry<T extends BotState> implements IWidgetRegistry {
-	private readonly setState: IUpdater<T>;
+export class WidgetRegistry<T extends BotState> implements IWidgetRegistry<T> {
+	private readonly setState: StateUpdater<T>;
 	private readonly actionProvider: IActionProvider;
-	private readonly widgets: Record<string, Widget> = {};
+
+	private readonly widgets: Record<
+		CanvasComponent["type"],
+		// biome-ignore lint/suspicious/noExplicitAny: It can be of any type
+		Widget<T, any> | undefined
+	> = {
+		text: undefined,
+		textarea: undefined,
+		image: undefined,
+		"single-select": undefined,
+		"multi-select": undefined,
+		button: undefined,
+	};
 
 	constructor({
 		setStateFunc,
 		actionProvider,
 	}: {
-		setStateFunc: IUpdater<T>;
+		setStateFunc: StateUpdater<T>;
 		actionProvider: IActionProvider;
 	}) {
 		this.setState = setStateFunc;
 		this.actionProvider = actionProvider;
 	}
 
-	addWidget({ widgetName, element, mapStateToProps, props }: Widget): void {
-		this.widgets[widgetName] = {
-			widgetName,
-			element,
-			props,
-			mapStateToProps,
-		};
+	addWidget<C extends CanvasComponent>(widget: Widget<T, C>): void {
+		this.widgets[widget.type] = widget;
 	}
 
-	getWidget(widgetName: string, state: BotState): HTMLElement | undefined {
-		const widgetObject = this.widgets[widgetName];
-		if (!widgetObject) return;
+	renderComponent(
+		component: CanvasComponent,
+		state: T
+	): HTMLElement | undefined {
+		const widget = this.widgets[component.type];
+		if (!widget) return;
 
-		const mappedStateProps = this.mapStateToProps(
-			widgetObject.mapStateToProps,
-			state
-		);
-
-		const widgetProps = {
-			scrollIntoView,
-			...getObject(widgetObject.props ?? {}),
-			...mappedStateProps,
+		return widget.render({
+			component,
+			state,
 			setState: this.setState,
 			actionProvider: this.actionProvider,
-		};
-
-		return widgetObject.element(widgetProps);
-	}
-
-	private mapStateToProps(
-		props: string[] | undefined,
-		state: BotState
-	): Record<string, unknown> {
-		if (!props || props.length === 0) return {};
-
-		return props.reduce<Record<string, unknown>>((acc, prop) => {
-			acc[prop] = state[prop];
-			return acc;
-		}, {});
+			scrollIntoView,
+		});
 	}
 }
-
-export { type Widget, type IWidgetRegistry, WidgetRegistry };

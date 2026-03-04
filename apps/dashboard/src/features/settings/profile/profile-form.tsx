@@ -1,350 +1,185 @@
-import { LastLoginBadge } from "@zero-heads-lab/auth/components/last-login-badge";
 import { useSession } from "@zero-heads-lab/auth/hooks";
-import { useAppForm } from "@zero-heads-lab/design-system/components/form";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@zero-heads-lab/design-system/components/ui/dialog";
-import { Label } from "@zero-heads-lab/design-system/components/ui/label";
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@zero-heads-lab/design-system/components/ui/avatar";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
-import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import {
 	AtSignIcon,
 	CheckCircle2Icon,
 	GlobeIcon,
-	PencilIcon,
-	Trash2Icon,
-	UploadIcon,
 	UserIcon,
 	XCircleIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { z } from "zod";
 
-const languages = [
-	{ label: "English", value: "en" },
-	{ label: "French", value: "fr" },
-	{ label: "German", value: "de" },
-	{ label: "Spanish", value: "es" },
-	{ label: "Portuguese", value: "pt" },
-	{ label: "Russian", value: "ru" },
-	{ label: "Japanese", value: "ja" },
-	{ label: "Korean", value: "ko" },
-	{ label: "Chinese", value: "zh" },
-];
-
-const formSchema = z.object({
-	name: z.string().min(2).max(30),
-	email: z.email(),
-	image: z.string(),
-	dob: z.date(),
-	language: z.string(),
-	bio: z.string().max(160),
-});
-
-export function ProfileForm() {
+export function ProfilePage() {
 	const { session, loading } = useSession();
 
-	const form = useAppForm({
-		defaultValues: {
-			name: session?.user.name ?? "",
-			email: session?.user.email ?? "",
-			image: session?.user.image ?? "",
-			bio: "",
-			dob: new Date(),
-			language: "en",
-		},
-		validators: { onSubmit: formSchema },
-		onSubmit: ({ value }) => {
-			toast.success("Settings updated successfully.", {
-				description: (
-					<pre className="max-h-64 overflow-auto text-xs">
-						{JSON.stringify(value, null, 2)}
-					</pre>
-				),
-			});
-		},
-	});
-
-	useEffect(() => {
-		if (session?.user) {
-			form.reset({
-				name: session.user.name ?? "",
-				email: session.user.email ?? "",
-				image: session.user.image ?? "",
-				bio: "",
-				dob: new Date(),
-				language: "en",
-			});
-		}
-	}, [session, form.reset]);
-
 	if (loading) return <ProfileSkeleton />;
+	if (!session?.user) return null;
+
+	const user = session.user;
 
 	return (
-		<form
-			className="mx-auto max-w-5xl"
-			onSubmit={(e) => {
-				e.preventDefault();
-				form.handleSubmit();
-			}}
-		>
-			<form.AppForm>
-				<div className="space-y-8">
-					{/* SECTION 1: HEADER & AVATAR */}
-					<div className="flex flex-col gap-6 border-border border-b pb-8 md:flex-row md:items-start md:justify-between">
-						<div className="flex items-start gap-6">
-							<div className="group relative">
-								<img
-									alt="Profile"
-									className="size-24 rounded-xl border-2 border-muted bg-muted object-cover shadow-sm transition-all group-hover:opacity-80"
-									src={session?.user.image ?? ""}
-								/>
-								<div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-									<UploadIcon className="size-6 text-white drop-shadow-md" />
-								</div>
-							</div>
-							<div className="space-y-1.5 pt-1">
-								<h2 className="font-semibold text-xl tracking-tight">
-									{session?.user.name || "User Profile"}
-								</h2>
-								<div className="flex items-center gap-2 text-muted-foreground text-sm">
-									<span>{session?.user.email}</span>
-									<LastLoginBadge />
-								</div>
-								<div className="flex gap-2 pt-2">
-									<Button className="h-8 text-xs" size="sm" variant="outline">
-										Change Avatar
-									</Button>
-									<Button
-										className="h-8 text-destructive text-xs hover:text-destructive"
-										size="sm"
-										variant="ghost"
-									>
-										<Trash2Icon className="mr-2 size-3" />
-										Remove
-									</Button>
-								</div>
-							</div>
-						</div>
-					</div>
-					{/* SECTION 2: FORM CONTENT */}
-					<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-						{/* LEFT COLUMN: PUBLIC PROFILE */}
-						<div className="space-y-6 lg:col-span-2">
-							<div>
-								<h3 className="mb-4 font-medium text-lg">Public Profile</h3>
-								<div className="grid gap-6">
-									<form.AppField
-										children={(field) => (
-											<field.TextField
-												icon={<UserIcon className="size-4" />}
-												label="Display Name"
-												placeholder="e.g. Jane Doe"
-											/>
-										)}
-										name="name"
-									/>
+		<div className="min-h-screen bg-background">
+			{/* ===================== COVER ===================== */}
+			<div className="relative h-56 w-full bg-muted">
+				<img
+					alt="Cover"
+					className="h-full w-full object-cover"
+					src="https://images.unsplash.com/photo-1772202289452-e9e87552527a?q=80&w=3538&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+				/>
 
-									<form.AppField
-										children={(field) => (
-											<field.TextareaField
-												className="min-h-[120px] resize-none"
-												description="Brief description for your profile. URLs are hyperlinked."
-												label="Bio"
-												maxLength={160}
-												placeholder="I'm a software engineer based in..."
-											/>
-										)}
-										name="bio"
-									/>
-
-									<form.AppField
-										children={(field) => (
-											<field.SelectField
-												icon={<GlobeIcon className="size-4" />}
-												label="Interface Language"
-												options={languages}
-											/>
-										)}
-										name="language"
-									/>
-								</div>
-							</div>
-						</div>
-
-						{/* RIGHT COLUMN: ACCOUNT & SECURITY */}
-						<div className="space-y-8">
-							<div>
-								<h3 className="mb-4 font-medium text-lg">Account Details</h3>
-								<div className="flex flex-col gap-6 rounded-lg border bg-card p-5 text-card-foreground shadow-sm">
-									{/* Email Field with Verification Status embedded cleanly */}
-									<div className="space-y-2">
-										<div className="flex items-center justify-between">
-											<Label className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-												Email Address
-											</Label>
-											{session?.user.emailVerified ? (
-												<span className="flex items-center gap-1 font-medium text-[10px] text-emerald-500 uppercase tracking-wider">
-													<CheckCircle2Icon className="size-3" /> Verified
-												</span>
-											) : (
-												<span className="flex items-center gap-1 font-medium text-[10px] text-amber-500 uppercase tracking-wider">
-													<XCircleIcon className="size-3" /> Unverified
-												</span>
-											)}
-										</div>
-
-										<form.AppField
-											children={(field) => (
-												<field.TextField
-													className="bg-muted/50"
-													disabled
-													icon={
-														<AtSignIcon className="size-4 text-muted-foreground" />
-													}
-													value={session?.user.email}
-												/>
-											)}
-											name="email"
-										/>
-
-										<div className="flex justify-end">
-											<UpdateEmailDialog />
-										</div>
-									</div>
-
-									<div className="h-px bg-border" />
-
-									<form.AppField
-										children={(field) => (
-											<field.DatePickerField label="Date of birth" />
-										)}
-										name="dob"
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* SECTION 3: DANGER ZONE */}
-					<div className="mt-8 pt-8">
-						<div className="flex flex-col gap-4 rounded-xl border border-destructive/20 bg-destructive/5 p-6 md:flex-row md:items-center md:justify-between">
-							<div className="space-y-1">
-								<h3 className="font-semibold text-base text-destructive">
-									Danger Zone
-								</h3>
-								<p className="text-muted-foreground text-sm">
-									Irreversible actions. Be careful with these settings.
-								</p>
-							</div>
-
-							<Button
-								className="bg-destructive text-white hover:bg-destructive/90"
-								variant="destructive"
-							>
-								Delete Account
-							</Button>
-						</div>
-					</div>
-
-					{/* FOOTER */}
-					<div className="flex items-center justify-between border-t py-6">
-						<p className="text-muted-foreground text-xs">
-							Last updated on {session?.user.updatedAt.toLocaleDateString()}
-						</p>
-						<form.SubmitButton className="min-w-[120px]" label="Save Changes" />
-					</div>
-				</div>
-			</form.AppForm>
-		</form>
-	);
-}
-
-function UpdateEmailDialog() {
-	const [open, setOpen] = useState(false);
-
-	const addEmailForm = useAppForm({
-		defaultValues: { email: "" },
-		validators: { onSubmit: z.object({ email: z.string().email() }) },
-		onSubmit: () => {
-			toast.promise(new Promise((res) => setTimeout(res, 1000)), {
-				loading: "Adding email...",
-				success: "Verification email sent!",
-				error: "Could not add email.",
-			});
-			setOpen(false);
-		},
-	});
-
-	return (
-		<Dialog onOpenChange={setOpen} open={open}>
-			<DialogTrigger asChild>
-				<Button
-					className="h-auto p-0 text-primary text-xs underline-offset-4 hover:underline"
-					size="sm"
-					variant="link"
-				>
-					<PencilIcon className="mr-1.5 size-3" /> Change email address
-				</Button>
-			</DialogTrigger>
-			<DialogContent className="sm:max-w-md">
-				<DialogHeader>
-					<DialogTitle>Update email</DialogTitle>
-					<DialogDescription>
-						Enter your new email address. We will send a verification link.
-					</DialogDescription>
-				</DialogHeader>
-				<div className="py-4">
-					<addEmailForm.AppField
-						children={(field) => (
-							<field.TextField
-								autoFocus
-								icon={<AtSignIcon className="size-4" />}
-								placeholder="new.email@example.com"
-							/>
+				{/* Avatar */}
+				<div className="absolute -bottom-12 left-10">
+					<Avatar className="h-24 w-24 border-4 border-background shadow-sm">
+						{user.image ? (
+							<AvatarImage src={user.image} />
+						) : (
+							<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
 						)}
-						name="email"
-					/>
+					</Avatar>
 				</div>
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button variant="ghost">Cancel</Button>
-					</DialogClose>
-					<Button onClick={() => addEmailForm.handleSubmit()}>
-						Send Verification
+			</div>
+
+			{/* ===================== PROFILE HEADER ===================== */}
+			<div className="mx-auto max-w-6xl px-6 pt-16 pb-10">
+				<div className="flex items-start justify-between">
+					<div>
+						<h1 className="font-semibold text-2xl">{user.name}</h1>
+						<p className="text-muted-foreground text-sm">{user.email}</p>
+					</div>
+
+					<Button size="sm" variant="outline">
+						Edit Profile
 					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+				</div>
+
+				<Separator className="my-8" />
+
+				{/* ===================== GRID LAYOUT ===================== */}
+				<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+					{/* ========== LEFT SIDEBAR ========== */}
+					<div className="space-y-6">
+						{/* About */}
+						<div className="rounded-lg border bg-card p-5 shadow-sm">
+							<h3 className="mb-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+								About
+							</h3>
+
+							<div className="space-y-3 text-sm">
+								<div className="flex items-center gap-3">
+									<UserIcon className="size-4 text-muted-foreground" />
+									Product Designer
+								</div>
+
+								<div className="flex items-center gap-3">
+									<GlobeIcon className="size-4 text-muted-foreground" />
+									English
+								</div>
+							</div>
+						</div>
+
+						{/* Account Info */}
+						<div className="rounded-lg border bg-card p-5 shadow-sm">
+							<h3 className="mb-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+								Account
+							</h3>
+
+							<div className="space-y-4 text-sm">
+								<div className="flex items-center justify-between">
+									<span className="flex items-center gap-2">
+										<AtSignIcon className="size-4 text-muted-foreground" />
+										Email
+									</span>
+
+									{user.emailVerified ? (
+										<span className="flex items-center gap-1 text-emerald-500 text-xs">
+											<CheckCircle2Icon className="size-3" />
+											Verified
+										</span>
+									) : (
+										<span className="flex items-center gap-1 text-amber-500 text-xs">
+											<XCircleIcon className="size-3" />
+											Unverified
+										</span>
+									)}
+								</div>
+
+								<p className="text-muted-foreground text-xs">{user.email}</p>
+							</div>
+						</div>
+					</div>
+
+					{/* ========== RIGHT CONTENT ========== */}
+					<div className="space-y-6 lg:col-span-2">
+						{/* Worked On */}
+						<div className="rounded-lg border bg-card shadow-sm">
+							<div className="flex items-center justify-between border-b px-5 py-4">
+								<h3 className="font-semibold text-sm">Worked on</h3>
+								<Button size="sm" variant="link">
+									View all
+								</Button>
+							</div>
+
+							<div className="divide-y">
+								<ProfileListItem
+									meta="Edited today · Zero Heads"
+									title="CRM Dashboard Revamp"
+								/>
+								<ProfileListItem
+									meta="Published yesterday"
+									title="Support Automation Flow"
+								/>
+								<ProfileListItem
+									meta="Edited 3 days ago"
+									title="Customer Segmentation Docs"
+								/>
+							</div>
+						</div>
+
+						{/* Spaces / Projects */}
+						<div className="rounded-lg border bg-card shadow-sm">
+							<div className="border-b px-5 py-4">
+								<h3 className="font-semibold text-sm">Places you work</h3>
+							</div>
+
+							<div className="divide-y">
+								<ProfileListItem title="Sales CRM" />
+								<ProfileListItem title="Customer Support" />
+								<ProfileListItem title="Marketing Automation" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }
+
+/* ===================== LIST ITEM ===================== */
+
+function ProfileListItem({ title, meta }: { title: string; meta?: string }) {
+	return (
+		<div className="cursor-pointer px-5 py-4 transition hover:bg-muted/40">
+			<p className="font-medium text-sm">{title}</p>
+			{meta && <p className="mt-1 text-muted-foreground text-xs">{meta}</p>}
+		</div>
+	);
+}
+
+/* ===================== SKELETON ===================== */
 
 function ProfileSkeleton() {
 	return (
-		<div className="mx-auto max-w-5xl space-y-10">
-			<div className="flex items-center gap-6 border-b pb-8">
-				<Skeleton className="size-24 rounded-xl" />
-				<div className="space-y-2">
-					<Skeleton className="h-8 w-48" />
-					<Skeleton className="h-4 w-32" />
-				</div>
-			</div>
-			<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-				<div className="col-span-2 space-y-8">
-					<Skeleton className="h-12 w-full" />
-					<Skeleton className="h-32 w-full" />
-				</div>
-				<div className="space-y-8">
-					<Skeleton className="h-64 w-full rounded-lg" />
-				</div>
+		<div className="space-y-10">
+			<Skeleton className="h-56 w-full" />
+			<div className="mx-auto max-w-6xl px-6">
+				<Skeleton className="h-8 w-48" />
+				<Skeleton className="mt-4 h-64 w-full" />
 			</div>
 		</div>
 	);

@@ -1,6 +1,9 @@
 import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
-import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
+import {
+	onboarding as onboardingSchema,
+	workspaceProfile,
+} from "../../drizzle/schemas/profile.schema";
 
 export async function updateOnboardingProgressByUserId(
 	database: Database,
@@ -49,3 +52,41 @@ export const clearOnboardingProgressByUserId = async (
 		throw error;
 	}
 };
+
+export async function createWorkspaceProfile(
+	database: Database,
+	params: {
+		organizationId: string;
+		subscriptionId?: string;
+		settings: Record<string, unknown>;
+	}
+) {
+	return await database
+		.insert(workspaceProfile)
+		.values({
+			organizationId: params.organizationId,
+			subscriptionId: params.subscriptionId,
+			settings: params.settings,
+		})
+		.catch(() => {
+			throw new Error("Failed to create workspace profile");
+		});
+}
+
+export async function updateWorkspaceSettingsByOrganizationId(
+	database: Database,
+	params: {
+		organizationId: string;
+		settings: Record<string, unknown>;
+	}
+) {
+	return await database
+		.update(workspaceProfile)
+		.set({
+			settings: params.settings,
+		})
+		.where(eq(workspaceProfile.organizationId, params.organizationId))
+		.catch(() => {
+			throw new Error("Failed to update workspace settings");
+		});
+}
