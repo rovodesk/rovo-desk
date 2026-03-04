@@ -203,7 +203,6 @@ const ConversationsPage = () => {
 	return (
 		<>
 			<MainContent
-				activeSecondary="all"
 				secondaryHeader={<SecondarySidebarTitleHeader title="Inbox" />}
 				secondarySearchable
 				secondarySections={conversationsSections}

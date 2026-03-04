@@ -10,12 +10,11 @@ export type HeaderProps = React.HTMLAttributes<HTMLElement> & {
 	showSecondarySidebarToggle?: boolean;
 
 	showRightSidebarToggle?: boolean;
-	isRightSidebarOpen?: boolean;
 	onToggleRightSidebar?: () => void;
 
+	rightSidebarToggleIcon?: React.ReactElement;
 	headerLeftContent?: React.ReactNode;
 	headerRightContent?: React.ReactNode;
-	title?: string;
 };
 
 export function Header({
@@ -23,14 +22,12 @@ export function Header({
 
 	showSecondarySidebarToggle = true,
 
-	isRightSidebarOpen,
-	onToggleRightSidebar,
 	showRightSidebarToggle = true,
+	rightSidebarToggleIcon = <PanelRight className="h-4 w-4" />,
 
 	headerLeftContent,
 	headerRightContent,
 
-	title = "BreadCrumbs Goes Here",
 	...props
 }: HeaderProps) {
 	const [_offset, setOffset] = useState(0);
@@ -44,49 +41,58 @@ export function Header({
 		return () => document.removeEventListener("scroll", onScroll);
 	}, []);
 
-	const { secondarySidebarOpen, setSecondarySidebarOpen } =
-		useDashboardLayout();
+	const {
+		secondarySidebarOpen,
+		setSecondarySidebarOpen,
+		rightSidebarOpen,
+		setRightSidebarOpen,
+	} = useDashboardLayout();
 
 	return (
 		<header
 			className={cn(
-				"flex h-[53px] shrink-0 items-center justify-between border-header border-b bg-header px-4",
+				"flex h-16 shrink-0 items-center justify-between bg-header px-4",
 				className
 			)}
 			{...props}
 		>
 			<div className="flex items-center gap-4 px-2">
 				{/* Secondary Sidebar Toggle */}
-				{showSecondarySidebarToggle && secondarySidebarOpen && (
-					<div className="flex items-center gap-2">
-						<Button
-							className="h-8 w-8"
-							onClick={() => setSecondarySidebarOpen(!secondarySidebarOpen)}
-							size="icon"
-							variant="ghost"
-						>
-							<PanelLeft className="h-4 w-4" />
-						</Button>
-						<Separator orientation="vertical" />
-					</div>
-				)}
+				{showSecondarySidebarToggle ||
+					(secondarySidebarOpen && (
+						<div className="flex items-center gap-2">
+							<Button
+								className="h-8 w-8"
+								onClick={() => setSecondarySidebarOpen(!secondarySidebarOpen)}
+								size="icon"
+								variant="ghost"
+							>
+								<PanelLeft className="h-4 w-4" />
+							</Button>
+							<Separator orientation="vertical" />
+						</div>
+					))}
 
 				<DynamicBreadcrumb />
-				{headerLeftContent}
+				{headerLeftContent && (
+					<div className="flex items-center gap-4">{headerLeftContent}</div>
+				)}
 			</div>
 
 			<div className="flex items-center gap-1">
-				{headerRightContent}
+				{headerRightContent && (
+					<div className="flex items-center gap-4">{headerRightContent}</div>
+				)}
 				{showRightSidebarToggle && (
-					<div className="flex items-center gap-2">
+					<div className="ml-2 flex items-center gap-4">
 						<Separator orientation="vertical" />
 						<Button
 							className="h-8 w-8"
-							onClick={onToggleRightSidebar}
+							onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
 							size="icon"
-							variant={isRightSidebarOpen ? "secondary" : "ghost"}
+							variant={rightSidebarOpen ? "secondary" : "ghost"}
 						>
-							<PanelRight className="h-4 w-4" />
+							{rightSidebarToggleIcon}
 						</Button>
 					</div>
 				)}

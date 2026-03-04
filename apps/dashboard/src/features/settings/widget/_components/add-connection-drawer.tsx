@@ -17,7 +17,7 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Check, ChevronLeft, Copy, Globe, IdCard } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
-import { useChatbot } from "@/hooks/use-chatbot";
+import { useChatbot } from "@/hooks/use-widget";
 import {
 	CONNECTION_MAP,
 	CONNECTIONS,

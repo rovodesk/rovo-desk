@@ -51,6 +51,15 @@ type OnboardingProgressQueryOptions = Omit<
 	"queryKey" | "queryFn"
 >;
 
+type UserProfileData = Awaited<
+	ReturnType<typeof orpcQuery.profile.user.get.call>
+>;
+
+type UserProfileQueryOptions = Omit<
+	UseQueryOptions<UserProfileData>,
+	"queryKey" | "queryFn"
+>;
+
 type PersistOnboardingProgressMutationOptions = Omit<
 	UseMutationOptions<
 		Awaited<ReturnType<typeof orpcQuery.profile.onboarding.persist.call>>,
@@ -60,36 +69,66 @@ type PersistOnboardingProgressMutationOptions = Omit<
 	"mutationFn"
 >;
 
+type ToggleUserAwayInput = Parameters<
+	typeof orpcQuery.profile.user.toggleAway.call
+>[0];
+
+type ToggleUserAwayMutationOptions = Omit<
+	UseMutationOptions<
+		Awaited<ReturnType<typeof orpcQuery.profile.user.toggleAway.call>>,
+		Error,
+		ToggleUserAwayInput
+	>,
+	"mutationFn"
+>;
+
 export function useProfile(
 	workspaceProfileQueryOptions?: WorkspaceProfileQueryOptions,
 	onboardingProgressQueryOptions?: OnboardingProgressQueryOptions,
 	updateWorkspaceSettingsOptions?: UpdateWorkspaceSettingsMutationOptions,
 	clearOnboardingProgressOptions?: clearOnboardingProgressMutationOptions,
-	persistOnboardingProgressOptions?: PersistOnboardingProgressMutationOptions
+	persistOnboardingProgressOptions?: PersistOnboardingProgressMutationOptions,
+	toggleUserAwayOptions?: ToggleUserAwayMutationOptions,
+	userProfileQueryOptions?: UserProfileQueryOptions
 ) {
 	const queryClient = useQueryClient();
 	const { session, loading: isSessionLoading } = useSession();
 
-	/*
-	 * Base query options (computed once)
-	 */
-	const baseQueryOptions = orpcQuery.profile.onboarding.load.queryOptions({
-		enabled: Boolean(session?.user?.id) && !isSessionLoading,
+	const userId = session?.user?.id;
+	const onboardingQueryOptions = orpcQuery.profile.onboarding.load.queryOptions(
+		{
+			enabled: Boolean(userId) && !isSessionLoading,
+			queryKey: ["profile", userId],
+		}
+	);
+
+	const workspaceId = session?.session?.activeOrganizationId;
+	const workspaceQueryOptions = orpcQuery.profile.workspace.get.queryOptions({
+		enabled: Boolean(workspaceId) && !isSessionLoading,
+		queryKey: ["profile", workspaceId],
+	});
+
+	const userQueryOptions = orpcQuery.profile.user.get.queryOptions({
+		enabled: Boolean(userId) && !isSessionLoading,
+		queryKey: ["profile", userId],
 	});
 
 	/*
 	 * QUERY
 	 */
 	const onboardingProgressQuery = useQuery({
-		...baseQueryOptions,
+		...onboardingQueryOptions,
 		...onboardingProgressQueryOptions,
 	});
 
 	const workspaceProfileQuery = useQuery({
-		...orpcQuery.profile.workspace.get.queryOptions({
-			enabled: Boolean(session?.user?.id) && !isSessionLoading,
-		}),
+		...workspaceQueryOptions,
 		...workspaceProfileQueryOptions,
+	});
+
+	const userProfileQuery = useQuery({
+		...userQueryOptions,
+		...userProfileQueryOptions,
 	});
 
 	/*
@@ -99,7 +138,7 @@ export function useProfile(
 		...orpcQuery.profile.onboarding.persist.mutationOptions({
 			onSuccess: () => {
 				queryClient.invalidateQueries({
-					queryKey: baseQueryOptions.queryKey,
+					queryKey: onboardingQueryOptions.queryKey,
 				});
 			},
 		}),
@@ -113,7 +152,7 @@ export function useProfile(
 		...orpcQuery.profile.onboarding.clear.mutationOptions({
 			onSuccess: () => {
 				queryClient.invalidateQueries({
-					queryKey: baseQueryOptions.queryKey,
+					queryKey: onboardingQueryOptions.queryKey,
 				});
 			},
 		}),
@@ -124,11 +163,22 @@ export function useProfile(
 		...orpcQuery.profile.workspace.update.mutationOptions({
 			onSuccess: () => {
 				queryClient.invalidateQueries({
-					queryKey: baseQueryOptions.queryKey,
+					queryKey: workspaceQueryOptions.queryKey,
 				});
 			},
 		}),
 		...updateWorkspaceSettingsOptions,
+	});
+
+	const toggleUserAwayMutation = useMutation({
+		...orpcQuery.profile.user.toggleAway.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries({
+					queryKey: userQueryOptions.queryKey,
+				});
+			},
+		}),
+		...toggleUserAwayOptions,
 	});
 
 	const loading =
@@ -137,12 +187,15 @@ export function useProfile(
 		isSessionLoading ||
 		persistOnboardingProgressMutation.isPending ||
 		clearOnboardingProgressMutation.isPending ||
-		updateWorkspaceSettingsMutation.isPending;
+		updateWorkspaceSettingsMutation.isPending ||
+		toggleUserAwayMutation.isPending ||
+		userProfileQuery.isLoading;
 
 	return {
 		onboardingProgress: onboardingProgressQuery.data,
 		workspaceProfile: workspaceProfileQuery.data,
-		loading,
+		userProfile: userProfileQuery.data,
+		isLoading: loading,
 
 		// Persist
 		persistOnboardingProgressMutation: persistOnboardingProgressMutation.mutate,
@@ -158,9 +211,14 @@ export function useProfile(
 		updateWorkspaceSettings: updateWorkspaceSettingsMutation.mutate,
 		updateWorkspaceSettingsAsync: updateWorkspaceSettingsMutation.mutateAsync,
 
+		// Toggle User Away
+		toggleUserAway: toggleUserAwayMutation.mutate,
+		toggleUserAwayAsync: toggleUserAwayMutation.mutateAsync,
+
 		refetch: () => {
 			onboardingProgressQuery.refetch();
 			workspaceProfileQuery.refetch();
+			userProfileQuery.refetch();
 		},
 	};
 }

@@ -1,14 +1,19 @@
-import { Placeholder } from "@zero-heads-lab/shared/utils";
+import type {
+	WidgetConfig,
+	WorkspaceSettings,
+} from "@zero-heads-lab/shared/types";
+import { widget } from "drizzle/schemas/widget.schema";
 import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
 	organization as orgSchema,
 	session as sessionSchema,
-	teamMember as teamMemSchema,
-	team as teamSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
-import { userProfile } from "../../drizzle/schemas/profile.schema";
+import {
+	userProfile,
+	workspaceProfile,
+} from "../../drizzle/schemas/profile.schema";
 
 export async function markUserAsDeleted(
 	database: Database,
@@ -44,13 +49,11 @@ export async function markSessionAsRevoked(
 		.where(eq(sessionSchema.id, params.sessionId));
 }
 
-export async function createNewUserWithProfileTransaction(
+export async function createNewUserWithProfileTX(
 	database: Database,
 	params: { userId: string }
 ) {
-	const orgName = "Default Workspace";
-
-	// 1️⃣ Ensure user exists
+	// Ensure user exists
 	const [existingUser] = await database
 		.select()
 		.from(userSchema)
@@ -71,80 +74,10 @@ export async function createNewUserWithProfileTransaction(
 		throw new Error("Profile already exists");
 	}
 
-	// 2️⃣ Run everything inside ONE transaction
 	return database.transaction(async (tx) => {
-		// 3️⃣ Create org with guaranteed unique slug
-		const baseSlug = Placeholder.slug();
-		// biome-ignore lint/suspicious/noExplicitAny:Add type
-		let org: any;
-		let attempt = 0;
-
-		while (!org && attempt < 10) {
-			const slug =
-				attempt === 0
-					? baseSlug
-					: `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`;
-
-			try {
-				[org] = await tx
-					.insert(orgSchema)
-					.values({
-						name: orgName,
-						slug,
-						logo: Placeholder.logo(orgName),
-					})
-					.returning();
-				// biome-ignore lint/suspicious/noExplicitAny: Database error
-			} catch (err: any) {
-				// If unique constraint fails, retry
-				if (err.code === "23505") {
-					attempt++;
-					continue;
-				}
-				throw err;
-			}
-		}
-
-		if (!org) {
-			throw new Error("Failed to generate unique organization slug");
-		}
-
-		// 4️⃣ Update user role to owner if not already
-		if (existingUser.role !== "owner") {
-			await tx
-				.update(userSchema)
-				.set({ role: "owner" })
-				.where(eq(userSchema.id, params.userId));
-		}
-
-		// 5️⃣ Create team
-		const [team] = await tx
-			.insert(teamSchema)
-			.values({
-				name: "Default Team",
-				organizationId: org.id,
-			})
-			.returning();
-
-		if (!team) {
-			throw new Error("Team creation failed");
-		}
-
-		// 6️⃣ Add team membership
-		await tx.insert(teamMemSchema).values({
-			userId: params.userId,
-			teamId: team.id,
-		});
-
-		// 7️⃣ Create profile
 		await tx.insert(userProfile).values({
 			userId: params.userId,
 		});
-
-		return {
-			organizationId: org.id,
-			teamId: team.id,
-		};
 	});
 }
 
@@ -158,4 +91,53 @@ export async function markUserAsVerified(
 			role: "verified",
 		})
 		.where(eq(userSchema.id, params.userId));
+}
+
+export async function createOrganizationWithProfileAndWidgetTX(
+	database: Database,
+	params: {
+		organizationId: string;
+		widgetConfig?: WidgetConfig;
+		workspaceConfig?: WorkspaceSettings;
+		subscriptionId?: string;
+	}
+) {
+	return await database.transaction(async (tx) => {
+		const [profile] = await tx
+			.insert(workspaceProfile)
+			.values({
+				organizationId: params.organizationId,
+				subscriptionId: params.subscriptionId,
+				settings: params.workspaceConfig,
+			})
+			.returning({
+				workspaceId: workspaceProfile.organizationId,
+			});
+		if (!profile) {
+			throw new Error("Failed to create workspace profile");
+		}
+
+		await tx
+			.insert(widget)
+			.values({
+				organizationId: profile.workspaceId,
+				config: params.widgetConfig,
+			})
+			.onConflictDoNothing()
+			.catch((err) => {
+				console.error("Failed to create widget", err);
+				throw err;
+			});
+
+		await tx
+			.update(orgSchema)
+			.set({
+				logo: params.workspaceConfig?.branding?.logo,
+			})
+			.where(eq(orgSchema.id, params.organizationId))
+			.catch((err) => {
+				console.error("Failed to update organization logo", err);
+				throw err;
+			});
+	});
 }

@@ -1,7 +1,7 @@
+import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { setCookie } from "@zero-heads-lab/shared/utils";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
 import { RightSidebar } from "@/layout/sidebar/right-sidebar";
 import {
 	type SecondaryNavSection,
@@ -15,6 +15,7 @@ type MainContentProps = {
 	className?: string;
 	children: React.ReactNode;
 	animate?: boolean;
+	showHeader?: boolean;
 
 	secondaryHeader?: React.ReactNode;
 	secondarySections?: SecondaryNavSection[];
@@ -22,6 +23,7 @@ type MainContentProps = {
 	secondarySearchable?: boolean;
 
 	rightSidebarContent?: React.ReactNode;
+	rightSidebarHeaderContent?: React.ReactNode;
 } & HeaderProps &
 	SecondarySidebarProps;
 
@@ -30,20 +32,22 @@ export function MainContent({
 	children,
 	animate = false,
 
+	showHeader = true,
+
 	secondaryHeader,
 	secondarySections,
-
 	secondarySearchable,
+
 	rightSidebarContent,
+	rightSidebarHeaderContent,
+	rightSidebarToggleIcon,
 
 	headerLeftContent,
 	headerRightContent,
 }: MainContentProps) {
-	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState<boolean>(
-		!!rightSidebarContent
-	);
+	const { secondarySidebarOpen, hydrated } = useDashboardLayout();
 
-	const { secondarySidebarOpen } = useDashboardLayout();
+	if (!hydrated) return <Loader title="Loading Dashboard" />;
 
 	if (!animate)
 		return (
@@ -64,13 +68,14 @@ export function MainContent({
 				)}
 
 				<div className="flex min-w-0 flex-1 flex-col">
-					<Header
-						headerLeftContent={headerLeftContent}
-						headerRightContent={headerRightContent}
-						isRightSidebarOpen={isRightSidebarOpen}
-						onToggleRightSidebar={() => setIsRightSidebarOpen((p) => !p)}
-						showRightSidebarToggle={!!rightSidebarContent}
-					/>
+					{showHeader && (
+						<Header
+							headerLeftContent={headerLeftContent}
+							headerRightContent={headerRightContent}
+							rightSidebarToggleIcon={rightSidebarToggleIcon}
+							showRightSidebarToggle={!!rightSidebarContent}
+						/>
+					)}
 
 					<main
 						className={cn(
@@ -83,10 +88,7 @@ export function MainContent({
 				</div>
 
 				{!!rightSidebarContent && (
-					<RightSidebar
-						isOpen={isRightSidebarOpen}
-						onClose={() => setIsRightSidebarOpen(false)}
-					>
+					<RightSidebar headerContent={rightSidebarHeaderContent}>
 						{rightSidebarContent}
 					</RightSidebar>
 				)}

@@ -2,11 +2,13 @@ import { defineConfig } from "drizzle-kit";
 import { keys } from "../keys";
 
 export function createDrizzleConfig(
+	schemaFile: string,
+	migrationFolder?: string,
 	overrides?: Partial<Parameters<typeof defineConfig>[0]>
 ) {
 	return defineConfig({
-		schema: "./schema.ts",
-		out: "./drizzle/migrations",
+		schema: schemaFile,
+		out: migrationFolder ?? "./drizzle/migrations",
 		dialect: "postgresql",
 		dbCredentials: {
 			url: keys.DATABASE_URL,

@@ -5,7 +5,7 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Palette, Paperclip, Send, Type } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { z } from "zod";
-import { useChatbot } from "@/hooks/use-chatbot";
+import { useChatbot } from "@/hooks/use-widget";
 
 const formSchema = z.object({
 	botName: z.string().min(2).max(30),

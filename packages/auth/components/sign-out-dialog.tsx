@@ -10,12 +10,12 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-	const signOutRedirectUrl = `${keys.VITE_SIGN_OUT_REDIRECT_URL}?redirectedFrom=${encodeURIComponent(window.location.href)}`;
+	const signOutRedirectUrl = `${keys.VITE_SIGN_OUT_REDIRECT_URL}?redirectedFrom=${encodeURIComponent(
+		window.location.href
+	)}`;
 
 	const { signOut, isPending } = useSignOut(signOutRedirectUrl, {
-		onSuccess: () => {
-			onOpenChange(false);
-		},
+		onSuccess: () => onOpenChange(false),
 		onError: () => {
 			toast.error("Error Signing out", {
 				description: "Please try again later!",
@@ -32,17 +32,15 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
 			onConfirm={signOut}
 			onOpenChange={onOpenChange}
 			open={open}
-			subtitle="Are you sure you want to sign out? You will need to sign in again to access your account."
+			subtitle="You will need to sign in again to access your account."
 			title="Sign out"
 			trigger={
 				<button
-					className="group flex w-full cursor-pointer items-center gap-3 rounded-xl border border-transparent p-3 transition-all duration-200 hover:border-white/30 hover:bg-destructive/20 hover:shadow-sm"
+					className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-red-600 text-sm transition-colors hover:bg-red-500/10 focus:bg-red-500/10"
 					type="button"
 				>
-					<LogOut className="h-4 w-4 text-muted-foreground" />
-					<span className="font-medium text-muted-foreground text-sm">
-						Sign Out
-					</span>
+					<LogOut className="h-4 w-4" />
+					<span className="flex-1 text-left">Logout</span>
 				</button>
 			}
 		/>

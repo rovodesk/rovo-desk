@@ -159,7 +159,7 @@ export function KnowledgeBaseHome() {
 				<div className="flex items-center gap-2">
 					<Separator orientation="vertical" />
 					<InputGroup className="ml-4 w-full max-w-sm">
-						<InputGroupInput placeholder="Search..." />
+						<InputGroupInput onChange={handleSearch} placeholder="Search..." />
 						<InputGroupButton>
 							<Search />
 						</InputGroupButton>

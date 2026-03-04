@@ -16,7 +16,7 @@ import { tasks } from "./data";
 export function Tasks() {
 	return (
 		<TasksProvider>
-			<MainContent className="flex flex-1 flex-col">
+			<MainContent className="flex flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
 				<div className="flex flex-wrap items-end justify-between">
 					<div>
 						<h2 className="font-bold text-2xl tracking-tight">Tasks</h2>
@@ -40,7 +40,7 @@ export function Tasks() {
 						<TabsContent value="kanban">
 							<TaskCardGrid data={tasks} />
 						</TabsContent>
-						<TabsContent value="roadmap">
+						<TabsContent className="mt-2" value="roadmap">
 							<RoadmapCalendar data={tasks} />
 						</TabsContent>
 					</div>

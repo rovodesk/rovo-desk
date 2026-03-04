@@ -1,11 +1,13 @@
 import { ORPCError } from "@orpc/server";
 import {
 	clearOnboardingProgressByUserId,
+	toggleUserAwayField,
 	updateOnboardingProgressByUserId,
 	updateWorkspaceSettingsByOrganizationId,
 } from "@zero-heads-lab/database/repositories/profile/mutations";
 import {
 	getOnboardingProgressByUserId,
+	getUserProfileByUserId,
 	getWorkspaceProfileByOrganizationId,
 } from "@zero-heads-lab/database/repositories/profile/queries";
 import { BaseMiddleware } from "@/middlewares/base.middleware";
@@ -13,6 +15,7 @@ import { OrganizationGuard } from "@/middlewares/organization.middleware";
 import { base } from "../context";
 import {
 	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
+	TOGGLE_USER_AWAY_INPUT_DTO,
 	UPDATE_ONBOARDING_PROGRESS_INPUT_DTO,
 	UPDATE_WORKSPACE_SETTINGS_INPUT_DTO,
 } from "../dto/profile.dto";
@@ -123,6 +126,45 @@ export const getWorkspaceProfile = base
 			console.error(error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to get workspace settings",
+			});
+		}
+	})
+	.callable();
+
+export const getUserProfile = base
+	.use(BaseMiddleware)
+	.use(AuthGuard)
+	.handler(async ({ context }) => {
+		const database = context.database;
+		try {
+			const userProfile = await getUserProfileByUserId(database, {
+				userId: context.user.id,
+			});
+			return userProfile;
+		} catch (error) {
+			console.error(error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to get user profile",
+			});
+		}
+	})
+	.callable();
+
+export const toogleUserAway = base
+	.input(TOGGLE_USER_AWAY_INPUT_DTO)
+	.use(BaseMiddleware)
+	.use(AuthGuard)
+	.handler(async ({ context, input }) => {
+		const database = context.database;
+		try {
+			await toggleUserAwayField(database, {
+				userId: context.user.id,
+				isAway: input.isAway,
+			});
+		} catch (error) {
+			console.error(error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to toggle user away field",
 			});
 		}
 	})

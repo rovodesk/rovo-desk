@@ -1,36 +1,34 @@
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
+import { useDashboardLayout } from "..";
 
 export interface RightSidebarProps {
-	isOpen: boolean;
-	onClose: () => void;
 	children?: React.ReactNode;
+	headerContent?: React.ReactNode;
 }
 
-export function RightSidebar({
-	isOpen = false,
-	onClose,
-	children,
-}: RightSidebarProps) {
+export function RightSidebar({ children, headerContent }: RightSidebarProps) {
+	const { rightSidebarOpen, setRightSidebarOpen } = useDashboardLayout();
+
 	return (
 		<div
 			className={cn(
-				"flex h-screen shrink-0 flex-col overflow-hidden border-border border-l bg-crm-right transition-all duration-200",
-				isOpen ? "w-80" : "w-0"
+				"flex h-screen shrink-0 flex-col overflow-hidden border-border border-l bg-card transition-[max-width] duration-300 ease-in-out",
+				rightSidebarOpen ? "max-w-[600px]" : "max-w-0"
 			)}
 		>
-			{isOpen && (
-				<>
+			{rightSidebarOpen && (
+				<div className="flex w-fit min-w-[320px] flex-col">
 					{/* Header */}
 					<div className="flex items-center justify-between border-border border-b px-4 py-3">
-						<div className="flex items-center gap-2 font-medium text-crm-right-foreground text-sm">
-							<span>Contact Details</span>
-							<ChevronDown className="h-3.5 w-3.5" />
+						<div className="flex items-center gap-2 font-semibold text-sm">
+							{headerContent}
 						</div>
+
 						<Button
 							className="h-7 w-7"
-							onClick={onClose}
+							onClick={() => setRightSidebarOpen(false)}
 							size="icon"
 							variant="ghost"
 						>
@@ -42,7 +40,7 @@ export function RightSidebar({
 					<div className="scrollbar-thin flex-1 overflow-y-auto">
 						{children}
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	);

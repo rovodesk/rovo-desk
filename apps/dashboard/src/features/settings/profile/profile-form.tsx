@@ -4,13 +4,21 @@ import {
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+} from "@zero-heads-lab/design-system/components/ui/input-group";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
+
 import {
 	AtSignIcon,
 	CheckCircle2Icon,
 	GlobeIcon,
+	Pencil,
 	UserIcon,
 	XCircleIcon,
 } from "lucide-react";
@@ -24,51 +32,94 @@ export function ProfilePage() {
 	const user = session.user;
 
 	return (
-		<div className="min-h-screen bg-background">
-			{/* ===================== COVER ===================== */}
-			<div className="relative h-56 w-full bg-muted">
+		<div className="flex min-h-screen flex-col bg-muted/30">
+			{/* ================= COVER ================= */}
+			<div className="relative h-52 w-full border-b bg-muted">
 				<img
 					alt="Cover"
 					className="h-full w-full object-cover"
-					src="https://images.unsplash.com/photo-1772202289452-e9e87552527a?q=80&w=3538&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+					src="https://images.unsplash.com/photo-1772202289452-e9e87552527a?q=80&w=3538&auto=format&fit=crop"
 				/>
+
+				<Button
+					className="absolute top-4 right-4 bg-muted/50!"
+					size="lg"
+					variant="outline"
+				>
+					<Pencil className="mr-2 h-4 w-4" />
+					Change Cover Picture
+				</Button>
 
 				{/* Avatar */}
 				<div className="absolute -bottom-12 left-10">
-					<Avatar className="h-24 w-24 border-4 border-background shadow-sm">
-						{user.image ? (
-							<AvatarImage src={user.image} />
-						) : (
-							<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
-						)}
-					</Avatar>
+					<div className="group relative z-10">
+						<Avatar className="h-24 w-24 border-4 border-muted transition-colors hover:border-primary">
+							{user.image ? (
+								<AvatarImage src={user.image} />
+							) : (
+								<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+							)}
+						</Avatar>
+
+						<Button
+							className="absolute right-0 bottom-0 h-8 w-8 bg-muted/50 opacity-0 transition group-hover:opacity-100"
+							size="icon-lg"
+							variant="ghost"
+						>
+							<Pencil className="h-4 w-4" />
+						</Button>
+					</div>
 				</div>
 			</div>
 
-			{/* ===================== PROFILE HEADER ===================== */}
-			<div className="mx-auto max-w-6xl px-6 pt-16 pb-10">
-				<div className="flex items-start justify-between">
-					<div>
-						<h1 className="font-semibold text-2xl">{user.name}</h1>
-						<p className="text-muted-foreground text-sm">{user.email}</p>
+			{/* ================= PROFILE BODY ================= */}
+			<div className="mx-auto w-full max-w-6xl px-6 pt-16 pb-12">
+				{/* Header */}
+				<div className="group flex items-center justify-between">
+					<div className="group relative flex flex-col gap-2 pr-10">
+						<Badge variant="outline">{user.role}</Badge>
+
+						<div className="flex flex-col gap-1">
+							<h1 className="font-semibold text-2xl tracking-tight">
+								{user.name}
+							</h1>
+							<p className="text-muted-foreground text-sm">{user.email}</p>
+						</div>
+
+						<Button
+							className="absolute top-0 right-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+							size="icon"
+							variant="ghost"
+						>
+							<Pencil className="h-4 w-4" />
+						</Button>
 					</div>
 
-					<Button size="sm" variant="outline">
-						Edit Profile
-					</Button>
+					<div className="flex items-center gap-4">
+						<Button size="sm" variant="outline">
+							<GlobeIcon className="mr-2 h-4 w-4" />
+							View Public Profile
+						</Button>
+					</div>
 				</div>
 
 				<Separator className="my-8" />
 
-				{/* ===================== GRID LAYOUT ===================== */}
-				<div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-					{/* ========== LEFT SIDEBAR ========== */}
+				{/* ================= GRID ================= */}
+				<div className="grid gap-10 lg:grid-cols-[280px_1fr]">
+					{/* LEFT SIDEBAR */}
 					<div className="space-y-6">
-						{/* About */}
-						<div className="rounded-lg border bg-card p-5 shadow-sm">
-							<h3 className="mb-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-								About
-							</h3>
+						{/* ABOUT */}
+						<div className="rounded-lg border bg-background p-5">
+							<div className="mb-4 flex items-center justify-between">
+								<h3 className="font-medium text-muted-foreground text-sm">
+									About
+								</h3>
+
+								<Button size="icon" variant="ghost">
+									<Pencil className="h-4 w-4" />
+								</Button>
+							</div>
 
 							<div className="space-y-3 text-sm">
 								<div className="flex items-center gap-3">
@@ -83,21 +134,23 @@ export function ProfilePage() {
 							</div>
 						</div>
 
-						{/* Account Info */}
-						<div className="rounded-lg border bg-card p-5 shadow-sm">
-							<h3 className="mb-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-								Account
-							</h3>
+						{/* ACCOUNT */}
+						<div className="space-y-4 rounded-lg border bg-background p-5">
+							<div className="flex items-center justify-between">
+								<h3 className="font-medium text-muted-foreground text-sm">
+									Account
+								</h3>
 
-							<div className="space-y-4 text-sm">
-								<div className="flex items-center justify-between">
-									<span className="flex items-center gap-2">
-										<AtSignIcon className="size-4 text-muted-foreground" />
-										Email
-									</span>
+								<Button size="sm" variant="outline">
+									<Pencil className="h-4 w-4" />
+									Update Email
+								</Button>
+							</div>
 
+							<div className="space-y-4">
+								<div className="flex items-center justify-start text-sm">
 									{user.emailVerified ? (
-										<span className="flex items-center gap-1 text-emerald-500 text-xs">
+										<span className="flex items-center gap-1 text-emerald-600 text-xs">
 											<CheckCircle2Icon className="size-3" />
 											Verified
 										</span>
@@ -109,50 +162,42 @@ export function ProfilePage() {
 									)}
 								</div>
 
-								<p className="text-muted-foreground text-xs">{user.email}</p>
+								<InputGroup>
+									<InputGroupAddon>
+										<AtSignIcon className="size-4 text-muted-foreground" />
+									</InputGroupAddon>
+									<InputGroupInput
+										className="w-full truncate"
+										readOnly
+										value={user.email}
+									/>
+								</InputGroup>
 							</div>
 						</div>
 					</div>
 
-					{/* ========== RIGHT CONTENT ========== */}
-					<div className="space-y-6 lg:col-span-2">
-						{/* Worked On */}
-						<div className="rounded-lg border bg-card shadow-sm">
-							<div className="flex items-center justify-between border-b px-5 py-4">
-								<h3 className="font-semibold text-sm">Worked on</h3>
-								<Button size="sm" variant="link">
-									View all
-								</Button>
-							</div>
+					{/* RIGHT CONTENT */}
+					<div className="space-y-6">
+						<CardSection title="Recent Activity">
+							<ProfileListItem
+								meta="Edited today · Zero Heads"
+								title="CRM Dashboard Revamp"
+							/>
+							<ProfileListItem
+								meta="Published yesterday"
+								title="Support Automation Flow"
+							/>
+							<ProfileListItem
+								meta="Edited 3 days ago"
+								title="Customer Segmentation Docs"
+							/>
+						</CardSection>
 
-							<div className="divide-y">
-								<ProfileListItem
-									meta="Edited today · Zero Heads"
-									title="CRM Dashboard Revamp"
-								/>
-								<ProfileListItem
-									meta="Published yesterday"
-									title="Support Automation Flow"
-								/>
-								<ProfileListItem
-									meta="Edited 3 days ago"
-									title="Customer Segmentation Docs"
-								/>
-							</div>
-						</div>
-
-						{/* Spaces / Projects */}
-						<div className="rounded-lg border bg-card shadow-sm">
-							<div className="border-b px-5 py-4">
-								<h3 className="font-semibold text-sm">Places you work</h3>
-							</div>
-
-							<div className="divide-y">
-								<ProfileListItem title="Sales CRM" />
-								<ProfileListItem title="Customer Support" />
-								<ProfileListItem title="Marketing Automation" />
-							</div>
-						</div>
+						<CardSection title="Workspaces">
+							<ProfileListItem title="Sales CRM" />
+							<ProfileListItem title="Customer Support" />
+							<ProfileListItem title="Marketing Automation" />
+						</CardSection>
 					</div>
 				</div>
 			</div>
@@ -160,7 +205,27 @@ export function ProfilePage() {
 	);
 }
 
-/* ===================== LIST ITEM ===================== */
+/* ================= CARD SECTION ================= */
+
+function CardSection({
+	title,
+	children,
+}: {
+	title: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<div className="rounded-lg border bg-background">
+			<div className="border-b px-5 py-4">
+				<h3 className="font-medium text-sm">{title}</h3>
+			</div>
+
+			<div className="divide-y">{children}</div>
+		</div>
+	);
+}
+
+/* ================= LIST ITEM ================= */
 
 function ProfileListItem({ title, meta }: { title: string; meta?: string }) {
 	return (
@@ -171,12 +236,12 @@ function ProfileListItem({ title, meta }: { title: string; meta?: string }) {
 	);
 }
 
-/* ===================== SKELETON ===================== */
+/* ================= SKELETON ================= */
 
 function ProfileSkeleton() {
 	return (
 		<div className="space-y-10">
-			<Skeleton className="h-56 w-full" />
+			<Skeleton className="h-52 w-full" />
 			<div className="mx-auto max-w-6xl px-6">
 				<Skeleton className="h-8 w-48" />
 				<Skeleton className="mt-4 h-64 w-full" />

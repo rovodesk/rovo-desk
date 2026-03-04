@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useDashboardLayout } from "@/layout";
 
 export interface SecondaryNavSection {
-	title: string;
+	title?: string;
 	collapsible?: boolean;
 	items: SecondaryNavItemType[];
 }
@@ -29,6 +29,7 @@ export interface SecondaryNavItemType {
 export interface SecondarySidebarProps {
 	header?: React.ReactNode;
 	sections?: SecondaryNavSection[];
+	component?: React.ReactNode;
 	activeItem?: string;
 	onItemClick?: (id: string) => void;
 	searchable?: boolean;
@@ -39,6 +40,7 @@ export interface SecondarySidebarProps {
 export function SecondarySidebar({
 	header,
 	sections,
+	component,
 	activeItem,
 	onItemClick,
 	searchable = false,
@@ -126,6 +128,8 @@ export function SecondarySidebar({
 					</div>
 				</div>
 			)}
+			{/* Component */}
+			{component}
 
 			{/* Navigation */}
 			<div
@@ -135,7 +139,7 @@ export function SecondarySidebar({
 				)}
 			>
 				{sections?.map((section) => {
-					const isCollapsed = collapsedSections.has(section.title);
+					const isCollapsed = collapsedSections.has(section?.title || "");
 					const filteredItems = section.items.filter((item) =>
 						item.label.toLowerCase().includes(search.toLowerCase())
 					);
@@ -152,7 +156,7 @@ export function SecondarySidebar({
 											"cursor-pointer hover:text-secondary-foreground"
 									)}
 									onClick={() =>
-										section.collapsible && toggleSection(section.title)
+										section.collapsible && toggleSection(section.title || "")
 									}
 								>
 									{section.collapsible &&

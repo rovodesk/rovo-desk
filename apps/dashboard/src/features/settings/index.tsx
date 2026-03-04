@@ -1,9 +1,9 @@
 import { Outlet } from "@tanstack/react-router";
 import {
+	AppWindow,
 	Bell,
 	CreditCard,
 	Globe,
-	LifeBuoy,
 	Palette,
 	Plug,
 	Shield,
@@ -76,10 +76,10 @@ const settingsSections: SecondaryNavSection[] = [
 		collapsible: false,
 		items: [
 			{
-				id: "apps",
-				label: "Apps",
-				icon: LifeBuoy,
-				path: "/settings/apps",
+				id: "widget",
+				label: "Widget",
+				icon: AppWindow,
+				path: "/settings/widget",
 			},
 			{
 				id: "integrations",

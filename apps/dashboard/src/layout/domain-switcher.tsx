@@ -1,9 +1,10 @@
+import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
+import { useOrganization } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,10 +17,14 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useIsMobile } from "@zero-heads-lab/design-system/hooks/use-mobile";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
 import { useMemo } from "react";
-import { useOrganization } from "../hooks";
-import { AddDomainDialog } from "./add-domain-dialog";
 
-export function DomainSwitcher() {
+type DomainSwitcherProps = {
+	workspaceSettingsRouteLink?: string;
+};
+
+export function DomainSwitcher({
+	workspaceSettingsRouteLink,
+}: DomainSwitcherProps) {
 	const isMobile = useIsMobile();
 
 	const {
@@ -38,12 +43,10 @@ export function DomainSwitcher() {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button
-					className="flex h-full w-full justify-between"
+			<DropdownMenuTrigger asChild disabled={loading}>
+				<button
+					className="flex h-full w-full items-center justify-between gap-2"
 					disabled={loading}
-					size="lg"
-					variant="ghost"
 				>
 					<Avatar className="size-8 rounded-lg">
 						<AvatarImage
@@ -63,8 +66,8 @@ export function DomainSwitcher() {
 						</span>
 					</div>
 
-					<ChevronsUpDown className="ml-auto size-4" />
-				</Button>
+					<ChevronsUpDown className="ml-4 size-4 text-muted-foreground" />
+				</button>
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent
@@ -119,7 +122,7 @@ export function DomainSwitcher() {
 									</>
 								) : // biome-ignore lint/style/noNestedTernary: Need to show different icons based on active state
 								isActive ? (
-									<a href="/">
+									<a href={workspaceSettingsRouteLink ?? "/"}>
 										<Settings className="ml-auto size-4" />
 										<span className="sr-only">Settings</span>
 									</a>

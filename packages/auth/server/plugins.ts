@@ -4,12 +4,16 @@ import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import type { KvCacheStore } from "@zero-heads-lab/cache";
 import type { Database } from "@zero-heads-lab/database/conn";
-import { createWorkspaceProfile } from "@zero-heads-lab/database/repositories/profile/mutations";
+import { createOrganizationWithProfileAndWidgetTX } from "@zero-heads-lab/database/repositories/auth/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
 	OrganizationInviteTemplate,
 } from "@zero-heads-lab/email/templates";
+import {
+	defaultWidgetConfig,
+	defaultWorkspaceSettings,
+} from "@zero-heads-lab/shared/types";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import type { BetterAuthPlugin } from "better-auth";
 import {
@@ -98,26 +102,23 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 			organizationHooks: {
 				// biome-ignore lint/suspicious/useAwait: No AWaited function
 				beforeCreateOrganization: async ({ organization }) => {
+					//TODO: Check billing plan
+					console.log("Creating Organization", organization);
 					return {
 						data: {
 							...organization,
-							logo:
-								organization.logo ||
-								Placeholder.logo(organization.name, "glass"),
 						},
 					};
 				},
 				afterCreateOrganization: async ({ organization }) => {
 					// Create Profile
 					try {
-						await createWorkspaceProfile(database, {
+						const logo =
+							organization.logo || Placeholder.logo(organization.name, "glass");
+						await createOrganizationWithProfileAndWidgetTX(database, {
 							organizationId: organization.id,
-							settings: {
-								branding: {
-									logo: organization.logo,
-									favicon: organization.logo,
-								},
-							},
+							workspaceConfig: defaultWorkspaceSettings(logo),
+							widgetConfig: defaultWidgetConfig(organization.name, logo),
 						});
 					} catch (error) {
 						console.error("Failed to create chatbot", error);

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
 	onboarding as onboardingSchema,
+	userProfile,
 	workspaceProfile,
 } from "../../drizzle/schemas/profile.schema";
 
@@ -57,5 +58,26 @@ export async function getWorkspaceProfileByOrganizationId(
 		.then((res) => res[0])
 		.catch(() => {
 			throw new Error("Failed to get workspace profile");
+		});
+}
+
+export async function getUserProfileByUserId(
+	database: Database,
+	params: {
+		userId: string;
+	}
+) {
+	return await database
+		.select({
+			settings: userProfile.settings,
+			isAway: userProfile.isAway,
+			workspaceProfileId: userProfile.workspaceProfileId,
+		})
+		.from(userProfile)
+		.where(eq(userProfile.userId, params.userId))
+		.limit(1)
+		.then((res) => res[0])
+		.catch(() => {
+			throw new Error("Failed to get user profile");
 		});
 }

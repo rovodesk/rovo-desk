@@ -1,118 +1,105 @@
-import { relations } from "drizzle-orm";
-import {
-	index,
-	integer,
-	jsonb,
-	pgSchema,
-	text,
-	timestamp,
-} from "drizzle-orm/pg-core";
-import { organization } from "./auth.schema";
-import { sdk, sdkConnections } from "./sdk.schema";
+// import { relations } from "drizzle-orm";
+// import {
+// 	index,
+// 	integer,
+// 	jsonb,
+// 	pgSchema,
+// 	text,
+// 	timestamp,
+// } from "drizzle-orm/pg-core";
+// import { organization } from "./auth.schema";
+// import { sdk, sdkConnections } from "./sdk.schema";
+// import { widget } from "schema";
 
-export const conversationSchema = pgSchema("conversation");
+// export const conversationSchema = pgSchema("conversation");
 
-export const conversations = conversationSchema.table(
-	"conversations",
-	{
-		id: text("id")
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+// export const conversations = conversationSchema.table(
+// 	"conversations",
+// 	{
+// 		id: text("id")
+// 			.primaryKey()
+// 			.$defaultFn(() => crypto.randomUUID()),
 
-		connectionId: text("connectionId")
-			.notNull()
-			.references(() => sdkConnections.id, { onDelete: "cascade" }),
+// 		organizationId: text("organizationId").references(() => organization.id),
 
-		sdkId: text("sdkId")
-			.notNull()
-			.references(() => sdk.id, { onDelete: "cascade" }),
+// 		senderId: text("senderId"),
 
-		organizationId: text("organizationId").references(() => organization.id),
+// 		status: text("status").notNull().default("active"),
 
-		senderId: text("senderId"),
+// 		totalTokens: integer("totalTokens").default(0),
 
-		status: text("status").notNull().default("active"),
+// 		createdAt: timestamp("createdAt", { withTimezone: true })
+// 			.defaultNow()
+// 			.notNull(),
 
-		totalTokens: integer("totalTokens").default(0),
+// 		endedAt: timestamp("endedAt", { withTimezone: true }),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+// 		deletedAt: timestamp("deletedAt", { withTimezone: true }),
+// 	},
+// 	(table) => [
+// 		index("conversations_org_idx").on(table.organizationId),
+// 		index("conversations_sender_idx").on(table.senderId),
+// 	]
+// );
 
-		endedAt: timestamp("endedAt", { withTimezone: true }),
+// export const conversationsRelations = relations(
+// 	conversations,
+// 	({ one, many }) => ({
+// 		organization: one(organization, {
+// 			fields: [conversations.organizationId],
+// 			references: [organization.id],
+// 		}),
 
-		deletedAt: timestamp("deletedAt", { withTimezone: true }),
-	},
-	(table) => [
-		index("conversations_sdk_idx").on(table.sdkId),
-		index("conversations_org_idx").on(table.organizationId),
-		index("conversations_sender_idx").on(table.senderId),
-	]
-);
+// 		widget: one(widget, {
+// 			fields: [conversations.organizationId],
+// 			references: [widget.organizationId],
+// 		}),
 
-export const conversationsRelations = relations(
-	conversations,
-	({ one, many }) => ({
-		connection: one(sdkConnections, {
-			fields: [conversations.connectionId],
-			references: [sdkConnections.id],
-		}),
+// 		messages: many(messages),
+// 	})
+// );
 
-		sdk: one(sdk, {
-			fields: [conversations.sdkId],
-			references: [sdk.id],
-		}),
+// export const messages = conversationSchema.table(
+// 	"messages",
+// 	{
+// 		id: text("id")
+// 			.primaryKey()
+// 			.$defaultFn(() => crypto.randomUUID()),
 
-		organization: one(organization, {
-			fields: [conversations.organizationId],
-			references: [organization.id],
-		}),
+// 		conversationId: text("conversationId")
+// 			.notNull()
+// 			.references(() => conversations.id, { onDelete: "cascade" }),
 
-		messages: many(messages),
-	})
-);
+// 		role: text("role").notNull(),
+// 		// "user" | "assistant" | "system" | "tool"
 
-export const messages = conversationSchema.table(
-	"messages",
-	{
-		id: text("id")
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+// 		content: text("content").notNull(),
 
-		conversationId: text("conversationId")
-			.notNull()
-			.references(() => conversations.id, { onDelete: "cascade" }),
+// 		tokenCount: integer("tokenCount"),
 
-		role: text("role").notNull(),
-		// "user" | "assistant" | "system" | "tool"
+// 		model: text("model"),
 
-		content: text("content").notNull(),
+// 		attachments: jsonb("attachments"),
 
-		tokenCount: integer("tokenCount"),
+// 		metadata: jsonb("metadata"),
 
-		model: text("model"),
+// 		createdAt: timestamp("createdAt", { withTimezone: true })
+// 			.defaultNow()
+// 			.notNull(),
 
-		attachments: jsonb("attachments"),
+// 		deletedAt: timestamp("deleted_at", { withTimezone: true }),
+// 	},
+// 	(table) => [
+// 		{
+// 			convoIdx: index("messages_conversation_idx").on(table.conversationId),
+// 			createdIdx: index("messages_created_idx").on(table.createdAt),
+// 		},
+// 	]
+// );
 
-		metadata: jsonb("metadata"),
-
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
-
-		deletedAt: timestamp("deleted_at", { withTimezone: true }),
-	},
-	(table) => [
-		{
-			convoIdx: index("messages_conversation_idx").on(table.conversationId),
-			createdIdx: index("messages_created_idx").on(table.createdAt),
-		},
-	]
-);
-
-export const messagesRelations = relations(messages, ({ one }) => ({
-	conversation: one(conversations, {
-		fields: [messages.conversationId],
-		references: [conversations.id],
-	}),
-}));
+// export const messagesRelations = relations(messages, ({ one }) => ({
+// 	conversation: one(conversations, {
+// 		fields: [messages.conversationId],
+// 		references: [conversations.id],
+// 	}),
+// }));

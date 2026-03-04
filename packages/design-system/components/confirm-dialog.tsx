@@ -27,7 +27,7 @@ export const ConfirmDialog = ({ className, confirmText = "Confirm", destructive,
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
-        <Button asChild>
+        <Button variant="outline" asChild>
           <DialogClose>Cancel</DialogClose>
         </Button>
 

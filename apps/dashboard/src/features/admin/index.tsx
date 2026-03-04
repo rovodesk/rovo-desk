@@ -32,8 +32,9 @@ export function AdminDashboard() {
 	}
 
 	return (
-		<>
+		<MainContent>
 			{/* Header */}
+
 			<Header>
 				<Search />
 				<div className="ms-auto flex items-center space-x-4">
@@ -58,81 +59,75 @@ export function AdminDashboard() {
 					</Tooltip>
 				</div>
 			</Header>
-
-			{/* ===== Main ===== */}
-			<MainContent fluid>
-				<div className="mb-8 flex items-center justify-between space-y-2 px-2">
-					<div className="flex items-center gap-2">
-						<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
-							Admin Dashboard
-						</h1>
-						<Badge variant="outline">{role}</Badge>
-					</div>
-					<div className="flex items-center space-x-2">
-						<p className="text-muted-foreground text-sm">
-							<span className="font-bold">Id: </span> {session?.user.id}
-						</p>
-					</div>
+			<div className="mb-8 flex items-center justify-between space-y-2 px-2">
+				<div className="flex items-center gap-2">
+					<h1 className="inline-flex items-center gap-2 font-bold text-3xl tracking-tight">
+						Admin Dashboard
+					</h1>
+					<Badge variant="outline">{role}</Badge>
 				</div>
+				<div className="flex items-center space-x-2">
+					<p className="text-muted-foreground text-sm">
+						<span className="font-bold">Id: </span> {session?.user.id}
+					</p>
+				</div>
+			</div>
 
-				<div className="space-y-4">
-					{/* Cards */}
-					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-						{/* Placeholder for your actual stat cards */}
-						{Array.from({ length: 4 }).map((_, i) => (
-							<Card key={i}>
-								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-									<CardTitle className="font-medium text-sm">
-										Total Revenue
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className="font-bold text-2xl">$45,231.89</div>
-									<p className="text-muted-foreground text-xs">
-										+20.1% from last month
-									</p>
-								</CardContent>
-							</Card>
-						))}
-					</div>
-
-					<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-						<Card className="lg:col-span-4">
-							<CardHeader>
-								<CardTitle>Overview</CardTitle>
-							</CardHeader>
-							<CardContent className="ps-2">
-								{/* Replace with your Chart component */}
-								<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
-									Chart Area
-								</div>
-							</CardContent>
-						</Card>
-
-						<Card className="lg:col-span-3">
-							<CardHeader>
-								<CardTitle>Recent Sales</CardTitle>
-								<CardDescription>
-									You made 265 sales this month.
-								</CardDescription>
+			<div className="space-y-4">
+				{/* Cards */}
+				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+					{/* Placeholder for your actual stat cards */}
+					{Array.from({ length: 4 }).map((_, i) => (
+						<Card key={i}>
+							<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+								<CardTitle className="font-medium text-sm">
+									Total Revenue
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
-								{/* Replace with your RecentSales list */}
-								<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
-									Sales List
-								</div>
+								<div className="font-bold text-2xl">$45,231.89</div>
+								<p className="text-muted-foreground text-xs">
+									+20.1% from last month
+								</p>
 							</CardContent>
 						</Card>
-					</div>
+					))}
 				</div>
-			</MainContent>
-		</>
+
+				<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+					<Card className="lg:col-span-4">
+						<CardHeader>
+							<CardTitle>Overview</CardTitle>
+						</CardHeader>
+						<CardContent className="ps-2">
+							{/* Replace with your Chart component */}
+							<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
+								Chart Area
+							</div>
+						</CardContent>
+					</Card>
+
+					<Card className="lg:col-span-3">
+						<CardHeader>
+							<CardTitle>Recent Sales</CardTitle>
+							<CardDescription>You made 265 sales this month.</CardDescription>
+						</CardHeader>
+						<CardContent>
+							{/* Replace with your RecentSales list */}
+							<div className="flex h-[350px] items-center justify-center rounded-md border border-dashed bg-muted/20">
+								Sales List
+							</div>
+						</CardContent>
+					</Card>
+				</div>
+			</div>
+		</MainContent>
 	);
 }
 
 function DashboardSkeleton() {
 	return (
-		<>
+		<MainContent>
 			<Header>
 				{/* Search Skeleton */}
 				<Skeleton className="h-9 w-64 rounded-md" />
@@ -142,67 +137,64 @@ function DashboardSkeleton() {
 					<Skeleton className="size-9 rounded-full" />
 				</div>
 			</Header>
+			{/* Top Bar Skeleton */}
+			<div className="mb-8 flex items-center justify-between px-2">
+				<Skeleton className="h-10 w-64" />
+				<Skeleton className="h-10 w-32" />
+			</div>
 
-			<MainContent fluid>
-				{/* Top Bar Skeleton */}
-				<div className="mb-8 flex items-center justify-between px-2">
-					<Skeleton className="h-10 w-64" />
-					<Skeleton className="h-10 w-32" />
-				</div>
-
-				<div className="space-y-4">
-					{/* 4 Stats Cards Skeleton */}
-					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-						{Array.from({ length: 4 }).map((_, i) => (
-							<Card key={i}>
-								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-									<Skeleton className="h-4 w-[100px]" />
-									<Skeleton className="size-4 rounded-full" />
-								</CardHeader>
-								<CardContent>
-									<Skeleton className="mb-2 h-8 w-[60px]" />
-									<Skeleton className="h-3 w-[120px]" />
-								</CardContent>
-							</Card>
-						))}
-					</div>
-
-					{/* Main Grid Skeleton */}
-					<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-						{/* Overview Chart Skeleton */}
-						<Card className="lg:col-span-4">
-							<CardHeader>
-								<Skeleton className="h-6 w-[140px]" />
-							</CardHeader>
-							<CardContent className="ps-2">
-								<Skeleton className="h-[350px] w-full rounded-xl" />
-							</CardContent>
-						</Card>
-
-						{/* Recent Sales Skeleton */}
-						<Card className="lg:col-span-3">
-							<CardHeader>
-								<Skeleton className="mb-2 h-6 w-[140px]" />
-								<Skeleton className="h-4 w-[200px]" />
+			<div className="space-y-4">
+				{/* 4 Stats Cards Skeleton */}
+				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+					{Array.from({ length: 4 }).map((_, i) => (
+						<Card key={i}>
+							<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+								<Skeleton className="h-4 w-[100px]" />
+								<Skeleton className="size-4 rounded-full" />
 							</CardHeader>
 							<CardContent>
-								<div className="space-y-6">
-									{Array.from({ length: 5 }).map((_, i) => (
-										<div className="flex items-center gap-4" key={i}>
-											<Skeleton className="size-10 rounded-full" />
-											<div className="space-y-2">
-												<Skeleton className="h-4 w-[150px]" />
-												<Skeleton className="h-3 w-[100px]" />
-											</div>
-											<Skeleton className="ml-auto h-4 w-[50px]" />
-										</div>
-									))}
-								</div>
+								<Skeleton className="mb-2 h-8 w-[60px]" />
+								<Skeleton className="h-3 w-[120px]" />
 							</CardContent>
 						</Card>
-					</div>
+					))}
 				</div>
-			</MainContent>
-		</>
+
+				{/* Main Grid Skeleton */}
+				<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+					{/* Overview Chart Skeleton */}
+					<Card className="lg:col-span-4">
+						<CardHeader>
+							<Skeleton className="h-6 w-[140px]" />
+						</CardHeader>
+						<CardContent className="ps-2">
+							<Skeleton className="h-[350px] w-full rounded-xl" />
+						</CardContent>
+					</Card>
+
+					{/* Recent Sales Skeleton */}
+					<Card className="lg:col-span-3">
+						<CardHeader>
+							<Skeleton className="mb-2 h-6 w-[140px]" />
+							<Skeleton className="h-4 w-[200px]" />
+						</CardHeader>
+						<CardContent>
+							<div className="space-y-6">
+								{Array.from({ length: 5 }).map((_, i) => (
+									<div className="flex items-center gap-4" key={i}>
+										<Skeleton className="size-10 rounded-full" />
+										<div className="space-y-2">
+											<Skeleton className="h-4 w-[150px]" />
+											<Skeleton className="h-3 w-[100px]" />
+										</div>
+										<Skeleton className="ml-auto h-4 w-[50px]" />
+									</div>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</div>
+			</div>
+		</MainContent>
 	);
 }

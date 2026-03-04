@@ -1,7 +1,7 @@
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
-	createNewUserWithProfileTransaction,
+	createNewUserWithProfileTX,
 	deleteSession,
 	markSessionAsRevoked,
 	markUserAsDeleted,
@@ -381,15 +381,15 @@ export function createAuth(namespace: KVNamespace) {
 					after: async (user) => {
 						try {
 							// Create A New User Profile
-							await createNewUserWithProfileTransaction(database, {
+							await createNewUserWithProfileTX(database, {
 								userId: user.id,
 							});
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
 							console.error("CRITICAL: Profile creation failed:", error);
-							// If you throw here, the user might be created but the UI will show an error
+
 							throw new APIError("INTERNAL_SERVER_ERROR", {
-								message: `Failed to create profile because ${error}`,
+								message: "Failed to create  user profile",
 							});
 						}
 

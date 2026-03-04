@@ -11,6 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@onboardjs/core": "^1.0.0-rc.3",
     "@onboardjs/react": "^1.0.0-rc.3",
     "@t3-oss/env-core": "catalog:",
@@ -21,11 +24,11 @@
     "@tanstack/router-plugin": "catalog:tanstack",
     "@zero-heads-lab/auth": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
+    "@zero-heads-lab/crypto": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
-    "@zero-heads-lab/crypto": "workspace:*",
     "axios": "^1.13.4",
     "canvas-confetti": "^1.9.4",
     "date-fns": "catalog:",

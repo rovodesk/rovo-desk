@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
 	onboarding as onboardingSchema,
+	userProfile,
 	workspaceProfile,
 } from "../../drizzle/schemas/profile.schema";
 
@@ -88,5 +89,23 @@ export async function updateWorkspaceSettingsByOrganizationId(
 		.where(eq(workspaceProfile.organizationId, params.organizationId))
 		.catch(() => {
 			throw new Error("Failed to update workspace settings");
+		});
+}
+
+export async function toggleUserAwayField(
+	database: Database,
+	params: {
+		userId: string;
+		isAway: boolean;
+	}
+) {
+	return await database
+		.update(userProfile)
+		.set({
+			isAway: params.isAway,
+		})
+		.where(eq(userProfile.userId, params.userId))
+		.catch(() => {
+			throw new Error("Failed to toggle user away field");
 		});
 }

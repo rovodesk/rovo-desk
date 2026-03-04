@@ -1,5 +1,10 @@
+import type {
+	UserSettings,
+	WorkspaceSettings,
+} from "@zero-heads-lab/shared/types";
 import { relations } from "drizzle-orm";
 import {
+	boolean,
 	jsonb,
 	pgSchema,
 	primaryKey,
@@ -16,14 +21,9 @@ export const userProfile = profileSchema.table("userProfile", {
 		.primaryKey()
 		.references(() => user.id, { onDelete: "cascade" }),
 
-	settings: jsonb("settings")
-		.$type<{
-			theme?: "light" | "dark" | "system";
-			locale?: string;
-			timezone?: string;
-			emailNotifications?: boolean;
-		}>()
-		.default({}),
+	settings: jsonb("settings").$type<UserSettings>().default({}),
+
+	isAway: boolean("isAway").notNull().default(false),
 
 	workspaceProfileId: text("workspaceProfileId").references(
 		() => workspaceProfile.organizationId,
@@ -56,34 +56,7 @@ export const workspaceProfile = profileSchema.table("workspaceProfile", {
 		onDelete: "set null",
 	}),
 
-	settings: jsonb("settings")
-		.$type<{
-			branding?: {
-				logo?: string;
-				colors?: {
-					brand?: string;
-					primary?: string;
-					secondary?: string;
-					accent?: string;
-				};
-			};
-			locale?: string;
-			timezone?: string;
-			workingHours?: {
-				startTime?: string;
-				endTime?: string;
-				days?: {
-					mon?: boolean;
-					tue?: boolean;
-					wed?: boolean;
-					thu?: boolean;
-					fri?: boolean;
-					sat?: boolean;
-					sun?: boolean;
-				};
-			};
-		}>()
-		.default({}),
+	settings: jsonb("settings").$type<WorkspaceSettings>().default({}),
 });
 
 export const workspaceProfileRelations = relations(

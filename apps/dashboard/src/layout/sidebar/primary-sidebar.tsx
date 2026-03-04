@@ -1,11 +1,6 @@
+import { IconBrandDiscordFilled } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { useUser } from "@zero-heads-lab/auth/hooks";
 import Logo from "@zero-heads-lab/design-system/components/logo";
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from "@zero-heads-lab/design-system/components/ui/avatar";
 import {
 	Tooltip,
 	TooltipContent,
@@ -13,17 +8,17 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import {
-	Bell,
 	Book,
 	Funnel,
-	HelpCircle,
 	Inbox,
 	LayoutDashboard,
 	ListTodo,
-	Settings,
+	Megaphone,
+	TableOfContents,
 	Zap,
 } from "lucide-react";
 import { useDashboardLayout } from "@/layout";
+import { UserProfileDropdown } from "../user-profile-dropdown";
 
 export type PrimaryNavItem = {
 	id: string;
@@ -75,22 +70,21 @@ const primaryNavItems: PrimaryNavItem[] = [
 
 const bottomNavItems: PrimaryNavItem[] = [
 	{
-		id: "notifications",
-		icon: Bell,
-		label: "Notifications",
-		badge: 3,
-		path: "#",
+		id: "announcements",
+		icon: Megaphone,
+		label: "Announcements",
+		path: "/announcements",
 	},
 	{
-		id: "settings",
-		icon: Settings,
-		label: "Settings",
-		path: "/settings",
+		id: "community",
+		icon: IconBrandDiscordFilled,
+		label: "Community",
+		path: "/community",
 	},
 	{
-		id: "help",
-		icon: HelpCircle,
-		label: "Help",
+		id: "docs",
+		icon: TableOfContents,
+		label: "Docs",
 		path: "#",
 	},
 ];
@@ -113,17 +107,6 @@ export function PrimarySidebar() {
 	const handleClick = (item: PrimaryNavItem) => {
 		if (item.path !== "#") navigate({ to: item.path });
 	};
-
-	const { user } = useUser();
-
-	const name = user?.name || "";
-	const image = user?.image || "";
-	const abbreviation = name
-		?.split(" ")
-		.map((n) => n[0])
-		.join("")
-		.toUpperCase()
-		.slice(0, 2);
 
 	const { setSecondarySidebarOpen } = useDashboardLayout();
 
@@ -162,15 +145,7 @@ export function PrimarySidebar() {
 						onClick={() => handleClick(item)}
 					/>
 				))}
-				<div className="relative mt-2">
-					<span className="absolute -top-0.5 -right-0.5 z-10 h-2.5 w-2.5 rounded-full bg-green-500" />
-					<Avatar className="relative h-10 w-10 rounded-lg border dark:border-gray-700">
-						<AvatarImage alt={name} src={image} />
-						<AvatarFallback className="rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-							{abbreviation}
-						</AvatarFallback>
-					</Avatar>
-				</div>
+				<UserProfileDropdown />
 			</div>
 		</div>
 	);
@@ -191,7 +166,7 @@ function NavButton({
 			<TooltipTrigger asChild>
 				<button
 					className={cn(
-						"relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-150 dark:border dark:border-gray-700",
+						"relative flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-150",
 						isActive
 							? "bg-primary text-primary-foreground"
 							: "hover:border hover:bg-muted"

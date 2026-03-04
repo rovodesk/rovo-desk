@@ -24,13 +24,13 @@ import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
+import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authenticated/settings/widget'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings/integrations'
 import { Route as AuthenticatedSettingsGeneralRouteImport } from './routes/_authenticated/settings/general'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedSettingsAppsIndexRouteImport } from './routes/_authenticated/settings/apps/index'
 import { Route as AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport } from './routes/_authenticated/knowledge-base/knowledge.$knowledgeId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -112,6 +112,12 @@ const AuthenticatedSettingsWorkspaceRoute =
     path: '/workspace',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedSettingsWidgetRoute =
+  AuthenticatedSettingsWidgetRouteImport.update({
+    id: '/widget',
+    path: '/widget',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/security',
@@ -148,12 +154,6 @@ const AuthenticatedSettingsAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedSettingsAppsIndexRoute =
-  AuthenticatedSettingsAppsIndexRouteImport.update({
-    id: '/apps/',
-    path: '/apps/',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute =
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport.update({
     id: '/knowledge-base/knowledge/$knowledgeId',
@@ -177,13 +177,13 @@ export interface FileRoutesByFullPath {
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
-  '/settings/apps/': typeof AuthenticatedSettingsAppsIndexRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
@@ -200,13 +200,13 @@ export interface FileRoutesByTo {
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/funnels': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
-  '/settings/apps': typeof AuthenticatedSettingsAppsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -226,13 +226,13 @@ export interface FileRoutesById {
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/_authenticated/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
-  '/_authenticated/settings/apps/': typeof AuthenticatedSettingsAppsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -252,13 +252,13 @@ export interface FileRouteTypes {
     | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
+    | '/settings/widget'
     | '/settings/workspace'
     | '/admin/'
     | '/funnels/'
     | '/knowledge-base/'
     | '/settings/'
     | '/knowledge-base/knowledge/$knowledgeId'
-    | '/settings/apps/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/sign-in'
@@ -275,13 +275,13 @@ export interface FileRouteTypes {
     | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
+    | '/settings/widget'
     | '/settings/workspace'
     | '/admin'
     | '/funnels'
     | '/knowledge-base'
     | '/settings'
     | '/knowledge-base/knowledge/$knowledgeId'
-    | '/settings/apps'
   id:
     | '__root__'
     | '/_authenticated'
@@ -300,13 +300,13 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/integrations'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/security'
+    | '/_authenticated/settings/widget'
     | '/_authenticated/settings/workspace'
     | '/_authenticated/admin/'
     | '/_authenticated/funnels/'
     | '/_authenticated/knowledge-base/'
     | '/_authenticated/settings/'
     | '/_authenticated/knowledge-base/knowledge/$knowledgeId'
-    | '/_authenticated/settings/apps/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -425,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsWorkspaceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/settings/widget': {
+      id: '/_authenticated/settings/widget'
+      path: '/widget'
+      fullPath: '/settings/widget'
+      preLoaderRoute: typeof AuthenticatedSettingsWidgetRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
     '/_authenticated/settings/security': {
       id: '/_authenticated/settings/security'
       path: '/security'
@@ -467,13 +474,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/settings/apps/': {
-      id: '/_authenticated/settings/apps/'
-      path: '/apps'
-      fullPath: '/settings/apps/'
-      preLoaderRoute: typeof AuthenticatedSettingsAppsIndexRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
-    }
     '/_authenticated/knowledge-base/knowledge/$knowledgeId': {
       id: '/_authenticated/knowledge-base/knowledge/$knowledgeId'
       path: '/knowledge-base/knowledge/$knowledgeId'
@@ -491,9 +491,9 @@ interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
+  AuthenticatedSettingsWidgetRoute: typeof AuthenticatedSettingsWidgetRoute
   AuthenticatedSettingsWorkspaceRoute: typeof AuthenticatedSettingsWorkspaceRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
-  AuthenticatedSettingsAppsIndexRoute: typeof AuthenticatedSettingsAppsIndexRoute
 }
 
 const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteChildren =
@@ -506,9 +506,9 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
     AuthenticatedSettingsNotificationsRoute:
       AuthenticatedSettingsNotificationsRoute,
     AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
+    AuthenticatedSettingsWidgetRoute: AuthenticatedSettingsWidgetRoute,
     AuthenticatedSettingsWorkspaceRoute: AuthenticatedSettingsWorkspaceRoute,
     AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
-    AuthenticatedSettingsAppsIndexRoute: AuthenticatedSettingsAppsIndexRoute,
   }
 
 const AuthenticatedSettingsRouteRouteWithChildren =

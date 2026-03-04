@@ -6,7 +6,7 @@ import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { Copy, Eye, EyeOff, Info, RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { useChatbot } from "@/hooks/use-chatbot";
+import { useChatbot } from "@/hooks/use-widget";
 
 type Props = {
 	connectionId: string;
