@@ -1,46 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Zero Heads Chatbot Test</title>
 
-		<link rel="stylesheet" href="index.css">
-	</head>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Zero Heads Chatbot Test</title>
 
-	<body>
-		<div class="page">
-			<header class="hero">
-				<h1>Zero Heads Chatbot SDK</h1>
-				<p>Testing environment for the embeddable chatbot engine.</p>
-			</header>
+	<link rel="stylesheet" href="index.css">
+</head>
 
-			<section class="card">
-				<h2>Environment Info</h2>
-				<p>
-					Engine loaded from:
-					<code>../../packages/engine/dist/index.js</code>
-				</p>
-				<p>Use this page to test rendering, positioning, and UI behavior.</p>
-			</section>
-		</div>
+<body>
+	<div class="page">
+		<header class="hero">
+			<h1>Zero Heads Chatbot SDK</h1>
+			<p>Testing environment for the embeddable chatbot engine.</p>
+		</header>
 
-		<script>
-		"use strict";
-		window.zeroHeadsSettings = {
-			organizationId: "XjJyKVeDQVGyyNVfhKW03DngxRecBi2t",
-			accessKey: "pk_live_abc",
-			apiBaseUrl: "http://localhost:5001/sdk",
-			user: {
-				id: "user_1",
-				email: "test@test.com",
-				name: "Test User",
-				createdAt: "2022-01-01T00:00:00.000Z",
-				signature: "signature",
-			},
-		};
-		</script>
+		<section class="card">
+			<h2>Environment Info</h2>
+			<p>
+				Engine loaded from:
+				<code>../../packages/engine/dist/index.js</code>
+			</p>
+			<p>Use this page to test rendering, positioning, and UI behavior.</p>
+		</section>
+	</div>
 
-		<script type="module" src="../../packages/engine/dist/index.js"></script>
-	</body>
+	<script>"use strict";
+		(function () {
+			var rovoDesk = window.RovoDesk;
+
+			if (typeof rovoDesk === "function") {
+				return;
+			}
+
+			rovoDesk = function () {
+				rovoDesk.q.push(arguments);
+			};
+
+			rovoDesk.q = [];
+			window.RovoDesk = rovoDesk;
+
+			rovoDesk("init", {
+				organizationId: "Xp0g0woQaOJ5ymHJTmRcuYmgcoza4D45",
+				accessKey:
+					"org_UjgeBsTexZDNpOThbfAJRjaRNmoklIeSbzHXCdXGtkXghMxeEcqXtMxQHHQYSPbN",
+				apiBaseUrl: "http://localhost:5001/widget",
+				user: {
+					id: "user_1",
+					email: "test@test.com",
+					name: "Test User",
+					createdAt: "2022-01-01T00:00:00.000Z",
+					signature: "signature",
+				},
+			});
+
+			var s = document.createElement("script");
+			s.async = true;
+			s.src = "../../packages/engine/dist/index.global.js";
+
+			document.head.appendChild(s);
+		})();
+	</script>
+</body>
+
 </html>

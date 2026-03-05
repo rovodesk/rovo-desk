@@ -1,13 +1,14 @@
 import { createAuth } from "@zero-heads-lab/auth/server";
-import { verifyJWTToken } from "@zero-heads-lab/crypto";
+import { KvCacheStore } from "@zero-heads-lab/cache";
+import { signJWTToken, verifyJWTToken } from "@zero-heads-lab/crypto";
 import { createDatabase } from "@zero-heads-lab/database";
 import { getApiKeyByWorkspaceId } from "@zero-heads-lab/database/repositories/auth/queries";
 import { getWorkspaceProfileByOrganizationId } from "@zero-heads-lab/database/repositories/profile/queries";
+import { getWidgetByOrganizationId } from "@zero-heads-lab/database/repositories/widget/queries";
 import { Hono } from "hono";
+import { setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import type { JWTPayload } from "hono/utils/jwt/types";
-import { canvasSchema } from "../../../../packages/engine/validations/canvas";
-import { buildInitialCanvas } from "../lib/utils";
 import type { Bindings } from "../types";
 
 export const widgetRoute = new Hono<{ Bindings: Bindings }>();
@@ -16,13 +17,72 @@ widgetRoute.use(
 	"*",
 	cors({
 		origin: "*",
-		allowHeaders: ["Content-Type", "Authorization"],
+		// origin: "http://localhost:5500",
+		allowHeaders: [
+			"Content-Type",
+			"Authorization",
+			"Access-Control-Allow-Origin",
+		],
 		allowMethods: ["POST", "GET", "OPTIONS"],
-		exposeHeaders: ["Content-Length"],
+		exposeHeaders: [
+			"Content-Length",
+			"Content-Type",
+			"Access-Control-Allow-Origin",
+		],
 		maxAge: 600,
-		credentials: true,
 	})
 );
+
+widgetRoute.post("/auth", async (c) => {
+	const { user, organizationId, accessKey } = await c.req.json();
+	if (!(user && organizationId && accessKey)) {
+		return c.json({ error: "Invalid request" }, 400);
+	}
+
+	let key: string;
+	// Get api Key from cache (fallback to db)
+	const cache = new KvCacheStore(c.env.AUTH_CACHE);
+	// biome-ignore lint/suspicious/noExplicitAny: Returns Any type
+	const cachedKey = await cache.get<Record<string, any>>(accessKey);
+	if (cachedKey?.key) {
+		key = cachedKey.key;
+	} else {
+		const db = createDatabase();
+		const apiKeyFromDb = await getApiKeyByWorkspaceId(db, {
+			workspaceId: organizationId,
+		});
+		if (!apiKeyFromDb) {
+			return c.json({ error: "API Key not found" }, 404);
+		}
+		key = apiKeyFromDb.key;
+		// Set API Key in cache for 1 hour
+		await cache.set(accessKey, apiKeyFromDb, 60 * 60); // 1 hour
+	}
+
+	const token = await signJWTToken(
+		{
+			keyId: crypto.randomUUID(),
+			orgId: organizationId,
+			user,
+			role: "authenticated",
+		},
+		key,
+		"1h", // 1 hour
+		"http://localhost:5001",
+		user.id as string,
+		`organization:${organizationId},user:${user.id},role:authenticated`
+	);
+
+	setCookie(c, "sdk_token", token, {
+		httpOnly: true,
+		sameSite: "Lax",
+		secure: true,
+		path: "/",
+		maxAge: 60 * 60, // 1 hour
+	});
+
+	return c.json({ token });
+});
 
 widgetRoute.post("/init", async (c) => {
 	const body = await c.req.json().catch(() => null);
@@ -32,7 +92,7 @@ widgetRoute.post("/init", async (c) => {
 	}
 
 	const { workspaceId, user } = body;
-	const customerSignedToken = jwtHeader?.split(" ")[1];
+	const jwtSignedToken = jwtHeader?.split(" ")[1];
 	if (!workspaceId) {
 		return c.json({ error: "Missing credentials" }, 400);
 	}
@@ -47,178 +107,52 @@ widgetRoute.post("/init", async (c) => {
 		return c.json({ error: "Workspace not found" }, 404);
 	}
 
+	const [apiKey, widget] = await Promise.all([
+		getApiKeyByWorkspaceId(db, { workspaceId }),
+		getWidgetByOrganizationId(db, { organizationId: workspaceId }),
+	]);
+
+	// console.log(jwtSignedToken, apiKey?.key, widget);
+
 	// Validate Customer Signed Token (ifPresent)
-	if (customerSignedToken && customerSignedToken !== "") {
+	if (jwtSignedToken && jwtSignedToken !== "") {
 		// Fetch apiKey from Database
-		const apiKey = await getApiKeyByWorkspaceId(db, {
-			workspaceId,
-		});
 		const jwtSecret = apiKey?.key;
 		if (!jwtSecret) {
 			return c.json({ error: "Unauthorized" }, 401);
 		}
 		// Verify Token
-		const decodedToken = await verifyJWTToken(customerSignedToken, jwtSecret);
+		const decodedToken: JWTPayload = await verifyJWTToken(
+			jwtSignedToken,
+			jwtSecret
+		);
 		if (!decodedToken) {
 			return c.json({ error: "Invalid token" }, 401);
 		}
+		// // HMAC Verification ( if x-signature header is present)
+		// const signature = c.req.header("x-signature");
+		// if (signature) {
+		// 	const expected = generateHmac(user.id, jwtSecret);
+		// 	if (expected !== signature) {
+		// 		return c.json({ error: "Invalid user signature" }, 401);
+		// 	}
+		// }
+		if (
+			decodedToken.role === "authenticated" &&
+			(!user || decodedToken.sub !== user.id)
+		) {
+			return c.json({ error: "Invalid user token" }, 401);
+		}
 	}
 
-	// HMAC Verification ( if x-signature header is present)
-	// const signature = c.req.header("x-signature");
-	// if (signature) {
-	// 	const expected = generateHmac(user.id, org.secretKey);
-	// 	if (expected !== signature) {
-	// 		return c.json({ error: "Invalid user signature" }, 401);
-	// 	}
-	// }
-
-	// Build Canvas
-	const canvas = buildInitialCanvas({
-		workspace,
-		user,
-	});
-
-	// Validate Canvas
-	const parsed = canvasSchema.safeParse({ canvas });
-
-	if (!parsed.success) {
-		console.error(parsed.error);
-		return c.json({ error: "Invalid canvas generated" }, 500);
-	}
-
-	// Return Canvas
+	// Return Widget
 	return c.json({
 		success: true,
-		canvas,
+		widget,
+		mode: user ? "user" : "visitor",
+		user,
 	});
 });
-
-// widgetRoute.post("/auth", async (c) => {
-// 	const { orgId } = await c.req.json();
-// 	const publicKey = c.req.header("x-public-key");
-// 	const secretKey = c.req.header("x-secret-key");
-
-// 	if (!orgId || typeof orgId !== "string") {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-// 	if (secretKey && typeof secretKey !== "string") {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-// 	if (publicKey && typeof publicKey !== "string") {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-
-// 	// When both keys are present
-// 	if (publicKey && secretKey) {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-
-// 	let result: boolean;
-// 	const auth = createAuth(c.env.AUTH_CACHE);
-
-// 	if (publicKey) {
-// 		//@ts-expect-error no public key verification in better-auth
-// 		result = await auth.api.verifyKey({
-// 			body: {
-// 				key: publicKey,
-// 				configId: "public",
-// 			},
-// 		});
-// 	} else if (secretKey) {
-// 		//@ts-expect-error no secret key verification in better-auth
-// 		result = await auth.api.verifyKey({
-// 			body: {
-// 				key: secretKey,
-// 				configId: "secret",
-// 			},
-// 		});
-// 	} else {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-
-// 	let token: string | undefined;
-// 	if (result) {
-// 		// Issue JWT token for anonymous user
-// 		token = await issueAnonymousSDKToken(orgId, c.env.SDK_JWT_SECRET);
-// 		// Set cookie for the token
-// 		setCookie(c, "sdk_token", token, {
-// 			httpOnly: true,
-// 			sameSite: "Lax",
-// 			secure: true,
-// 			path: "/",
-// 			maxAge: 15 * 60, // 15 minutes
-// 		});
-// 	}
-// 	// Return chatroom URL
-// 	return c.json({
-// 		authToken: token,
-// 		chatroomUrl: `/sdk/chatroom/${orgId}`,
-// 	});
-// });
-
-// widgetRoute.post("/auth/authenticated", async (c) => {
-// 	const { connId, orgId, user, signature } = await c.req.json();
-// 	if (
-// 		!(connId && orgId && user && signature) ||
-// 		typeof connId !== "string" ||
-// 		typeof orgId !== "string" ||
-// 		typeof user !== "object" ||
-// 		typeof user.id !== "string" ||
-// 		typeof signature !== "string" ||
-// 		!validateUUID(connId)
-// 	) {
-// 		return c.json({ error: "Invalid request" }, 400);
-// 	}
-
-// 	const db = createDatabase();
-// 	// Check if connection is enabled
-// 	const connection = await getSDKConnectionById(db, {
-// 		connectionId: connId,
-// 	});
-// 	if (!connection?.isActive) {
-// 		return c.json({ error: "Connection disabled" }, 404);
-// 	}
-// 	// Get Active Public Key
-// 	const keyRecord = await getActivePublicKeyByConnectionId(db, {
-// 		connectionId: connId,
-// 	});
-// 	if (!keyRecord?.publicKey) {
-// 		return c.json({ error: "Connection not found" }, 400);
-// 	}
-
-// 	// Verify signature and jwt token for provided user payload
-// 	const crypto = new AsymmetricCrypto();
-// 	const verified = crypto.verify(
-// 		keyRecord.publicKey,
-// 		JSON.stringify(user),
-// 		signature
-// 	);
-// 	if (!verified) {
-// 		return c.json({ error: "JWT Verification Failed" }, 401);
-// 	}
-
-// 	// Issue JWT token for authenticated user
-// 	const token = await issueAuthenticatedSDKToken(
-// 		orgId,
-// 		connId,
-// 		user,
-// 		c.env.SDK_JWT_SECRET
-// 	);
-// 	// Set cookie for the token
-// 	setCookie(c, "sdk_token", token, {
-// 		httpOnly: true,
-// 		sameSite: "Lax",
-// 		secure: true,
-// 		path: "/",
-// 		maxAge: 30 * 60, // 30 minutes
-// 	});
-// 	// Return chatroom URL
-// 	return c.json({
-// 		authToken: token,
-// 		chatroomUrl: `/sdk/chatroom/${connId}`,
-// 	});
-// });
 
 widgetRoute.all("/chatroom/:connId", async (c) => {
 	const connId = c.req.param("connId");

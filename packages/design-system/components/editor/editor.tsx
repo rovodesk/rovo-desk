@@ -14,7 +14,7 @@ import { EmojiPicker } from "./emoji-picker";
 import { SideMenu } from "./side-menu";
 import "./editor.css";
 import { cn } from "../../lib/utils";
-import * as Y from "@zero-heads-lab/shared/utils/yjs";
+import * as Y from "yjs";
 import {
   CommentsExtension,
   User,

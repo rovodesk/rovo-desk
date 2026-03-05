@@ -1,13 +1,13 @@
 import type { IActionProvider } from "./action-provider.js";
 
-type MessageType = "bot" | "user" | "external" | "system" | "error";
+type MessageType = "ai" | "visitor" | "user" | "admin" | "system" | "error";
 
 interface Message {
 	id: string;
 	userId?: string;
 	username?: string;
 	message: string;
-	timestamp: number;
+	timestamp?: number;
 	type: MessageType;
 	loading?: boolean;
 	widget?: string;
@@ -26,11 +26,11 @@ class MessageParser implements IMessageParser {
 
 	parse(message: string) {
 		if (message.toLowerCase().includes("hello")) {
-			this.actionProvider.addBotMessage("Hello 👋 I am working!");
+			this.actionProvider.addSystemMessage("Hello 👋 I am working!");
 			return;
 		}
 		// fallback
-		this.actionProvider.addBotMessage("Sorry, I didn’t understand that.");
+		this.actionProvider.addError("Sorry, I didn’t understand that.");
 	}
 }
 

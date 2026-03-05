@@ -20,7 +20,6 @@ import { Separator } from "@zero-heads-lab/design-system/components/ui/separator
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
-import * as Y from "@zero-heads-lab/shared/utils/yjs";
 import {
 	Calendar,
 	CheckSquare,
@@ -33,6 +32,7 @@ import {
 	X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import * as Y from "yjs";
 import { avatars } from "@/data/active-avatars";
 import { MainContent } from "@/layout/main-content";
 import { partyKitProvider } from "@/lib/partykit";

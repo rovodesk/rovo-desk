@@ -2,7 +2,7 @@ import type { BotState, StateUpdater } from "../types";
 import { createChatMessage, type Message } from "./message-parser.js";
 
 interface IActionProvider {
-	addBotMessage: (
+	addAIMessage: (
 		message: string,
 		options?: Partial<
 			Omit<Message, "id" | "type" | "message" | "userId" | "username">
@@ -16,6 +16,16 @@ interface IActionProvider {
 		>
 	) => void;
 
+	addSystemMessage: (
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) => void;
+
+	addError: (
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) => void;
+
 	setLoading(id: string, loading: boolean): void;
 }
 
@@ -26,21 +36,21 @@ class ActionProvider<T extends BotState> implements IActionProvider {
 		this.setState = setState;
 	}
 
-	addBotMessage(
+	addAIMessage(
 		message: string,
 		options?: Partial<
 			Omit<Message, "id" | "type" | "message" | "userId" | "username">
 		>
 	) {
-		const botMessage = {
-			...createChatMessage(message, "bot"),
+		const aiMessage = {
+			...createChatMessage(message, "ai"),
 			...options,
 			loading: true,
 		};
 
 		this.setState((state) => ({
 			...state,
-			messages: [...state.messages, botMessage],
+			messages: [...(state.messages || []), aiMessage],
 		}));
 	}
 
@@ -55,14 +65,44 @@ class ActionProvider<T extends BotState> implements IActionProvider {
 
 		this.setState((state) => ({
 			...state,
-			messages: [...state.messages, userMessage],
+			messages: [...(state.messages || []), userMessage],
+		}));
+	}
+
+	addSystemMessage(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) {
+		const systemMessage = {
+			...createChatMessage(message, "system"),
+			...options,
+		};
+
+		this.setState((state) => ({
+			...state,
+			messages: [...(state.messages || []), systemMessage],
+		}));
+	}
+
+	addError(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) {
+		const errorMessage = {
+			...createChatMessage(message, "error"),
+			...options,
+		};
+
+		this.setState((state) => ({
+			...state,
+			messages: [...(state.messages || []), errorMessage],
 		}));
 	}
 
 	setLoading(id: string, loading: boolean) {
 		this.setState((state) => ({
 			...state,
-			messages: state.messages.map((message) =>
+			messages: (state.messages || []).map((message) =>
 				message.id === id ? { ...message, loading } : message
 			),
 		}));

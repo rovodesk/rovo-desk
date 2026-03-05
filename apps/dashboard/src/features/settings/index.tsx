@@ -3,7 +3,6 @@ import {
 	AppWindow,
 	Bell,
 	CreditCard,
-	Globe,
 	Palette,
 	Plug,
 	Shield,
@@ -46,10 +45,10 @@ const settingsSections: SecondaryNavSection[] = [
 		collapsible: false,
 		items: [
 			{
-				id: "general",
+				id: "workspace",
 				label: "General",
-				icon: Globe,
-				path: "/settings/general",
+				icon: Users,
+				path: "/settings/workspace",
 			},
 			{
 				id: "appearance",
@@ -57,12 +56,7 @@ const settingsSections: SecondaryNavSection[] = [
 				icon: Palette,
 				path: "/settings/appearance",
 			},
-			{
-				id: "workspace",
-				label: "Workspace",
-				icon: Users,
-				path: "/settings/workspace",
-			},
+
 			{
 				id: "billing",
 				label: "Billing",

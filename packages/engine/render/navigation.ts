@@ -1,5 +1,6 @@
+import { capitalize } from "@zero-heads-lab/shared/utils";
 import type { ChatbotEngine } from "../core/engine";
-import type { BotState } from "../types";
+import type { BotState, Mode } from "../types";
 
 export function createNavigation(
 	state: BotState,
@@ -7,9 +8,11 @@ export function createNavigation(
 ) {
 	const nav = document.createElement("div");
 
+	const theme = state.config?.theme;
+
 	Object.assign(nav.style, {
-		padding: "14px 16px 18px",
-		background: "#0f172a",
+		padding: "12px 16px 16px",
+		background: theme?.backgroundColor ?? "#0f172a",
 		borderTop: "1px solid rgba(255,255,255,0.06)",
 	});
 
@@ -20,27 +23,25 @@ export function createNavigation(
 		gap: "8px",
 	});
 
-	const views = state.canvas?.views ?? [];
+	const modes: Mode[] = ["visitor", "user"];
 
-	views.forEach((view) => {
-		if (!view.label) return; // only show views that have labels
+	modes.forEach((mode) => {
+		const isActive = state.mode === mode;
 
 		const btn = document.createElement("button");
-		const isActive = state.activeViewId === view.id;
-
-		btn.textContent = view.label;
+		btn.textContent = capitalize(mode);
 
 		Object.assign(btn.style, {
 			flex: "1",
-			padding: "10px 12px",
+			padding: "9px 12px",
 			borderRadius: "10px",
 			border: "none",
 			cursor: "pointer",
 			fontSize: "13px",
 			fontWeight: isActive ? "600" : "500",
-			background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
-			color: isActive ? "#ffffff" : "#94a3b8",
-			transition: "all 0.2s ease",
+			background: isActive ? (theme?.primaryColor ?? "#2563eb") : "transparent",
+			color: isActive ? "#fff" : "#94a3b8",
+			transition: "all 0.15s ease",
 		});
 
 		btn.onmouseenter = () => {
@@ -57,10 +58,9 @@ export function createNavigation(
 			}
 		};
 
-		btn.onclick = () =>
-			engine.updateState({
-				activeViewId: view.id,
-			});
+		btn.onclick = () => {
+			engine.setMode(mode);
+		};
 
 		inner.appendChild(btn);
 	});

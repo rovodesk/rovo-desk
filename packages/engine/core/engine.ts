@@ -1,9 +1,5 @@
-import type {
-	BotState,
-	NewState,
-	StateListener,
-	StateSubscriber,
-} from "../types";
+import type { Block, WidgetConfig } from "@zero-heads-lab/shared/types";
+import type { BotState, Mode, NewState, StateListener, User } from "../types";
 import { ActionProvider } from "./action-provider.js";
 import { MessageParser } from "./message-parser.js";
 import { initialStore, type Store } from "./state-manager.js";
@@ -15,16 +11,21 @@ export interface ChatbotEngineOptions<T extends BotState> {
 }
 
 interface IChatbotEngine<T extends BotState> {
-	getState: () => T;
-	updateState: (updater: NewState<T>) => void;
-	subscribe: StateSubscriber<T>;
-
 	handleUserMessage(message: string, options?: Record<string, unknown>): void;
 	clearMessages(): void;
 
-	addWidget(widget: Widget<T>): void;
-	setCanvas(canvas: T["canvas"]): void;
-	renderCanvas(state: T): HTMLElement | undefined;
+	getState(): T;
+	subscribe(listener: StateListener<T>): () => void;
+
+	updateState(updater: NewState<T>): void;
+
+	setUser(user: User): void;
+	setConfig(config: WidgetConfig): void;
+	setMode(mode: Mode): void;
+	getMode(): Mode;
+
+	renderBlock(block: Block, state: T): HTMLElement | undefined;
+	renderScreen(state: T): HTMLElement | undefined;
 }
 
 export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
@@ -57,15 +58,17 @@ export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
 		});
 	}
 
-	/* --------------------------
-       Public API
-    -------------------------- */
+	getState(): T {
+		return this.store.getState();
+	}
 
-	getState = () => this.store.getState();
+	subscribe(listener: StateListener<T>): () => void {
+		return this.store.subscribe(listener);
+	}
 
-	updateState = (updater: NewState<T>) => this.store.setState(updater);
-
-	subscribe = (listener: StateListener<T>) => this.store.subscribe(listener);
+	updateState(updater: NewState<T>): void {
+		this.store.setState(updater);
+	}
 
 	handleUserMessage(message: string, options?: Record<string, unknown>) {
 		// Add user message
@@ -75,22 +78,34 @@ export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
 		this.parser.parse(message);
 	}
 
-	addWidget(widget: Widget<T>) {
-		this.widgetRegistry.addWidget(widget);
+	setUser(user: User) {
+		this.store.setState((state) => ({
+			...state,
+			user,
+		}));
 	}
 
-	setCanvas(canvas: T["canvas"]) {
-		const firstViewId = canvas?.views[0]?.id;
-
-		this.store.setState({
-			canvas,
-			activeViewId: firstViewId,
-		} as Partial<T>);
+	setConfig(config: WidgetConfig) {
+		this.store.setState((state) => ({
+			...state,
+			config,
+		}));
 	}
 
-	renderCanvas(state: T) {
+	setMode(mode: Mode) {
+		this.store.setState((state) => ({
+			...state,
+			mode,
+		}));
+	}
+
+	getMode(): Mode {
+		return this.store.getState().mode;
+	}
+
+	renderScreen(state: T) {
 		const container = document.createElement("div");
-		container.className = "zh-canvas";
+		container.className = `zh-${state.mode}-screen`;
 		container.style.display = "flex";
 		container.style.flexDirection = "column";
 		container.style.gap = "12px";
@@ -98,20 +113,29 @@ export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
 		container.style.overflowY = "auto";
 		container.style.flex = "1";
 
-		if (!state.canvas) return container;
+		if (!state.config) return container;
 
-		const currentView =
-			state.canvas.views.find((v) => v.id === state.activeViewId) ??
-			state.canvas.views[0];
+		let currentScreen: Block[];
+		if (state.mode === "visitor") {
+			currentScreen = state.config.screens.visitors;
+		} else {
+			currentScreen = state.config.screens.users;
+		}
 
-		if (!currentView) return container;
+		if (!currentScreen) return container;
 
-		currentView.components.forEach((component) => {
-			const el = this.widgetRegistry.renderComponent(component, state);
-			if (el) container.appendChild(el);
+		currentScreen.forEach((block) => {
+			const blockEl = this.widgetRegistry.renderBlock(block, state);
+			if (blockEl) container.appendChild(blockEl);
 		});
 
 		return container;
+	}
+
+	renderBlock(block: Block, state: T): HTMLElement | undefined {
+		if (!block.enabled) return;
+
+		return this.widgetRegistry.renderBlock(block, state);
 	}
 
 	clearMessages() {

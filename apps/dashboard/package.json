@@ -40,7 +40,8 @@
     "recharts": "^3.7.0",
     "vite-tsconfig-paths": "catalog:vite",
     "y-partykit": "^0.0.33",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "yjs": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:tailwindcss",

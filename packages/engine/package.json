@@ -12,7 +12,8 @@
     "build": "tsup"
   },
   "dependencies": {
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@zero-heads-lab/shared": "workspace:*"
   },
   "devDependencies": {
     "@zero-heads-lab/typescript-config": "workspace:*",

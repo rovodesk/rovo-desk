@@ -1,4 +1,5 @@
 export * from "./capitalize";
+export * from "./color";
 export * from "./cookies";
 export * from "./error";
 export * from "./extract-origins";

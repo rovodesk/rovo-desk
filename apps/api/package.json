@@ -18,7 +18,8 @@
     "lib0": "^0.2.117",
     "partyserver": "^0.1.5",
     "y-protocols": "^1.0.7",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "yjs": "catalog:"
   },
   "devDependencies": {
     "wrangler": "^4.4.0",

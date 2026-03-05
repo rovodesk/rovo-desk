@@ -456,7 +456,7 @@ export const accountRelations = relations(account, ({ one }) => ({
 	}),
 }));
 
-export const apiKey = authSchema.table("apiKey", {
+export const apikey = authSchema.table("apikey", {
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
@@ -478,7 +478,7 @@ export const apiKey = authSchema.table("apiKey", {
 	rateLimitMax: integer("rateLimitMax"),
 	requestCount: integer("requestCount").notNull().default(0),
 	remaining: integer("remaining"),
-	lastRequestAt: timestamp("lastRequestAt", {
+	lastRequest: timestamp("lastRequest", {
 		precision: 6,
 		withTimezone: true,
 	}),

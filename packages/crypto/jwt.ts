@@ -5,7 +5,7 @@ import type { JWTPayload } from "types";
 export async function signJWTToken<T extends JWTPayload>(
 	payload: T,
 	secret: string,
-	expiry: string | number | Date,
+	expiry: string,
 	iss: string,
 	sub: string,
 	aud: string | string[]
@@ -69,7 +69,6 @@ export async function issueAnonymousSDKToken(
 
 export async function issueAuthenticatedSDKToken(
 	orgId: string,
-	connectionId: string,
 	user: Record<string, unknown>,
 	masterSecret: string
 ): Promise<string> {
@@ -77,14 +76,13 @@ export async function issueAuthenticatedSDKToken(
 		{
 			keyId: crypto.randomUUID(),
 			orgId,
-			connectionId,
 			user,
 			role: "authenticated",
 		},
 		masterSecret,
 		"30m",
 		"http://localhost:5001",
-		connectionId,
+		user.id as string,
 		`organization:${orgId},user:${user.id},role:authenticated`
 	);
 }

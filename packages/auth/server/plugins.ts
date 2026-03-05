@@ -15,7 +15,6 @@ import {
 	defaultWorkspaceSettings,
 } from "@zero-heads-lab/shared/types";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
-import type { BetterAuthPlugin } from "better-auth";
 import {
 	admin as betterAuthAdmin,
 	type Jwk,
@@ -138,7 +137,7 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
 		}),
 		// OPENAPI Plugin
-		process.env.NODE_ENV !== "production" && openAPI(),
+		...(process.env.NODE_ENV !== "production" ? [openAPI()] : []),
 		// Stripe Plugin
 		stripe({
 			stripeClient,
@@ -187,6 +186,7 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				timeWindow: AUTH_CONFIG.API_KEY_RATE_LIMIT_TIME_WINDOW,
 			},
 			storage: "secondary-storage",
+			fallbackToDatabase: true,
 			enableMetadata: true,
 		}),
 		jwt({
@@ -238,5 +238,5 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				},
 			},
 		}),
-	].filter(Boolean) as BetterAuthPlugin[];
+	];
 };

@@ -201,7 +201,7 @@ function UserProfileDropdown() {
 							asChild
 							className="flex items-center justify-between rounded-md px-3 py-2"
 						>
-							<Link to="/settings/general">
+							<Link to="/settings/workspace">
 								<span>Language: English (US)</span>
 								<ChevronRight className="h-4 w-4 text-muted-foreground" />
 							</Link>

@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!packages/design-system", "!**/*.jsonc"]
+    "includes": ["!packages/design-system", "!**/*.jsonc", "!examples/**/*"]
   },
   "formatter": {
     "enabled": true,

@@ -1,7 +1,7 @@
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
-	apiKey as apiKeySchema,
+	apikey as apiKeySchema,
 	member as memberSchema,
 	organization as organizationSchema,
 	session as sessionSchema,

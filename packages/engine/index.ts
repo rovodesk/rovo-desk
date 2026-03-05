@@ -1,83 +1,88 @@
-import type { ChatbotConfig } from "./core/config";
-import { ChatbotEngine } from "./core/engine";
-import { renderWidget } from "./render";
-import { injectGlobalStyles } from "./render/style";
-import type { BotState } from "./types";
+import type { SDKConfig } from "config";
+import type { User } from "types";
+import { initSDK } from "./functions/init";
 
 declare global {
 	interface Window {
-		zeroHeadsSettings?: ChatbotConfig;
+		RovoDesk?: CommandFunction & { q?: unknown[][] };
+		__ROVODESK_SDK_LOADED__?: boolean;
 	}
 }
 
-/* ------------------------------------------
-   SDK Init Entry Point
------------------------------------------- */
+type CommandMap = {
+	init: (config: SDKConfig) => Promise<void>;
+	open: () => void;
+	close: () => void;
+	identify: (user: User) => void;
+	track: (event: string, data?: unknown) => void;
+	update: (data: Partial<SDKConfig>) => void;
+	shutdown: () => void;
+};
 
-function init(config: ChatbotConfig) {
-	if (!(config?.organizationId && config?.accessKey)) {
-		console.error("ZeroHeads: Missing organizationId or publicKey.");
+type CommandFunction = (command: keyof CommandMap, payload?: unknown) => void;
+
+(function bootstrap() {
+	if (window.__ROVODESK_SDK_LOADED__) {
 		return;
 	}
 
-	injectGlobalStyles();
+	window.__ROVODESK_SDK_LOADED__ = true;
 
-	const initialState: BotState = {
-		isOpen: config.display?.defaultOpen ?? false,
-		isElevated: false,
-		messages: [...(config.chatbot?.welcomeMessages ?? [])],
-		canvas: undefined,
-		activeViewId: "",
+	let initialized = false;
+
+	const commands: CommandMap = {
+		init: async (config) => {
+			if (initialized) return;
+			initialized = true;
+
+			await initSDK(config);
+		},
+
+		open: () => console.log("Open widget"),
+		close: () => console.log("Close widget"),
+
+		identify: (user: User) => {
+			console.log("Identify user", user);
+		},
+
+		track: (event: string, data?: unknown) => {
+			console.log("Track event", event, data);
+		},
+
+		update: (data: Partial<SDKConfig>) => {
+			console.log("Update config", data);
+		},
+
+		shutdown: () => {
+			console.log("Shutdown");
+		},
 	};
 
-	const engine = new ChatbotEngine({ initialState });
+	function runCommand(command: string, payload?: unknown) {
+		const handler = commands[command as keyof CommandMap];
 
-	let root = document.getElementById("chatbot-root");
+		if (!handler) {
+			console.warn(`RovoDesk: Unknown command "${command}"`);
+			return;
+		}
 
-	if (!root) {
-		root = document.createElement("div");
-		root.id = "chatbot-root";
-		document.body.appendChild(root);
+		handler(payload as never);
 	}
 
-	renderWidget(root, config, engine);
+	const rd = window.RovoDesk;
 
-	// Fetch canvas
-	if (!config.apiBaseUrl) {
-		console.warn("ZeroHeads: apiBaseUrl not provided.");
-		return;
+	if (!rd) return;
+
+	const queue = rd.q ?? [];
+
+	const RovoDesk: CommandFunction = (command, payload) => {
+		runCommand(command, payload);
+	};
+
+	window.RovoDesk = RovoDesk;
+
+	for (const args of queue) {
+		const [command, payload] = args;
+		runCommand(command as string, payload);
 	}
-
-	fetch(`${config.apiBaseUrl}/init`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			"x-access-key": config.accessKey,
-		},
-		body: JSON.stringify({
-			workspaceId: config.organizationId,
-			user: config.user,
-			accessKey: config.accessKey,
-		}),
-	})
-		.then((res) => res.json())
-		.then((data) => {
-			if (!data.canvas) return;
-
-			engine.updateState({
-				canvas: data.canvas,
-				activeViewId: data.canvas.views[0]?.id ?? "",
-			});
-		})
-		.catch((err) => {
-			console.error("ZeroHeads: Failed to initialize.", err);
-		});
-}
-
-/* ------------------------------------------
-   Expose Global SDK
------------------------------------------- */
-
-if (window.zeroHeadsSettings) {
-	init(window.zeroHeadsSettings);
-}
+})();

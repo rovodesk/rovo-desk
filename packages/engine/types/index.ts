@@ -1,5 +1,4 @@
-import type { canvasSchema } from "validations/canvas";
-import type z from "zod";
+import type { Block, WidgetConfig } from "@zero-heads-lab/shared/types";
 import type { Message } from "../core/message-parser";
 
 export type NewState<T extends BotState> =
@@ -14,32 +13,39 @@ export type StateSubscriber<T extends BotState> = (
 	listener: StateListener<T>
 ) => () => void;
 
-export type Canvas = z.infer<typeof canvasSchema>["canvas"];
-export type Theme = Canvas["theme"];
-export type View = Canvas["views"][number];
-export type CanvasComponent = Canvas["views"][number]["components"][number];
+type BlockIdentity = Pick<Block, "id" | "type">;
+
+export interface User {
+	id: string;
+	email: string;
+	name?: string;
+	[key: string]: unknown;
+}
+
+export type Mode = "visitor" | "user";
 
 export interface BotState {
 	[key: string]: unknown;
-	/**
-	 * The messages
-	 */
-	messages: Message[];
+
+	mode: Mode;
 	/**
 	 * Is the Bot Widget is open
 	 */
 	isOpen: boolean;
 	/**
-	 * Is the Chatbot Elevated to Team
+	 * The messages
 	 */
-	isElevated: boolean;
+	messages?: Message[];
+
+	user?: User;
+
 	/**
 	 * The active view
 	 */
-	activeViewId?: string;
-	canvas?: Canvas;
-	/**
-	 * The API base URL
-	 */
-	apiBaseUrl?: string;
+	activeScreen?: {
+		visitors: BlockIdentity[];
+		users: BlockIdentity[];
+	};
+
+	config?: WidgetConfig;
 }

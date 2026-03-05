@@ -24,23 +24,23 @@ export interface WidgetLauncher {
 	hideDefault: boolean;
 }
 
-export type HomeBlockType =
+export type BlockType =
 	| "welcome"
 	| "conversation"
 	| "knowledge_base"
 	| "announcement"
 	| "cta";
 
-export interface HomeBlock {
+export interface Block {
 	id: string;
-	type: HomeBlockType;
+	type: BlockType;
 	enabled: boolean;
 	config: Record<string, unknown>;
 }
 
 export interface WidgetScreens {
-	visitors: HomeBlock[];
-	users: HomeBlock[];
+	visitors: Block[];
+	users: Block[];
 }
 
 export interface WidgetConversation {

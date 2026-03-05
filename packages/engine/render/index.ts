@@ -1,10 +1,8 @@
-import { resolveRadius } from "utils";
-import type { ChatbotConfig } from "../core/config";
+import type { SDKConfig } from "config";
 import type { ChatbotEngine } from "../core/engine";
 import type { BotState } from "../types";
 import { renderError } from "./error.js";
 import { createLauncher } from "./launcher.js";
-import { createNavigation } from "./navigation.js";
 
 export const render = (
 	rootEl: HTMLElement,
@@ -15,46 +13,77 @@ export const render = (
 
 	const wrapper = document.createElement("div");
 	wrapper.className = "zh-widget-wrapper";
+
+	const position = state.config?.launcher?.position ?? "right";
+
 	Object.assign(wrapper.style, {
 		position: "fixed",
 		bottom: "20px",
-		right: "20px",
-		zIndex: "1000",
+		[position]: "20px",
+		zIndex: "9999",
+		display: "flex",
+		flexDirection: "column",
+		alignItems: position === "right" ? "flex-end" : "flex-start",
 	});
+
+	const theme = state.config?.theme;
 
 	if (state.isOpen) {
 		const panel = document.createElement("div");
 		panel.className = "zh-widget-panel";
 
-		const theme = state.canvas?.theme;
-
 		Object.assign(panel.style, {
-			width: "380px",
-			height: "min(640px, 80vh)",
-			background: theme?.colors?.background ?? "#0f172a",
-			borderRadius: resolveRadius(theme?.radius),
-			boxShadow: "0 40px 100px rgba(0,0,0,0.45), 0 10px 30px rgba(0,0,0,0.25)",
+			width: `${theme?.widgetWidth ?? 380}px`,
+			height: `${theme?.widgetHeight ?? 600}px`,
+			maxHeight: "80vh",
+			background: theme?.backgroundColor ?? "#ffffff",
+			borderRadius: `${theme?.borderRadius ?? 16}px`,
+			boxShadow: theme?.shadow
+				? "0 40px 100px rgba(0,0,0,0.25), 0 10px 30px rgba(0,0,0,0.15)"
+				: "none",
 			display: "flex",
 			flexDirection: "column",
 			overflow: "hidden",
-			animation: "zh-widget-fade-in 0.25s ease",
+			animation: "zh-widget-fade-in 0.2s ease",
 		});
 
-		// Render Canvas
-		panel.appendChild(engine.renderCanvas(state));
+		/* -------------------------
+       Render Screen Blocks
+    -------------------------- */
 
-		// Render Navigation only if multiple labeled views
-		const labeledViews = state.canvas?.views.filter((v) => v.label) ?? [];
+		const screens = state.config?.screens;
+		const isUser = Boolean(state.user);
 
-		if (labeledViews.length > 1) {
-			panel.appendChild(createNavigation(state, engine));
-		}
+		const blocks = isUser ? (screens?.users ?? []) : (screens?.visitors ?? []);
+
+		const canvas = document.createElement("div");
+
+		Object.assign(canvas.style, {
+			flex: "1",
+			display: "flex",
+			flexDirection: "column",
+			gap: "12px",
+			padding: "16px",
+			overflowY: "auto",
+		});
+
+		blocks
+			.filter((b) => b.enabled)
+			.forEach((block) => {
+				const el = engine.renderBlock(block, state);
+				if (el) canvas.appendChild(el);
+			});
+
+		panel.appendChild(canvas);
 
 		wrapper.appendChild(panel);
 	}
 
-	// Hide launcher when open
-	if (!state.isOpen) {
+	/* -------------------------
+     Launcher
+  -------------------------- */
+
+	if (!(state.isOpen || state.config?.launcher?.hideDefault)) {
 		wrapper.appendChild(createLauncher(state, engine));
 	}
 
@@ -63,7 +92,7 @@ export const render = (
 
 export const renderWidget = (
 	rootEl: HTMLElement,
-	config: ChatbotConfig,
+	config: SDKConfig,
 	engine: ChatbotEngine<BotState>
 ): (() => void) => {
 	// If the required props are not provided, render an error message
@@ -79,15 +108,15 @@ export const renderWidget = (
 	// 	return;
 	// }
 
-	const renderFromState = (state: BotState) => {
+	const stateListener = (state: BotState) => {
 		render(rootEl, state, engine);
 	};
 
 	// Subscribe once
-	const unsubscribe = engine.subscribe(renderFromState);
+	const unsubscribe = engine.subscribe(stateListener);
 
 	// Initial render
-	renderFromState(engine.getState());
+	stateListener(engine.getState());
 
 	// Optional: return cleanup for unmounting
 	return () => unsubscribe();

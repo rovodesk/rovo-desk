@@ -1,4 +1,3 @@
-import * as Y from "@zero-heads-lab/shared/utils/yjs";
 import * as decoding from "lib0/decoding";
 import * as encoding from "lib0/encoding";
 import {
@@ -9,6 +8,7 @@ import {
 } from "partyserver";
 import * as awareness from "y-protocols/awareness";
 import * as sync from "y-protocols/sync";
+import * as Y from "yjs";
 import type { Bindings } from "../../types";
 
 export default class Document extends Server<Bindings> {

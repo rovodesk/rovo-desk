@@ -1,14 +1,12 @@
-import type { BotState, CanvasComponent, StateUpdater } from "../types";
+import type { Block } from "@zero-heads-lab/shared/types";
+import type { BotState, StateUpdater } from "../types";
 import { scrollIntoView } from "../utils";
 import type { IActionProvider } from "./action-provider.js";
 
-export interface Widget<
-	T extends BotState,
-	C extends CanvasComponent = CanvasComponent,
-> {
-	type: C["type"];
+export interface Widget<T extends BotState, B extends Block = Block> {
+	type: B["type"];
 	render: (params: {
-		component: C;
+		block: B;
 		state: T;
 		setState: StateUpdater<T>;
 		actionProvider: IActionProvider;
@@ -16,32 +14,21 @@ export interface Widget<
 	}) => HTMLElement;
 }
 
-export interface IWidgetRegistry<
-	T extends BotState,
-	C extends CanvasComponent = CanvasComponent,
-> {
-	addWidget(widget: Widget<T, C>): void;
-	renderComponent(
-		component: CanvasComponent,
-		state: T
-	): HTMLElement | undefined;
+export interface IWidgetRegistry<T extends BotState> {
+	addWidget(widget: Widget<T>): void;
+	renderBlock(block: Block, state: T): HTMLElement | undefined;
 }
 
 export class WidgetRegistry<T extends BotState> implements IWidgetRegistry<T> {
 	private readonly setState: StateUpdater<T>;
 	private readonly actionProvider: IActionProvider;
 
-	private readonly widgets: Record<
-		CanvasComponent["type"],
-		// biome-ignore lint/suspicious/noExplicitAny: It can be of any type
-		Widget<T, any> | undefined
-	> = {
-		text: undefined,
-		textarea: undefined,
-		image: undefined,
-		"single-select": undefined,
-		"multi-select": undefined,
-		button: undefined,
+	private readonly widgets: Record<Block["type"], Widget<T> | undefined> = {
+		welcome: undefined,
+		conversation: undefined,
+		knowledge_base: undefined,
+		announcement: undefined,
+		cta: undefined,
 	};
 
 	constructor({
@@ -55,19 +42,16 @@ export class WidgetRegistry<T extends BotState> implements IWidgetRegistry<T> {
 		this.actionProvider = actionProvider;
 	}
 
-	addWidget<C extends CanvasComponent>(widget: Widget<T, C>): void {
+	addWidget(widget: Widget<T>): void {
 		this.widgets[widget.type] = widget;
 	}
 
-	renderComponent(
-		component: CanvasComponent,
-		state: T
-	): HTMLElement | undefined {
-		const widget = this.widgets[component.type];
-		if (!widget) return;
+	renderBlock(block: Block, state: T): HTMLElement | undefined {
+		const widget = this.widgets[block.type];
+		if (!(widget && block.enabled)) return;
 
 		return widget.render({
-			component,
+			block,
 			state,
 			setState: this.setState,
 			actionProvider: this.actionProvider,

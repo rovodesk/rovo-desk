@@ -28,7 +28,6 @@ import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authe
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings/integrations'
-import { Route as AuthenticatedSettingsGeneralRouteImport } from './routes/_authenticated/settings/general'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport } from './routes/_authenticated/knowledge-base/knowledge.$knowledgeId'
@@ -136,12 +135,6 @@ const AuthenticatedSettingsIntegrationsRoute =
     path: '/integrations',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedSettingsGeneralRoute =
-  AuthenticatedSettingsGeneralRouteImport.update({
-    id: '/general',
-    path: '/general',
-    getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
 const AuthenticatedSettingsBillingRoute =
   AuthenticatedSettingsBillingRouteImport.update({
     id: '/billing',
@@ -173,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/tasks': typeof AuthenticatedTasksRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
-  '/settings/general': typeof AuthenticatedSettingsGeneralRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
@@ -196,7 +188,6 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
-  '/settings/general': typeof AuthenticatedSettingsGeneralRoute
   '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
@@ -222,7 +213,6 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
-  '/_authenticated/settings/general': typeof AuthenticatedSettingsGeneralRoute
   '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
@@ -248,7 +238,6 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/settings/appearance'
     | '/settings/billing'
-    | '/settings/general'
     | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
@@ -271,7 +260,6 @@ export interface FileRouteTypes {
     | '/'
     | '/settings/appearance'
     | '/settings/billing'
-    | '/settings/general'
     | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
@@ -296,7 +284,6 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/billing'
-    | '/_authenticated/settings/general'
     | '/_authenticated/settings/integrations'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/security'
@@ -453,13 +440,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIntegrationsRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/settings/general': {
-      id: '/_authenticated/settings/general'
-      path: '/general'
-      fullPath: '/settings/general'
-      preLoaderRoute: typeof AuthenticatedSettingsGeneralRouteImport
-      parentRoute: typeof AuthenticatedSettingsRouteRoute
-    }
     '/_authenticated/settings/billing': {
       id: '/_authenticated/settings/billing'
       path: '/billing'
@@ -487,7 +467,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
-  AuthenticatedSettingsGeneralRoute: typeof AuthenticatedSettingsGeneralRoute
   AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
@@ -500,7 +479,6 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
   {
     AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
     AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
-    AuthenticatedSettingsGeneralRoute: AuthenticatedSettingsGeneralRoute,
     AuthenticatedSettingsIntegrationsRoute:
       AuthenticatedSettingsIntegrationsRoute,
     AuthenticatedSettingsNotificationsRoute:
