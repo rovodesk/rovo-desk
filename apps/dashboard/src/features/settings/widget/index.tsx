@@ -7,11 +7,9 @@ import {
 	CollapsibleTrigger,
 } from "@zero-heads-lab/design-system/components/ui/collapsible";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import {
-	defaultWidgetConfig,
-	type WidgetConfig,
-} from "@zero-heads-lab/shared/types";
-import { widgetConfigSchema } from "@zero-heads-lab/transport/dto/widget.dto";
+import { defaultWidgetConfig } from "@zero-heads-lab/shared/defaults";
+import type { WidgetConfig } from "@zero-heads-lab/shared/types";
+import { WidgetConfigSchema } from "@zero-heads-lab/shared/validations";
 import {
 	Braces,
 	Check,
@@ -35,7 +33,7 @@ export const WidgetSettings = () => {
 	const form = useAppForm({
 		defaultValues: defaultWidgetConfig(),
 		validators: {
-			onSubmit: widgetConfigSchema,
+			onSubmit: WidgetConfigSchema,
 		},
 		onSubmit: async ({ value }) => {
 			try {

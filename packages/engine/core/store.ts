@@ -1,6 +1,5 @@
 import type {
 	BotState,
-	NewState,
 	StateListener,
 	StateSubscriber,
 	StateUpdater,
@@ -26,34 +25,45 @@ export interface Store<T extends BotState> {
 
 export const initialStore = <T extends BotState>(initialState: T): Store<T> => {
 	// Create a deep copy of the initial state to avoid mutating the original object.
-	let state = structuredClone(initialState);
+	//⚠️ StructuredClone can break in some environments.
+	// Not supported in older browsers
+	// Slower than necessary
+	// Unnecessary if initialState is not mutated
+	// let state = structuredClone(initialState);
+
+	let state: T = { ...initialState };
+
 	// Use a Set to store the listeners to avoid duplicate listeners.
-	const listeners: Set<StateListener<T>> = new Set<StateListener<T>>();
+	const listeners = new Set<StateListener<T>>();
 
 	const getState = () => state;
 
-	const setState = (updater: NewState<T>) => {
+	const setState: StateUpdater<T> = (updater) => {
 		const partialState =
 			typeof updater === "function" ? updater(state) : updater;
 
 		if (!partialState || typeof partialState !== "object") return;
 
-		const nextState = { ...state, ...partialState };
-
-		// Shallow equality check
 		const hasChanged = Object.keys(partialState).some(
-			(key) => !Object.is(state[key as keyof T], nextState[key as keyof T])
+			(key) => !Object.is(state[key as keyof T], partialState[key as keyof T])
 		);
+
 		if (!hasChanged) return;
 
-		// Change state and notify listeners
-		state = nextState;
-		listeners.forEach((listener) => listener(state));
+		const prevState = state;
+		state = { ...state, ...partialState };
+
+		for (const listener of listeners) {
+			listener(state, prevState);
+		}
 	};
 
-	const subscribe = (listener: StateListener<T>) => {
+	const subscribe: StateSubscriber<T> = (listener) => {
 		listeners.add(listener);
-		return () => listeners.delete(listener);
+
+		return () => {
+			listeners.delete(listener);
+		};
 	};
 
 	return { getState, setState, subscribe };

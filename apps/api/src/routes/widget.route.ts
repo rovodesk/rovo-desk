@@ -148,7 +148,7 @@ widgetRoute.post("/init", async (c) => {
 	// Return Widget
 	return c.json({
 		success: true,
-		widget,
+		widgetConfig: widget,
 		mode: user ? "user" : "visitor",
 		user,
 	});

@@ -13,7 +13,7 @@ import {
 import {
 	defaultWidgetConfig,
 	defaultWorkspaceSettings,
-} from "@zero-heads-lab/shared/types";
+} from "@zero-heads-lab/shared/defaults";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	admin as betterAuthAdmin,

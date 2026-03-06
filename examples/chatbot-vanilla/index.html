@@ -26,25 +26,26 @@
 		</section>
 	</div>
 
-	<script>"use strict";
+	<script>
+		"use strict";
 		(function () {
-			var rovoDesk = window.RovoDesk;
+			var rd = window.RovoDesk;
 
-			if (typeof rovoDesk === "function") {
-				return;
-			}
+			// Prevent duplicate loader execution
+			if (typeof rd === "function") return;
 
-			rovoDesk = function () {
-				rovoDesk.q.push(arguments);
+			rd = function () {
+				rd.q.push(Array.prototype.slice.call(arguments));
 			};
 
-			rovoDesk.q = [];
-			window.RovoDesk = rovoDesk;
+			rd.q = [];
+			window.RovoDesk = rd;
 
-			rovoDesk("init", {
-				organizationId: "Xp0g0woQaOJ5ymHJTmRcuYmgcoza4D45",
+			// Queue init command
+			rd("init", {
+				organizationId: "XhhChirAhgIEypAtwFFQz80xJv21B1uN",
 				accessKey:
-					"org_UjgeBsTexZDNpOThbfAJRjaRNmoklIeSbzHXCdXGtkXghMxeEcqXtMxQHHQYSPbN",
+					"org_SnjOUbVeTYYSrAazJDXjRppkWAcdYwzVzITwocmRXHECwncdsGfzmjLlrvzdxNyt",
 				apiBaseUrl: "http://localhost:5001/widget",
 				user: {
 					id: "user_1",
@@ -55,9 +56,10 @@
 				},
 			});
 
+			// Load SDK script
 			var s = document.createElement("script");
-			s.async = true;
 			s.src = "../../packages/engine/dist/index.global.js";
+			s.async = true;
 
 			document.head.appendChild(s);
 		})();

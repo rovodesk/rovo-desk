@@ -17,32 +17,32 @@ services:
       test: ["CMD-SHELL", "pg_isready -U user -d zero-heads"]
       interval: 10s
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    restart: unless-stopped
-    hostname: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./.docker/data/redis:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+  # redis:
+  #   image: redis:alpine
+  #   container_name: redis
+  #   restart: unless-stopped
+  #   hostname: redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - ./.docker/data/redis:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    restart: unless-stopped
-    hostname: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: Password
-    volumes:
-      - ./.docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   restart: unless-stopped
+  #   hostname: rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: user
+  #     RABBITMQ_DEFAULT_PASS: Password
+  #   volumes:
+  #     - ./.docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
 
   # --- MANAGEMENT UIs ---
   pgadmin:
@@ -55,17 +55,21 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - ./.docker/pgadmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
 
-  redis-insight:
-    image: redis/redisinsight:latest
-    container_name: redis-insight
-    restart: unless-stopped
-    environment:
-      - RI_REDIS_HOST=redis
-      - RI_REDIS_PORT=6379
-    ports:
-      - "5540:5540"
-    depends_on:
-      - redis
+  # redis-insight:
+  #   image: redis/redisinsight:latest
+  #   container_name: redis-insight
+  #   restart: unless-stopped
+  #   environment:
+  #     - RI_REDIS_HOST=redis
+  #     - RI_REDIS_PORT=6379
+  #   ports:
+  #     - "5540:5540"
+  #   depends_on:
+  #     - redis

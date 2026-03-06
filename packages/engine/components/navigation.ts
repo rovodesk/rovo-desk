@@ -1,14 +1,14 @@
+import type { TabType, WidgetScreenConfig } from "@zero-heads-lab/shared/types";
 import { capitalize } from "@zero-heads-lab/shared/utils";
-import type { ChatbotEngine } from "../core/engine";
-import type { BotState, Mode } from "../types";
+import type { ChatbotEngine } from "core/engine";
+import type { BotState } from "../types";
 
 export function createNavigation(
 	state: BotState,
 	engine: ChatbotEngine<BotState>
 ) {
 	const nav = document.createElement("div");
-
-	const theme = state.config?.theme;
+	const theme = state.widgetConfig?.theme;
 
 	Object.assign(nav.style, {
 		padding: "12px 16px 16px",
@@ -17,19 +17,27 @@ export function createNavigation(
 	});
 
 	const inner = document.createElement("div");
-
 	Object.assign(inner.style, {
 		display: "flex",
 		gap: "8px",
 	});
 
-	const modes: Mode[] = ["visitor", "user"];
+	const modeConfig = state.widgetConfig?.screens?.[state.mode];
 
-	modes.forEach((mode) => {
-		const isActive = state.mode === mode;
+	if (!modeConfig) {
+		nav.appendChild(inner);
+		return nav;
+	}
+
+	const activeTab = state.activeTab ?? modeConfig.defaultTab;
+
+	const tabs = modeConfig.screens.map((s: WidgetScreenConfig) => s.tab);
+
+	tabs.forEach((tab: TabType) => {
+		const isActive = activeTab === tab;
 
 		const btn = document.createElement("button");
-		btn.textContent = capitalize(mode);
+		btn.textContent = capitalize(tab.replace("_", " "));
 
 		Object.assign(btn.style, {
 			flex: "1",
@@ -59,7 +67,7 @@ export function createNavigation(
 		};
 
 		btn.onclick = () => {
-			engine.setMode(mode);
+			engine.changeTab({ tab });
 		};
 
 		inner.appendChild(btn);

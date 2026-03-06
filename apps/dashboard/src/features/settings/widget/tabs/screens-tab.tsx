@@ -34,8 +34,8 @@ import {
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
 import type {
-	HomeBlock,
-	HomeBlockType,
+	Block,
+	BlockType,
 	WidgetConfig,
 	WidgetScreens,
 } from "@zero-heads-lab/shared/types";
@@ -57,7 +57,7 @@ interface Props {
 }
 
 const blockTypeInfo: Record<
-	HomeBlockType,
+	BlockType,
 	{ label: string; icon: React.ElementType }
 > = {
 	welcome: { label: "Welcome Message", icon: MessageCircle },
@@ -74,7 +74,7 @@ function SortableBlock({
 	block,
 	onUpdate,
 }: {
-	block: HomeBlock;
+	block: Block;
 	onUpdate: (config: Record<string, unknown>) => void;
 }) {
 	const {
@@ -155,7 +155,7 @@ function BlockConfigEditor({
 	block,
 	onUpdate,
 }: {
-	block: HomeBlock;
+	block: Block;
 	onUpdate: (config: Record<string, unknown>) => void;
 }) {
 	const cfg = block.config;
@@ -317,7 +317,7 @@ const Editor = ({
 
 	const blocks = screens[tab];
 
-	const updateBlocks = (newBlocks: HomeBlock[]) => {
+	const updateBlocks = (newBlocks: Block[]) => {
 		onChange({
 			...screens,
 			[tab]: newBlocks,

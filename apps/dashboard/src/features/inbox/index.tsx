@@ -17,6 +17,7 @@ import {
 	Star,
 } from "lucide-react";
 import { useState } from "react";
+import { useDashboardLayout } from "@/layout";
 import { MainContent } from "@/layout/main-content";
 import { RightSidebar } from "@/layout/sidebar/right-sidebar";
 import {
@@ -193,7 +194,8 @@ const CRITICAL_THRESHOLD = 24;
 const ConversationsPage = () => {
 	const [activeConv, setActiveConv] = useState("1");
 	const selected = allConversations.find((c) => c.id === activeConv);
-	const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+	const { rightSidebarOpen, setRightSidebarOpen } = useDashboardLayout();
+
 	const handleElevateToIssue = () => {
 		toast.success("Conversation elevated to issue", {
 			description: "Not implemented yet",
@@ -351,7 +353,7 @@ const ConversationsPage = () => {
 										</Button>
 
 										<Button
-											onClick={() => setIsRightSidebarOpen((p) => !p)}
+											onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
 											size="icon-lg"
 											variant="ghost"
 										>
@@ -404,8 +406,14 @@ const ConversationsPage = () => {
 				</div>
 			</MainContent>
 			<RightSidebar
-				isOpen={isRightSidebarOpen}
-				onClose={() => setIsRightSidebarOpen(false)}
+				headerContent={
+					<div className="flex items-center gap-2">
+						<Button size="icon-lg" variant="ghost">
+							<InfoIcon className="h-8 w-8" />
+						</Button>
+						<span className="font-medium text-sm">User Info</span>
+					</div>
+				}
 			>
 				<InfoPanel />
 			</RightSidebar>

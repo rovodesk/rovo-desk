@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "type": "chrome",
+      "name": "file:///Users/dev/Desktop/SAAS/Chat%20App/zero-heads/examples/chatbot-vanilla/index.html",
+      "request": "launch",
+      "url": "file:///Users/dev/Desktop/SAAS/Chat%20App/zero-heads/examples/chatbot-vanilla/index.html"
+    }
+  ]
+}

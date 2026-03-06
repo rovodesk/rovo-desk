@@ -1,3 +1,4 @@
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import {
@@ -104,16 +105,7 @@ export function SessionTable() {
 								<TableCell className="flex justify-center px-6">
 									<div className="flex items-center gap-3">
 										<DeviceIcon className="size-4 text-muted-foreground" />
-										<div className="flex flex-col">
-											<span className="font-medium text-sm">
-												{device.label}
-											</span>
-											{session.isCurrent && (
-												<span className="font-bold text-[10px] text-emerald-500 uppercase tracking-wider">
-													Active Now
-												</span>
-											)}
-										</div>
+										<span className="font-medium text-sm">{device.label}</span>
 									</div>
 								</TableCell>
 
@@ -128,8 +120,14 @@ export function SessionTable() {
 								</TableCell>
 
 								{/* Time */}
-								<TableCell className="px-4 text-muted-foreground text-sm">
-									{lastActiveTime}
+								<TableCell className="justify-center px-4 text-muted-foreground text-sm">
+									{session.isCurrent ? (
+										<Badge className="ml-2 text-green-500" variant="secondary">
+											Active
+										</Badge>
+									) : (
+										lastActiveTime
+									)}
 								</TableCell>
 
 								{/* Actions */}

@@ -1,5 +1,5 @@
-import type { ChatbotConfig } from "./core/config";
-import type { IMessageParser } from "./core/message-parser";
+import type { AnyBlock, TabType } from "@zero-heads-lab/shared/types";
+import type { BotState } from "types";
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {
 	if (object && typeof object === "object") {
@@ -18,30 +18,57 @@ export const scrollIntoView = (): void => {
 	chatContainer.scrollTop = chatContainer.scrollHeight;
 };
 
-export const validateProps = (
-	config: ChatbotConfig,
-	MessageParser: IMessageParser
-) => {
-	const errors: Error[] = [];
+export function isSDKInitialized(state: BotState) {
+	return Boolean(state.widgetConfig);
+}
 
-	if (!config?.chatbot?.welcomeMessages) {
-		errors.push(
-			new Error(
-				"Config must contain property 'welcomeMessage', and it expects it to be an array of chatbotmessages."
-			)
-		);
+export function resolveActiveBlocks(state: BotState): AnyBlock[] {
+	// biome-ignore lint/suspicious/noExplicitAny: To support legacy API structure
+	const widgetScreens = state.widgetConfig?.screens as Record<string, any>;
+	console.log("Widget Screens", widgetScreens);
+	if (!widgetScreens) return [];
+
+	let modeConfig = widgetScreens[state.mode];
+
+	// Handle old schema fallback
+	if (!modeConfig && widgetScreens.screens) {
+		modeConfig = widgetScreens;
 	}
 
-	if (!MessageParser) {
-		errors.push(
-			new Error(
-				"Messageparser must implement the method 'parse', please add this method to your object. The signature is parse(message: string)."
-			)
-		);
-	}
+	if (!modeConfig) return [];
 
-	return errors;
-};
+	const activeTab = state.activeTab ?? modeConfig.defaultTab;
+	const screen = modeConfig.screens.find(
+		(screen: { tab: TabType }) => screen.tab === activeTab
+	);
+
+	return screen?.blocks ?? [];
+}
+
+// export const validateProps = (
+// 	config: SDKConfig,
+// 	MessageParser: IMessageParser
+// ) => {
+// 	const errors: Error[] = [];
+
+// 	if (!config?.?.welcomeMessages) {
+// 		errors.push(
+// 			new Error(
+// 				"Config must contain property 'welcomeMessage', and it expects it to be an array of chatbotmessages."
+// 			)
+// 		);
+// 	}
+
+// 	if (!MessageParser) {
+// 		errors.push(
+// 			new Error(
+// 				"Messageparser must implement the method 'parse', please add this method to your object. The signature is parse(message: string)."
+// 			)
+// 		);
+// 	}
+
+// 	return errors;
+// };
 
 export function onDomReady(callback: () => void) {
 	if (document.readyState === "loading") {

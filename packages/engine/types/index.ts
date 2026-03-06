@@ -1,4 +1,5 @@
-import type { Block, WidgetConfig } from "@zero-heads-lab/shared/types";
+import type { TabType, WidgetConfig } from "@zero-heads-lab/shared/types";
+import type { SDKConfig } from "config";
 import type { Message } from "../core/message-parser";
 
 export type NewState<T extends BotState> =
@@ -7,13 +8,14 @@ export type NewState<T extends BotState> =
 
 export type StateUpdater<T extends BotState> = (updater: NewState<T>) => void;
 
-export type StateListener<T extends BotState> = (state: T) => void;
+export type StateListener<T extends BotState> = (
+	state: T,
+	prevState: T
+) => void;
 
 export type StateSubscriber<T extends BotState> = (
 	listener: StateListener<T>
 ) => () => void;
-
-type BlockIdentity = Pick<Block, "id" | "type">;
 
 export interface User {
 	id: string;
@@ -35,17 +37,33 @@ export interface BotState {
 	/**
 	 * The messages
 	 */
-	messages?: Message[];
+	messages: Message[];
 
 	user?: User;
 
-	/**
-	 * The active view
-	 */
-	activeScreen?: {
-		visitors: BlockIdentity[];
-		users: BlockIdentity[];
-	};
-
-	config?: WidgetConfig;
+	activeTab?: TabType;
+	widgetConfig?: WidgetConfig;
+	sdkConfig?: SDKConfig;
 }
+
+export type Command =
+	| { type: "init"; payload: SDKConfig }
+	| { type: "open" }
+	| { type: "close" }
+	| { type: "identify"; payload: User }
+	| { type: "track"; payload: { event: string; data?: unknown } }
+	| { type: "update"; payload: Partial<SDKConfig> }
+	| { type: "switch-tab"; payload: TabType }
+	| { type: "shutdown" };
+
+export type CommandArgs =
+	| ["init", SDKConfig]
+	| ["open"]
+	| ["close"]
+	| ["identify", User]
+	| ["track", { event: string; data?: unknown }]
+	| ["update", Partial<SDKConfig>]
+	| ["switch-tab", TabType]
+	| ["shutdown"];
+
+export type RovoDeskFunction = (...args: CommandArgs) => void;
