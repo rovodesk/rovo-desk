@@ -1,10 +1,10 @@
 export function injectGlobalStyles() {
-    if (document.getElementById("zh-widget-global")) return;
+	if (document.getElementById("zh-widget-global")) return;
 
-    const style = document.createElement("style");
-    style.id = "zh-widget-global";
+	const style = document.createElement("style");
+	style.id = "zh-widget-global";
 
-    style.innerHTML = `
+	style.innerHTML = `
 	    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     .zh-widget-wrapper,
     .zh-widget-panel,
@@ -82,5 +82,5 @@ export function injectGlobalStyles() {
     }
   `;
 
-    document.head.appendChild(style);
+	document.head.appendChild(style);
 }

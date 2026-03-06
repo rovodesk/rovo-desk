@@ -99,8 +99,7 @@ export function defaultWidgetConfig(
 									headerTitle: `${companyName} Support`,
 									subtitle: "We usually reply within a few minutes",
 									placeholder: "Type your message...",
-									welcomeMessage:
-										"Hello! How can we help you today?",
+									welcomeMessage: "Hello! How can we help you today?",
 
 									showBadge: true,
 									allowAttachments: true,

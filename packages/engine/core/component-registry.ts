@@ -19,11 +19,9 @@ export interface IComponentRegistry {
 }
 
 export class ComponentRegistry implements IComponentRegistry {
-
 	private readonly actionProvider: IActionProvider;
-	private readonly components: Partial<
-		Record<AnyBlock["type"], Component[]>
-	> = {};
+	private readonly components: Partial<Record<AnyBlock["type"], Component[]>> =
+		{};
 
 	constructor({ actionProvider }: { actionProvider: IActionProvider }) {
 		this.actionProvider = actionProvider;
@@ -38,7 +36,6 @@ export class ComponentRegistry implements IComponentRegistry {
 
 		this.components[type]!.push(component);
 	}
-
 
 	renderBlock(block: AnyBlock): HTMLElement | undefined {
 		if (!block.enabled) return;

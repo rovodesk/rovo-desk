@@ -24,7 +24,8 @@ interface IActionProvider {
 }
 
 class ActionProvider<T extends BotState & { sdkConfig?: SDKConfig }>
-	implements IActionProvider {
+	implements IActionProvider
+{
 	private readonly store: Store<T>;
 	private readonly messageParser: MessageParser<T>;
 
@@ -90,7 +91,7 @@ class ActionProvider<T extends BotState & { sdkConfig?: SDKConfig }>
 					mode,
 					user: data.user,
 					widgetConfig,
-					activeTab: modeConfig?.defaultTab
+					activeTab: modeConfig?.defaultTab,
 				}));
 
 				console.log("RovoDesk: widget config", widgetConfig);
