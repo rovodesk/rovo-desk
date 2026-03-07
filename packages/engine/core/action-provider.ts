@@ -24,7 +24,8 @@ interface IActionProvider {
 }
 
 class ActionProvider<T extends BotState & { sdkConfig?: SDKConfig }>
-	implements IActionProvider {
+	implements IActionProvider
+{
 	private readonly store: Store<T>;
 	private readonly messageParser: MessageParser<T>;
 
