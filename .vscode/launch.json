@@ -5,6 +5,22 @@
       "name": "file:///Users/dev/Desktop/SAAS/Chat%20App/zero-heads/examples/chatbot-vanilla/index.html",
       "request": "launch",
       "url": "file:///Users/dev/Desktop/SAAS/Chat%20App/zero-heads/examples/chatbot-vanilla/index.html"
+    },
+    {
+      "name": "cms",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/cms/node_modules/next/dist/bin/next",
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/apps/cms"
+      },
+      "cwd": "${workspaceFolder}/apps/cms"
     }
   ]
 }
