@@ -1,4 +1,5 @@
 import { ORPCError } from "@orpc/server";
+import { createDatabase } from "@zero-heads-lab/database";
 import { base } from "../context";
 
 export const BaseMiddleware = base.middleware(({ context, next }) => {
@@ -9,5 +10,11 @@ export const BaseMiddleware = base.middleware(({ context, next }) => {
 		});
 	}
 
-	return next();
+	const database = createDatabase();
+	context.database = database;
+	return next({
+		context: {
+			database,
+		},
+	});
 });

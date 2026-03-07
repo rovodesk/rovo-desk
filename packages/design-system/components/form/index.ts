@@ -11,3 +11,4 @@ export * from "./date-picker-field";
 export * from "./switch-field";
 export * from "./file-upload-field";
 export * from "./tag-field";
+export { FormApi } from "@tanstack/react-form";

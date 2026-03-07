@@ -2,15 +2,19 @@ import type { DataLoadFn, DataPersistFn } from "@onboardjs/core";
 import { OnboardingProvider as OnboardJSProvider } from "@onboardjs/react";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { onboardingSteps } from "@/data/onboarding-steps";
-import { useOnboardingProgress } from "@/hooks/use-onboarding-progress";
+import { useProfile } from "@/hooks/use-profile";
 
 export function OnboardingProvider({
 	children,
 }: {
 	children?: React.ReactNode;
 }) {
-	const { onboardingProgress, persistAsync, clearAsync, isLoading } =
-		useOnboardingProgress();
+	const {
+		onboardingProgress,
+		persistOnboardingProgressMutationAsync,
+		clearOnboardingProgressMutationAsync,
+		loading,
+	} = useProfile();
 
 	/*
 	 * LOAD FROM DATABASE
@@ -33,7 +37,7 @@ export function OnboardingProvider({
 	 * PERSIST TO DATABASE
 	 */
 	const handleDataPersist: DataPersistFn = async (context, currentStepId) => {
-		await persistAsync({
+		await persistOnboardingProgressMutationAsync({
 			currentStepId: String(currentStepId),
 			flowData: context,
 		});
@@ -43,14 +47,14 @@ export function OnboardingProvider({
 	 * CLEAR DATABASE STATE
 	 */
 	const handleClearPersistedData = async () => {
-		await clearAsync();
+		await clearOnboardingProgressMutationAsync();
 	};
 
-	if (isLoading) {
+	if (loading) {
 		return (
 			<Loader
-				subtitle="Please wait while we start your onboarding"
-				title="Something Great is Cooking..."
+				subtitle="Please wait while we prepare your workspace"
+				title="Speeding things up..."
 			/>
 		);
 	}

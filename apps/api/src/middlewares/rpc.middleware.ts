@@ -10,12 +10,10 @@ import type { Bindings } from "../types";
 export const rpcMiddleware: MiddlewareHandler<{
 	Bindings: Bindings;
 }> = async (c, next) => {
-	const auth = createAuth(c.env.AUTH_CACHE);
-
 	const { matched, response } = await orpcHandler.handle(c.req.raw, {
 		prefix: "/rpc",
 		context: {
-			auth,
+			auth: createAuth(c.env.AUTH_CACHE),
 			reqHeaders: c.req.raw.headers,
 		},
 	});

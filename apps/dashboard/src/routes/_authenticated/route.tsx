@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthenticatedLayout } from "@/layout";
+import { DashboardLayout } from "@/layout";
 
 export const Route = createFileRoute("/_authenticated")({
-	component: AuthenticatedLayout,
+	component: DashboardLayout,
 	beforeLoad: ({ context }) => {
 		const isAuthenticated = context.auth?.isAuthenticated;
 		if (!isAuthenticated) {

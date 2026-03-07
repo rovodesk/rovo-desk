@@ -10,4 +10,14 @@ export const AUTH_CONFIG = {
 	RATE_LIMIT_MAX_REQUESTS: 100,
 
 	IMPERSONATION_SESSION_DURATION_IN_SECS: 60 * 60 * 6, // 6 hours
+
+	JWT_ISSUER: "http://localhost:5001",
+	JWT_AUDIENCE: "http://localhost:3000",
+	JWT_EXPIRATION_TIME_IN_SECS: 60 * 60 * 1, // 1 hour
+	JWT_ALGORITHM: "ES256" as const,
+	JWKS_URL: "http://localhost:5001/.well-known/jwks.json",
+
+	API_KEY_DEFAULT_PREFIX: "org_",
+	API_KEY_RATE_LIMIT_MAX_REQUESTS: 100, //100 Requests per minute
+	API_KEY_RATE_LIMIT_TIME_WINDOW: 1000 * 60, // 1 minute
 };

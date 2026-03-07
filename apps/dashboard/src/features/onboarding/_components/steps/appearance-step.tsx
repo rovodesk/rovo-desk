@@ -108,7 +108,7 @@ export function AppearanceStep({ className }: React.ComponentProps<"div">) {
 														{option.value === "light" ? (
 															<Sun className="size-4 text-orange-500" />
 														) : (
-															<Moon className="size-4 text-indigo-400" />
+															<Moon className="size-4 text-[#72e3ad]" />
 														)}
 														<span className="font-semibold text-sm">
 															{option.label}

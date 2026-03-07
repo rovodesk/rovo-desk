@@ -1,7 +1,9 @@
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
+import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { BellRingIcon, MailIcon } from "lucide-react";
+import { Bell, Mail } from "lucide-react";
 import { z } from "zod";
+import { SettingRow } from "../_components/setting-row";
 
 const notificationsFormSchema = z.object({
 	type: z.enum(["all", "mentions", "none"]),
@@ -34,25 +36,23 @@ export function NotificationsForm() {
 
 	return (
 		<form
-			className="max-w-5xl"
 			onSubmit={(e) => {
 				e.preventDefault();
 				form.handleSubmit();
 			}}
 		>
 			<form.AppForm>
-				<div className="grid grid-cols-1 gap-x-12 gap-y-10 md:grid-cols-2">
+				<div className="grid w-full grid-cols-1 gap-12 lg:grid-cols-3">
 					{/* LEFT COLUMN: GLOBAL DELIVERY */}
-					<div className="space-y-8">
-						<div>
-							<div className="mb-2 flex items-center gap-2">
-								<BellRingIcon className="size-4 text-primary" />
-								<h3 className="font-medium text-lg">Delivery Mode</h3>
-							</div>
-							<p className="text-muted-foreground text-sm">
-								Decide how and when you want to be interrupted.
-							</p>
+					{/* Delivery Mode */}
+					<div className="rounded-lg border border-border p-5 lg:col-span-2">
+						<div className="mb-1 flex items-center gap-2">
+							<Bell className="h-4 w-4 text-muted-foreground" />
+							<h3 className="font-semibold text-base">Delivery Mode</h3>
 						</div>
+						<p className="mb-4 text-muted-foreground text-sm">
+							Decide how and when you want to be interrupted.
+						</p>
 
 						<form.AppField
 							children={(field) => (
@@ -71,7 +71,12 @@ export function NotificationsForm() {
 							name="type"
 						/>
 
-						<div className="rounded-xl border border-dashed bg-muted/30 p-4">
+						<Separator className="my-4" />
+
+						<SettingRow
+							description="Mirror these settings to your mobile devices."
+							label="Push to Mobile"
+						>
 							<form.AppField
 								children={(field) => (
 									<field.SwitchField
@@ -81,23 +86,24 @@ export function NotificationsForm() {
 								)}
 								name="mobile"
 							/>
-						</div>
+						</SettingRow>
 					</div>
 
 					{/* RIGHT COLUMN: EMAIL GRANULARITY */}
-					<div className="space-y-6">
-						<div>
-							<div className="mb-2 flex items-center gap-2">
-								<MailIcon className="size-4 text-primary" />
-								<h3 className="font-medium text-lg">Email Subscriptions</h3>
-							</div>
-							<p className="text-muted-foreground text-sm">
-								Manage the noise in your inbox.
-							</p>
+					<div className="rounded-lg border border-border p-5 lg:col-span-1">
+						<div className="mb-1 flex items-center gap-2">
+							<Mail className="h-4 w-4 text-muted-foreground" />
+							<h3 className="font-semibold text-base">Email Subscriptions</h3>
 						</div>
+						<p className="mb-4 text-muted-foreground text-sm">
+							Manage the noise in your inbox.
+						</p>
 
-						<div className="divide-y rounded-xl border bg-card">
-							<div className="p-4 transition-colors hover:bg-muted/50">
+						<div className="divide-y divide-border">
+							<SettingRow
+								description="Essential news about your profile."
+								label="Account Updates"
+							>
 								<form.AppField
 									children={(field) => (
 										<field.SwitchField
@@ -108,8 +114,11 @@ export function NotificationsForm() {
 									)}
 									name="communication_emails"
 								/>
-							</div>
-							<div className="p-4 transition-colors hover:bg-muted/50">
+							</SettingRow>
+							<SettingRow
+								description="Friend requests and interactions."
+								label="Social Activity"
+							>
 								<form.AppField
 									children={(field) => (
 										<field.SwitchField
@@ -120,8 +129,11 @@ export function NotificationsForm() {
 									)}
 									name="social_emails"
 								/>
-							</div>
-							<div className="p-4 transition-colors hover:bg-muted/50">
+							</SettingRow>
+							<SettingRow
+								description="Product features and occasional offers."
+								label="Marketing & Tips"
+							>
 								<form.AppField
 									children={(field) => (
 										<field.SwitchField
@@ -132,8 +144,11 @@ export function NotificationsForm() {
 									)}
 									name="marketing_emails"
 								/>
-							</div>
-							<div className="p-4 transition-colors hover:bg-muted/50">
+							</SettingRow>
+							<SettingRow
+								description="MFA logs and security alerts. (Recommended)."
+								label="Security & Privacy"
+							>
 								<form.AppField
 									children={(field) => (
 										<field.SwitchField
@@ -144,7 +159,7 @@ export function NotificationsForm() {
 									)}
 									name="security_emails"
 								/>
-							</div>
+							</SettingRow>
 						</div>
 					</div>
 				</div>
@@ -153,9 +168,11 @@ export function NotificationsForm() {
 					<p className="text-muted-foreground text-xs">
 						Looking for Desktop notifications? Check your browser settings.
 					</p>
-					<form.SubmitButton className="px-10" size="lg">
-						Save Preferences
-					</form.SubmitButton>
+					<form.SubmitButton
+						className="px-10"
+						label="Save Preferences"
+						size="lg"
+					/>
 				</div>
 			</form.AppForm>
 		</form>

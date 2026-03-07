@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
-import { Route as AuthenticatedConversationsRouteImport } from './routes/_authenticated/conversations'
+import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/inbox'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
@@ -21,14 +21,15 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_authenticated/knowledge-base/index'
-import { Route as AuthenticatedIntegrationsIndexRouteImport } from './routes/_authenticated/integrations/index'
-import { Route as AuthenticatedBotIndexRouteImport } from './routes/_authenticated/bot/index'
+import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
+import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authenticated/settings/widget'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
+import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings/integrations'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedBotCustomiseRouteImport } from './routes/_authenticated/bot/customise'
 import { Route as AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport } from './routes/_authenticated/knowledge-base/knowledge.$knowledgeId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -45,12 +46,11 @@ const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedConversationsRoute =
-  AuthenticatedConversationsRouteImport.update({
-    id: '/conversations',
-    path: '/conversations',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
+const AuthenticatedInboxRoute = AuthenticatedInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const errors500Route = errors500RouteImport.update({
   id: '/(errors)/500',
   path: '/500',
@@ -94,22 +94,29 @@ const AuthenticatedKnowledgeBaseIndexRoute =
     path: '/knowledge-base/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedIntegrationsIndexRoute =
-  AuthenticatedIntegrationsIndexRouteImport.update({
-    id: '/integrations/',
-    path: '/integrations/',
+const AuthenticatedFunnelsIndexRoute =
+  AuthenticatedFunnelsIndexRouteImport.update({
+    id: '/funnels/',
+    path: '/funnels/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedBotIndexRoute = AuthenticatedBotIndexRouteImport.update({
-  id: '/bot/',
-  path: '/bot/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsWorkspaceRoute =
+  AuthenticatedSettingsWorkspaceRouteImport.update({
+    id: '/workspace',
+    path: '/workspace',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedSettingsWidgetRoute =
+  AuthenticatedSettingsWidgetRouteImport.update({
+    id: '/widget',
+    path: '/widget',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
 const AuthenticatedSettingsSecurityRoute =
   AuthenticatedSettingsSecurityRouteImport.update({
     id: '/security',
@@ -120,6 +127,12 @@ const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedSettingsIntegrationsRoute =
+  AuthenticatedSettingsIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
 const AuthenticatedSettingsBillingRoute =
@@ -133,12 +146,6 @@ const AuthenticatedSettingsAppearanceRoute =
     id: '/appearance',
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
-const AuthenticatedBotCustomiseRoute =
-  AuthenticatedBotCustomiseRouteImport.update({
-    id: '/bot/customise',
-    path: '/bot/customise',
-    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute =
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport.update({
@@ -155,16 +162,17 @@ export interface FileRoutesByFullPath {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-  '/conversations': typeof AuthenticatedConversationsRoute
+  '/inbox': typeof AuthenticatedInboxRoute
   '/tasks': typeof AuthenticatedTasksRoute
-  '/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
+  '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/bot/': typeof AuthenticatedBotIndexRoute
-  '/integrations/': typeof AuthenticatedIntegrationsIndexRoute
+  '/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -175,17 +183,18 @@ export interface FileRoutesByTo {
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
-  '/conversations': typeof AuthenticatedConversationsRoute
+  '/inbox': typeof AuthenticatedInboxRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/': typeof AuthenticatedIndexRoute
-  '/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
+  '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/bot': typeof AuthenticatedBotIndexRoute
-  '/integrations': typeof AuthenticatedIntegrationsIndexRoute
+  '/funnels': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -199,17 +208,18 @@ export interface FileRoutesById {
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
-  '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
+  '/_authenticated/inbox': typeof AuthenticatedInboxRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/bot/customise': typeof AuthenticatedBotCustomiseRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/billing': typeof AuthenticatedSettingsBillingRoute
+  '/_authenticated/settings/integrations': typeof AuthenticatedSettingsIntegrationsRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
+  '/_authenticated/settings/widget': typeof AuthenticatedSettingsWidgetRoute
+  '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/bot/': typeof AuthenticatedBotIndexRoute
-  '/_authenticated/integrations/': typeof AuthenticatedIntegrationsIndexRoute
+  '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -224,16 +234,17 @@ export interface FileRouteTypes {
     | '/401'
     | '/403'
     | '/500'
-    | '/conversations'
+    | '/inbox'
     | '/tasks'
-    | '/bot/customise'
     | '/settings/appearance'
     | '/settings/billing'
+    | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
+    | '/settings/widget'
+    | '/settings/workspace'
     | '/admin/'
-    | '/bot/'
-    | '/integrations/'
+    | '/funnels/'
     | '/knowledge-base/'
     | '/settings/'
     | '/knowledge-base/knowledge/$knowledgeId'
@@ -244,17 +255,18 @@ export interface FileRouteTypes {
     | '/401'
     | '/403'
     | '/500'
-    | '/conversations'
+    | '/inbox'
     | '/tasks'
     | '/'
-    | '/bot/customise'
     | '/settings/appearance'
     | '/settings/billing'
+    | '/settings/integrations'
     | '/settings/notifications'
     | '/settings/security'
+    | '/settings/widget'
+    | '/settings/workspace'
     | '/admin'
-    | '/bot'
-    | '/integrations'
+    | '/funnels'
     | '/knowledge-base'
     | '/settings'
     | '/knowledge-base/knowledge/$knowledgeId'
@@ -267,17 +279,18 @@ export interface FileRouteTypes {
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/500'
-    | '/_authenticated/conversations'
+    | '/_authenticated/inbox'
     | '/_authenticated/tasks'
     | '/_authenticated/'
-    | '/_authenticated/bot/customise'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/billing'
+    | '/_authenticated/settings/integrations'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/settings/security'
+    | '/_authenticated/settings/widget'
+    | '/_authenticated/settings/workspace'
     | '/_authenticated/admin/'
-    | '/_authenticated/bot/'
-    | '/_authenticated/integrations/'
+    | '/_authenticated/funnels/'
     | '/_authenticated/knowledge-base/'
     | '/_authenticated/settings/'
     | '/_authenticated/knowledge-base/knowledge/$knowledgeId'
@@ -315,11 +328,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/conversations': {
-      id: '/_authenticated/conversations'
-      path: '/conversations'
-      fullPath: '/conversations'
-      preLoaderRoute: typeof AuthenticatedConversationsRouteImport
+    '/_authenticated/inbox': {
+      id: '/_authenticated/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AuthenticatedInboxRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(errors)/500': {
@@ -378,18 +391,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKnowledgeBaseIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/integrations/': {
-      id: '/_authenticated/integrations/'
-      path: '/integrations'
-      fullPath: '/integrations/'
-      preLoaderRoute: typeof AuthenticatedIntegrationsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/bot/': {
-      id: '/_authenticated/bot/'
-      path: '/bot'
-      fullPath: '/bot/'
-      preLoaderRoute: typeof AuthenticatedBotIndexRouteImport
+    '/_authenticated/funnels/': {
+      id: '/_authenticated/funnels/'
+      path: '/funnels'
+      fullPath: '/funnels/'
+      preLoaderRoute: typeof AuthenticatedFunnelsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/': {
@@ -398,6 +404,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/workspace': {
+      id: '/_authenticated/settings/workspace'
+      path: '/workspace'
+      fullPath: '/settings/workspace'
+      preLoaderRoute: typeof AuthenticatedSettingsWorkspaceRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/settings/widget': {
+      id: '/_authenticated/settings/widget'
+      path: '/widget'
+      fullPath: '/settings/widget'
+      preLoaderRoute: typeof AuthenticatedSettingsWidgetRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
     '/_authenticated/settings/security': {
       id: '/_authenticated/settings/security'
@@ -411,6 +431,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/settings/integrations': {
+      id: '/_authenticated/settings/integrations'
+      path: '/integrations'
+      fullPath: '/settings/integrations'
+      preLoaderRoute: typeof AuthenticatedSettingsIntegrationsRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
     '/_authenticated/settings/billing': {
@@ -427,13 +454,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/bot/customise': {
-      id: '/_authenticated/bot/customise'
-      path: '/bot/customise'
-      fullPath: '/bot/customise'
-      preLoaderRoute: typeof AuthenticatedBotCustomiseRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/knowledge-base/knowledge/$knowledgeId': {
       id: '/_authenticated/knowledge-base/knowledge/$knowledgeId'
       path: '/knowledge-base/knowledge/$knowledgeId'
@@ -447,8 +467,11 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsBillingRoute: typeof AuthenticatedSettingsBillingRoute
+  AuthenticatedSettingsIntegrationsRoute: typeof AuthenticatedSettingsIntegrationsRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
   AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
+  AuthenticatedSettingsWidgetRoute: typeof AuthenticatedSettingsWidgetRoute
+  AuthenticatedSettingsWorkspaceRoute: typeof AuthenticatedSettingsWorkspaceRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
 
@@ -456,9 +479,13 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
   {
     AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
     AuthenticatedSettingsBillingRoute: AuthenticatedSettingsBillingRoute,
+    AuthenticatedSettingsIntegrationsRoute:
+      AuthenticatedSettingsIntegrationsRoute,
     AuthenticatedSettingsNotificationsRoute:
       AuthenticatedSettingsNotificationsRoute,
     AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
+    AuthenticatedSettingsWidgetRoute: AuthenticatedSettingsWidgetRoute,
+    AuthenticatedSettingsWorkspaceRoute: AuthenticatedSettingsWorkspaceRoute,
     AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   }
 
@@ -469,26 +496,22 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
-  AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
+  AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedBotCustomiseRoute: typeof AuthenticatedBotCustomiseRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedBotIndexRoute: typeof AuthenticatedBotIndexRoute
-  AuthenticatedIntegrationsIndexRoute: typeof AuthenticatedIntegrationsIndexRoute
+  AuthenticatedFunnelsIndexRoute: typeof AuthenticatedFunnelsIndexRoute
   AuthenticatedKnowledgeBaseIndexRoute: typeof AuthenticatedKnowledgeBaseIndexRoute
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
-  AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
+  AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedBotCustomiseRoute: AuthenticatedBotCustomiseRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedBotIndexRoute: AuthenticatedBotIndexRoute,
-  AuthenticatedIntegrationsIndexRoute: AuthenticatedIntegrationsIndexRoute,
+  AuthenticatedFunnelsIndexRoute: AuthenticatedFunnelsIndexRoute,
   AuthenticatedKnowledgeBaseIndexRoute: AuthenticatedKnowledgeBaseIndexRoute,
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute:
     AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute,

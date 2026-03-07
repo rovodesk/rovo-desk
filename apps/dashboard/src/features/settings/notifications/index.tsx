@@ -1,13 +1,15 @@
-import { ContentSection } from "../_components/content-section";
+import { SectionHeader } from "../_components/section-header";
+import SectionMain from "../_components/section-main";
 import { NotificationsForm } from "./notifications-form";
 
-export function SettingsNotifications() {
+export function NotificationSettings() {
 	return (
-		<ContentSection
-			desc="Configure how you receive notifications."
-			title="Notifications"
-		>
+		<SectionMain>
+			<SectionHeader
+				description="Choose what notifications you receive."
+				title="Notifications"
+			/>
 			<NotificationsForm />
-		</ContentSection>
+		</SectionMain>
 	);
 }

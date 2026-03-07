@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
-	date,
 	index,
 	integer,
 	jsonb,
@@ -10,6 +9,7 @@ import {
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
+import { userProfile, workspaceProfile } from "schema";
 
 export const authSchema = pgSchema("auth");
 
@@ -26,15 +26,13 @@ export const user = authSchema.table("user", {
 	role: text("role").notNull().default("unverified"),
 	banned: boolean("banned"),
 	banReason: text("banReason"),
-	banExpires: date("banExpires"),
+	banExpires: timestamp("banExpires"),
 	stripeCustomerId: text("stripeCustomerId"),
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-	updatedAt: timestamp("updatedAt", { withTimezone: true })
+	createdAt: timestamp("createdAt").defaultNow().notNull(),
+	updatedAt: timestamp("updatedAt")
 		.defaultNow()
 		.$onUpdate(() => new Date()),
-	deletedAt: timestamp("deletedAt", { withTimezone: true }),
+	deletedAt: timestamp("deletedAt"),
 });
 
 export const userRelations = relations(user, ({ many, one }) => ({
@@ -58,6 +56,11 @@ export const userRelations = relations(user, ({ many, one }) => ({
 		references: [passkey.userId],
 		relationName: "userPasskey",
 	}),
+	profile: one(userProfile, {
+		fields: [user.id],
+		references: [userProfile.userId],
+		relationName: "userProfile",
+	}),
 }));
 
 export const organization = authSchema.table("organization", {
@@ -73,16 +76,35 @@ export const organization = authSchema.table("organization", {
 	metadata: jsonb("metadata"),
 	stripeCustomerId: text("stripeCustomerId"),
 
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-
-	updatedAt: timestamp("updatedAt", { withTimezone: true })
+	createdAt: timestamp("createdAt").defaultNow().notNull(),
+	updatedAt: timestamp("updatedAt")
 		.defaultNow()
 		.$onUpdate(() => new Date()),
-
-	deletedAt: timestamp("deletedAt", { withTimezone: true }),
+	deletedAt: timestamp("deletedAt"),
 });
+
+export const organizationRelations = relations(
+	organization,
+	({ many, one }) => ({
+		members: many(member, {
+			relationName: "organizationMembers",
+		}),
+		teams: many(team, {
+			relationName: "organizationTeams",
+		}),
+		invitations: many(invitation, {
+			relationName: "organizationInvitations",
+		}),
+		roles: many(organizationRole, {
+			relationName: "organizationRoles",
+		}),
+		profile: one(workspaceProfile, {
+			fields: [organization.id],
+			references: [workspaceProfile.organizationId],
+			relationName: "organizationWorkspaceProfile",
+		}),
+	})
+);
 
 export const organizationRole = authSchema.table("organizationRole", {
 	id: text("id")
@@ -94,13 +116,11 @@ export const organizationRole = authSchema.table("organizationRole", {
 		.references(() => organization.id, { onDelete: "cascade" }),
 
 	role: text("role").notNull().default("member"),
-	permissions: jsonb("permissions").$type<string[]>().notNull(),
+	permission: text("permission").notNull(),
 
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
+	createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-	updatedAt: timestamp("updatedAt", { withTimezone: true })
+	updatedAt: timestamp("updatedAt")
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 });
@@ -122,11 +142,9 @@ export const member = authSchema.table(
 
 		role: text("role").notNull().default("member"),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-		deletedAt: timestamp("deletedAt", { withTimezone: true }),
+		deletedAt: timestamp("deletedAt"),
 	},
 	(t) => [
 		unique("memberUserOrgUnique").on(t.userId, t.organizationId),
@@ -156,13 +174,11 @@ export const invitation = authSchema.table("invitation", {
 
 	status: text("status").notNull().default("pending"),
 
-	acceptedAt: timestamp("acceptedAt", { withTimezone: true }),
+	acceptedAt: timestamp("acceptedAt"),
 
-	expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
+	expiresAt: timestamp("expiresAt").notNull(),
 
-	createdAt: timestamp("createdAt", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
+	createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const team = authSchema.table(
@@ -178,11 +194,9 @@ export const team = authSchema.table(
 			.notNull()
 			.references(() => organization.id, { onDelete: "cascade" }),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true })
+		updatedAt: timestamp("updatedAt")
 			.defaultNow()
 			.$onUpdate(() => new Date()),
 	},
@@ -204,30 +218,13 @@ export const teamMember = authSchema.table(
 			.notNull()
 			.references(() => team.id, { onDelete: "cascade" }),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 	},
 	(t) => [
 		unique("teamMemberUserTeamUnique").on(t.userId, t.teamId),
 		index("teamMemberTeamIdx").on(t.teamId),
 	]
 );
-
-export const organizationRelations = relations(organization, ({ many }) => ({
-	members: many(member, {
-		relationName: "organizationMembers",
-	}),
-	teams: many(team, {
-		relationName: "organizationTeams",
-	}),
-	invitations: many(invitation, {
-		relationName: "organizationInvitations",
-	}),
-	roles: many(organizationRole, {
-		relationName: "organizationRoles",
-	}),
-}));
 
 export const memberRelations = relations(member, ({ one }) => ({
 	user: one(user, {
@@ -307,7 +304,7 @@ export const session = authSchema.table(
 		token: text("token").notNull().unique(),
 		deviceId: text("deviceId"),
 
-		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
+		expiresAt: timestamp("expiresAt").notNull(),
 
 		isAnonymous: boolean("isAnonymous"),
 
@@ -327,16 +324,12 @@ export const session = authSchema.table(
 		ipAddress: text("ipAddress"),
 		userAgent: text("userAgent"),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-		lastActiveAt: timestamp("lastActiveAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		lastActiveAt: timestamp("lastActiveAt").defaultNow().notNull(),
 
 		// 🔑 NEW: soft revocation
-		revokedAt: timestamp("revokedAt", { withTimezone: true }),
+		revokedAt: timestamp("revokedAt"),
 	},
 	(t) => [
 		index("sessionUserIdx").on(t.userId),
@@ -364,26 +357,18 @@ export const account = authSchema.table(
 		accessToken: text("accessToken"),
 		refreshToken: text("refreshToken"),
 
-		accessTokenExpiresAt: timestamp("accessTokenExpiresAt", {
-			withTimezone: true,
-		}),
+		accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
 
-		refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt", {
-			withTimezone: true,
-		}),
+		refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
 
 		scope: text("scope"),
 		idToken: text("idToken"),
 
 		password: text("password"),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
+		updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
 	},
 	(t) => [
 		unique("accountProviderAccountIdUnique").on(t.providerId, t.accountId),
@@ -407,7 +392,7 @@ export const passkey = authSchema.table(
 		deviceType: text("deviceType").notNull(),
 		backedUp: boolean("backedUp").notNull(),
 		transports: text("transports"),
-		createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+		createdAt: timestamp("createdAt").defaultNow(),
 		aaguid: text("aaguid"),
 	},
 	(t) => [index("passkeyUserIdx").on(t.userId)]
@@ -431,15 +416,11 @@ export const verification = authSchema.table(
 		identifier: text("identifier").notNull(),
 		value: text("value").notNull(),
 
-		expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
+		expiresAt: timestamp("expiresAt").notNull(),
 
-		createdAt: timestamp("createdAt", { withTimezone: true })
-			.defaultNow()
-			.notNull(),
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
 
-		updatedAt: timestamp("updatedAt", { withTimezone: true }).$onUpdate(
-			() => new Date()
-		),
+		updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
 	},
 	(t) => [
 		unique("verificationIdentifierValueUnique").on(t.identifier, t.value),
@@ -474,3 +455,51 @@ export const accountRelations = relations(account, ({ one }) => ({
 		relationName: "userAccount",
 	}),
 }));
+
+export const apikey = authSchema.table("apikey", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	configId: text("configId").notNull(),
+	name: text("name"),
+	start: text("start"),
+	prefix: text("prefix"),
+	key: text("key").notNull(),
+	referenceId: text("referenceId").notNull(),
+	refillInterval: integer("refillInterval"),
+	refillAmount: integer("refillAmount"),
+	lastRefillAt: timestamp("lastRefillAt", {
+		precision: 6,
+		withTimezone: true,
+	}),
+	enabled: boolean("enabled").notNull().default(true),
+	rateLimitEnabled: boolean("rateLimitEnabled").notNull().default(true),
+	rateLimitTimeWindow: integer("rateLimitTimeWindow"),
+	rateLimitMax: integer("rateLimitMax"),
+	requestCount: integer("requestCount").notNull().default(0),
+	remaining: integer("remaining"),
+	lastRequest: timestamp("lastRequest", {
+		precision: 6,
+		withTimezone: true,
+	}),
+	expiresAt: timestamp("expiresAt", { precision: 6, withTimezone: true }),
+	createdAt: timestamp("createdAt", { precision: 6, withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updatedAt", {
+		precision: 6,
+		withTimezone: true,
+	}).$onUpdate(() => new Date()),
+	permissions: text("permissions"),
+	metadata: jsonb("metadata"),
+});
+
+export const jwksSchema = authSchema.table("jwks", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	publicKey: text("publicKey").notNull(),
+	privateKey: text("privateKey").notNull(),
+	createdAt: timestamp("createdAt").notNull().defaultNow(),
+	expiresAt: timestamp("expiresAt"),
+});

@@ -28,13 +28,6 @@ export function AddDomainDialog() {
 		setStep("invite_members");
 	};
 
-	const handleCreateDomainError: (error: Error) => void = (error) => {
-		console.error("ERROR CREATING DOMAIN", error);
-		toast.error("Failed to create domain", {
-			description: "Something went wrong. Please try again later.",
-		});
-	};
-
 	const handleInviteMembersSuccess: (value: { emails: Tag[] }) => void = (
 		value
 	) => {
@@ -43,15 +36,14 @@ export function AddDomainDialog() {
 		setStep("create_domain");
 	};
 
-	const handleInviteMembersError: (error: Error) => void = (error) => {
-		console.error("ERROR INVITING MEMBERS", error);
-		toast.error("Failed to invite members", {
-			description: "Something went wrong. Please try again later.",
-		});
-	};
-
 	return (
-		<Dialog onOpenChange={setOpen} open={open}>
+		<Dialog
+			onOpenChange={(v) => {
+				setOpen(v);
+				if (!v) setStep("create_domain");
+			}}
+			open={open}
+		>
 			<DialogTrigger asChild>
 				<SidebarGroupAction title="Add Domain">
 					<Plus className="size-4" />
@@ -60,36 +52,43 @@ export function AddDomainDialog() {
 
 			<DialogContent>
 				{step === "create_domain" && (
-					<DialogHeader>
-						<DialogTitle>Create New Domain</DialogTitle>
-						<DialogDescription>
-							Domain names and slugs identify your projects.
-						</DialogDescription>
-					</DialogHeader>
-				)}
-				{step === "invite_members" && (
-					<DialogHeader>
-						<DialogTitle>Invite Members</DialogTitle>
-						<DialogDescription>
-							Invite members to your domain.
-						</DialogDescription>
-					</DialogHeader>
-				)}
+					<>
+						<DialogHeader>
+							<DialogTitle>Create New Domain</DialogTitle>
+							<DialogDescription>
+								Domain names and slugs identify your projects.
+							</DialogDescription>
+						</DialogHeader>
 
-				{step === "create_domain" && (
-					<DomainForm
-						cancelable
-						onCancel={() => setOpen(false)}
-						onError={handleCreateDomainError}
-						onSuccess={handleCreateDomainSuccess}
-					/>
+						<DomainForm
+							cancelable
+							onCancel={() => setOpen(false)}
+							onError={(error) => {
+								console.error(error);
+								toast.error("Failed to create domain");
+							}}
+							onSuccess={handleCreateDomainSuccess}
+						/>
+					</>
 				)}
 				{step === "invite_members" && (
-					<InviteMembersForm
-						onCancel={() => setOpen(false)}
-						onError={handleInviteMembersError}
-						onSuccess={handleInviteMembersSuccess}
-					/>
+					<>
+						<DialogHeader>
+							<DialogTitle>Invite Members</DialogTitle>
+							<DialogDescription>
+								Invite members to your domain.
+							</DialogDescription>
+						</DialogHeader>
+
+						<InviteMembersForm
+							onCancel={() => setOpen(false)}
+							onError={(error) => {
+								console.error(error);
+								toast.error("Failed to invite members");
+							}}
+							onSuccess={handleInviteMembersSuccess}
+						/>
+					</>
 				)}
 			</DialogContent>
 		</Dialog>

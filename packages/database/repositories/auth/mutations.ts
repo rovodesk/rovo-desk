@@ -1,53 +1,63 @@
-import { Placeholder } from "@zero-heads-lab/shared/utils";
+import type {
+	WidgetConfig,
+	WorkspaceSettings,
+} from "@zero-heads-lab/shared/types";
+import { widget } from "drizzle/schemas/widget.schema";
 import { eq } from "drizzle-orm";
-import { createDatabase } from "../../conn";
+import type { Database } from "../../conn";
 import {
 	organization as orgSchema,
 	session as sessionSchema,
-	teamMember as teamMemSchema,
-	team as teamSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
+import {
+	userProfile,
+	workspaceProfile,
+} from "../../drizzle/schemas/profile.schema";
 
-import { profile as profileSchema } from "../../drizzle/schemas/profile.schema";
-
-export async function markUserAsDeleted(userId: string) {
-	const db = createDatabase();
-	return await db
+export async function markUserAsDeleted(
+	database: Database,
+	params: { userId: string }
+) {
+	return await database
 		.update(userSchema)
 		.set({
 			deletedAt: new Date(),
 			role: "deleted",
 		})
-		.where(eq(userSchema.id, userId));
+		.where(eq(userSchema.id, params.userId));
 }
 
-export async function deleteSession(sessionId: string) {
-	const db = createDatabase();
-
-	return await db.delete(sessionSchema).where(eq(sessionSchema.id, sessionId));
+export async function deleteSession(
+	database: Database,
+	params: { sessionId: string }
+) {
+	return await database
+		.delete(sessionSchema)
+		.where(eq(sessionSchema.id, params.sessionId));
 }
 
-export async function markSessionAsRevoked(sessionId: string) {
-	const db = createDatabase();
-
-	return await db
+export async function markSessionAsRevoked(
+	database: Database,
+	params: { sessionId: string }
+) {
+	return await database
 		.update(sessionSchema)
 		.set({
 			revokedAt: new Date(),
 		})
-		.where(eq(sessionSchema.id, sessionId));
+		.where(eq(sessionSchema.id, params.sessionId));
 }
 
-export async function createNewUserWithProfile(userId: string) {
-	const orgName = "Default Workspace";
-	const db = createDatabase();
-
-	// 1️⃣ Ensure user exists
-	const [existingUser] = await db
+export async function createNewUserWithProfileTX(
+	database: Database,
+	params: { userId: string }
+) {
+	// Ensure user exists
+	const [existingUser] = await database
 		.select()
 		.from(userSchema)
-		.where(eq(userSchema.id, userId))
+		.where(eq(userSchema.id, params.userId))
 		.limit(1);
 
 	if (!existingUser) {
@@ -55,99 +65,79 @@ export async function createNewUserWithProfile(userId: string) {
 	}
 
 	// Prevent duplicate profile creation (important for migrations)
-	const [existingProfile] = await db
+	const [existingProfile] = await database
 		.select()
-		.from(profileSchema)
-		.where(eq(profileSchema.userId, userId))
+		.from(userProfile)
+		.where(eq(userProfile.userId, params.userId))
 		.limit(1);
 	if (existingProfile) {
 		throw new Error("Profile already exists");
 	}
 
-	// 2️⃣ Run everything inside ONE transaction
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Its ok
-	return db.transaction(async (tx) => {
-		// 3️⃣ Create org with guaranteed unique slug
-		const baseSlug = Placeholder.slug();
-		// biome-ignore lint/suspicious/noExplicitAny:Add type
-		let org: any;
-		let attempt = 0;
-
-		while (!org && attempt < 10) {
-			const slug =
-				attempt === 0
-					? baseSlug
-					: `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`;
-
-			try {
-				[org] = await tx
-					.insert(orgSchema)
-					.values({
-						name: orgName,
-						slug,
-						logo: Placeholder.logo(orgName),
-					})
-					.returning();
-				// biome-ignore lint/suspicious/noExplicitAny: Database error
-			} catch (err: any) {
-				// If unique constraint fails, retry
-				if (err.code === "23505") {
-					attempt++;
-					continue;
-				}
-				throw err;
-			}
-		}
-
-		if (!org) {
-			throw new Error("Failed to generate unique organization slug");
-		}
-
-		// 4️⃣ Update user role to owner if not already
-		if (existingUser.role !== "owner") {
-			await tx
-				.update(userSchema)
-				.set({ role: "owner" })
-				.where(eq(userSchema.id, userId));
-		}
-
-		// 5️⃣ Create team
-		const [team] = await tx
-			.insert(teamSchema)
-			.values({
-				name: "Default Team",
-				organizationId: org.id,
-			})
-			.returning();
-
-		if (!team) {
-			throw new Error("Team creation failed");
-		}
-
-		// 6️⃣ Add team membership
-		await tx.insert(teamMemSchema).values({
-			userId,
-			teamId: team.id,
+	return database.transaction(async (tx) => {
+		await tx.insert(userProfile).values({
+			userId: params.userId,
 		});
-
-		// 7️⃣ Create profile
-		await tx.insert(profileSchema).values({
-			userId,
-		});
-
-		return {
-			organizationId: org.id,
-			teamId: team.id,
-		};
 	});
 }
 
-export async function markUserAsVerified(userId: string) {
-	const db = createDatabase();
-	return await db
+export async function markUserAsVerified(
+	database: Database,
+	params: { userId: string }
+) {
+	return await database
 		.update(userSchema)
 		.set({
 			role: "verified",
 		})
-		.where(eq(userSchema.id, userId));
+		.where(eq(userSchema.id, params.userId));
+}
+
+export async function createOrganizationWithProfileAndWidgetTX(
+	database: Database,
+	params: {
+		organizationId: string;
+		widgetConfig?: WidgetConfig;
+		workspaceConfig?: WorkspaceSettings;
+		subscriptionId?: string;
+	}
+) {
+	return await database.transaction(async (tx) => {
+		const [profile] = await tx
+			.insert(workspaceProfile)
+			.values({
+				organizationId: params.organizationId,
+				subscriptionId: params.subscriptionId,
+				settings: params.workspaceConfig,
+			})
+			.returning({
+				workspaceId: workspaceProfile.organizationId,
+			});
+		if (!profile) {
+			throw new Error("Failed to create workspace profile");
+		}
+
+		await tx
+			.insert(widget)
+			.values({
+				organizationId: profile.workspaceId,
+				config: params.widgetConfig,
+			})
+			.onConflictDoNothing()
+			.catch((err) => {
+				console.error("Failed to create widget", err);
+				throw err;
+			});
+
+		await tx
+			.update(orgSchema)
+			.set({
+				logo: params.workspaceConfig?.branding?.logo,
+			})
+			.where(eq(orgSchema.id, params.organizationId))
+			.catch((err) => {
+				console.error("Failed to update organization logo", err);
+				throw err;
+			});
+	});
 }

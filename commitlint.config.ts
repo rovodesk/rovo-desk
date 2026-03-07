@@ -21,6 +21,7 @@ export default {
 				"chore",
 				"build",
 				"ci",
+				"style",
 				"revert",
 			],
 		],

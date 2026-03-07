@@ -10,6 +10,7 @@ import { DatePickerField } from "./date-picker-field";
 import { SwitchField } from "./switch-field";
 import { FileUploadField } from "./file-upload-field";
 import { TagInputField } from "./tag-field";
+import { FormResetButton } from "./reset-button";
 
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   fieldComponents: {
@@ -25,6 +26,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
   },
   formComponents: {
     SubmitButton: FormSubmitButton,
+    ResetButton: FormResetButton,
   },
   fieldContext,
   formContext,

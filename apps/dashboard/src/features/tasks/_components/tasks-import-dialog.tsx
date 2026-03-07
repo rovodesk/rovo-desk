@@ -98,7 +98,7 @@ export function TasksImportDialog({
 						<Button variant="outline">Close</Button>
 					</DialogClose>
 					<form.AppForm>
-						<form.SubmitButton>Import</form.SubmitButton>
+						<form.SubmitButton label="Import" />
 					</form.AppForm>
 				</DialogFooter>
 			</DialogContent>

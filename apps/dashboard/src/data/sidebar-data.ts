@@ -23,7 +23,6 @@ import type { SidebarConfig } from "@/types/sidebar";
 export const SIDEBAR_CONFIG: SidebarConfig = {
 	navGroups: [
 		{
-			title: "General",
 			items: [
 				{
 					title: "Dashboard",
@@ -78,22 +77,19 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 						roles: ["owner", "admin"],
 					},
 				},
+				{
+					title: "Bot",
+					icon: BotIcon,
+					url: "/bot",
+					visibility: {
+						roles: ["owner", "admin"],
+					},
+				},
 			],
 		},
 		{
 			title: "Workspace",
 			items: [
-				{
-					title: "Bot",
-					icon: BotIcon,
-					items: [
-						{ title: "Overview", url: "/bot" },
-						{ title: "Customise", url: "/bot/customise" },
-					],
-					visibility: {
-						roles: ["owner", "admin"],
-					},
-				},
 				{
 					title: "Funnel",
 					icon: Funnel,

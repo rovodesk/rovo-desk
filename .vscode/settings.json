@@ -7,7 +7,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -90,5 +90,6 @@
   "typescript.inlayHints.parameterNames.enabled": "all",
   "typescript.inlayHints.variableTypes.enabled": true,
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "postman.settings.dotenv-detection-notification-visibility": false
 }

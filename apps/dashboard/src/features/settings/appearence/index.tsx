@@ -1,14 +1,15 @@
-import { ContentSection } from "../_components/content-section";
+import { SectionHeader } from "../_components/section-header";
+import SectionMain from "../_components/section-main";
 import { AppearanceForm } from "./appearance-form";
 
-export function SettingsAppearance() {
+export function AppearenceSettings() {
 	return (
-		<ContentSection
-			desc="Customize the appearance of the app. Automatically switch between day
-          and night themes."
-			title="Appearance"
-		>
+		<SectionMain>
+			<SectionHeader
+				description="Customize the look and feel."
+				title="Appearance"
+			/>
 			<AppearanceForm />
-		</ContentSection>
+		</SectionMain>
 	);
 }

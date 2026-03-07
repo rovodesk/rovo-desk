@@ -5,8 +5,6 @@ export const Route = createFileRoute(
 	"/_authenticated/knowledge-base/knowledge/$knowledgeId"
 )({
 	loader: ({ params }) => {
-		// Fetch Knowledge from Database
-		console.log(params);
 		return { knowledgeId: params.knowledgeId };
 	},
 	component: RouteComponent,

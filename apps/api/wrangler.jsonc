@@ -13,6 +13,10 @@
     {
       "binding": "AUTH_CACHE",
       "id": "0173a3d4931d4ddaa5f140fda68639bc"
+    },
+    {
+      "binding": "SDK_CACHE",
+      "id": "691f41ea481c46388e17acc6bd89fdb9"
     }
   ],
   "durable_objects": {
@@ -33,6 +37,12 @@
         "new_classes": [
           "Document"
         ]
-      }
+      },
+      {
+      "tag": "v1",
+      "new_classes": [
+        "ChatRoom"
+      ]
+    }
     ]
 }

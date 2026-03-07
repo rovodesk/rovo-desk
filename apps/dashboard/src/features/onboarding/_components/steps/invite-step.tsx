@@ -6,7 +6,7 @@ import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { ArrowRight, UserPlus, Users } from "lucide-react";
 
 export function InviteStep({ className }: React.ComponentProps<"div">) {
-	const { next, loading, updateContext, skip } = useOnboarding();
+	const { next, updateContext, skip } = useOnboarding();
 
 	const handleInviteStepSubmit = (value: { emails: Tag[] }) => {
 		updateContext({
@@ -57,10 +57,7 @@ export function InviteStep({ className }: React.ComponentProps<"div">) {
 							</span>
 						</div>
 
-						<InviteMembersForm
-							isPending={loading.isAnyLoading}
-							onSubmit={handleInviteStepSubmit}
-						/>
+						<InviteMembersForm onSuccess={handleInviteStepSubmit} />
 					</div>
 				</div>
 

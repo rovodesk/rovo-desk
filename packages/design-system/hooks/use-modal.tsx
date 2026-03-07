@@ -1,32 +1,22 @@
-import { ReactNode, useEffect, useRef } from "react"
-import { useModalContext } from "../context/modal"
-
-type ModalOptions = {
-    shouldAllowBackdropClick?: boolean
-    modalBoxClassName?: string
-    onModalClose?: () => void
-}
+import { ComponentType, useEffect, useRef } from "react";
+import { useModalContext, ModalOptions } from "../context/modal";
 
 export function useModal<T extends string>(
-    key: T,
-    content: ReactNode,
-    title?: string,
-    description?: string,
-    options?: ModalOptions
+  key: T,
+  component: ComponentType<any>,
+  title?: string,
+  description?: string,
+  options?: ModalOptions
 ) {
-    const { register, open, close } = useModalContext()
+  const { register, open, close } = useModalContext();
 
-    const hasRegistered = useRef(false)
+  const openModal = () => {
+    register(key, component, title, description, options);
+    open(key);
+  };
 
-    useEffect(() => {
-        if (hasRegistered.current) return
-
-        register(key, content, title, description, options)
-        hasRegistered.current = true
-    }, [key])
-
-    return {
-        openModal: () => open(key),
-        closeModal: () => close(key),
-    }
+  return {
+    openModal,
+    closeModal: () => close(key),
+  };
 }

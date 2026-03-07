@@ -1,0 +1,32 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start",
+    "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@zero-heads-lab/design-system": "workspace:*",
+    "fumadocs-core": "16.6.7",
+    "fumadocs-mdx": "14.2.8",
+    "fumadocs-ui": "16.6.7",
+    "lucide-react": "catalog:",
+    "next": "16.1.6",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "@takumi-rs/image-response": "^0.69.1"
+  },
+  "devDependencies": {
+    "@types/mdx": "^2.0.13",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "catalog:tailwindcss",
+    "typescript": "catalog:"
+  }
+}

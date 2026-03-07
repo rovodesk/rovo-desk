@@ -1,52 +1,96 @@
-import { useOnboarding } from "@onboardjs/react";
 import { Outlet } from "@tanstack/react-router";
-import Loader from "@zero-heads-lab/design-system/components/loader";
-import {
-	SidebarInset,
-	SidebarProvider,
-} from "@zero-heads-lab/design-system/components/ui/sidebar";
-import { LayoutProvider } from "@zero-heads-lab/design-system/context/layout";
-import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { getCookie } from "@zero-heads-lab/shared/utils/cookies";
-import { SearchProvider } from "@/providers/search";
-import { AppSidebar } from "./app-sidebar";
+import { SidebarProvider } from "@zero-heads-lab/design-system/components/ui/sidebar";
+import { getCookie, setCookie } from "@zero-heads-lab/shared/utils";
+import { createContext, useContext, useEffect, useState } from "react";
+import { PrimarySidebar } from "@/layout/sidebar/primary-sidebar";
 
-export function AuthenticatedLayout() {
-	const sidebarOpen = getCookie("sidebar_state") !== "false";
+interface DashboardLayoutContextType {
+	secondarySidebarOpen: boolean;
+	setSecondarySidebarOpen: (open: boolean) => void;
+	activeSecondarySidebar: string;
+	setActiveSecondarySidebar: (id: string) => void;
 
-	const { loading } = useOnboarding();
+	pinnedSecondarySidebar: boolean;
+	setPinnedSecondarySidebar: (pinned: boolean) => void;
 
-	if (loading.isHydrating) {
-		return <Loader title="Loading..." />;
+	rightSidebarOpen: boolean;
+	setRightSidebarOpen: (open: boolean) => void;
+	activeRightSidebar: string;
+	setActiveRightSidebar: (id: string) => void;
+
+	hydrated: boolean;
+}
+
+const DashboardLayoutContext = createContext<DashboardLayoutContextType | null>(
+	null
+);
+
+export function useDashboardLayout() {
+	const ctx = useContext(DashboardLayoutContext);
+	if (!ctx)
+		throw new Error("useDashboardLayout must be used within DashboardLayout");
+	return ctx;
+}
+
+export function DashboardLayout() {
+	const [hydrated, setHydrated] = useState(false);
+
+	const [activeSecondarySidebar, setActiveSecondarySidebar] = useState("");
+	const [activeRightSidebar, setActiveRightSidebar] = useState("");
+
+	const [secondarySidebarOpen, setSecondarySidebarOpen] = useState(false);
+	const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
+
+	const [pinnedSecondarySidebar, setPinnedSecondarySidebar] = useState(false);
+
+	// Hydration step
+	useEffect(() => {
+		const cookie = getCookie("secondary-sidebar-state");
+		setPinnedSecondarySidebar(cookie === "open");
+		setHydrated(true);
+	}, []);
+
+	const value: DashboardLayoutContextType = {
+		pinnedSecondarySidebar,
+		setPinnedSecondarySidebar,
+
+		secondarySidebarOpen,
+		setSecondarySidebarOpen: (open: boolean) => {
+			setSecondarySidebarOpen(open);
+			setCookie("secondary-sidebar-state", open ? "open" : "closed");
+		},
+
+		activeSecondarySidebar,
+		setActiveSecondarySidebar,
+
+		rightSidebarOpen,
+		setRightSidebarOpen,
+
+		activeRightSidebar,
+		setActiveRightSidebar,
+
+		hydrated,
+	};
+
+	// Loading state during hydration
+	if (!hydrated) {
+		return (
+			<div className="flex h-svh w-full items-center justify-center">
+				<div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-primary" />
+			</div>
+		);
 	}
 
-	// if (!state?.isCompleted) {
-	// 	return <OnboardingFlow />;
-	// }
-
 	return (
-		<SearchProvider>
-			<LayoutProvider>
-				<SidebarProvider defaultOpen={sidebarOpen}>
-					<AppSidebar />
-					<SidebarInset
-						className={cn(
-							// Set content container, so we can use container queries
-							"@container/content",
-
-							// If layout is fixed, set the height
-							// to 100svh to prevent overflow
-							"has-data-[layout=fixed]:h-svh",
-
-							// If layout is fixed and sidebar is inset,
-							// set the height to 100svh - spacing (total margins) to prevent overflow
-							"peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]"
-						)}
-					>
+		<div className="flex h-svh w-full overflow-hidden">
+			<DashboardLayoutContext.Provider value={value}>
+				<SidebarProvider open={false}>
+					<div className="flex h-svh w-full overflow-hidden">
+						<PrimarySidebar />
 						<Outlet />
-					</SidebarInset>
+					</div>
 				</SidebarProvider>
-			</LayoutProvider>
-		</SearchProvider>
+			</DashboardLayoutContext.Provider>
+		</div>
 	);
 }

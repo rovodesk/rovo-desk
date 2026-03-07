@@ -1,49 +1,101 @@
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
-import { SidebarTrigger } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import { PanelLeft, PanelRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { DynamicBreadcrumb } from "@/components/dynamic-breadcrumb";
+import { useDashboardLayout } from ".";
 
-type HeaderProps = React.HTMLAttributes<HTMLElement> & {
-	fixed?: boolean;
-	ref?: React.Ref<HTMLElement>;
+export type HeaderProps = React.HTMLAttributes<HTMLElement> & {
+	showSecondarySidebarToggle?: boolean;
+
+	showRightSidebarToggle?: boolean;
+	onToggleRightSidebar?: () => void;
+
+	rightSidebarToggleIcon?: React.ReactElement;
+	headerLeftContent?: React.ReactNode;
+	headerRightContent?: React.ReactNode;
 };
 
-export function Header({ className, fixed, children, ...props }: HeaderProps) {
-	const [offset, setOffset] = useState(0);
+export function Header({
+	className,
+
+	showSecondarySidebarToggle = true,
+
+	showRightSidebarToggle = true,
+	rightSidebarToggleIcon = <PanelRight className="h-4 w-4" />,
+
+	headerLeftContent,
+	headerRightContent,
+
+	...props
+}: HeaderProps) {
+	const [_offset, setOffset] = useState(0);
 
 	useEffect(() => {
 		const onScroll = () => {
 			setOffset(document.body.scrollTop || document.documentElement.scrollTop);
 		};
 
-		// Add scroll listener to the body
 		document.addEventListener("scroll", onScroll, { passive: true });
-
-		// Clean up the event listener on unmount
 		return () => document.removeEventListener("scroll", onScroll);
 	}, []);
+
+	const {
+		secondarySidebarOpen,
+		setSecondarySidebarOpen,
+		rightSidebarOpen,
+		setRightSidebarOpen,
+	} = useDashboardLayout();
 
 	return (
 		<header
 			className={cn(
-				"z-50 h-16 border-b",
-				fixed && "header-fixed peer/header sticky top-0 w-[inherit]",
-				offset > 10 && fixed ? "shadow" : "shadow-none",
+				"flex h-16 shrink-0 items-center justify-between bg-header px-4",
 				className
 			)}
 			{...props}
 		>
-			<div
-				className={cn(
-					"relative flex h-full items-center gap-3 p-4 sm:gap-4",
-					offset > 10 &&
-						fixed &&
-						"after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg"
+			<div className="flex items-center gap-4 px-2">
+				{/* Secondary Sidebar Toggle */}
+				{showSecondarySidebarToggle ||
+					(secondarySidebarOpen && (
+						<div className="flex items-center gap-2">
+							<Button
+								className="h-8 w-8"
+								onClick={() => setSecondarySidebarOpen(!secondarySidebarOpen)}
+								size="icon"
+								variant="ghost"
+							>
+								<PanelLeft className="h-4 w-4" />
+							</Button>
+							<Separator orientation="vertical" />
+						</div>
+					))}
+
+				<DynamicBreadcrumb />
+				{headerLeftContent && (
+					<div className="flex items-center gap-4">{headerLeftContent}</div>
 				)}
-			>
-				<SidebarTrigger className="max-md:scale-125" variant="ghost" />
-				<Separator orientation="vertical" />
-				{children}
+			</div>
+
+			<div className="flex items-center gap-1">
+				{headerRightContent && (
+					<div className="flex items-center gap-4">{headerRightContent}</div>
+				)}
+				{showRightSidebarToggle && (
+					<div className="ml-2 flex items-center gap-4">
+						<Separator orientation="vertical" />
+						<Button
+							className="h-8 w-8"
+							onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+							size="icon"
+							variant={rightSidebarOpen ? "secondary" : "ghost"}
+						>
+							{rightSidebarToggleIcon}
+						</Button>
+					</div>
+				)}
 			</div>
 		</header>
 	);

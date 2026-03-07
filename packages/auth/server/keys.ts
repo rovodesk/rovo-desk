@@ -6,8 +6,8 @@ export const keys = createEnv({
 	extends: [billingKeys],
 	server: {
 		BETTER_AUTH_SECRET: z.string(),
-		BETTER_AUTH_URL: z.url().default("http://localhost:5001").optional(),
-		BETTER_AUTH_BASE_PATH: z.string().default("/auth").optional(),
+		BETTER_AUTH_URL: z.url(),
+		BETTER_AUTH_BASE_PATH: z.string(),
 
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),

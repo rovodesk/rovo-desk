@@ -1,6 +1,10 @@
 import { eq } from "drizzle-orm";
-import { createDatabase } from "../../conn";
-import { onboarding as onboardingSchema } from "../../drizzle/schemas/profile.schema";
+import type { Database } from "../../conn";
+import {
+	onboarding as onboardingSchema,
+	userProfile,
+	workspaceProfile,
+} from "../../drizzle/schemas/profile.schema";
 
 export type OnboardingProgress = {
 	currentStepId: string | null;
@@ -11,11 +15,12 @@ export type OnboardingProgress = {
 };
 
 export async function getOnboardingProgressByUserId(
-	userId: string
+	database: Database,
+	params: {
+		userId: string;
+	}
 ): Promise<OnboardingProgress> {
-	const db = createDatabase();
-
-	const flow = await db
+	const flow = await database
 		.select({
 			currentStepId: onboardingSchema.currentStepId,
 			flowData: onboardingSchema.flowData,
@@ -24,7 +29,7 @@ export async function getOnboardingProgressByUserId(
 			skippedAt: onboardingSchema.skippedAt,
 		})
 		.from(onboardingSchema)
-		.where(eq(onboardingSchema.userId, userId))
+		.where(eq(onboardingSchema.userId, params.userId))
 		.limit(1)
 		.then((res) => res[0]);
 
@@ -35,4 +40,44 @@ export async function getOnboardingProgressByUserId(
 		completedAt: flow?.completedAt ?? null,
 		skippedAt: flow?.skippedAt ?? null,
 	};
+}
+
+export async function getWorkspaceProfileByOrganizationId(
+	database: Database,
+	params: {
+		organizationId: string;
+	}
+) {
+	return await database
+		.select({
+			settings: workspaceProfile.settings,
+		})
+		.from(workspaceProfile)
+		.where(eq(workspaceProfile.organizationId, params.organizationId))
+		.limit(1)
+		.then((res) => res[0])
+		.catch(() => {
+			throw new Error("Failed to get workspace profile");
+		});
+}
+
+export async function getUserProfileByUserId(
+	database: Database,
+	params: {
+		userId: string;
+	}
+) {
+	return await database
+		.select({
+			settings: userProfile.settings,
+			isAway: userProfile.isAway,
+			workspaceProfileId: userProfile.workspaceProfileId,
+		})
+		.from(userProfile)
+		.where(eq(userProfile.userId, params.userId))
+		.limit(1)
+		.then((res) => res[0])
+		.catch(() => {
+			throw new Error("Failed to get user profile");
+		});
 }

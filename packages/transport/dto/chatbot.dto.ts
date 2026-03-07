@@ -47,6 +47,72 @@ export const CHATBOT_WITH_SETTINGS_DTO = CHATBOT_DTO.extend({
 	settings: BOT_SETTINGS_DTO.nullable().optional(),
 });
 
+export const CREATE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionIcon: z.string(),
+	connectionName: z.string().min(1, "Connection name is required"),
+	connectionSource: z.string().min(1, "Connection source is required"),
+	connectionType: z.enum(["CLIENT", "SERVER"]),
+});
+
+export const CREATE_CHATBOT_CONNECTION_OUTPUT_DTO = z.object({
+	key: z.string().nullable(),
+});
+
+export const CHATBOT_CONNECTION_DTO = z.object({
+	id: z.string(),
+	connectionName: z.string(),
+	connectionIcon: z.string(),
+	connectionSource: z.string(),
+	connectionType: z.enum(["CLIENT", "SERVER"]),
+	keys: z
+		.object({
+			publicKey: z.string(),
+			privateKey: z.string(),
+			status: z.enum(["active", "rotating", "expired"]),
+			expiryDate: z.date().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
+	isActive: z.boolean(),
+	createdAt: z.coerce.date(),
+	updatedAt: z.coerce.date().nullable(),
+	deletedAt: z.coerce.date().nullable().optional(),
+});
+
+export const CHATBOT_CONNECTIONS_DTO = z.array(CHATBOT_CONNECTION_DTO);
+
+export const FIND_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const DELETE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const TOGGLE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+});
+
+export const ROTATE_CHATBOT_CONNECTION_KEYS_INPUT_DTO = z.object({
+	connectionId: z.string(),
+	connectionType: z.enum(["CLIENT", "SERVER"]),
+});
+
+export const ROTATE_CHATBOT_CONNECTION_KEYS_OUTPUT_DTO = z.object({
+	publicKey: z.string().nullable().optional(),
+	privateKey: z.string().nullable().optional(),
+});
+
+export const UPDATE_CHATBOT_CONNECTION_INPUT_DTO = z.object({
+	connectionId: z.string(),
+	connectionName: z.string().min(1, "Connection name is required").optional(),
+	connectionSource: z
+		.string()
+		.min(1, "Connection source is required")
+		.optional(),
+	connectionActive: z.boolean().optional(),
+});
+
 export const CONVERSATION_DTO = z.object({
 	id: z.string(),
 	chatbotId: z.string(),

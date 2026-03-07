@@ -1,15 +1,24 @@
+import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import { createChatbotWithDefaults } from "@zero-heads-lab/database/repositories/chatbot/mutations";
+import type { KvCacheStore } from "@zero-heads-lab/cache";
+import type { Database } from "@zero-heads-lab/database/conn";
+import { createOrganizationWithProfileAndWidgetTX } from "@zero-heads-lab/database/repositories/auth/mutations";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
 	OrganizationInviteTemplate,
 } from "@zero-heads-lab/email/templates";
-import type { BetterAuthPlugin } from "better-auth";
+import {
+	defaultWidgetConfig,
+	defaultWorkspaceSettings,
+} from "@zero-heads-lab/shared/defaults";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	admin as betterAuthAdmin,
+	type Jwk,
+	jwt,
 	lastLoginMethod,
 	magicLink,
 	multiSession,
@@ -20,8 +29,9 @@ import { accessControl, PLATFORM_ROLES, Roles } from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 
-export const AuthPlugins = () => {
+export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 	// const products = getProducts();
+	const cacheStore = cache;
 
 	return [
 		// Magic Link Plugin
@@ -54,6 +64,16 @@ export const AuthPlugins = () => {
 							required: false,
 							input: false,
 						},
+						publicKey: {
+							type: "string",
+							required: false,
+							input: false,
+						},
+						privateKey: {
+							type: "string",
+							required: false,
+							input: false,
+						},
 					},
 				},
 			},
@@ -79,18 +99,36 @@ export const AuthPlugins = () => {
 				});
 			},
 			organizationHooks: {
+				// biome-ignore lint/suspicious/useAwait: No AWaited function
+				beforeCreateOrganization: async ({ organization }) => {
+					//TODO: Check billing plan
+					console.log("Creating Organization", organization);
+					return {
+						data: {
+							...organization,
+						},
+					};
+				},
 				afterCreateOrganization: async ({ organization }) => {
-					// Create A Chatbot for Organization
+					// Create Profile
 					try {
-						await createChatbotWithDefaults({
+						const logo =
+							organization.logo || Placeholder.logo(organization.name, "glass");
+						await createOrganizationWithProfileAndWidgetTX(database, {
 							organizationId: organization.id,
-							name: "Default Chatbot",
+							workspaceConfig: defaultWorkspaceSettings(logo),
+							widgetConfig: defaultWidgetConfig(organization.name, logo),
 						});
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
 					}
 					//TODO: Add analytics
 					console.log("New Organization Created", organization);
+				},
+				// biome-ignore lint/suspicious/useAwait: No Awaited Function
+				afterDeleteOrganization: async ({ organization }) => {
+					//TODO: Add Analytics
+					console.log("Organization Deleted", organization);
 				},
 			},
 		}),
@@ -99,7 +137,7 @@ export const AuthPlugins = () => {
 			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
 		}),
 		// OPENAPI Plugin
-		process.env.NODE_ENV !== "production" && openAPI(),
+		...(process.env.NODE_ENV !== "production" ? [openAPI()] : []),
 		// Stripe Plugin
 		stripe({
 			stripeClient,
@@ -139,5 +177,66 @@ export const AuthPlugins = () => {
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
-	].filter(Boolean) as BetterAuthPlugin[];
+		apiKey({
+			defaultPrefix: AUTH_CONFIG.API_KEY_DEFAULT_PREFIX,
+			references: "organization", // Owned by organizations
+			rateLimit: {
+				enabled: true,
+				maxRequests: AUTH_CONFIG.API_KEY_RATE_LIMIT_MAX_REQUESTS,
+				timeWindow: AUTH_CONFIG.API_KEY_RATE_LIMIT_TIME_WINDOW,
+			},
+			storage: "secondary-storage",
+			fallbackToDatabase: true,
+			enableMetadata: true,
+		}),
+		jwt({
+			jwks: {
+				keyPairConfig: {
+					alg: AUTH_CONFIG.JWT_ALGORITHM,
+				},
+			},
+			jwt: {
+				issuer: AUTH_CONFIG.JWT_ISSUER,
+				expirationTime: "1h",
+				getSubject: (session) => session.user.id,
+				definePayload: ({ user }) => ({
+					id: user.id,
+					email: user.email,
+					verified: user.emailVerified,
+					role: user.role,
+					anonymous: user.isAnonymous,
+					deleted: !!user.deletedAt,
+				}),
+			},
+			adapter: {
+				async getJwks() {
+					const keys = await cacheStore.get<Jwk[]>("jwks");
+
+					return keys ?? [];
+				},
+
+				async createJwk(data) {
+					const id = crypto.randomUUID();
+
+					const newKey: Jwk = {
+						id,
+						...data,
+					};
+
+					const existing = await cacheStore.get<Jwk[]>("jwks");
+					const keys = existing ?? [];
+
+					const updated = [newKey, ...keys].slice(0, 2); // keep last 2
+
+					await cacheStore.set(
+						"jwks",
+						updated,
+						AUTH_CONFIG.JWT_EXPIRATION_TIME_IN_SECS
+					);
+
+					return newKey;
+				},
+			},
+		}),
+	];
 };

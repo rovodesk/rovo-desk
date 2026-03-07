@@ -1,3 +1,4 @@
+import { apiKeyClient } from "@better-auth/api-key/client";
 import { passkeyClient } from "@better-auth/passkey/client";
 import { stripeClient } from "@better-auth/stripe/client";
 import type { BetterAuthClientPlugin } from "better-auth";
@@ -5,6 +6,7 @@ import {
 	adminClient,
 	inferAdditionalFields,
 	inferOrgAdditionalFields,
+	jwtClient,
 	lastLoginMethodClient,
 	magicLinkClient,
 	multiSessionClient,
@@ -35,6 +37,8 @@ const Plugins = [
 	}),
 	adminClient(),
 	lastLoginMethodClient(),
+	apiKeyClient(),
+	jwtClient(),
 ] satisfies BetterAuthClientPlugin[];
 
 export const authClient = createBetterAuthClient({

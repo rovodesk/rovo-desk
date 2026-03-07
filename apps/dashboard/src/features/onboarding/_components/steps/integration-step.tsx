@@ -90,7 +90,7 @@ export function IntegrationStep({ className }: React.ComponentProps<"div">) {
 							onClick={() => toggleIntegration(app.id)}
 						>
 							{/* Icon Container with subtle scale on hover */}
-							<div className="flex size-12 shrink-0 items-center justify-center rounded-lg border bg-background shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:shadow-indigo-500/10">
+							<div className="flex size-12 shrink-0 items-center justify-center rounded-lg border bg-background shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:shadow-[#72e3ad]/10">
 								{app.icon}
 							</div>
 

@@ -1,7 +1,10 @@
 import { getRouteApi, Link } from "@tanstack/react-router";
-import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import { Input } from "@zero-heads-lab/design-system/components/ui/input";
+import {
+	InputGroup,
+	InputGroupButton,
+	InputGroupInput,
+} from "@zero-heads-lab/design-system/components/ui/input-group";
 import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-area";
 import {
 	Select,
@@ -10,6 +13,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@zero-heads-lab/design-system/components/ui/select";
+import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import {
 	Tabs,
 	TabsList,
@@ -20,13 +24,11 @@ import {
 	ChevronDown,
 	Grid2X2,
 	LayoutList,
-	Plus,
-	Search as SearchIcon,
+	Search,
 	SlidersHorizontal,
 } from "lucide-react";
 import { type ChangeEvent, useMemo } from "react";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Header } from "@/layout/header";
+import { MainContent } from "@/layout/main-content";
 import { DocCard } from "./_components/document-card";
 import { BlankTemplateCard, TemplateCard } from "./_components/template-card";
 
@@ -151,172 +153,154 @@ export function KnowledgeBaseHome() {
 	}, [initSort, filter, tabs]);
 
 	return (
-		<div className="flex h-screen flex-col overflow-hidden bg-background/50">
-			{/* Header */}
-			<Header className="sticky top-0 z-30 shrink-0 border-b bg-background/80 px-6 backdrop-blur-md">
-				{/* BreadCrumb */}
-				<Breadcrumbs />
-
-				{/* Search Bar */}
-				<div className="mx-auto hidden w-full max-w-md md:block">
-					<div className="relative">
-						<SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-						<Input
-							className="h-9 border-none bg-muted/50 pl-9 focus-visible:ring-1"
-							onChange={handleSearch}
-							placeholder="Search documents..."
-							value={filter}
-						/>
-					</div>
+		<MainContent
+			className="px-4 py-6 sm:px-6 lg:px-8"
+			headerRightContent={
+				<div className="flex items-center gap-2">
+					<Separator orientation="vertical" />
+					<InputGroup className="ml-4 w-full max-w-sm">
+						<InputGroupInput onChange={handleSearch} placeholder="Search..." />
+						<InputGroupButton>
+							<Search />
+						</InputGroupButton>
+					</InputGroup>
 				</div>
-
-				{/* New Document Button */}
-				<div className="ms-auto flex items-center gap-3">
-					<Button className="hidden shadow-sm sm:flex" size="sm">
-						<Plus className="mr-2 size-4" />
-						New Doc
+			}
+		>
+			{/* 1. Templates Section - Horizontal ScrollFade */}
+			<section className="mb-10 shrink-0">
+				<div className="mb-4 flex items-center justify-between">
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-widest">
+						Start from a template
+					</h2>
+					<Button className="text-xs" size="sm" variant="ghost">
+						View all <ChevronDown className="ml-1 size-3" />
 					</Button>
-					<div className="mx-1 h-4 w-px bg-border" />
-					<ThemeSwitch />
 				</div>
-			</Header>
 
-			<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-				{/* 1. Templates Section - Horizontal ScrollFade */}
-				<section className="mb-10 shrink-0">
-					<div className="mb-4 flex items-center justify-between">
-						<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-widest">
-							Start from a template
-						</h2>
-						<Button className="text-xs" size="sm" variant="ghost">
-							View all <ChevronDown className="ml-1 size-3" />
-						</Button>
+				<ScrollArea axis="horizontal" className="pb-4" withFade={true}>
+					<div className="flex gap-5 px-1">
+						{" "}
+						{/* px-1 prevents card shadows from clipping */}
+						<BlankTemplateCard />
+						{templates.map((template) => (
+							<Link
+								className="transition-transform hover:-translate-y-1"
+								key={template.id}
+								params={{ knowledgeId: template.id }}
+								to={"/knowledge-base/knowledge/$knowledgeId"}
+							>
+								<TemplateCard {...template} />
+							</Link>
+						))}
 					</div>
+				</ScrollArea>
+			</section>
 
-					<ScrollArea axis="horizontal" className="pb-4" withFade={true}>
-						<div className="flex gap-5 px-1">
-							{" "}
-							{/* px-1 prevents card shadows from clipping */}
-							<BlankTemplateCard />
-							{templates.map((template) => (
+			{/* 2. Recent Documents Section - Vertical ScrollFade */}
+			<section className="flex min-h-0 flex-1 flex-col space-y-6">
+				<div className="flex shrink-0 flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
+					<Tabs
+						className="w-full sm:w-auto"
+						defaultValue={tabs}
+						onValueChange={handleTabChange}
+					>
+						<TabsList className="h-9 bg-muted/50">
+							<TabsTrigger
+								className={tabs === "all" ? "text-accent-foreground!" : ""}
+								value="all"
+							>
+								All Docs
+							</TabsTrigger>
+							<TabsTrigger
+								className={tabs === "shared" ? "text-accent-foreground!" : ""}
+								value="shared"
+							>
+								Shared
+							</TabsTrigger>
+							<TabsTrigger
+								className={
+									tabs === "favorites" ? "text-accent-foreground!" : ""
+								}
+								value="favorites"
+							>
+								Favorites
+							</TabsTrigger>
+						</TabsList>
+					</Tabs>
+
+					<div className="flex items-center gap-3">
+						<div className="flex items-center rounded-lg border bg-background p-1 shadow-sm">
+							<button
+								className={cn(
+									"rounded-md p-1 transition-all",
+									view === "card"
+										? "bg-muted shadow-sm"
+										: "text-muted-foreground"
+								)}
+								onClick={() => handleViewChange("card")}
+							>
+								<Grid2X2 size={14} />
+							</button>
+							<button
+								className={cn(
+									"rounded-md p-1 transition-all",
+									view === "list"
+										? "bg-muted shadow-sm"
+										: "text-muted-foreground"
+								)}
+								onClick={() => handleViewChange("list")}
+							>
+								<LayoutList size={14} />
+							</button>
+						</div>
+
+						<Select
+							onValueChange={(v) => handleSortChange(v as SortType)}
+							value={initSort}
+						>
+							<SelectTrigger className="h-9 w-[150px] bg-background text-xs shadow-sm">
+								<SlidersHorizontal className="mr-2 size-3" />
+								<SelectValue placeholder="Sort" />
+							</SelectTrigger>
+							<SelectContent align="end">
+								<SelectItem value="desc">Newest first</SelectItem>
+								<SelectItem value="asc">Oldest first</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+				</div>
+
+				{/* Fixed-height Scrollable Area with Vertical Fade */}
+				<div className="relative min-h-0 flex-1">
+					<ScrollArea axis="vertical" className="h-full" withFade={true}>
+						<div
+							className={cn(
+								"grid gap-6 pt-2 pb-20",
+								view === "card"
+									? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
+									: "grid-cols-1"
+							)}
+						>
+							{sortedDocuments.map((doc) => (
 								<Link
-									className="transition-transform hover:-translate-y-1"
-									key={template.id}
-									params={{ knowledgeId: template.id }}
+									className="group"
+									key={doc.id}
+									params={{ knowledgeId: doc.id }}
 									to={"/knowledge-base/knowledge/$knowledgeId"}
 								>
-									<TemplateCard {...template} />
+									<DocCard
+										{...doc}
+										className="transition-all"
+										isFavourite={doc.isFavorite}
+										variant={view}
+									/>
 								</Link>
 							))}
 						</div>
 					</ScrollArea>
-				</section>
-
-				{/* 2. Recent Documents Section - Vertical ScrollFade */}
-				<section className="flex min-h-0 flex-1 flex-col space-y-6">
-					<div className="flex shrink-0 flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
-						<Tabs
-							className="w-full sm:w-auto"
-							defaultValue={tabs}
-							onValueChange={handleTabChange}
-						>
-							<TabsList className="h-9 bg-muted/50">
-								<TabsTrigger
-									className={tabs === "all" ? "text-accent-foreground!" : ""}
-									value="all"
-								>
-									All Docs
-								</TabsTrigger>
-								<TabsTrigger
-									className={tabs === "shared" ? "text-accent-foreground!" : ""}
-									value="shared"
-								>
-									Shared
-								</TabsTrigger>
-								<TabsTrigger
-									className={
-										tabs === "favorites" ? "text-accent-foreground!" : ""
-									}
-									value="favorites"
-								>
-									Favorites
-								</TabsTrigger>
-							</TabsList>
-						</Tabs>
-
-						<div className="flex items-center gap-3">
-							<div className="flex items-center rounded-lg border bg-background p-1 shadow-sm">
-								<button
-									className={cn(
-										"rounded-md p-1 transition-all",
-										view === "card"
-											? "bg-muted shadow-sm"
-											: "text-muted-foreground"
-									)}
-									onClick={() => handleViewChange("card")}
-								>
-									<Grid2X2 size={14} />
-								</button>
-								<button
-									className={cn(
-										"rounded-md p-1 transition-all",
-										view === "list"
-											? "bg-muted shadow-sm"
-											: "text-muted-foreground"
-									)}
-									onClick={() => handleViewChange("list")}
-								>
-									<LayoutList size={14} />
-								</button>
-							</div>
-
-							<Select
-								onValueChange={(v) => handleSortChange(v as SortType)}
-								value={initSort}
-							>
-								<SelectTrigger className="h-9 w-[150px] bg-background text-xs shadow-sm">
-									<SlidersHorizontal className="mr-2 size-3" />
-									<SelectValue placeholder="Sort" />
-								</SelectTrigger>
-								<SelectContent align="end">
-									<SelectItem value="desc">Newest first</SelectItem>
-									<SelectItem value="asc">Oldest first</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-
-					{/* Fixed-height Scrollable Area with Vertical Fade */}
-					<div className="relative min-h-0 flex-1">
-						<ScrollArea axis="vertical" className="h-full" withFade={true}>
-							<div
-								className={cn(
-									"grid gap-6 pt-2 pb-20",
-									view === "card"
-										? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5"
-										: "grid-cols-1"
-								)}
-							>
-								{sortedDocuments.map((doc) => (
-									<Link
-										className="group"
-										key={doc.id}
-										params={{ knowledgeId: doc.id }}
-										to={"/knowledge-base/knowledge/$knowledgeId"}
-									>
-										<DocCard
-											{...doc}
-											className="transition-all"
-											isFavourite={doc.isFavorite}
-											variant={view}
-										/>
-									</Link>
-								))}
-							</div>
-						</ScrollArea>
-					</div>
-				</section>
-			</main>
-		</div>
+				</div>
+			</section>
+		</MainContent>
 	);
 }

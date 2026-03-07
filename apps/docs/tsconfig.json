@@ -1,0 +1,12 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "fumadocs-mdx:collections/*": ["./.source/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}
