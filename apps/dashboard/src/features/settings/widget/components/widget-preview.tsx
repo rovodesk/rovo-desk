@@ -3,7 +3,11 @@ import {
 	AvatarFallback,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import type { WidgetConfig } from "@zero-heads-lab/shared/types";
+import type {
+	WidgetConfig,
+	WidgetMode,
+	WidgetTabType,
+} from "@zero-heads-lab/shared/types";
 import {
 	BookOpen,
 	ChevronLeft,
@@ -18,7 +22,8 @@ import {
 	Smile,
 	X,
 } from "lucide-react";
-import { useState } from "react";
+import { type Key, useState } from "react";
+import { resolveBlocks } from "../utils/blocks";
 
 const iconMap: Record<string, React.ElementType> = {
 	"message-circle": MessageCircle,
@@ -37,9 +42,18 @@ export function WidgetPreview({
 	config: WidgetConfig;
 }) {
 	const [view, setView] = useState<PreviewView>("home");
-	const { theme, launcher, conversation } = config;
+	const { theme, launcher } = config;
 	const LauncherIcon = iconMap[launcher.icon] || MessageCircle;
 	const borderRadius = `${theme.borderRadius}px`;
+
+	const blocks = resolveBlocks(config, "user", "conversation");
+	const conversationBlock = blocks.find(
+		(b: { type: string }) => b.type === "conversation"
+	);
+
+	if (!conversationBlock) return null;
+
+	const conversation = conversationBlock.config;
 
 	return (
 		<div
@@ -107,7 +121,7 @@ export function WidgetPreview({
 											<ChevronLeft className="h-4 w-4" />
 										</button>
 									)}
-									{conversation.showAgentAvatar && (
+									{conversation.showAvatar && (
 										<Avatar className="h-7 w-7">
 											<AvatarFallback
 												className="font-bold text-[10px]"
@@ -195,121 +209,151 @@ export function WidgetPreview({
 
 function HomeView({
 	config,
+	mode = "visitor",
 	onStartConversation,
 }: {
 	config: WidgetConfig;
+	mode?: WidgetMode;
 	onStartConversation: () => void;
 }) {
-	const { screens, theme } = config;
+	const { theme } = config;
 
-	const blocks = screens.visitors ?? [];
+	const blocks = resolveBlocks(config, mode, "welcome");
 
 	return (
 		<div className="space-y-3 p-4">
 			{blocks
-				.filter((b) => b.enabled)
-				.map((block) => {
-					switch (block.type) {
-						case "welcome":
-							return (
-								<div className="space-y-1" key={block.id}>
-									<p
-										className="font-semibold text-sm"
-										style={{ color: theme.textColor }}
+				.filter((b: { enabled: boolean }) => b.enabled)
+				.map(
+					(block: {
+						type: WidgetTabType;
+						id: Key | null | undefined;
+						config: {
+							title: string;
+							subtitle: string;
+							label: string;
+							articleLimit: number;
+							text: string;
+						};
+					}) => {
+						switch (block.type) {
+							case "welcome":
+								return (
+									<div className="space-y-1" key={block.id}>
+										<p
+											className="font-semibold text-sm"
+											style={{ color: theme.textColor }}
+										>
+											{block.config.title as string}
+										</p>
+										<p
+											className="text-xs"
+											style={{ color: theme.textColor, opacity: 0.6 }}
+										>
+											{block.config.subtitle as string}
+										</p>
+									</div>
+								);
+							case "conversation":
+								return (
+									<button
+										className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left transition-colors hover:bg-muted/50"
+										key={block.id}
+										onClick={onStartConversation}
 									>
-										{block.config.title as string}
-									</p>
-									<p
-										className="text-xs"
-										style={{ color: theme.textColor, opacity: 0.6 }}
+										<MessageCircle
+											className="h-4 w-4"
+											style={{ color: theme.primaryColor }}
+										/>
+										<span
+											className="text-sm"
+											style={{ color: theme.textColor }}
+										>
+											{block.config.label as string}
+										</span>
+									</button>
+								);
+							case "knowledge_base":
+								return (
+									<div className="space-y-2" key={block.id}>
+										<div className="flex items-center gap-2">
+											<BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+											<span className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+												Help Articles
+											</span>
+										</div>
+										{[1, 2, 3]
+											.slice(
+												0,
+												Math.min((block.config.articleLimit as number) || 3, 3)
+											)
+											.map((i) => (
+												<div
+													className="rounded border border-border p-2 text-xs"
+													key={i}
+													style={{ color: theme.textColor, opacity: 0.7 }}
+												>
+													Sample article {i}
+												</div>
+											))}
+									</div>
+								);
+							case "announcement":
+								return (
+									<div
+										className="flex items-center gap-2 rounded-lg p-3"
+										key={block.id}
+										style={{ backgroundColor: `${theme.primaryColor}15` }}
 									>
-										{block.config.subtitle as string}
-									</p>
-								</div>
-							);
-						case "conversation":
-							return (
-								<button
-									className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left transition-colors hover:bg-muted/50"
-									key={block.id}
-									onClick={onStartConversation}
-								>
-									<MessageCircle
-										className="h-4 w-4"
-										style={{ color: theme.primaryColor }}
-									/>
-									<span className="text-sm" style={{ color: theme.textColor }}>
-										{block.config.label as string}
-									</span>
-								</button>
-							);
-						case "knowledge_base":
-							return (
-								<div className="space-y-2" key={block.id}>
-									<div className="flex items-center gap-2">
-										<BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-										<span className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-											Help Articles
+										<Megaphone
+											className="h-4 w-4"
+											style={{ color: theme.primaryColor }}
+										/>
+										<span
+											className="text-xs"
+											style={{ color: theme.textColor }}
+										>
+											{(block.config.text as string) || "New feature!"}
 										</span>
 									</div>
-									{[1, 2, 3]
-										.slice(
-											0,
-											Math.min((block.config.articleLimit as number) || 3, 3)
-										)
-										.map((i) => (
-											<div
-												className="rounded border border-border p-2 text-xs"
-												key={i}
-												style={{ color: theme.textColor, opacity: 0.7 }}
-											>
-												Sample article {i}
-											</div>
-										))}
-								</div>
-							);
-						case "announcement":
-							return (
-								<div
-									className="flex items-center gap-2 rounded-lg p-3"
-									key={block.id}
-									style={{ backgroundColor: `${theme.primaryColor}15` }}
-								>
-									<Megaphone
-										className="h-4 w-4"
-										style={{ color: theme.primaryColor }}
-									/>
-									<span className="text-xs" style={{ color: theme.textColor }}>
-										{(block.config.text as string) || "New feature!"}
-									</span>
-								</div>
-							);
-						case "cta":
-							return (
-								<button
-									className="flex w-full items-center gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-muted/50"
-									key={block.id}
-								>
-									<Phone
-										className="h-4 w-4"
-										style={{ color: theme.primaryColor }}
-									/>
-									<span className="text-xs" style={{ color: theme.textColor }}>
-										{(block.config.text as string) || "Contact Us"}
-									</span>
-								</button>
-							);
-						default:
-							return null;
+								);
+							case "cta":
+								return (
+									<button
+										className="flex w-full items-center gap-2 rounded-lg border border-border p-3 transition-colors hover:bg-muted/50"
+										key={block.id}
+									>
+										<Phone
+											className="h-4 w-4"
+											style={{ color: theme.primaryColor }}
+										/>
+										<span
+											className="text-xs"
+											style={{ color: theme.textColor }}
+										>
+											{(block.config.text as string) || "Contact Us"}
+										</span>
+									</button>
+								);
+							default:
+								return null;
+						}
 					}
-				})}
+				)}
 		</div>
 	);
 }
 
 function ConversationView({ config }: { config: WidgetConfig }) {
-	const { conversation, theme, behavior } = config;
-	const bubbleRadius = conversation.bubbleStyle === "rounded" ? "18px" : "6px";
+	const { theme } = config;
+	const blocks = resolveBlocks(config, "user", "conversation");
+	const conversationBlock = blocks.find(
+		(b: { type: string }) => b.type === "conversation"
+	);
+
+	if (!conversationBlock) return null;
+
+	const conversation = conversationBlock.config;
 
 	return (
 		<div className="flex h-full flex-col">
@@ -333,11 +377,11 @@ function ConversationView({ config }: { config: WidgetConfig }) {
 						className="max-w-[75%] px-3 py-2 text-xs"
 						style={{
 							backgroundColor: conversation.agentBubbleColor,
-							borderRadius: bubbleRadius,
+							borderRadius: theme.borderRadius,
 							color: theme.textColor,
 						}}
 					>
-						{behavior.welcomeMessage}
+						{conversation.welcomeMessage}
 					</div>
 				</div>
 
@@ -347,7 +391,7 @@ function ConversationView({ config }: { config: WidgetConfig }) {
 						className="max-w-[75%] px-3 py-2 text-white text-xs"
 						style={{
 							backgroundColor: conversation.userBubbleColor,
-							borderRadius: bubbleRadius,
+							borderRadius: theme.borderRadius,
 						}}
 					>
 						Hi! I have a question about pricing.
@@ -355,7 +399,7 @@ function ConversationView({ config }: { config: WidgetConfig }) {
 				</div>
 
 				{/* Typing indicator */}
-				{behavior.enableTypingIndicator && (
+				{conversation.showTypingIndicator && (
 					<div className="flex items-end gap-2">
 						{conversation.showAgentAvatar && (
 							<Avatar className="h-6 w-6 shrink-0">
@@ -395,7 +439,7 @@ function ConversationView({ config }: { config: WidgetConfig }) {
 
 			{/* Input */}
 			<div className="flex items-center gap-2 border-border border-t p-2">
-				{behavior.enableAttachments && (
+				{conversation.allowAttachments && (
 					<button className="p-1 text-muted-foreground hover:text-foreground">
 						<Paperclip className="h-4 w-4" />
 					</button>
@@ -403,7 +447,7 @@ function ConversationView({ config }: { config: WidgetConfig }) {
 				<div className="flex-1 rounded-full bg-muted/50 px-3 py-1.5 text-muted-foreground text-xs">
 					{conversation.placeholderText}
 				</div>
-				{behavior.enableEmojiPicker && (
+				{conversation.allowEmojis && (
 					<button className="p-1 text-muted-foreground hover:text-foreground">
 						<Smile className="h-4 w-4" />
 					</button>

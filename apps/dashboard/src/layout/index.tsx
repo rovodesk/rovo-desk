@@ -75,17 +75,17 @@ export function DashboardLayout() {
 	// Loading state during hydration
 	if (!hydrated) {
 		return (
-			<div className="flex h-dvh w-full items-center justify-center">
+			<div className="flex h-svh w-full items-center justify-center">
 				<div className="h-6 w-6 animate-spin rounded-full border-2 border-muted border-t-primary" />
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex max-h-dvh w-full overflow-hidden">
+		<div className="flex h-svh w-full overflow-hidden">
 			<DashboardLayoutContext.Provider value={value}>
 				<SidebarProvider open={false}>
-					<div className="flex h-screen w-full overflow-hidden">
+					<div className="flex h-svh w-full overflow-hidden">
 						<PrimarySidebar />
 						<Outlet />
 					</div>

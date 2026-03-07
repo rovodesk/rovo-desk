@@ -6,14 +6,9 @@ import {
 import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import { Switch } from "@zero-heads-lab/design-system/components/ui/switch";
 import { Textarea } from "@zero-heads-lab/design-system/components/ui/textarea";
-import type { WidgetAdvanced } from "@zero-heads-lab/shared/types";
+import type { WidgetAdvancedConfig } from "@zero-heads-lab/shared/types";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-
-interface Props {
-	advanced: WidgetAdvanced;
-	onChange: (advanced: Partial<WidgetAdvanced>) => void;
-}
 
 function SectionGroup({
 	title,
@@ -38,7 +33,13 @@ function SectionGroup({
 	);
 }
 
-export function AdvancedTab({ advanced, onChange }: Props) {
+export function AdvancedTab({
+	advanced,
+	onChange,
+}: {
+	advanced: WidgetAdvancedConfig;
+	onChange: (advanced: Partial<WidgetAdvancedConfig>) => void;
+}) {
 	return (
 		<div className="space-y-1">
 			<SectionGroup title="Visibility Rules">

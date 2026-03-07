@@ -122,7 +122,7 @@ export function PrimarySidebar() {
 			onMouseEnter={handleMouseEnter}
 		>
 			<div className="mb-2 flex items-center justify-center rounded-full p-2 text-center">
-				<Logo className="mb-3 h-10 w-8" />
+				<Logo className="mb-3 h-10 w-10" />
 			</div>
 
 			<nav className="flex flex-1 flex-col items-center gap-2">

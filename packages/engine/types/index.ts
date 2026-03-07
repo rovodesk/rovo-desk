@@ -1,4 +1,4 @@
-import type { TabType, WidgetConfig } from "@zero-heads-lab/shared/types";
+import type { WidgetConfig, WidgetTabType } from "@zero-heads-lab/shared/types";
 import type { SDKConfig } from "config";
 import type { Message } from "../core/message-parser";
 
@@ -41,7 +41,7 @@ export interface BotState {
 
 	user?: User;
 
-	activeTab?: TabType;
+	activeTab?: WidgetTabType;
 	widgetConfig?: WidgetConfig;
 	sdkConfig?: SDKConfig;
 }
@@ -53,7 +53,7 @@ export type Command =
 	| { type: "identify"; payload: User }
 	| { type: "track"; payload: { event: string; data?: unknown } }
 	| { type: "update"; payload: Partial<SDKConfig> }
-	| { type: "switch-tab"; payload: TabType }
+	| { type: "switch-tab"; payload: WidgetTabType }
 	| { type: "shutdown" };
 
 export type CommandArgs =
@@ -63,7 +63,7 @@ export type CommandArgs =
 	| ["identify", User]
 	| ["track", { event: string; data?: unknown }]
 	| ["update", Partial<SDKConfig>]
-	| ["switch-tab", TabType]
+	| ["switch-tab", WidgetTabType]
 	| ["shutdown"];
 
 export type RovoDeskFunction = (...args: CommandArgs) => void;

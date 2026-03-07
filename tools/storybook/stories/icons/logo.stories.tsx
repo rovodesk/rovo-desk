@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Logo, LogoIcon } from "@zero-heads-lab/design-system/components/logo";
+import { Logo } from "@zero-heads-lab/design-system/components/logo";
 
 /**
  * The brand identity components for Zero Heads.
@@ -39,24 +39,12 @@ export const Default: Story = {
 };
 
 /**
- * The simplified icon variant for navbars, buttons, or mobile views.
- */
-export const Icon: StoryObj<typeof LogoIcon> = {
-	render: (args) => <LogoIcon {...args} />,
-	args: {
-		className: "w-10 h-10 text-primary",
-		title: "ZH Icon",
-	},
-};
-
-/**
  * Demonstration of the "fill-current" behavior using brand colors.
  */
 export const CustomColor: Story = {
 	render: () => (
 		<div className="flex items-center gap-8">
 			<Logo className="h-auto w-24 text-blue-600" />
-			<LogoIcon className="h-12 w-12 text-orange-500" />
 			<Logo className="h-auto w-24 text-emerald-500" />
 		</div>
 	),

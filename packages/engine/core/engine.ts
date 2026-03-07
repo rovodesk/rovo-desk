@@ -1,4 +1,4 @@
-import type { TabType } from "@zero-heads-lab/shared/types";
+import type { WidgetTabType } from "@zero-heads-lab/shared/types";
 import type { BotState, CommandArgs, StateListener } from "../types";
 import { ActionProvider, type IActionProvider } from "./action-provider.js";
 import {
@@ -21,7 +21,7 @@ interface IChatbotEngine<T extends BotState> {
 
 	subscribe(listener: StateListener<T>): () => void;
 
-	changeTab(tab: TabType): void;
+	changeTab(tab: WidgetTabType): void;
 }
 
 export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
@@ -94,7 +94,7 @@ export class ChatbotEngine<T extends BotState> implements IChatbotEngine<T> {
 		return this.store.subscribe(listener);
 	}
 
-	changeTab(tab: TabType): void {
+	changeTab(tab: WidgetTabType): void {
 		this.actionProvider.navigate(tab);
 	}
 }

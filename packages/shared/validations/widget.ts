@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const WidgetThemeAppearanceSchema = z.object({
+export const WidgetAppearanceSchema = z.object({
 	primaryColor: z.string(),
 	backgroundColor: z.string(),
 	textColor: z.string(),
@@ -15,8 +15,8 @@ export const WidgetThemeAppearanceSchema = z.object({
 	shadow: z.boolean(),
 });
 
-export const WidgetLauncherAppearanceSchema = z.object({
-	position: z.enum(["bottom-right", "bottom-left", "top-right", "top-left"]),
+export const WidgetLauncherSchema = z.object({
+	position: z.enum(["left", "right"]),
 	logo: z.string().optional(),
 	labelText: z.string(),
 	compact: z.boolean(),
@@ -25,6 +25,7 @@ export const WidgetLauncherAppearanceSchema = z.object({
 export const WidgetAdvancedConfigSchema = z.object({
 	showOnPages: z.string(),
 	hideOnPages: z.string(),
+	showAfterDelay: z.number(),
 	customCss: z.string(),
 	hideLauncher: z.boolean(),
 	programmaticControl: z.boolean(),
@@ -144,8 +145,8 @@ export const WidgetModeConfigSchema = z.record(
 );
 
 export const WidgetConfigSchema = z.object({
-	theme: WidgetThemeAppearanceSchema,
-	launcher: WidgetLauncherAppearanceSchema,
+	theme: WidgetAppearanceSchema,
+	launcher: WidgetLauncherSchema,
 	screens: WidgetModeConfigSchema,
 	advanced: WidgetAdvancedConfigSchema,
 });

@@ -1,6 +1,11 @@
 import { useOrganization } from "@zero-heads-lab/auth/hooks";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
+import {
+	InputGroup,
+	InputGroupButton,
+	InputGroupInput,
+} from "@zero-heads-lab/design-system/components/ui/input-group";
 import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import {
 	Select,
@@ -58,26 +63,36 @@ export function WorkspaceSettings() {
 
 				<div className="mt-6 grid gap-6 md:grid-cols-2">
 					<div className="space-y-2">
-						<Label>Workspace Name</Label>
-						<Input defaultValue={organization?.name} />
-					</div>
-
-					<div className="space-y-2">
 						<Label>Workspace ID</Label>
 
 						<div className="flex items-center gap-2">
-							<Input
-								className="font-mono text-xs"
-								readOnly
-								value={organization?.id ?? ""}
-							/>
-
-							<Button onClick={copyWorkspaceId} size="icon" variant="outline">
-								<Copy
-									className={cn("h-4 w-4", workspaceIdCopied && "text-primary")}
+							<InputGroup>
+								<InputGroupInput
+									className="border-dashed font-mono text-xs"
+									disabled
+									readOnly
+									value={organization?.id ?? ""}
 								/>
-							</Button>
+
+								<InputGroupButton
+									onClick={copyWorkspaceId}
+									size="icon-sm"
+									variant="ghost"
+								>
+									<Copy
+										className={cn(
+											"h-4 w-4",
+											workspaceIdCopied && "text-primary"
+										)}
+									/>
+								</InputGroupButton>
+							</InputGroup>
 						</div>
+					</div>
+
+					<div className="space-y-2">
+						<Label>Workspace Name</Label>
+						<Input defaultValue={organization?.name} />
 					</div>
 
 					<div className="space-y-2">

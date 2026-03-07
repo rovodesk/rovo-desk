@@ -5,19 +5,18 @@ import type {
 	TabTypeSchema,
 	WelcomeConfigSchema,
 	WidgetAdvancedConfigSchema,
+	WidgetAppearanceSchema,
 	WidgetConfigSchema,
-	WidgetLauncherAppearanceSchema,
+	WidgetLauncherSchema,
+	WidgetModeSchema,
 	WidgetScreenConfigSchema,
 	WidgetScreenSchema,
-	WidgetThemeAppearanceSchema,
 } from "validations/widget";
 import type z from "zod";
 
-export type WidgetThemeAppearance = z.infer<typeof WidgetThemeAppearanceSchema>;
+export type WidgetAppearance = z.infer<typeof WidgetAppearanceSchema>;
 
-export type WidgetLauncherAppearance = z.infer<
-	typeof WidgetLauncherAppearanceSchema
->;
+export type WidgetLauncher = z.infer<typeof WidgetLauncherSchema>;
 
 export type WidgetAdvancedConfig = z.infer<typeof WidgetAdvancedConfigSchema>;
 
@@ -48,4 +47,19 @@ export type AnyBlock = {
 	[K in BlockType]: Block<K>;
 }[BlockType];
 
-export type TabType = z.input<typeof TabTypeSchema>;
+export type WidgetTabType = z.input<typeof TabTypeSchema>;
+
+export const WidgetTabs = [
+	"welcome",
+	"conversation",
+	"knowledge_base",
+	"publications",
+];
+export const WidgetConfigKeys = [
+	"launcher",
+	"appearance",
+	"screens",
+	"advanced",
+];
+
+export type WidgetMode = z.infer<typeof WidgetModeSchema>;

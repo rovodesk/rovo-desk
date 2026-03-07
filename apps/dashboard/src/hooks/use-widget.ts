@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: connection type is not properly typed */
 import {
 	type UseQueryOptions,
 	useMutation,
@@ -62,7 +61,7 @@ export function useWidget(
 
 			const previous = queryClient.getQueryData<WidgetData>(keys.widget);
 
-			queryClient.setQueryData<WidgetData>(keys.widget, (old: any) =>
+			queryClient.setQueryData<WidgetData>(keys.widget, (old) =>
 				old ? { ...old, ...input } : old
 			);
 

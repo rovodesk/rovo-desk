@@ -67,7 +67,7 @@ export function MainContent({
 					/>
 				)}
 
-				<div className="flex min-w-0 flex-1 flex-col">
+				<main className="flex h-svh min-w-0 flex-1 flex-col">
 					{showHeader && (
 						<Header
 							headerLeftContent={headerLeftContent}
@@ -77,15 +77,15 @@ export function MainContent({
 						/>
 					)}
 
-					<main
+					<div
 						className={cn(
 							"flex h-svh grow flex-col space-y-6 overflow-hidden",
 							className
 						)}
 					>
 						{children}
-					</main>
-				</div>
+					</div>
+				</main>
 
 				{!!rightSidebarContent && (
 					<RightSidebar headerContent={rightSidebarHeaderContent}>

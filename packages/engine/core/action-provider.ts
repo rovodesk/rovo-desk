@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/useAwait: No awaited functions are used here*/
 
-import type { TabType } from "@zero-heads-lab/shared/types";
+import type { WidgetTabType } from "@zero-heads-lab/shared/types";
 import { renderLoading } from "components/loading";
 import type { SDKConfig } from "config";
 import { isSDKInitialized } from "utils";
@@ -17,15 +17,14 @@ interface IActionProvider {
 
 	track(event: string, data?: unknown): void;
 	update(data: Partial<SDKConfig>): void;
-	navigate(tab: TabType): void;
+	navigate(tab: WidgetTabType): void;
 	shutdown(): void;
 
 	addMessage(message: Message): void;
 }
 
 class ActionProvider<T extends BotState & { sdkConfig?: SDKConfig }>
-	implements IActionProvider
-{
+	implements IActionProvider {
 	private readonly store: Store<T>;
 	private readonly messageParser: MessageParser<T>;
 
@@ -189,7 +188,7 @@ class ActionProvider<T extends BotState & { sdkConfig?: SDKConfig }>
 		}));
 	}
 
-	navigate(tab: TabType) {
+	navigate(tab: WidgetTabType) {
 		this.store.setState((state) => ({
 			...state,
 			activeTab: tab,

@@ -6,14 +6,15 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tabs";
-import type { WidgetConfig } from "@zero-heads-lab/shared/types";
+import {
+	type WidgetConfig,
+	WidgetConfigKeys,
+} from "@zero-heads-lab/shared/types";
 import { useCallback } from "react";
-import { AdvancedTab } from "../tabs/advanced-tab";
-import { AppearanceTab } from "../tabs/appearance-tab";
-import { BehaviorTab } from "../tabs/behavior-tab";
-import { ConversationTab } from "../tabs/conversation-tab";
-import { LauncherTab } from "../tabs/launcher-tab";
-import { ScreensTab } from "../tabs/screens-tab";
+import { AdvancedTab } from "./tabs/advanced-tab";
+import { AppearanceTab } from "./tabs/appearance-tab";
+import { LauncherTab } from "./tabs/launcher-tab";
+import { ScreensTab } from "./tabs/screens-tab";
 
 type WidgetSidebarProps = {
 	config: WidgetConfig;
@@ -54,26 +55,6 @@ export const WidgetSidebar = ({ config, updateConfig }: WidgetSidebarProps) => {
 		[updateConfig, config]
 	);
 
-	const updateConversation = useCallback(
-		(partial: Partial<WidgetConfig["conversation"]>) => {
-			updateConfig("conversation", {
-				...config.conversation,
-				...partial,
-			});
-		},
-		[config, updateConfig]
-	);
-
-	const updateBehavior = useCallback(
-		(partial: Partial<WidgetConfig["behavior"]>) => {
-			updateConfig("behavior", {
-				...config.behavior,
-				...partial,
-			});
-		},
-		[config, updateConfig]
-	);
-
 	const updateAdvanced = useCallback(
 		(partial: Partial<WidgetConfig["advanced"]>) => {
 			updateConfig("advanced", {
@@ -90,20 +71,13 @@ export const WidgetSidebar = ({ config, updateConfig }: WidgetSidebarProps) => {
 			<Tabs className="flex min-h-0 flex-1 flex-col" defaultValue="launcher">
 				<div className="border-border border-b px-2">
 					<TabsList className="h-10 w-full justify-start gap-0 rounded-none bg-transparent p-0">
-						{[
-							"launcher",
-							"home",
-							"conversation",
-							"appearance",
-							"behavior",
-							"advanced",
-						].map((tab) => (
+						{WidgetConfigKeys.map((tab) => (
 							<TabsTrigger
 								className="rounded-none border-transparent border-b-2 px-3 py-2.5 text-xs capitalize data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
 								key={tab}
 								value={tab}
 							>
-								{tab === "home" ? "Home Screen" : tab}
+								{tab === "screens" ? "Screens" : tab}
 							</TabsTrigger>
 						))}
 					</TabsList>
@@ -111,29 +85,17 @@ export const WidgetSidebar = ({ config, updateConfig }: WidgetSidebarProps) => {
 
 				<ScrollArea className="flex-1">
 					<div className="p-4">
-						<TabsContent className="mt-0" value="appearance">
-							<AppearanceTab onChange={updateTheme} theme={config.theme} />
-						</TabsContent>
 						<TabsContent className="mt-0" value="launcher">
 							<LauncherTab
 								launcher={config.launcher}
 								onChange={updateLauncher}
 							/>
 						</TabsContent>
-						<TabsContent className="mt-0" value="home">
+						<TabsContent className="mt-0" value="appearance">
+							<AppearanceTab onChange={updateTheme} theme={config.theme} />
+						</TabsContent>
+						<TabsContent className="mt-0" value="screens">
 							<ScreensTab onChange={updateHome} screens={config.screens} />
-						</TabsContent>
-						<TabsContent className="mt-0" value="conversation">
-							<ConversationTab
-								conversation={config.conversation}
-								onChange={updateConversation}
-							/>
-						</TabsContent>
-						<TabsContent className="mt-0" value="behavior">
-							<BehaviorTab
-								behavior={config.behavior}
-								onChange={updateBehavior}
-							/>
 						</TabsContent>
 						<TabsContent className="mt-0" value="advanced">
 							<AdvancedTab

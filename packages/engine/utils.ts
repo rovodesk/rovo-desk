@@ -1,4 +1,4 @@
-import type { AnyBlock, TabType } from "@zero-heads-lab/shared/types";
+import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/types";
 import type { BotState } from "types";
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {
@@ -39,7 +39,7 @@ export function resolveActiveBlocks(state: BotState): AnyBlock[] {
 
 	const activeTab = state.activeTab ?? modeConfig.defaultTab;
 	const screen = modeConfig.screens.find(
-		(screen: { tab: TabType }) => screen.tab === activeTab
+		(screen: { tab: WidgetTabType }) => screen.tab === activeTab
 	);
 
 	return screen?.blocks ?? [];

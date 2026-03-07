@@ -5,6 +5,7 @@ import {
 	type DragEndEvent,
 	KeyboardSensor,
 	PointerSensor,
+	type UniqueIdentifier,
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
@@ -35,9 +36,10 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/tabs";
 import type {
 	Block,
+	BlockConfigMap,
 	BlockType,
 	WidgetConfig,
-	WidgetScreens,
+	WidgetScreenConfig,
 } from "@zero-heads-lab/shared/types";
 import {
 	BookOpen,
@@ -47,14 +49,8 @@ import {
 	Megaphone,
 	MessageCircle,
 	MessageSquare,
-	Phone,
 } from "lucide-react";
 import { useState } from "react";
-
-interface Props {
-	screens: WidgetScreens;
-	onChange: (screens: WidgetScreens) => void;
-}
 
 const blockTypeInfo: Record<
 	BlockType,
@@ -66,8 +62,7 @@ const blockTypeInfo: Record<
 		icon: MessageSquare,
 	},
 	knowledge_base: { label: "Knowledge Base", icon: BookOpen },
-	announcement: { label: "Announcement", icon: Megaphone },
-	cta: { label: "Contact Button", icon: Phone },
+	publications: { label: "Publications", icon: Megaphone },
 };
 
 function SortableBlock({
@@ -235,7 +230,7 @@ function BlockConfigEditor({
 					/>
 				</div>
 			);
-		case "announcement":
+		case "publications":
 			return (
 				<div className="space-y-1.5 pt-3">
 					<Label className="text-muted-foreground text-xs">
@@ -248,24 +243,20 @@ function BlockConfigEditor({
 					/>
 				</div>
 			);
-		case "cta":
-			return (
-				<div className="space-y-1.5 pt-3">
-					<Label className="text-muted-foreground text-xs">Button Text</Label>
-					<Input
-						className="h-8 text-sm"
-						onChange={(e) => onUpdate({ ...cfg, text: e.target.value })}
-						value={(cfg.text as string) || "Contact Us"}
-					/>
-				</div>
-			);
 		default:
 			return null;
 	}
 }
 
-export function ScreensTab({ screens, onChange }: Props) {
-	const [tab, setTab] = useState<"visitors" | "users">("visitors");
+export function ScreensTab({
+	screens,
+	onChange,
+}: {
+	screens: WidgetScreenConfig;
+	onChange: (screens: WidgetScreenConfig) => void;
+}) {
+	const [tab, setTab] = useState<"visitor" | "user">("visitor");
+	console.log("Screens", screens);
 
 	return (
 		<div className="space-y-4">
@@ -280,19 +271,19 @@ export function ScreensTab({ screens, onChange }: Props) {
 
 			<Tabs
 				className="space-y-4"
-				onValueChange={(v) => setTab(v as "visitors" | "users")}
+				onValueChange={(v) => setTab(v as "visitor" | "user")}
 				value={tab}
 			>
 				<TabsList>
-					<TabsTrigger value="visitors">Visitors</TabsTrigger>
-					<TabsTrigger value="users">Users</TabsTrigger>
+					<TabsTrigger value="visitor">Visitors</TabsTrigger>
+					<TabsTrigger value="user">Users</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value="visitors">
-					<Editor onChange={onChange} screens={screens} tab="visitors" />
+				<TabsContent value="visitor">
+					<Editor onChange={onChange} screens={screens} tab="visitor" />
 				</TabsContent>
-				<TabsContent value="users">
-					<Editor onChange={onChange} screens={screens} tab="users" />
+				<TabsContent value="user">
+					<Editor onChange={onChange} screens={screens} tab="user" />
 				</TabsContent>
 			</Tabs>
 		</div>
@@ -306,7 +297,48 @@ const Editor = ({
 }: {
 	screens: WidgetConfig["screens"];
 	onChange: (screens: WidgetConfig["screens"]) => void;
-	tab: "visitors" | "users";
+	tab: "visitor" | "user";
+}) => {
+	const modeConfig = screens[tab];
+
+	if (!modeConfig) return null;
+
+	return (
+		<div className="space-y-3">
+			{modeConfig.screens.map(
+				(
+					screen: WidgetScreenConfig["visitor"]["screens"][0],
+					index: number
+				) => (
+					<ScreenEditor
+						key={screen.id}
+						modeConfig={modeConfig}
+						onChange={onChange}
+						screen={screen}
+						screenIndex={index}
+						screens={screens}
+						tab={tab}
+					/>
+				)
+			)}
+		</div>
+	);
+};
+
+const ScreenEditor = ({
+	screen,
+	screenIndex,
+	modeConfig,
+	screens,
+	onChange,
+	tab,
+}: {
+	screen: WidgetScreenConfig["visitor"]["screens"][0];
+	screenIndex: number;
+	modeConfig: WidgetScreenConfig["visitor"];
+	screens: WidgetConfig["screens"];
+	onChange: (screens: WidgetConfig["screens"]) => void;
+	tab: "visitor" | "user";
 }) => {
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -315,27 +347,42 @@ const Editor = ({
 		})
 	);
 
-	const blocks = screens[tab];
+	const blocks = screen?.blocks ?? [];
 
 	const updateBlocks = (newBlocks: Block[]) => {
+		const newScreens = [...modeConfig.screens];
+
+		newScreens[screenIndex] = {
+			...screen,
+			blocks: newBlocks,
+		};
+
 		onChange({
 			...screens,
-			[tab]: newBlocks,
+			[tab]: {
+				...modeConfig,
+				screens: newScreens,
+			},
 		});
 	};
+
 	const handleDragEnd = (event: DragEndEvent) => {
 		const { active, over } = event;
 		if (!over || active.id === over.id) return;
 
-		const oldIndex = blocks.findIndex((b) => b.id === active.id);
-		const newIndex = blocks.findIndex((b) => b.id === over.id);
+		const oldIndex = blocks.findIndex(
+			(b: { id: UniqueIdentifier }) => b.id === active.id
+		);
+		const newIndex = blocks.findIndex(
+			(b: { id: UniqueIdentifier }) => b.id === over.id
+		);
 
 		updateBlocks(arrayMove(blocks, oldIndex, newIndex));
 	};
 
 	const updateBlock = (id: string, config: Record<string, unknown>) => {
 		updateBlocks(
-			blocks.map((b) =>
+			blocks.map((b: Block) =>
 				b.id === id
 					? {
 							...b,
@@ -349,25 +396,25 @@ const Editor = ({
 	};
 
 	return (
-		<DndContext
-			collisionDetection={closestCenter}
-			onDragEnd={handleDragEnd}
-			sensors={sensors}
-		>
-			<SortableContext
-				items={blocks.map((b) => b.id)}
-				strategy={verticalListSortingStrategy}
+		<div>
+			<DndContext
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+				sensors={sensors}
 			>
-				<div className="space-y-2">
-					{blocks.map((block) => (
+				<SortableContext
+					items={blocks.map((b: { id: string }) => b.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					{blocks.map((block: Block<keyof BlockConfigMap>) => (
 						<SortableBlock
 							block={block}
 							key={block.id}
 							onUpdate={(config) => updateBlock(block.id, config)}
 						/>
 					))}
-				</div>
-			</SortableContext>
-		</DndContext>
+				</SortableContext>
+			</DndContext>
+		</div>
 	);
 };

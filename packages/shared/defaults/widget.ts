@@ -21,7 +21,7 @@ export function defaultWidgetConfig(
 		},
 
 		launcher: {
-			position: "bottom-right",
+			position: "right",
 			logo,
 			labelText: `Chat with ${companyName}`,
 			compact: false,
@@ -30,7 +30,6 @@ export function defaultWidgetConfig(
 		screens: {
 			visitor: {
 				defaultTab: "welcome",
-
 				screens: [
 					{
 						id: "welcome",
@@ -168,6 +167,7 @@ export function defaultWidgetConfig(
 		advanced: {
 			showOnPages: "",
 			hideOnPages: "",
+			showAfterDelay: 10,
 			customCss: "",
 			hideLauncher: false,
 			programmaticControl: false,
