@@ -1,7 +1,7 @@
-import FeaturesSection from "./sections/features";
-import HeroSection from "./sections/hero";
-import { PricingSection } from "./sections/pricing";
-import ProblemSection from "./sections/problem";
+import FeaturesSection from "./features";
+import HeroSection from "./hero";
+import { PricingSection } from "./pricing";
+import ProblemSection from "./problem";
 
 const HomePage = () => {
 	return (

@@ -6,6 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
+    "gen:routes": "tsr generate",
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
@@ -15,10 +16,7 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
     "@number-flow/react": "^0.6.0",
-    "@tailwindcss/vite": "catalog:tailwindcss",
-    "@tanstack/react-devtools": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
-    "@tanstack/react-router-devtools": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
@@ -30,8 +28,12 @@
     "tailwindcss": "catalog:tailwindcss"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "catalog:tailwindcss",
+    "@tanstack/react-devtools": "catalog:tanstack",
     "@tailwindcss/typography": "catalog:tailwindcss",
     "@tanstack/devtools-vite": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tanstack/router-cli": "catalog:tanstack",
     "@testing-library/dom": "catalog:testing",
     "@testing-library/react": "catalog:testing",
     "@types/bun": "catalog:",
