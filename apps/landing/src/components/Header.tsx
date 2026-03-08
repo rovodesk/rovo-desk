@@ -1,78 +1,445 @@
-import { Link } from "@tanstack/react-router";
-import ThemeToggle from "./ThemeToggle";
+import Logo from "@zero-heads-lab/design-system/components/logo";
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import {
+	ArrowRight,
+	BarChart,
+	BookOpen,
+	ChevronDown,
+	Code,
+	FileText,
+	type LucideIcon,
+	Menu,
+	Palette,
+	Play,
+	Shield,
+	Sparkle,
+	Video,
+	X,
+	Zap,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-export default function Header() {
+type MenuItem = {
+	icon?: LucideIcon;
+	label: string;
+	description?: string;
+	href: string;
+};
+
+const coreFeatures: MenuItem[] = [
+	{
+		icon: Sparkle,
+		label: "AI Assistant",
+		description: "Intelligent code suggestions",
+		href: "#",
+	},
+	{
+		icon: Code,
+		label: "Code Editor",
+		description: "Advanced syntax highlighting",
+		href: "#",
+	},
+	{
+		icon: Palette,
+		label: "Design Tools",
+		description: "Visual design system builder",
+		href: "#",
+	},
+];
+
+const advancedFeatures: MenuItem[] = [
+	{
+		icon: BarChart,
+		label: "Analytics",
+		description: "Real-time performance insights",
+		href: "#",
+	},
+	{
+		icon: Shield,
+		label: "Security",
+		description: "Enterprise-grade protection",
+		href: "#",
+	},
+	{
+		icon: Zap,
+		label: "Automation",
+		description: "Workflow automation tools",
+		href: "#",
+	},
+];
+
+const resources: MenuItem[] = [
+	{ icon: FileText, label: "Documentation", href: "#" },
+	{ icon: Video, label: "Video Tutorials", href: "#" },
+	{ icon: BookOpen, label: "Guides", href: "#" },
+];
+
+const company: MenuItem[] = [
+	{ label: "About", href: "#" },
+	{ label: "Blog", href: "#" },
+	{ label: "Careers", href: "#" },
+];
+
+const menuConfig = {
+	Product: { core: coreFeatures, advanced: advancedFeatures },
+	Solutions: { resources, company },
+};
+
+const Header = () => {
+	const [isVisible, setIsVisible] = useState(true);
+	const [activeMenu, setActiveMenu] = useState<string | null>(null);
+	const [isSidebar, setSidebarOpen] = useState(false);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	// Scroll Logic
+	useEffect(() => {
+		const handleScroll = () => {
+			// Header hides after scrolling 100px, then reappears if scrolling up or at top
+			// You can adjust '100' to any threshold you prefer
+			if (window.scrollY > 100) {
+				setIsVisible(false);
+			} else {
+				setIsVisible(true);
+			}
+		};
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+
+	// Desktop Hover Handlers
+	const handleEnter = (name: string) => {
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		setActiveMenu(name);
+	};
+
+	const headerVariants = {
+		initial: {
+			y: -100,
+			opacity: 0,
+		},
+		animate: {
+			y: 0,
+			opacity: 1,
+			transition: {
+				type: "spring",
+				stiffness: 200,
+				damping: 36,
+			},
+		},
+		exit: {
+			y: -100,
+			opacity: 0,
+			transition: {
+				duration: 1.2,
+				ease: "easeInOut",
+			},
+		},
+	} as const;
+
 	return (
-		<header className="sticky top-0 z-50 border-[var(--line)] border-b bg-[var(--header-bg)] px-4 backdrop-blur-lg">
-			<nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
-				<h2 className="m-0 flex-shrink-0 font-semibold text-base tracking-tight">
-					<Link
-						className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-[var(--sea-ink)] text-sm no-underline shadow-[0_8px_24px_rgba(30,90,72,0.08)] sm:px-4 sm:py-2"
-						to="/"
+		<>
+			<AnimatePresence>
+				{isVisible && !isSidebar && (
+					<motion.header
+						animate="animate"
+						className="fixed inset-x-0 top-0 z-50 px-4 py-4 lg:px-8"
+						exit="exit"
+						initial="initial"
+						key="main-header"
+						onMouseLeave={() => setActiveMenu(null)}
+						variants={headerVariants}
 					>
-						<span className="h-2 w-2 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
-						TanStack Start
-					</Link>
-				</h2>
+						<nav className="relative mx-auto max-w-7xl">
+							<div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-6 py-3 shadow-2xl backdrop-blur-xl">
+								{/* Left: Logo & Mobile Toggle */}
+								<div className="flex items-center justify-between gap-4">
+									<button
+										className="text-white/70 transition-colors hover:text-white md:hidden"
+										onClick={() => setSidebarOpen(true)}
+									>
+										<Menu className="size-6" />
+									</button>
+									<div className="group hidden cursor-pointer items-center gap-2 md:flex">
+										<Logo className="h-7 w-auto transition-transform group-hover:scale-110" />
+										<span className="font-bold text-lg text-white tracking-tight">
+											Rovodesk
+										</span>
+									</div>
+								</div>
 
-				<div className="ml-auto flex items-center gap-1.5 sm:ml-0 sm:gap-2">
-					<a
-						className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
-						href="https://x.com/tan_stack"
-						rel="noreferrer"
-						target="_blank"
-					>
-						<span className="sr-only">Follow TanStack on X</span>
-						<svg aria-hidden="true" height="24" viewBox="0 0 16 16" width="24">
-							<path
-								d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-								fill="currentColor"
-							/>
-						</svg>
-					</a>
-					<a
-						className="hidden rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)] sm:block"
-						href="https://github.com/TanStack"
-						rel="noreferrer"
-						target="_blank"
-					>
-						<span className="sr-only">Go to TanStack GitHub</span>
-						<svg aria-hidden="true" height="24" viewBox="0 0 16 16" width="24">
-							<path
-								d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-								fill="currentColor"
-							/>
-						</svg>
-					</a>
+								{/* Visible on Mobile Only */}
+								<div className="group flex cursor-pointer items-center gap-2 md:hidden">
+									<Logo className="h-7 w-auto transition-transform group-hover:scale-110" />
+									<span className="font-bold text-lg text-white tracking-tight">
+										Rovodesk
+									</span>
+								</div>
 
-					<ThemeToggle />
-				</div>
+								{/* Center: Desktop Nav Items */}
+								<div className="hidden items-center gap-1 md:flex">
+									{["Product", "Pricing", "Developers", "Blog"].map((item) => (
+										<button
+											className={cn(
+												"relative rounded-md px-4 py-2 font-medium text-sm transition-colors",
+												activeMenu === item
+													? "text-white"
+													: "text-gray-400 hover:text-white"
+											)}
+											key={item}
+											onMouseEnter={() => handleEnter(item)}
+										>
+											<span className="relative z-10 flex items-center gap-1">
+												{item}
+												{item === "Product" && (
+													<ChevronDown
+														className={cn(
+															"size-3 transition-transform",
+															activeMenu === item && "rotate-180"
+														)}
+													/>
+												)}
+											</span>
+											{activeMenu === item && (
+												<motion.div
+													className="absolute inset-0 rounded-md bg-white/10"
+													layoutId="nav-pill"
+													transition={{
+														type: "spring",
+														bounce: 0.2,
+														duration: 0.6,
+													}}
+												/>
+											)}
+										</button>
+									))}
+								</div>
 
-				<div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 font-semibold text-sm sm:order-2 sm:w-auto sm:flex-nowrap sm:pb-0">
-					<Link
-						activeProps={{ className: "nav-link is-active" }}
-						className="nav-link"
-						to="/"
-					>
-						Home
-					</Link>
-					<Link
-						activeProps={{ className: "nav-link is-active" }}
-						className="nav-link"
-						to="/about"
-					>
-						About
-					</Link>
-					<a
-						className="nav-link"
-						href="https://tanstack.com/start/latest/docs/framework/react/overview"
-						rel="noreferrer"
-						target="_blank"
-					>
-						Docs
-					</a>
-				</div>
-			</nav>
-		</header>
+								{/* Right: CTA Actions */}
+								<div className="flex items-center gap-6">
+									<button className="group hidden items-center gap-1 font-semibold text-sm text-white/80 transition-colors hover:text-white lg:flex">
+										Watch Demo
+										<span className="flex size-5 items-center justify-center rounded-full bg-white/10 transition-transform group-hover:translate-x-1 group-hover:bg-white/20">
+											<Play className="size-2 fill-current" />
+										</span>
+									</button>
+									<button className="rounded-lg bg-white px-5 py-2 font-bold text-black text-sm shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all duration-100 hover:scale-105 hover:bg-blue-600 hover:text-white active:scale-95">
+										Start Free
+									</button>
+								</div>
+							</div>
+
+							{/* MegaMenu Dropdown */}
+							<AnimatePresence>
+								{activeMenu &&
+									(activeMenu === "Product" || activeMenu === "Solutions") && (
+										<motion.div
+											animate={{ opacity: 1, y: 0, scale: 1 }}
+											className="absolute inset-x-0 top-[calc(100%+12px)] mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0B]/90 shadow-2xl backdrop-blur-3xl"
+											exit={{ opacity: 0, y: 10, scale: 0.98 }}
+											initial={{ opacity: 0, y: 10, scale: 0.98 }}
+											onMouseEnter={() => handleEnter(activeMenu)}
+										>
+											<MegaMenuContent activeMenu={activeMenu} />
+										</motion.div>
+									)}
+							</AnimatePresence>
+						</nav>
+					</motion.header>
+				)}
+			</AnimatePresence>
+			<Sidebar isOpen={isSidebar} onClose={() => setSidebarOpen(false)} />
+		</>
 	);
-}
+};
+
+// --- Subcomponents ---
+
+const MegaMenuContent = ({ activeMenu }: { activeMenu: string }) => {
+	const data = menuConfig[activeMenu as keyof typeof menuConfig];
+
+	return (
+		<div className="grid grid-cols-12 gap-0">
+			{/* Left Content Area */}
+			<div className="col-span-8 grid grid-cols-2 gap-8 p-8">
+				{Object.entries(data).map(([title, items]) => (
+					<div className="space-y-4" key={title}>
+						<h4 className="font-bold text-[10px] text-gray-500 uppercase tracking-[0.15em]">
+							{title}
+						</h4>
+						<div className="grid gap-2">
+							{items.map((item) => (
+								<a
+									className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/5"
+									href={item.href}
+									key={item.label}
+								>
+									<div className="mt-1 rounded-lg bg-white/5 p-2 text-white transition-colors group-hover:bg-blue-600 group-hover:text-white">
+										{item.icon && <item.icon className="size-4" />}
+									</div>
+									<div>
+										<div className="font-semibold text-sm text-white">
+											{item.label}
+										</div>
+										<div className="line-clamp-1 text-gray-400 text-xs">
+											{item.description}
+										</div>
+									</div>
+								</a>
+							))}
+						</div>
+					</div>
+				))}
+			</div>
+
+			{/* Right Sidebar Area */}
+			<div className="col-span-4 flex flex-col gap-6 border-white/5 border-l bg-white/2 p-8">
+				<div className="rounded-2xl border border-white/10 bg-linear-to-br from-blue-600/20 to-purple-600/20 p-4">
+					<div className="mb-3 flex size-8 items-center justify-center rounded-full bg-blue-600">
+						<Play className="size-3 fill-white text-white" />
+					</div>
+					<h5 className="font-bold text-sm text-white">Product Overview</h5>
+					<p className="mt-1 mb-4 text-gray-400 text-xs">
+						See how Rovodesk can transform your workflow in 2 minutes.
+					</p>
+					<button className="flex items-center gap-1 font-bold text-white text-xs transition-all hover:gap-2">
+						Watch Video <ArrowRight className="size-3" />
+					</button>
+				</div>
+
+				<div className="space-y-3">
+					<h5 className="font-bold text-[10px] text-gray-500 uppercase tracking-widest">
+						Support
+					</h5>
+					<a
+						className="group flex items-center justify-between text-gray-300 text-sm hover:text-white"
+						href="/"
+					>
+						Contact Sales{" "}
+						<ArrowRight className="size-3 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+					</a>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const Sidebar = ({
+	isOpen,
+	onClose,
+}: {
+	isOpen: boolean;
+	onClose: () => void;
+}) => {
+	return (
+		<AnimatePresence>
+			{isOpen && (
+				<>
+					<motion.div
+						animate={{ opacity: 1 }}
+						className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md"
+						exit={{ opacity: 0 }}
+						initial={{ opacity: 0 }}
+						onClick={onClose}
+					/>
+					<motion.div
+						animate={{ x: 0 }}
+						className="fixed top-0 bottom-0 left-0 z-70 flex w-full max-w-[320px] flex-col border-white/10 border-r bg-[#0A0A0B] p-6"
+						exit={{ x: "-100%" }}
+						initial={{ x: "-100%" }}
+						transition={{ type: "spring", damping: 25, stiffness: 200 }}
+					>
+						<div className="mb-10 flex items-center justify-between">
+							<Logo className="h-7 w-auto" />
+							<span className="font-bold text-lg text-white tracking-tight">
+								Rovodesk
+							</span>
+							<button
+								className="rounded-full bg-white/5 p-2 text-white"
+								onClick={onClose}
+							>
+								<X className="size-5" />
+							</button>
+						</div>
+
+						<nav className="flex-1 space-y-2">
+							<MobileAccordion
+								items={[...coreFeatures, ...advancedFeatures]}
+								title="Platform"
+							/>
+							<MobileAccordion items={resources} title="Resources" />
+							<a
+								className="block border-white/5 border-b py-3 font-medium text-lg text-white"
+								href="/"
+							>
+								Pricing
+							</a>
+							<a
+								className="block border-white/5 border-b py-3 font-medium text-lg text-white"
+								href="/"
+							>
+								Blog
+							</a>
+						</nav>
+
+						<div className="grid gap-6 pt-6">
+							<button className="w-full rounded-lg border border-white/10 bg-blue-600 py-3 font-semibold text-white hover:bg-blue-800">
+								Watch Demo
+							</button>
+							<button className="w-full rounded-lg bg-white py-3 font-bold text-black transition-all hover:scale-102 hover:border-blue-600 hover:bg-gray-600/40 hover:text-white">
+								Start Free
+							</button>
+						</div>
+					</motion.div>
+				</>
+			)}
+		</AnimatePresence>
+	);
+};
+
+const MobileAccordion = ({
+	title,
+	items,
+}: {
+	title: string;
+	items: MenuItem[];
+}) => {
+	const [isOpen, setIsOpen] = useState(false);
+	return (
+		<div className="border-white/5 border-b">
+			<button
+				className="flex w-full items-center justify-between py-4 font-medium text-lg text-white"
+				onClick={() => setIsOpen(!isOpen)}
+			>
+				{title}
+				<ChevronDown
+					className={cn("size-4 transition-transform", isOpen && "rotate-180")}
+				/>
+			</button>
+			<AnimatePresence>
+				{isOpen && (
+					<motion.div
+						animate={{ height: "auto", opacity: 1 }}
+						className="overflow-hidden"
+						exit={{ height: 0, opacity: 0 }}
+						initial={{ height: 0, opacity: 0 }}
+					>
+						<div className="grid gap-4 pb-4 pl-4">
+							{items.map((item) => (
+								<a
+									className="text-gray-400 text-sm hover:text-white"
+									href={item.href}
+									key={item.label}
+								>
+									{item.label}
+								</a>
+							))}
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	);
+};
+
+export default Header;

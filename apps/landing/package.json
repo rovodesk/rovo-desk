@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
+    "@number-flow/react": "^0.6.0",
     "@tailwindcss/vite": "catalog:tailwindcss",
     "@tanstack/react-devtools": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
@@ -21,7 +22,9 @@
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
+    "@zero-heads-lab/design-system": "workspace:*",
     "lucide-react": "catalog:",
+    "motion": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "tailwindcss": "catalog:tailwindcss"

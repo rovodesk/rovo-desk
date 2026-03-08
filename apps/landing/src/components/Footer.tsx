@@ -1,43 +1,170 @@
+import { Link } from "@tanstack/react-router";
+import Logo from "@zero-heads-lab/design-system/components/logo";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { Input } from "@zero-heads-lab/design-system/components/ui/input";
+import { useTheme } from "@zero-heads-lab/design-system/hooks/use-theme";
+import {
+	Github,
+	Linkedin,
+	MessageCircle,
+	Moon,
+	Sun,
+	Twitter,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+
+const data = () => ({
+	navigation: {
+		product: [
+			{ name: "Features", href: "#features" },
+			{ name: "Pricing", href: "#pricing" },
+			{ name: "Integrations", href: "#integrations" },
+			{ name: "Roadmap", href: "#roadmap" },
+		],
+		company: [
+			{ name: "About", href: "/about" },
+			{ name: "Blog", href: "/blog" },
+			{ name: "Careers", href: "/careers" },
+			{ name: "Contact", href: "/contact" },
+		],
+		resources: [
+			{ name: "Documentation", href: "/docs" },
+			{ name: "API Reference", href: "/api" },
+			{ name: "Community", href: "/community" },
+			{ name: "Status", href: "/status" },
+		],
+		legal: [
+			{ name: "Privacy", href: "/privacy" },
+			{ name: "Terms", href: "/terms" },
+			{ name: "Cookie Policy", href: "/cookies" },
+		],
+	},
+	socialLinks: [
+		{ icon: Twitter, label: "Twitter", href: "#" },
+		{ icon: Github, label: "GitHub", href: "#" },
+		{ icon: MessageCircle, label: "Discord", href: "#" },
+		{ icon: Linkedin, label: "LinkedIn", href: "#" },
+	],
+	bottomLinks: [
+		{ href: "/privacy", label: "Privacy Policy" },
+		{ href: "/terms", label: "Terms of Service" },
+		{ href: "/cookies", label: "Cookie Policy" },
+	],
+});
+
 export default function Footer() {
-	const year = new Date().getFullYear();
+	const { theme, setTheme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+	useEffect(() => setMounted(true), []);
+
+	const currentYear = new Date().getFullYear();
+	if (!mounted) return null;
 
 	return (
-		<footer className="mt-20 border-[var(--line)] border-t px-4 pt-10 pb-14 text-[var(--sea-ink-soft)]">
-			<div className="page-wrap flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
-				<p className="m-0 text-sm">
-					&copy; {year} Your name here. All rights reserved.
-				</p>
-				<p className="island-kicker m-0">Built with TanStack Start</p>
-			</div>
-			<div className="mt-4 flex justify-center gap-4">
-				<a
-					className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-					href="https://x.com/tan_stack"
-					rel="noreferrer"
-					target="_blank"
-				>
-					<span className="sr-only">Follow TanStack on X</span>
-					<svg aria-hidden="true" height="32" viewBox="0 0 16 16" width="32">
-						<path
-							d="M12.6 1h2.2L10 6.48 15.64 15h-4.41L7.78 9.82 3.23 15H1l5.14-5.84L.72 1h4.52l3.12 4.73L12.6 1zm-.77 12.67h1.22L4.57 2.26H3.26l8.57 11.41z"
-							fill="currentColor"
-						/>
-					</svg>
-				</a>
-				<a
-					className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-					href="https://github.com/TanStack"
-					rel="noreferrer"
-					target="_blank"
-				>
-					<span className="sr-only">Go to TanStack GitHub</span>
-					<svg aria-hidden="true" height="32" viewBox="0 0 16 16" width="32">
-						<path
-							d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-							fill="currentColor"
-						/>
-					</svg>
-				</a>
+		<footer className="w-full border-t bg-background pt-16">
+			<div className="container mx-auto px-6">
+				<div className="grid grid-cols-1 gap-12 pb-12 lg:grid-cols-12">
+					{/* Left Side: Brand & Newsletter */}
+					<div className="space-y-8 lg:col-span-4">
+						<div className="flex flex-col gap-4">
+							<Link className="flex items-center gap-2" to="/">
+								<Logo className="h-8 w-8" />
+								<span className="font-bold text-xl tracking-tight">
+									Rovo Desk
+								</span>
+							</Link>
+							<p className="max-w-sm text-muted-foreground text-sm leading-relaxed">
+								Empowering modern enterprises with scalable, high-performance
+								desk solutions. Built for the future of work.
+							</p>
+						</div>
+
+						<div className="space-y-4">
+							<h4 className="font-semibold text-sm">Subscribe to updates</h4>
+							<div className="flex max-w-sm gap-2">
+								<Input
+									className="border! rounded-md! bg-muted! focus-visible:ring-1!"
+									placeholder="work@email.com"
+								/>
+								<Button className="rounded-lg px-6 font-medium text-md">
+									Join
+								</Button>
+							</div>
+						</div>
+
+						<div className="flex gap-3">
+							{data().socialLinks.map(({ icon: Icon, label, href }) => (
+								<Link
+									className="text-muted-foreground transition-colors hover:text-primary"
+									key={label}
+									to={href}
+								>
+									<Icon className="size-5" />
+								</Link>
+							))}
+							<button
+								className="ml-2 border-l pl-4 text-muted-foreground transition-colors hover:text-primary"
+								onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+							>
+								{theme === "dark" ? (
+									<Sun className="size-5" />
+								) : (
+									<Moon className="size-5" />
+								)}
+							</button>
+						</div>
+					</div>
+
+					{/* Right Side: Links Grid */}
+					<div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:col-span-8">
+						{(["product", "company", "resources", "legal"] as const).map(
+							(section) => (
+								<div className="flex flex-col gap-4" key={section}>
+									<h3 className="font-semibold text-foreground/70 text-sm uppercase tracking-widest">
+										{section}
+									</h3>
+									<ul className="flex flex-col gap-3">
+										{data().navigation[section].map((item) => (
+											<li key={item.name}>
+												<Link
+													className="text-muted-foreground text-sm transition-colors hover:text-foreground"
+													to={item.href}
+												>
+													{item.name}
+												</Link>
+											</li>
+										))}
+									</ul>
+								</div>
+							)
+						)}
+					</div>
+				</div>
+
+				{/* The "Enterprise" Faded Header Section */}
+				<div className="relative overflow-hidden border-t py-12">
+					<div className="relative z-10 flex flex-col items-center justify-between gap-4 md:flex-row">
+						<p className="text-muted-foreground text-xs">
+							© {currentYear} Rovo Desk Inc. All rights reserved.
+						</p>
+						<div className="flex gap-6 text-muted-foreground text-xs">
+							{data().bottomLinks.map((link) => (
+								<Link
+									className="hover:text-foreground"
+									key={link.label}
+									to={link.href}
+								>
+									{link.label}
+								</Link>
+							))}
+						</div>
+					</div>
+
+					{/* Background Faded Text */}
+					<h1 className="pointer-events-none absolute right-0 -bottom-6 left-0 select-none bg-linear-to-b from-foreground/5 to-transparent bg-clip-text text-center font-bold text-[12vw] text-transparent leading-none opacity-50 dark:from-white/10">
+						ROVO DESK
+					</h1>
+				</div>
 			</div>
 		</footer>
 	);

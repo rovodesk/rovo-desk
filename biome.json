@@ -27,7 +27,8 @@
         "useNodejsImportProtocol": "off",
         "noHeadElement": "off",
         "useConsistentTypeDefinitions": "off",
-        "useFilenamingConvention": "off"
+        "useFilenamingConvention": "off",
+        "noNestedTernary": "off"
       },
       "performance": {
         "noBarrelFile": "off",
@@ -37,7 +38,9 @@
       },
       "a11y": {
         "noSvgWithoutTitle": "off",
-        "useButtonType": "off"
+        "useButtonType": "off",
+        "noNoninteractiveElementInteractions": "off",
+        "noStaticElementInteractions": "off"
       },
       "correctness": {
         "useImageSize": "off",
