@@ -1,52 +1,53 @@
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@zero-heads-lab/design-system/components/ui/avatar";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { AnimatedList } from "@/components/animated-list";
 
 interface Item {
 	name: string;
-	description: string;
-	icon: string;
-	color: string;
+	email: string;
+	avatar: string;
 	time: string;
 }
 
 let notifications = [
 	{
 		name: "Payment received",
-		description: "Magic UI",
+		email: "user@okta.com",
 		time: "15m ago",
-		icon: "💸",
-		color: "#00C9A7",
+		avatar: Placeholder.avatar("user@okta.com"),
 	},
 	{
 		name: "User signed up",
-		description: "Magic UI",
+		email: "user@uber.com",
 		time: "10m ago",
-		icon: "👤",
-		color: "#FFB800",
+		avatar: Placeholder.avatar("user@uber.com"),
 	},
 	{
-		name: "New message",
-		description: "Magic UI",
+		name: "Orders are delayed",
+		email: "user@myntra.com",
 		time: "5m ago",
-		icon: "💬",
-		color: "#FF3D71",
+		avatar: Placeholder.avatar("user@myntra.com"),
 	},
 	{
-		name: "New event",
-		description: "Magic UI",
+		name: "New comment on your post",
+		email: "user@flipkart.com",
 		time: "2m ago",
-		icon: "🗞️",
-		color: "#1E86FF",
+		avatar: Placeholder.avatar("user@flipkart.com"),
 	},
 ];
 
 notifications = Array.from({ length: 10 }, () => notifications).flat();
 
-const Notification = ({ name, description, icon, color, time }: Item) => {
+const Notification = ({ name, email, avatar, time }: Item) => {
 	return (
 		<figure
 			className={cn(
-				"relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-2xl p-4",
+				"relative mx-auto min-h-fit w-full max-w-100 cursor-pointer overflow-hidden rounded-2xl p-4",
 				// animation styles
 				"transition-all duration-200 ease-in-out hover:scale-[103%]",
 				// light styles
@@ -56,23 +57,17 @@ const Notification = ({ name, description, icon, color, time }: Item) => {
 			)}
 		>
 			<div className="flex flex-row items-center gap-3">
-				<div
-					className="flex size-10 items-center justify-center rounded-2xl"
-					style={{
-						backgroundColor: color,
-					}}
-				>
-					<span className="text-lg">{icon}</span>
-				</div>
+				<Avatar>
+					<AvatarImage alt={name} src={avatar} />
+					<AvatarFallback>{name[0]}</AvatarFallback>
+				</Avatar>
 				<div className="flex flex-col overflow-hidden">
 					<figcaption className="flex flex-row items-center whitespace-pre font-medium text-lg dark:text-white">
 						<span className="text-sm sm:text-lg">{name}</span>
 						<span className="mx-1">·</span>
 						<span className="text-neutral-500 text-xs">{time}</span>
 					</figcaption>
-					<p className="font-normal text-sm dark:text-white/60">
-						{description}
-					</p>
+					<p className="font-normal text-sm dark:text-white/60">{email}</p>
 				</div>
 			</div>
 		</figure>

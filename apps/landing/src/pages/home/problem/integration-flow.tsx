@@ -38,12 +38,13 @@ export function IntegrationFlowAnimation({
 	return (
 		<div
 			className={cn(
-				"relative flex h-[500px] w-full items-center justify-center overflow-hidden p-10",
+				"relative flex h-125 w-full items-center justify-center overflow-hidden p-10",
 				className
 			)}
 			ref={containerRef}
 		>
 			<div className="flex size-full max-w-lg flex-row items-stretch justify-between gap-10">
+				{/* Icons */}
 				<div className="flex flex-col justify-center gap-2">
 					<Circle ref={div1Ref}>
 						<Icons.googleDrive />
@@ -61,6 +62,7 @@ export function IntegrationFlowAnimation({
 						<Icons.notion />
 					</Circle>
 				</div>
+				{/* UserIcon */}
 				<div className="flex flex-col justify-center">
 					<Circle className="size-16" ref={div6Ref}>
 						<Icons.logo />
@@ -75,32 +77,49 @@ export function IntegrationFlowAnimation({
 
 			<AnimatedBeam
 				containerRef={containerRef}
+				endYOffset={-20}
 				fromRef={div1Ref}
+				pathWidth={3}
 				toRef={div6Ref}
 			/>
 			<AnimatedBeam
 				containerRef={containerRef}
+				endYOffset={-8}
 				fromRef={div2Ref}
+				pathWidth={3}
+				startYOffset={5}
 				toRef={div6Ref}
 			/>
 			<AnimatedBeam
 				containerRef={containerRef}
 				fromRef={div3Ref}
+				pathWidth={3}
+				startYOffset={8}
 				toRef={div6Ref}
 			/>
 			<AnimatedBeam
 				containerRef={containerRef}
+				endYOffset={12}
 				fromRef={div4Ref}
+				pathWidth={3}
+				startYOffset={12}
 				toRef={div6Ref}
 			/>
+
 			<AnimatedBeam
 				containerRef={containerRef}
+				endYOffset={28}
 				fromRef={div5Ref}
+				pathWidth={3}
+				startYOffset={14}
 				toRef={div6Ref}
 			/>
+
+			{/* User Beam */}
 			<AnimatedBeam
 				containerRef={containerRef}
 				fromRef={div6Ref}
+				pathWidth={5}
 				toRef={div7Ref}
 			/>
 		</div>

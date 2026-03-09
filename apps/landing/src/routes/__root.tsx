@@ -1,10 +1,10 @@
 // import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 // import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { UIProvider } from "@zero-heads-lab/design-system";
 import { fonts } from "@zero-heads-lab/design-system/context/font";
 import appCss from "@zero-heads-lab/design-system/styles/default.css?url";
 import Footer from "@/components/footer";
-import Header from "@/components/header";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -37,10 +37,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className={`wrap-anywhere ${fonts} antialiased`}>
-				<Header />
-				{children}
-				<Footer />
-				{/* <TanStackDevtools
+				<UIProvider>
+					{children}
+					<Footer />
+					{/* <TanStackDevtools
 					config={{
 						position: "bottom-right",
 					}}
@@ -51,7 +51,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						},
 					]}
 				/> */}
-				<Scripts />
+					<Scripts />
+				</UIProvider>
 			</body>
 		</html>
 	);

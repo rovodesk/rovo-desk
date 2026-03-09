@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 
-export function Scribble({ color = "#00000" }: { color?: string }) {
+export function Scribble({ color = "#155efc" }: { color?: string }) {
 	return (
 		<svg height="90" viewBox="0 0 100 100" width="90">
 			<motion.circle

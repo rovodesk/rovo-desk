@@ -1,4 +1,4 @@
-import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import Logo from "@zero-heads-lab/design-system/components/logo";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
@@ -108,12 +108,6 @@ const Header = () => {
 	const [isSidebar, setSidebarOpen] = useState(false);
 	// const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	const router = useRouter();
-	const route = useLocation();
-
-	const postsRoute = route.href.includes("/post");
-	const baseRoute = router.basepath;
-
 	// Scroll Logic
 	useEffect(() => {
 		let lastScroll = 0;
@@ -165,8 +159,10 @@ const Header = () => {
 		},
 	} as const;
 
+	const router = useRouter();
+
 	return (
-		<div className={postsRoute ? "hidden" : "flex"}>
+		<div className="relative">
 			<AnimatePresence>
 				{isVisible && !isSidebar && (
 					<motion.header
@@ -181,24 +177,20 @@ const Header = () => {
 						<nav className="relative mx-auto max-w-7xl">
 							<div
 								className={cn(
-									"flex items-center justify-between rounded-xl border border-white/10 px-6 py-3 shadow-2xl",
-									baseRoute ? "bg-black/40 backdrop-blur-xl" : "bg-white"
+									"flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-6 py-3 shadow-2xl backdrop-blur-xl"
 								)}
 							>
 								{/* Left: Logo & Mobile Toggle */}
 								<div className="flex items-center justify-between gap-4">
 									<button
 										className={cn(
-											"transition-colors md:hidden",
-											baseRoute
-												? "text-white/70 hover:text-white"
-												: "text-black/70 hover:text-blue-600"
+											"text-white/70 transition-colors hover:text-white md:hidden"
 										)}
 										onClick={() => setSidebarOpen(true)}
 									>
 										<Menu className="size-6" />
 									</button>
-									<div className="group flex cursor-pointer items-center gap-2">
+									<div className="group flex cursor-pointer items-center gap-2 sm:hidden md:flex">
 										<Logo className="h-7 w-auto transition-transform group-hover:scale-110" />
 										<span className="font-bold text-lg text-white tracking-tight">
 											Rovodesk
@@ -391,10 +383,10 @@ const Sidebar = ({
 						transition={{ type: "spring", damping: 25, stiffness: 200 }}
 					>
 						<div className="mb-10 flex items-center justify-between">
-							{/* <Logo className="h-7 w-auto" />
+							<Logo className="h-7 w-auto" />
 							<span className="font-bold text-lg text-white tracking-tight">
 								Rovodesk
-							</span> */}
+							</span>
 							<button
 								className="rounded-full bg-white/5 p-2 text-white"
 								onClick={onClose}

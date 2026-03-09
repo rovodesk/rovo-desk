@@ -1,5 +1,6 @@
 import { motion, stagger, useAnimate } from "motion/react";
 import { useEffect } from "react";
+import { AvatarGroup } from "./avatar-group";
 import { ChatSequence } from "./chat-sequence";
 
 const words =
@@ -142,20 +143,7 @@ const LeftColumn = () => {
 					</span>
 				</button> */}
 
-				<div className="flex items-center">
-					<div className="flex -space-x-2">
-						{[1, 2, 3].map((i) => (
-							<div
-								className="h-8 w-8 rounded-full border-2 border-white bg-slate-200"
-								key={i}
-							/>
-						))}
-					</div>
-
-					<span className="ml-4 font-medium text-slate-400 text-sm">
-						+2k users
-					</span>
-				</div>
+				<AvatarGroup />
 			</motion.div>
 		</div>
 	);

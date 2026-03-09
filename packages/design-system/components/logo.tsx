@@ -1,12 +1,18 @@
 import { cn } from "../lib/utils";
 import type * as React from "react";
 
-type LogoProps = React.SVGProps<SVGSVGElement> & {
+interface LogoProps extends React.SVGProps<SVGSVGElement> {
     title?: string;
+    background?: boolean;
+    backgroundGraidentStart?: string;
+    backgroundGraidentEnd?: string;
 };
 
 export function Logo({
     className,
+    background,
+    backgroundGraidentStart = "#00bcff",
+    backgroundGraidentEnd = "#5A3BFF",
     title = "RovoDesk",
     ...props
 }: LogoProps) {
@@ -21,12 +27,14 @@ export function Logo({
         >
             {title && <title>{title}</title>}
 
-            <defs>
-                <linearGradient id="rovoGradient" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#7C5CFF" />
-                    <stop offset="100%" stopColor="#5A3BFF" />
-                </linearGradient>
-            </defs>
+            {background && (
+                <defs>
+                    <linearGradient id="rovoGradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stopColor={backgroundGraidentStart} />
+                        <stop offset="100%" stopColor={backgroundGraidentEnd} />
+                    </linearGradient>
+                </defs>
+            )}
 
             {/* Background */}
             <rect

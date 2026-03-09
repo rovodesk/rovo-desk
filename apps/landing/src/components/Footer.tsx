@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import Logo from "@zero-heads-lab/design-system/components/logo";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { useTheme } from "@zero-heads-lab/design-system/hooks/use-theme";
 import {
+	ArrowRight,
 	Github,
 	Linkedin,
 	MessageCircle,
@@ -86,9 +86,10 @@ export default function Footer() {
 									className="border! rounded-md! bg-muted! focus-visible:ring-1!"
 									placeholder="work@email.com"
 								/>
-								<Button className="rounded-lg px-6 font-medium text-md">
+								<button className="flex h-8 items-center justify-center whitespace-nowrap rounded-lg bg-blue-600 px-6 py-2 font-semibold text-sm text-white transition-colors hover:bg-blue-700">
 									Join
-								</Button>
+									<ArrowRight className="ml-1 h-3 w-3" />
+								</button>
 							</div>
 						</div>
 
