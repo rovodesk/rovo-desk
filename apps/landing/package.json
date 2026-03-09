@@ -2,9 +2,6 @@
   "name": "landing",
   "private": true,
   "type": "module",
-  "imports": {
-    "#/*": "./src/*"
-  },
   "scripts": {
     "gen:routes": "tsr generate",
     "dev": "vite dev --port 3000",
@@ -16,23 +13,29 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.26.0",
     "@number-flow/react": "^0.6.0",
+    "@t3-oss/env-core": "catalog:",
+    "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
     "@zero-heads-lab/design-system": "workspace:*",
+    "dotenv": "^17.3.1",
+    "graphql-request": "^7.4.0",
     "lucide-react": "catalog:",
     "motion": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
-    "tailwindcss": "catalog:tailwindcss"
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "tailwindcss": "catalog:tailwindcss",
     "@tailwindcss/vite": "catalog:tailwindcss",
     "@tanstack/react-devtools": "catalog:tanstack",
     "@tailwindcss/typography": "catalog:tailwindcss",
     "@tanstack/devtools-vite": "catalog:tanstack",
     "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tanstack/react-query-devtools": "catalog:tanstack",
     "@tanstack/router-cli": "catalog:tanstack",
     "@testing-library/dom": "catalog:testing",
     "@testing-library/react": "catalog:testing",

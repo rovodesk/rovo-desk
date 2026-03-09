@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
-import { resolveImage } from "@/utils/resolve-image";
+import { resolveImage } from "@/lib/utils/resolve-image";
 import { AuthorAvatar } from "../components/author-avatar";
 import { BlogCard } from "../components/blog-card";
 import { CategoryBadge } from "../components/category-badge";

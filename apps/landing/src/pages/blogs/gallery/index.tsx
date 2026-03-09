@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
-import { resolveImage } from "@/utils/resolve-image";
+import { resolveImage } from "@/lib/utils/resolve-image";
 import { BlogCard } from "../components/blog-card";
 import { CategoryBadge } from "../components/category-badge";
 import { blogPosts, type Category, categories } from "../data";

@@ -11,14 +11,13 @@ export const UIProvider = ({
 }: ThemeProviderProps) => (
 	<ThemeProvider {...properties}>
 		<ModalProvider>
-		<FontProvider>
-			<TooltipProvider>
-				{children}
-				<Toaster />
-				<ModalHost />
-			</TooltipProvider>
-		</FontProvider>
+			<FontProvider>
+				<TooltipProvider>
+					{children}
+					<Toaster />
+					<ModalHost />
+				</TooltipProvider>
+			</FontProvider>
 		</ModalProvider>
 	</ThemeProvider>
 );
-	

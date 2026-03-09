@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { resolveImage } from "@/utils/resolve-image";
+import { resolveImage } from "@/lib/utils/resolve-image";
 import { getFeaturedPost } from "../data";
 import { FeaturedPost } from "./featured-post";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'
 
@@ -59,44 +61,44 @@ export function ThemeProvider({
 
   const [theme, _setTheme] = useState<Theme>(decideTheme)
 
-const getSystemTheme = (): ResolvedTheme => {
-  if (typeof window === 'undefined') return 'light'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
-}
-
-const resolvedTheme = useMemo<ResolvedTheme>(() => {
-  if (theme === 'system') {
-    return getSystemTheme()
-  }
-  return theme
-}, [theme])
-
-
-useEffect(() => {
-  if (typeof window === 'undefined') return
-
-  const root = window.document.documentElement
-  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-  const applyTheme = (currentResolvedTheme: ResolvedTheme) => {
-    root.classList.remove('light', 'dark')
-    root.classList.add(currentResolvedTheme)
+  const getSystemTheme = (): ResolvedTheme => {
+    if (typeof window === 'undefined') return 'light'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
   }
 
-  const handleChange = () => {
+  const resolvedTheme = useMemo<ResolvedTheme>(() => {
     if (theme === 'system') {
-      const systemTheme = mediaQuery.matches ? 'dark' : 'light'
-      applyTheme(systemTheme)
+      return getSystemTheme()
     }
-  }
+    return theme
+  }, [theme])
 
-  applyTheme(resolvedTheme)
 
-  mediaQuery.addEventListener('change', handleChange)
-  return () => mediaQuery.removeEventListener('change', handleChange)
-}, [theme, resolvedTheme])
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const root = window.document.documentElement
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const applyTheme = (currentResolvedTheme: ResolvedTheme) => {
+      root.classList.remove('light', 'dark')
+      root.classList.add(currentResolvedTheme)
+    }
+
+    const handleChange = () => {
+      if (theme === 'system') {
+        const systemTheme = mediaQuery.matches ? 'dark' : 'light'
+        applyTheme(systemTheme)
+      }
+    }
+
+    applyTheme(resolvedTheme)
+
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [theme, resolvedTheme])
 
 
   const setTheme = (theme: Theme) => {

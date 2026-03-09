@@ -1,35 +1,35 @@
-# services:
-  payload:
-    image: node:18-alpine
-    ports:
-      - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "corepack enable && corepack prepare bun@latest --activate && bun i && bun run dev"
-    depends_on:
-      - mongo
-      # - postgres
-    env_file:
-      - .env
-  # --- CORE SERVICES ---
-  # postgres:
-  #   image: postgres:17
-  #   container_name: postgres
-  #   restart: unless-stopped
-  #   hostname: postgres
+services:
+  # payload:
+  #   image: node:18-alpine
   #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     POSTGRES_USER: user
-  #     POSTGRES_DB: zero-heads
-  #     POSTGRES_PASSWORD: Password
+  #     - '3000:3000'
   #   volumes:
-  #     - ./.docker/data/postgres/data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U user -d zero-heads"]
-  #     interval: 10s
+  #     - .:/home/node/app
+  #     - node_modules:/home/node/app/node_modules
+  #   working_dir: /home/node/app/
+  #   command: sh -c "corepack enable && corepack prepare bun@latest --activate && bun i && bun run dev"
+  #   depends_on:
+  #     - mongo
+  #     # - postgres
+  #   env_file:
+  #     - .env
+  # --- CORE SERVICES ---
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: zero-heads
+      POSTGRES_PASSWORD: Password
+    volumes:
+      - ./.docker/data/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d zero-heads"]
+      interval: 10s
 
   # mongodb:
   #   image: mongo:8

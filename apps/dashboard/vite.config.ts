@@ -1,5 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
-import viteReact from "@vitejs/plugin-react";
+import viteReact from "@vitejs/plugin-react-swc";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";

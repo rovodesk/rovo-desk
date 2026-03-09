@@ -1,12 +1,21 @@
 // import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+
+import type { QueryClient } from "@tanstack/react-query";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+	Scripts,
+} from "@tanstack/react-router";
 // import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { fonts } from "@zero-heads-lab/design-system/context/font";
 import appCss from "@zero-heads-lab/design-system/styles/default.css?url";
 import Footer from "@/components/footer";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+}>()({
 	head: () => ({
 		meta: [
 			{
@@ -27,8 +36,16 @@ export const Route = createRootRoute({
 			},
 		],
 	}),
-	shellComponent: RootDocument,
+	component: RootComponent,
 });
+
+function RootComponent() {
+	return (
+		<RootDocument>
+			<Outlet />
+		</RootDocument>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (

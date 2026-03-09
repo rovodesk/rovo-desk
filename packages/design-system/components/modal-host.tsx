@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Dialog,
 	DialogContent,
@@ -32,7 +34,7 @@ export const ModalHost = () => {
 							}
 						}}
 					>
-						{modal.content}
+						<modal.component />
 					</DialogContent>
 				</Dialog>
 			))}
