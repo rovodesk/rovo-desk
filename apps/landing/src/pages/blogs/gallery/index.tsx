@@ -40,10 +40,11 @@ const PostsGallery = () => {
 				{/* Categories */}
 				<div className="flex flex-wrap items-center gap-2">
 					<motion.button
-						className={`inline-flex items-center rounded-full px-4 py-1.5 font-semibold text-xs transition-all duration-200 ${activeCategory === "All"
-							? "bg-blue-600 shadow-blue-600/20 shadow-sm"
-							: "bg-muted text-muted-foreground hover:bg-muted/80"
-							}`}
+						className={`inline-flex items-center rounded-full px-4 py-1.5 font-semibold text-xs transition-all duration-200 ${
+							activeCategory === "All"
+								? "bg-blue-600 shadow-blue-600/20 shadow-sm"
+								: "bg-muted text-muted-foreground hover:bg-muted/80"
+						}`}
 						onClick={() => setActiveCategory("All")}
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.95 }}
