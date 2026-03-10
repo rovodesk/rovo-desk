@@ -80,9 +80,9 @@ export function filterSidebarConfig(
 
 		quickLinks: config.quickLinks
 			? {
-				primary: filterNavLinks(config.quickLinks.primary, role),
-				secondary: filterNavLinks(config.quickLinks.secondary, role),
-			}
+					primary: filterNavLinks(config.quickLinks.primary, role),
+					secondary: filterNavLinks(config.quickLinks.secondary, role),
+				}
 			: undefined,
 	};
 }

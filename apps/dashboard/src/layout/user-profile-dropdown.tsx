@@ -88,8 +88,9 @@ function UserProfileDropdown() {
 
 							{/* Status indicator */}
 							<span
-								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${isUserAvailable ? "bg-green-500" : "bg-slate-500"
-									}`}
+								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${
+									isUserAvailable ? "bg-green-500" : "bg-slate-500"
+								}`}
 							/>
 						</div>
 					</DropdownMenuTrigger>
@@ -113,8 +114,9 @@ function UserProfileDropdown() {
 
 								{/* Status indicator */}
 								<span
-									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${isUserAvailable ? "bg-green-500" : "bg-slate-500"
-										}`}
+									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${
+										isUserAvailable ? "bg-green-500" : "bg-slate-500"
+									}`}
 								/>
 							</div>
 

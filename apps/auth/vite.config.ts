@@ -5,22 +5,22 @@ import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
-  plugins: [
-    // this is the plugin that enables path aliases
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
-    tailwindcss(),
-    viteReact(),
-  ],
-  server: {
-    port: 3001,
-  },
+	resolve: {
+		alias: {
+			"@": fileURLToPath(new URL("./src", import.meta.url)),
+		},
+	},
+	plugins: [
+		// this is the plugin that enables path aliases
+		viteTsConfigPaths({
+			projects: ["./tsconfig.json"],
+		}),
+		tailwindcss(),
+		viteReact(),
+	],
+	server: {
+		port: 3001,
+	},
 });
 
 export default config;

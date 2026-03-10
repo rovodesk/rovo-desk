@@ -27,7 +27,7 @@ export const accessControl = createAccessControl(permissions);
 export const admin = accessControl.newRole({
 	...defaultStatements,
 	...adminAc.statements,
-	apiKey: ["update", "delete"]
+	apiKey: ["update", "delete"],
 });
 
 // ─────────────────────────────────────────────

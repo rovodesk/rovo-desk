@@ -200,7 +200,7 @@ export function createAuth(namespace: KVNamespace) {
 			useSecureCookies: process.env.NODE_ENV === "production", // FALSE on HTTP
 			crossSubDomainCookies: {
 				enabled: true,
-				domain: 'localhost',
+				domain: "localhost",
 			},
 			// cookies: {
 			// 	session_token: {

@@ -505,7 +505,9 @@ export const jwksSchema = authSchema.table("jwks", {
 });
 
 export const ssoProvider = authSchema.table("ssoProvider", {
-	id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
 	issuer: text("issuer").notNull(),
 	domain: text("domain").notNull(),
 	domainVerified: boolean().notNull(),
@@ -513,5 +515,7 @@ export const ssoProvider = authSchema.table("ssoProvider", {
 	samlConfig: text("samlConfig").notNull(),
 	userId: text("userId").references(() => user.id, { onDelete: "cascade" }),
 	providerId: text("providerId").notNull(),
-	organizationId: text("organizationId").references(() => organization.id, { onDelete: "cascade" }),
+	organizationId: text("organizationId").references(() => organization.id, {
+		onDelete: "cascade",
+	}),
 });

@@ -96,6 +96,6 @@ export const EmailSignInForm = ({ isAnyLoading }: EmailSignInFormProps) => {
 			</form.AppForm>
 		</form>
 	);
-}
+};
 
 export default EmailSignInForm;

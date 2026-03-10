@@ -3,26 +3,25 @@ import { getErrorStatus } from "@zero-heads-lab/shared/utils";
 import { AxiosError } from "axios";
 
 export function handleMutationError(error: unknown) {
-    // eslint-disable-next-line no-console
-    console.log(error);
+	// eslint-disable-next-line no-console
+	console.log(error);
 
-    let errMsg = "Something went wrong!";
-    const errorStatus = getErrorStatus(error);
+	let errMsg = "Something went wrong!";
+	const errorStatus = getErrorStatus(error);
 
-    if (errorStatus === 204) {
-        errMsg = "Content not found.";
-    }
+	if (errorStatus === 204) {
+		errMsg = "Content not found.";
+	}
 
-    if (errorStatus === 500) {
-        errMsg = "Internal server error.";
-    }
+	if (errorStatus === 500) {
+		errMsg = "Internal server error.";
+	}
 
-    if (error instanceof AxiosError) {
-        errMsg = error.response?.data.title;
-    }
+	if (error instanceof AxiosError) {
+		errMsg = error.response?.data.title;
+	}
 
-    toast.error("Something went wrong!", {
-        description: errMsg,
-    });
+	toast.error("Something went wrong!", {
+		description: errMsg,
+	});
 }
-
