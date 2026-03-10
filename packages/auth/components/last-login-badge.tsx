@@ -68,25 +68,30 @@ export function LastLoginBadge({
 		<Badge
 			className={cn(
 				"relative flex items-center transition-all duration-300",
-				"border-none shadow-sm",
+				"border border-white/20",
+				"bg-white/10 backdrop-blur-md",
+				"text-white shadow-sm",
+				"hover:bg-white/15",
 				compact ? "h-6 gap-1.5 px-2" : "h-8 gap-2 px-3",
-				config?.className,
 				className
 			)}
-			variant="outline"
 		>
-			{/* Soft Glow Background Overlay */}
-			<div className="pointer-events-none absolute inset-0 rounded-full opacity-[0.03]" />
+			{/* Glow overlay */}
+			<div className="pointer-events-none absolute inset-0 rounded-full bg-white/5 opacity-60 dark:bg-white/5" />
 
-			{/* Icon - Scaled to fit modern proportions */}
 			{!compact && Icon && (
-				<Icon className={cn("shrink-0", compact ? "h-3 w-3" : "h-3.5 w-3.5")} />
+				<Icon
+					className={cn(
+						"shrink-0 text-white/80",
+						compact ? "h-3 w-3" : "h-3.5 w-3.5"
+					)}
+				/>
 			)}
 
 			<div className="flex items-baseline gap-1.5">
 				<span
 					className={cn(
-						"font-semibold tracking-tight",
+						"font-semibold text-white tracking-tight",
 						compact ? "text-[10px]" : "text-xs"
 					)}
 				>

@@ -10,6 +10,8 @@
   "dependencies": {
     "@better-auth/api-key": "^1.5.1",
     "@better-auth/passkey": "^1.5.1",
+    "@better-auth/scim": "^1.5.4",
+    "@better-auth/sso": "^1.5.4",
     "@better-auth/stripe": "^1.5.1",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",

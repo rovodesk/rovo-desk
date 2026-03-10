@@ -1,11 +1,8 @@
 import { Hono } from "hono";
-import { corsMiddleware } from "../middlewares/cors.middleware";
 import { documenttMiddleware } from "../middlewares/document.middleware";
 import type { Bindings } from "../types";
 
 export const documentRoute = new Hono<{ Bindings: Bindings }>();
-
-documentRoute.use("*", corsMiddleware);
 
 documentRoute
 	.all("/:documentId?", async (c) => {

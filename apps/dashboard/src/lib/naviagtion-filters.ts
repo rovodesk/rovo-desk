@@ -59,8 +59,10 @@ function filterNavLinks<T extends NavLink>(
 
 export function filterSidebarConfig(
 	config: SidebarConfig,
-	role: AuthRole
+	role: AuthRole | null
 ): SidebarConfig {
+	if (!role) return config;
+
 	return {
 		...config,
 
@@ -78,9 +80,9 @@ export function filterSidebarConfig(
 
 		quickLinks: config.quickLinks
 			? {
-					primary: filterNavLinks(config.quickLinks.primary, role),
-					secondary: filterNavLinks(config.quickLinks.secondary, role),
-				}
+				primary: filterNavLinks(config.quickLinks.primary, role),
+				secondary: filterNavLinks(config.quickLinks.secondary, role),
+			}
 			: undefined,
 	};
 }

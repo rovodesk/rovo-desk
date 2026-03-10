@@ -9,6 +9,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AuthProvider, authClient } from "@zero-heads-lab/auth/client";
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { UIProvider } from "@zero-heads-lab/design-system";
+import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { AxiosError } from "axios";
@@ -16,8 +17,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
-import { AppErrorBoundary } from "@/lib/error-boundary";
-import { handleServerError } from "@/lib/utils";
+import { handleMutationError } from "@/lib/utils/error";
 import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
 
@@ -29,7 +29,6 @@ export const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			retry: (failureCount, error) => {
-				// eslint-disable-next-line no-console
 				if (import.meta.env.DEV) console.log({ failureCount, error });
 
 				if (failureCount >= 0 && import.meta.env.DEV) return false;
@@ -45,7 +44,7 @@ export const queryClient = new QueryClient({
 		},
 		mutations: {
 			onError: (error) => {
-				handleServerError(error);
+				handleMutationError(error);
 
 				if (error instanceof AxiosError && error.response?.status === 304) {
 					toast.error("Content not modified!");

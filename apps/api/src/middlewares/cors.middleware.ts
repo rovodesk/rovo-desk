@@ -15,14 +15,13 @@ export const corsMiddleware: MiddlewareHandler<{
 			const allowed = getAllowedOrigins(c);
 			return allowed.includes(requestOrigin) ? requestOrigin : null;
 		},
-		// origin: "*",
 		allowHeaders: [
 			"Content-Type",
 			"Authorization",
 			"x-csrf-token",
 			"x-access-key",
 		],
-		allowMethods: ["POST", "GET", "OPTIONS"],
+		allowMethods: ["POST", "GET", "OPTIONS", "PUT", "DELETE", "PATCH"],
 		exposeHeaders: ["Content-Length"],
 		maxAge: 600,
 		credentials: true,

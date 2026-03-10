@@ -1,5 +1,7 @@
 import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
+import { scim } from "@better-auth/scim";
+import { sso } from "@better-auth/sso";
 import { stripe } from "@better-auth/stripe";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import type { KvCacheStore } from "@zero-heads-lab/cache";
@@ -25,9 +27,10 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-import { accessControl, PLATFORM_ROLES, Roles } from "../access-control";
+import { ADMIN_ROLES, accessControl, Roles } from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
+import { SAML_CONFIG } from "./sso-config";
 
 export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 	// const products = getProducts();
@@ -173,7 +176,7 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				...Roles,
 			},
 			defaultRole: "anonymous",
-			adminRoles: [...PLATFORM_ROLES],
+			adminRoles: [...ADMIN_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
@@ -196,7 +199,7 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				},
 			},
 			jwt: {
-				issuer: AUTH_CONFIG.JWT_ISSUER,
+				issuer: keys.BETTER_AUTH_URL,
 				expirationTime: "1h",
 				getSubject: (session) => session.user.id,
 				definePayload: ({ user }) => ({
@@ -238,5 +241,15 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 				},
 			},
 		}),
+		sso({
+			defaultSSO: [
+				{
+					domain: keys.BETTER_AUTH_URL,
+					providerId: "sso",
+					samlConfig: SAML_CONFIG,
+				},
+			],
+		}),
+		scim(),
 	];
 };

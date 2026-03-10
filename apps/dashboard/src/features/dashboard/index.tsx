@@ -1,5 +1,5 @@
 import { IconPackageExport } from "@tabler/icons-react";
-import { determineAccessRole } from "@zero-heads-lab/auth/helpers";
+import { determineAuthRole } from "@zero-heads-lab/auth/helpers";
 import { useOrganization, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
@@ -43,7 +43,7 @@ export function Dashboard() {
 
 	const name = organization?.name ?? "Unknown";
 	const plan = findPlan(organization?.metadata?.plan ?? "basic");
-	const role = determineAccessRole(session?.user?.role);
+	const role = determineAuthRole(session?.user?.role);
 
 	const isLoading = isSessionLoading || isOrganizationLoading;
 	if (isLoading) {

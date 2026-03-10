@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { capitalize, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useEffect } from "react";
 import { keys } from "../client";
@@ -54,6 +55,21 @@ export function useSignIn(options?: UseSignInOptions) {
 			authClient.signIn.magicLink({
 				email,
 				name: capitalize(Placeholder.name(2, " ")),
+				callbackURL,
+			}),
+		onSuccess: () => {
+			toast.success("Email Sent", {
+				description: "Login link sent to your email inbox.",
+			});
+			handleSessionSync;
+		},
+		onError: (err) => options?.onError?.(err),
+	});
+
+	const ssoMutation = useMutation<unknown, Error, { email: string }>({
+		mutationFn: ({ email }) =>
+			authClient.signIn.sso({
+				email,
 				callbackURL,
 			}),
 		onSuccess: handleSessionSync,
@@ -116,12 +132,14 @@ export function useSignIn(options?: UseSignInOptions) {
 	const loading =
 		oauthMutation.isPending ||
 		magicLinkMutation.isPending ||
-		passkeyMutation.isPending;
+		passkeyMutation.isPending ||
+		ssoMutation.isPending;
 
 	const error =
 		oauthMutation.error ||
 		magicLinkMutation.error ||
 		passkeyMutation.error ||
+		ssoMutation.error ||
 		null;
 
 	const refetch = () =>
@@ -131,8 +149,16 @@ export function useSignIn(options?: UseSignInOptions) {
 
 	return {
 		signInWithOAuth: oauthMutation.mutate,
+		signInWithOAuthAsync: oauthMutation.mutateAsync,
+
 		signInWithMagicLink: magicLinkMutation.mutate,
+		signInWithMagicLinkAsync: magicLinkMutation.mutateAsync,
+
 		signInWithPasskey: passkeyMutation.mutate,
+		signInWithPasskeyAsync: passkeyMutation.mutateAsync,
+
+		signInWithSSO: ssoMutation.mutate,
+		signInWithSSOAsync: ssoMutation.mutateAsync,
 
 		// Last login
 		lastLoginMethod: lastLoginQuery.data ?? null,

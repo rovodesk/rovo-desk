@@ -36,7 +36,7 @@ import * as Y from "yjs";
 import { avatars } from "@/data/active-avatars";
 import { MainContent } from "@/layout/main-content";
 import { partyKitProvider } from "@/lib/partykit";
-import { pickUserColor } from "@/lib/utils";
+import { pickUserColor } from "@/lib/utils/pick-color";
 import { ActiveAvatars } from "./_components/active-avatars";
 
 const useKnowledgeById = (id: string) => {

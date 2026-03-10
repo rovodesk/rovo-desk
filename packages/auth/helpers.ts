@@ -1,16 +1,6 @@
 import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
-import { z } from "zod";
-import type {
-	AuthRole,
-	OrganizationRole,
-	PlatformRole,
-} from "./access-control";
-import {
-	AUTH_ROLES,
-	ORGANIZATION_MEMBER_ROLES,
-	PLATFORM_ROLES,
-} from "./access-control";
+import type { AuthRole } from "./access-control";
 import { AUTH_CONFIG } from "./config";
 import type {
 	AuthClient,
@@ -24,9 +14,9 @@ import type {
  */
 export type SessionValidation =
 	| {
-			valid: false;
-			reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
-	  }
+		valid: false;
+		reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
+	}
 	| { valid: true; session: NonNullable<Session> };
 
 /**
@@ -58,81 +48,6 @@ export function validateSession(session: Session | null): SessionValidation {
 	}
 
 	return { valid: true, session };
-}
-
-/**
- * Platform-level access (superAdmin, moderator, support)
- */
-export function hasPlatformAccessRole(role: unknown): role is PlatformRole {
-	try {
-		const parsed = z.enum(PLATFORM_ROLES).parse(role);
-		return PLATFORM_ROLES.includes(parsed);
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Organization-level access (owner/admin/member + platform roles)
- */
-export function hasOrganizationAccessRole(
-	role: unknown
-): role is OrganizationRole | PlatformRole {
-	try {
-		const parsed = z.enum(ORGANIZATION_MEMBER_ROLES).parse(role);
-		return ORGANIZATION_MEMBER_ROLES.includes(parsed);
-	} catch {
-		return false;
-	}
-}
-
-/**
- * User has org access AND an active organization
- */
-export function hasOrganizationAccess(session: Session | null): boolean {
-	if (!session) return false;
-	if (!session.session.activeOrganizationId) return false;
-
-	return hasOrganizationAccessRole(session.user.role);
-}
-
-/**
- * User has any access at all (platform OR org)
- */
-export function hasAccess(session: Session | null): boolean {
-	if (!session) return false;
-
-	return (
-		hasPlatformAccessRole(session.user.role) || hasOrganizationAccess(session)
-	);
-}
-
-/**
- * Determine the access role for a user
- *
- * @param role
- * @returns {AuthRole}
- */
-export function determineAccessRole(role: unknown): AuthRole {
-	// 1. Normalize Better Auth internal roles to our AuthRole types
-	let normalizedRole = role;
-	if (role === "owner") normalizedRole = "owner";
-	if (role === "admin") normalizedRole = "admin";
-	if (role === "member") normalizedRole = "member";
-
-	if (hasPlatformAccessRole(normalizedRole)) {
-		return normalizedRole;
-	}
-
-	if (hasOrganizationAccessRole(normalizedRole)) {
-		return normalizedRole;
-	}
-
-	return "anonymous";
-}
-
-export function isAuthRole(value: unknown): value is AuthRole {
-	return AUTH_ROLES.includes(value as AuthRole);
 }
 
 export function getDeviceInfo(userAgent?: string | null) {
@@ -221,3 +136,18 @@ export async function validateAuthToken(token: string): Promise<JWTPayload> {
 		throw new Error("Unauthorized");
 	}
 }
+
+export const determineAuthRole = (role?: string): AuthRole | null => {
+	if (!role) return null;
+
+	switch (role.trim().toLowerCase()) {
+		case "owner":
+			return "owner";
+		case "admin":
+			return "admin";
+		case "member":
+			return "member";
+		default:
+			return null;
+	}
+};

@@ -1,6 +1,6 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
+// import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+// import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "@zero-heads-lab/design-system/components/ui/toast";
 import { AppNavigationProgress } from "@/components/app-nav-progress";
 import { GeneralError } from "@/features/errors/general-error";
@@ -15,7 +15,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 				<Outlet />
 				<Toaster />
 
-				{import.meta.env.DEV && (
+				{/* {import.meta.env.DEV && (
 					<>
 						<TanStackDevtools
 							config={{ position: "bottom-left" }}
@@ -29,9 +29,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 						{/* <ReactQueryDevtools
 							buttonPosition="top-left"
 							initialIsOpen={false}
-						/> */}
+						/> 
 					</>
-				)}
+				// )} */}
 			</>
 		);
 	},
@@ -39,3 +39,4 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	notFoundComponent: NotFoundError,
 	errorComponent: GeneralError,
 });
+

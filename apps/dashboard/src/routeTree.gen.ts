@@ -22,7 +22,6 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_authenticated/knowledge-base/index'
 import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
 import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authenticated/settings/widget'
 import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
@@ -100,11 +99,6 @@ const AuthenticatedFunnelsIndexRoute =
     path: '/funnels/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSettingsWorkspaceRoute =
   AuthenticatedSettingsWorkspaceRouteImport.update({
     id: '/workspace',
@@ -171,7 +165,6 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
-  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -193,7 +186,6 @@ export interface FileRoutesByTo {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
-  '/admin': typeof AuthenticatedAdminIndexRoute
   '/funnels': typeof AuthenticatedFunnelsIndexRoute
   '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -218,7 +210,6 @@ export interface FileRoutesById {
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/_authenticated/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
-  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -243,7 +234,6 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/settings/widget'
     | '/settings/workspace'
-    | '/admin/'
     | '/funnels/'
     | '/knowledge-base/'
     | '/settings/'
@@ -265,7 +255,6 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/settings/widget'
     | '/settings/workspace'
-    | '/admin'
     | '/funnels'
     | '/knowledge-base'
     | '/settings'
@@ -289,7 +278,6 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/security'
     | '/_authenticated/settings/widget'
     | '/_authenticated/settings/workspace'
-    | '/_authenticated/admin/'
     | '/_authenticated/funnels/'
     | '/_authenticated/knowledge-base/'
     | '/_authenticated/settings/'
@@ -398,13 +386,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFunnelsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/settings/workspace': {
       id: '/_authenticated/settings/workspace'
       path: '/workspace'
@@ -499,7 +480,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInboxRoute: typeof AuthenticatedInboxRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedFunnelsIndexRoute: typeof AuthenticatedFunnelsIndexRoute
   AuthenticatedKnowledgeBaseIndexRoute: typeof AuthenticatedKnowledgeBaseIndexRoute
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -510,7 +490,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInboxRoute: AuthenticatedInboxRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedFunnelsIndexRoute: AuthenticatedFunnelsIndexRoute,
   AuthenticatedKnowledgeBaseIndexRoute: AuthenticatedKnowledgeBaseIndexRoute,
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute:

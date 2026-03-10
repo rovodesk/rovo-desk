@@ -11,12 +11,11 @@ export { default as Document } from "./lib/partykit/document";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-app.use("/rpc/*", corsMiddleware, rpcMiddleware);
+app.use("*", corsMiddleware);
+app.use("/rpc/*", rpcMiddleware);
 
-//TODO: Add cors middleware to these routes
 app.route("/ws/document", documentRoute);
 app.route("/auth", authRoute);
-
 app.route("/widget", widgetRoute);
 
 export default app;

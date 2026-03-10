@@ -20,7 +20,7 @@ const config = defineConfig({
 	],
 	server: {
 		host: true,
-		port: 3001,
+		port: 3002,
 		strictPort: true,
 		allowedHosts: ["dashboard.zeroheads.local"],
 	},

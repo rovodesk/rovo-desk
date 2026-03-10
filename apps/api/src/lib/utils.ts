@@ -5,7 +5,7 @@ import type { z } from "zod";
 import type { Bindings } from "../types";
 
 export const getAllowedOrigins = (c: Context<{ Bindings: Bindings }>) => {
-	return extractOrigins(c.env.ALLOWED_ORIGINS);
+	return extractOrigins(c.env.ALLOWED_ORIGINS || "");
 };
 
 export async function validateJson<T extends z.ZodTypeAny>(

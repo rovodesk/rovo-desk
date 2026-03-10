@@ -77,22 +77,22 @@ services:
   #     - ./.docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
 
   # --- MANAGEMENT UIs ---
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   container_name: pgadmin
-  #   restart: unless-stopped
-  #   hostname: pgadmin
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #     PGADMIN_CONFIG_SERVER_MODE: "False"
-  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-  #   volumes:
-  #     - ./.docker/pgadmin/servers.json:/pgadmin4/servers.json
-  #   depends_on:
-  #     - postgres
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    hostname: pgadmin
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - ./.docker/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
       
   # mongo-express:
   #   image: mongo-express

@@ -23,7 +23,7 @@ import {
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { AUTH_ROLES } from "@/access-control";
+import { Roles } from "@/access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
@@ -34,7 +34,6 @@ export function createAuth(namespace: KVNamespace) {
 	const database = createDatabase();
 
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
-	console.log(trustedAuthOrigins);
 
 	const Plugins = AuthPlugins(cacheStore, database);
 
@@ -199,27 +198,27 @@ export function createAuth(namespace: KVNamespace) {
 				disableIpTracking: false, // Enable IP Tracking [SECURITY]
 			},
 			useSecureCookies: process.env.NODE_ENV === "production", // FALSE on HTTP
-			// crossSubDomainCookies: {
-			// 	enabled: true,
-			// 	domain: `dashboard.${AUTH_CONFIG.DOMAIN}`,
+			crossSubDomainCookies: {
+				enabled: true,
+				domain: 'localhost',
+			},
+			// cookies: {
+			// 	session_token: {
+			// 		name: AUTH_CONFIG.SESSION_TOKEN_NAME,
+			// 		attributes: {
+			// 			httpOnly: true,
+			// 			path: "/",
+			// 			sameSite: "lax",
+			// 			secure: process.env.NODE_ENV === "production", // TRUE on HTTPS
+			// 		},
+			// 	},
 			// },
-			cookies: {
-				session_token: {
-					name: AUTH_CONFIG.SESSION_TOKEN_NAME,
-					attributes: {
-						httpOnly: true,
-						path: "/",
-						sameSite: "lax",
-						secure: process.env.NODE_ENV === "production", // TRUE on HTTPS
-					},
-				},
-			},
-			defaultCookieAttributes: {
-				httpOnly: true,
-				secure: process.env.NODE_ENV === "production",
-				sameSite: "lax",
-			},
-			cookiePrefix: AUTH_CONFIG.COOKIE_PREFIX,
+			// defaultCookieAttributes: {
+			// 	httpOnly: true,
+			// 	secure: process.env.NODE_ENV === "production",
+			// 	sameSite: "lax",
+			// },
+			// cookiePrefix: AUTH_CONFIG.COOKIE_PREFIX,
 		},
 		logger: {
 			disabled: false,
@@ -374,7 +373,7 @@ export function createAuth(namespace: KVNamespace) {
 							data: {
 								...user,
 								image: avatar,
-								role: AUTH_ROLES.find((role) => role === "owner"),
+								role: Roles.owner,
 							},
 						};
 					},
