@@ -47,10 +47,19 @@ export const member = accessControl.newRole({
 	...memberAc.statements,
 });
 
+export const anonymous = accessControl.newRole({
+	organization: [],
+	member: [],
+	invitation: [],
+	team: [],
+	ac: [],
+})
+
 export const Roles = {
 	admin,
 	owner,
 	member,
+	anonymous
 } as const;
 
 export type AuthRole = keyof typeof Roles;
@@ -58,3 +67,5 @@ export type AuthRole = keyof typeof Roles;
 export const ORGANIZATION_MEMBER_ROLES = ["owner", "member"];
 
 export const ADMIN_ROLES = ["admin"];
+
+export const DEFAULT_ROLE = "anonymous"

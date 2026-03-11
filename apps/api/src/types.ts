@@ -1,11 +1,15 @@
+import type { Analytics } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 
 export type Bindings = {
-	AUTH_CACHE: KVNamespace;
+	CACHE_STORE: KVNamespace;
 	DATABASE: Database;
 	KNOWLEDGE_BASE: DurableObjectNamespace;
 	CHAT_ROOM: DurableObjectNamespace;
-	SDK_CACHE: KVNamespace;
-	SDK_JWT_SECRET: string;
 	ALLOWED_ORIGINS: string;
+	POSTHOG_PROJECT_API_KEY: string;
+};
+
+export type Variables = {
+	analytics: Analytics;
 };

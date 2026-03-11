@@ -7,7 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!packages/design-system", "!**/*.jsonc", "!examples/**/*"]
+    "includes": [
+      "!packages/design-system",
+      "!**/*.jsonc",
+      "!examples/**/*",
+      "!**/*.d.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -22,6 +27,7 @@
         "useIterableCallbackReturn": "off"
       },
       "style": {
+        "noParameterAssign": "off",
         "noNonNullAssertion": "off",
         "useBlockStatements": "off",
         "useNodejsImportProtocol": "off",

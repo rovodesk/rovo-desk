@@ -5,12 +5,33 @@ import {
 	getWorkspaceProfile,
 	loadOnboardingProgress,
 	persistOnboardingProgress,
-	toogleUserAway,
+	toogleUserActive,
 	updateWorkspaceSettings,
 } from "./procedures/profile.procedure";
 import { getWidget, updateWidgetSettings } from "./procedures/widget.procedure";
 
-export const RouterContract = {
+export const RouterContract: {
+	health: typeof healthProcedure;
+	profile: {
+		onboarding: {
+			load: typeof loadOnboardingProgress;
+			persist: typeof persistOnboardingProgress;
+			clear: typeof clearOnboardingProgress;
+		};
+		workspace: {
+			get: typeof getWorkspaceProfile;
+			update: typeof updateWorkspaceSettings;
+		};
+		user: {
+			get: typeof getUserProfile;
+			toggleActive: typeof toogleUserActive;
+		};
+	};
+	widget: {
+		updateSettings: typeof updateWidgetSettings;
+		get: typeof getWidget;
+	};
+} = {
 	health: healthProcedure,
 	profile: {
 		onboarding: {
@@ -24,7 +45,7 @@ export const RouterContract = {
 		},
 		user: {
 			get: getUserProfile,
-			toggleAway: toogleUserAway,
+			toggleActive: toogleUserActive,
 		},
 	},
 	widget: {

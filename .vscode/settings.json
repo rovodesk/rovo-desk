@@ -32,7 +32,8 @@
   "prettier.enable": false,
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.associations": {
-    "*.css": "tailwindcss"
+    "*.css": "tailwindcss",
+		"**/wrangler.json": "jsonc"
   },
   "todo-tree.general.tags": ["TODO", "FIXME", "BUG", "FUTURE"],
   "todo-tree.highlights.defaultHighlight": {
@@ -92,5 +93,6 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "postman.settings.dotenv-detection-notification-visibility": false,
-  "reactSnippets.settings.typescript": true
+  "reactSnippets.settings.typescript": true,
+  	
 }

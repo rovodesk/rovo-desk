@@ -5,10 +5,10 @@ export const keys = createEnv({
 	clientPrefix: "VITE_",
 	client: {
 		VITE_SIGN_OUT_REDIRECT_URL: z.string(),
-		VITE_SIGN_IN_CALLBACK_URL: z.string(),
+		VITE_SIGN_IN_CALLBACK_URL: z.string().optional(),
 		VITE_ADMIN_SIGN_IN_CALLBACK_URL: z.string().optional(),
 		VITE_AUTH_SERVER_URL: z.string(),
-		VITE_AUTH_SERVER_BASE_PATH: z.string(),
+		VITE_AUTH_SERVER_BASE_PATH: z.string()
 	},
 	runtimeEnv: {
 		VITE_SIGN_OUT_REDIRECT_URL: import.meta.env.VITE_SIGN_OUT_REDIRECT_URL,

@@ -1,5 +1,4 @@
 import { ORPCError } from "@orpc/server";
-import { createDatabase } from "@zero-heads-lab/database";
 import { base } from "../context";
 
 export const BaseMiddleware = base.middleware(({ context, next }) => {
@@ -9,12 +8,26 @@ export const BaseMiddleware = base.middleware(({ context, next }) => {
 			message: "No headers provided",
 		});
 	}
+	const database = context.database;
+	if (!database) {
+		// This should NEVER happen if wired correctly
+		throw new ORPCError("INTERNAL_SERVER_ERROR", {
+			message: "Database not initialized",
+		});
+	}
 
-	const database = createDatabase();
-	context.database = database;
+	const analytics = context.analytics;
+	if (!analytics) {
+		// This should NEVER happen if wired correctly
+		throw new ORPCError("INTERNAL_SERVER_ERROR", {
+			message: "Analytics not initialized",
+		});
+	}
+
 	return next({
 		context: {
 			database,
-		},
+			analytics
+		}
 	});
 });

@@ -7,7 +7,6 @@ import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
 	organization as orgSchema,
-	session as sessionSchema,
 	user as userSchema,
 } from "../../drizzle/schemas/auth.schema";
 import {
@@ -26,27 +25,6 @@ export async function markUserAsDeleted(
 			role: "deleted",
 		})
 		.where(eq(userSchema.id, params.userId));
-}
-
-export async function deleteSession(
-	database: Database,
-	params: { sessionId: string }
-) {
-	return await database
-		.delete(sessionSchema)
-		.where(eq(sessionSchema.id, params.sessionId));
-}
-
-export async function markSessionAsRevoked(
-	database: Database,
-	params: { sessionId: string }
-) {
-	return await database
-		.update(sessionSchema)
-		.set({
-			revokedAt: new Date(),
-		})
-		.where(eq(sessionSchema.id, params.sessionId));
 }
 
 export async function createNewUserWithProfileTX(

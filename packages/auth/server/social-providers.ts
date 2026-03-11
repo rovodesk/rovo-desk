@@ -1,4 +1,5 @@
 import type {
+	CognitoProfile,
 	GithubProfile,
 	GoogleProfile,
 	SocialProviders,
@@ -23,6 +24,20 @@ export const OauthProviders: SocialProviders = {
 			return {
 				name: `${profile.given_name} ${profile.family_name}`,
 				image: profile.picture,
+			};
+		},
+	},
+	cognito: {
+		clientId: keys.AWS_COGNITO_CLIENT_ID,
+		clientSecret: keys.AWS_COGNITO_CLIENT_SECRET,
+		domain: keys.AWS_COGNITO_DOMAIN,
+		region: keys.AWS_REGION,
+		userPoolId: keys.AWS_COGNITO_USER_POOL_ID,
+		mapProfileToUser(profile: CognitoProfile) {
+			return {
+				name: profile.name,
+				image: profile.picture,
+				role: "admin",
 			};
 		},
 	},

@@ -6,7 +6,8 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { AuthProvider, authClient } from "@zero-heads-lab/auth/client";
+import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
+import { AuthProvider } from "@zero-heads-lab/auth/client";
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
@@ -89,15 +90,19 @@ if (!rootElement.innerHTML) {
 	root.render(
 		<StrictMode>
 			<AppErrorBoundary>
-				<QueryClientProvider client={queryClient}>
-					<AuthProvider authClient={authClient}>
-						<OnboardingProvider>
-							<SearchProvider>
-								<App />
-							</SearchProvider>
-						</OnboardingProvider>
-					</AuthProvider>
-				</QueryClientProvider>
+				<AnalyticsProvider>
+					<QueryClientProvider client={queryClient}>
+						<AuthProvider>
+							<OnboardingProvider>
+								<SearchProvider>
+									<UIProvider>
+										<App />
+									</UIProvider>
+								</SearchProvider>
+							</OnboardingProvider>
+						</AuthProvider>
+					</QueryClientProvider>
+				</AnalyticsProvider>
 			</AppErrorBoundary>
 		</StrictMode>
 	);
@@ -125,19 +130,12 @@ function App() {
 	};
 	console.log(authContext);
 
-	return (
-		<UIProvider>
-			<RouterProvider context={{ auth: authContext }} router={router} />
-		</UIProvider>
-	);
+	return <RouterProvider context={{ auth: authContext }} router={router} />;
 }
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
-	}
-	interface StaticDataRouteOption {
-		breadcrumb?: string | ((params: Record<string, unknown>) => string);
 	}
 }

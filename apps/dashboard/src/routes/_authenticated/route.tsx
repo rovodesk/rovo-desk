@@ -7,8 +7,6 @@ export const Route = createFileRoute("/_authenticated")({
 	component: DashboardLayout,
 	beforeLoad: async () => {
 		const { data: session } = await authClient.getSession();
-		console.log("Dashboard SEssion", session);
-
 		if (!session) {
 			console.log("NOT AUTHENTICATED, REDIRECTING TO SIGN IN");
 			// throw Route.redirect({

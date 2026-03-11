@@ -1,13 +1,11 @@
+import type { Analytics } from "@zero-heads-lab/analytics/types";
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
 	createNewUserWithProfileTX,
-	deleteSession,
-	markSessionAsRevoked,
 	markUserAsDeleted,
 } from "@zero-heads-lab/database/repositories/auth/mutations";
 import {
-	// findReusableSession,
 	getUserEmailVerificationStatus,
 	getUserSessionBootstrap,
 	getUserSessions,
@@ -15,6 +13,7 @@ import {
 import * as schema from "@zero-heads-lab/database/schema";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
+	AccountDeleteVerifiactionTemplate,
 	ChangeEmailConfirmationTemplate,
 	EmailVerificationLinkTemplate,
 	LoginAlertTemplate,
@@ -29,13 +28,18 @@ import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
 
-export function createAuth(namespace: KVNamespace) {
-	const cacheStore = new KvCacheStore(namespace);
+export function createAuth(cache: KVNamespace, analytics: Analytics) {
+	if (!analytics) {
+		throw new Error("Analytics client not provided to createAuth()");
+	}
+
+	const cacheStore = new KvCacheStore(cache).withPrefix("auth");
+
 	const database = createDatabase();
 
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
 
-	const Plugins = AuthPlugins(cacheStore, database);
+	const Plugins = AuthPlugins(cacheStore, database, analytics);
 
 	return betterAuth({
 		database: drizzleAdapter(database, {
@@ -44,16 +48,9 @@ export function createAuth(namespace: KVNamespace) {
 		}),
 		trustedOrigins: trustedAuthOrigins,
 		secondaryStorage: {
-			get: async (key) => {
-				return await cacheStore.get(key);
-			},
-			set: async (key, value, ttl) => {
-				if (ttl) await cacheStore.set(key, value, ttl);
-				else await cacheStore.set(key, value);
-			},
-			delete: async (key) => {
-				await cacheStore.delete(key);
-			},
+			get: (key) => cacheStore.get(key),
+			set: (key, value, ttl) => cacheStore.set(key, value, ttl),
+			delete: (key) => cacheStore.delete(key),
 		},
 		baseURL: keys.BETTER_AUTH_URL,
 		basePath: keys.BETTER_AUTH_BASE_PATH,
@@ -78,6 +75,26 @@ export function createAuth(namespace: KVNamespace) {
 			},
 		},
 		user: {
+			deleteUser: {
+				enabled: true,
+				sendDeleteAccountVerification: async ({ url, user }) => {
+					await sendEmail({
+						to: user.email,
+						subject: "Confirm Account Deletion",
+						react: AccountDeleteVerifiactionTemplate({ url }),
+					});
+				},
+				afterDelete: async (user) => {
+					// Send Analytics Event
+					await analytics.captureImmediate({
+						distinctId: user.id,
+						event: "user_deleted",
+						properties: {
+							email: user.email,
+						},
+					});
+				},
+			},
 			additionalFields: {
 				lastLoginMethod: {
 					type: "string",
@@ -141,6 +158,7 @@ export function createAuth(namespace: KVNamespace) {
 				enabled: true,
 				maxAge: AUTH_CONFIG.COOKIE_MAX_AGE,
 			},
+			preserveSessionInDatabase: true,
 			additionalFields: {
 				activeOrganizationId: {
 					type: "string",
@@ -236,64 +254,6 @@ export function createAuth(namespace: KVNamespace) {
 		databaseHooks: {
 			session: {
 				create: {
-					before: async (session) => {
-						// Reuse Session
-						// const { userId, userAgent } = session;
-						// const deviceId = ctx?.request?.headers.get("device-id");
-
-						// if (deviceId && userAgent && !session.isAnonymous) {
-						// 	const reusableSession = await findReusableSession({
-						// 		userId,
-						// 		userAgent,
-						// 		deviceId,
-						// 	});
-
-						// 	if (reusableSession) {
-						// 		// IMPORTANT:
-						// 		// Returning an existing session here tells better-auth
-						// 		// to SKIP creation and reuse this one.
-						// 		return {
-						// 			data: {
-						// 				reuse: true,
-						// 				...reusableSession,
-						// 			},
-						// 		};
-						// 	}
-						// }
-
-						// Enforce maximum sessions (only if creating a new one)
-						const sessions = await getUserSessions(database, {
-							userId: session.userId,
-						});
-						if (sessions && sessions.length >= AUTH_CONFIG.MAXIMUM_SESSIONS) {
-							// If All available session of the user are greater than the max session value then delete the oldest session
-							const oldestSession = sessions.at(-1);
-							if (oldestSession) {
-								try {
-									// 1. Delete from DB
-									await deleteSession(database, {
-										sessionId: oldestSession.id,
-									});
-
-									// 2. Manual Cache Invalidation
-									// Better-Auth uses specific keys for sessions.
-									// Usually: "session:[token]" or "session:[id]"
-									await cacheStore.delete(`session:${oldestSession.id}`);
-									console.log(`Evicted session ${oldestSession.id} from cache`);
-								} catch (error) {
-									console.error(
-										`Failed to evict session ${oldestSession.id} from cache`,
-										error
-									);
-									throw new APIError("INTERNAL_SERVER_ERROR", {
-										message: "Failed to evict session from cache",
-									});
-								}
-							}
-						}
-						// Allow the session to be created
-						return;
-					},
 					after: async (session) => {
 						try {
 							const rows = await getUserSessionBootstrap(database, {
@@ -339,28 +299,30 @@ export function createAuth(namespace: KVNamespace) {
 								message: "Failed to initialize user session",
 							});
 						}
+
+						// Send Analytics
+						analytics.captureImmediate({
+							distinctId: session.userId,
+							event: "user_logged_in",
+							properties: {
+								ipAddress: session.ipAddress,
+								userAgent: session.userAgent
+							}
+						})
 					},
 				},
 				delete: {
-					before: async (session) => {
-						console.log(`Session  ${session.id} is being revoked`);
-						try {
-							try {
-								await markSessionAsRevoked(database, { sessionId: session.id });
-							} catch {
-								// Ignore
+					after: async (session) => {
+						await analytics.captureImmediate({
+							distinctId: session.userId,
+							event: "user_logged_out",
+							properties: {
+								ipAddress: session.ipAddress,
+								userAgent: session.userAgent
 							}
-							// Delete session from cache
-							await cacheStore.delete(`session:${session.id}`);
-						} catch (error) {
-							console.error("Failed to revoke session", error);
-							throw new APIError("INTERNAL_SERVER_ERROR", {
-								message: "Failed to revoke session",
-							});
-						}
-						return false;
-					},
-				},
+						})
+					}
+				}
 			},
 			user: {
 				create: {
@@ -378,8 +340,8 @@ export function createAuth(namespace: KVNamespace) {
 						};
 					},
 					after: async (user) => {
+						// Create A New User Profile
 						try {
-							// Create A New User Profile
 							await createNewUserWithProfileTX(database, {
 								userId: user.id,
 							});
@@ -392,6 +354,7 @@ export function createAuth(namespace: KVNamespace) {
 							});
 						}
 
+						// Send Welcome Email
 						try {
 							await sendEmail({
 								to: user.email,
@@ -407,39 +370,52 @@ export function createAuth(namespace: KVNamespace) {
 								message: "Failed to send welcome email",
 							});
 						}
-						// TODO: ADD ANALYTICS
+
+						// Send event to Analytics
+						console.log("USER SIGNED UP", user);
+						analytics.captureImmediate({
+							distinctId: user.id,
+							event: "user_signed_up",
+							properties: {
+								email: user.email,
+								provider: user.lastLoginMethod ?? "email",
+								role: user.role,
+							},
+						});
 					},
 				},
 				delete: {
 					before: async (user) => {
-						console.log(`User ${user.email} is being deleted`);
 						try {
 							await markUserAsDeleted(database, { userId: user.id });
-							// Delete from Cache
+
+							// Delete from Storage
 							const userSessions = await getUserSessions(database, {
 								userId: user.id,
 							});
-							userSessions.forEach((session) => {
-								cacheStore.delete(`session:${session.id}`);
-							});
+							if (userSessions.length > 0) {
+								await Promise.all(
+									userSessions.map((session) =>
+										cacheStore.delete(`session:${session.id}`)
+									)
+								);
+							}
+
 							await cacheStore.delete(`user:${user.id}`);
 						} catch (error) {
 							console.error("Failed to mark user as deleted", error);
 							throw new APIError("INTERNAL_SERVER_ERROR");
 						}
-						//TODO: Add Analytics
-						return false; // Abort the deletion
 					},
-					after: async (user) => {
-						await console.log(`User ${user.email} is deleted`);
-						//TODO: Add Analytics
-						// try {
-						// 	await deleteCustomer(user.id);
-						// } catch (error) {
-						// 	console.error("Failed to delete customer", error);
-						// 	throw new APIError("INTERNAL_SERVER_ERROR");
-						// }
-					},
+					// after: async (user) => {
+
+					// 	// try {
+					// 	// 	await deleteCustomer(user.id);
+					// 	// } catch (error) {
+					// 	// 	console.error("Failed to delete customer", error);
+					// 	// 	throw new APIError("INTERNAL_SERVER_ERROR");
+					// 	// }
+					// },
 				},
 			},
 		},

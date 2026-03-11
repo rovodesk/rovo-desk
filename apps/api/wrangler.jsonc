@@ -10,16 +10,12 @@
     "port": 5001
   },
   "vars": {
-    "ALLOWED_ORIGINS": "http://localhost:3001, http://localhost:3002, http://localhost:3003, http://127.0.0.1:3001, http://127.0.0.1:3002, http://127.0.0.1:3003"
+    "ALLOWED_ORIGINS": "http://localhost:3001, http://localhost:3002, http://localhost:3003,http://localhost:3005, http://127.0.0.1:3001, http://127.0.0.1:3002, http://127.0.0.1:3003, http://127.0.0.1:3005",
   },
   "kv_namespaces": [
     {
-      "binding": "AUTH_CACHE",
+      "binding": "CACHE_STORE",
       "id": "0173a3d4931d4ddaa5f140fda68639bc"
-    },
-    {
-      "binding": "SDK_CACHE",
-      "id": "691f41ea481c46388e17acc6bd89fdb9"
     }
   ],
   "durable_objects": {

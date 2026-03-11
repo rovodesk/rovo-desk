@@ -1,4 +1,4 @@
-import { apiKeyClient } from "@better-auth/api-key/client";
+import { apiKeyClient } from "@better-auth/api-key/client"
 import { passkeyClient } from "@better-auth/passkey/client";
 import { ssoClient } from "@better-auth/sso/client";
 import { stripeClient } from "@better-auth/stripe/client";
@@ -19,7 +19,7 @@ import { accessControl, Roles } from "../access-control";
 import type { AuthInstance } from "../types";
 import { keys } from "./keys";
 
-const Plugins = [
+const Plugins: BetterAuthClientPlugin[] = [
 	inferAdditionalFields<AuthInstance>(),
 	organizationClient({
 		accessControl,
@@ -42,7 +42,7 @@ const Plugins = [
 	apiKeyClient(),
 	jwtClient(),
 	ssoClient(),
-] satisfies BetterAuthClientPlugin[];
+];
 
 export const authClient = createBetterAuthClient({
 	baseURL: keys.VITE_AUTH_SERVER_URL,
@@ -54,5 +54,22 @@ export const authClient = createBetterAuthClient({
 				toast.error("Too many requests. Please try again later.");
 			}
 		},
+		credentials: "include",
 	},
 });
+
+export function createAuthClient(baseURL: string, basePath: string) {
+	return createBetterAuthClient({
+		baseURL,
+		basePath,
+		plugins: Plugins,
+		fetchOptions: {
+			onError(e) {
+				if (e.error.status === 429) {
+					toast.error("Too many requests. Please try again later.");
+				}
+			},
+			credentials: "include",
+		},
+	})
+}

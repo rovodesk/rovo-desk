@@ -2,21 +2,16 @@ import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
 import type { AuthRole } from "./access-control";
 import { AUTH_CONFIG } from "./config";
-import type {
-	AuthClient,
-	ClientPermissionMap,
-	PermissionCheckMap,
-	Session,
-} from "./types";
+import type { AuthClient, Session } from "./types";
 
 /**
  * Validated session result - discriminated union
  */
 export type SessionValidation =
 	| {
-			valid: false;
-			reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
-	  }
+		valid: false;
+		reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
+	}
 	| { valid: true; session: NonNullable<Session> };
 
 /**
@@ -85,21 +80,6 @@ export function getDeviceInfo(userAgent?: string | null) {
 	return { label: "Unknown device", Icon: MonitorIcon };
 }
 
-export function narrowToClientPermissions(
-	permissions: PermissionCheckMap
-): ClientPermissionMap {
-	const result: ClientPermissionMap = {};
-
-	for (const [resource, actions] of Object.entries(permissions)) {
-		if (!actions) continue;
-
-		// TS-safe assignment at boundary
-		(result as Record<string, unknown>)[resource] = actions;
-	}
-
-	return result;
-}
-
 export function generateSlug(value: string) {
 	return value
 		.toLowerCase()
@@ -148,6 +128,6 @@ export const determineAuthRole = (role?: string): AuthRole | null => {
 		case "member":
 			return "member";
 		default:
-			return null;
+			return "anonymous";
 	}
 };

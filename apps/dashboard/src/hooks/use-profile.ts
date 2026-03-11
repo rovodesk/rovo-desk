@@ -69,15 +69,15 @@ type PersistOnboardingProgressMutationOptions = Omit<
 	"mutationFn"
 >;
 
-type ToggleUserAwayInput = Parameters<
-	typeof orpcQuery.profile.user.toggleAway.call
+type ToggleUserActiveInput = Parameters<
+	typeof orpcQuery.profile.user.toggleActive.call
 >[0];
 
-type ToggleUserAwayMutationOptions = Omit<
+type ToggleUserActiveMutationOptions = Omit<
 	UseMutationOptions<
-		Awaited<ReturnType<typeof orpcQuery.profile.user.toggleAway.call>>,
+		Awaited<ReturnType<typeof orpcQuery.profile.user.toggleActive.call>>,
 		Error,
-		ToggleUserAwayInput
+		ToggleUserActiveInput
 	>,
 	"mutationFn"
 >;
@@ -88,7 +88,7 @@ export function useProfile(
 	updateWorkspaceSettingsOptions?: UpdateWorkspaceSettingsMutationOptions,
 	clearOnboardingProgressOptions?: clearOnboardingProgressMutationOptions,
 	persistOnboardingProgressOptions?: PersistOnboardingProgressMutationOptions,
-	toggleUserAwayOptions?: ToggleUserAwayMutationOptions,
+	toggleUserActiveOptions?: ToggleUserActiveMutationOptions,
 	userProfileQueryOptions?: UserProfileQueryOptions
 ) {
 	const queryClient = useQueryClient();
@@ -170,15 +170,15 @@ export function useProfile(
 		...updateWorkspaceSettingsOptions,
 	});
 
-	const toggleUserAwayMutation = useMutation({
-		...orpcQuery.profile.user.toggleAway.mutationOptions({
+	const toggleUserActiveMutation = useMutation({
+		...orpcQuery.profile.user.toggleActive.mutationOptions({
 			onSuccess: () => {
 				queryClient.invalidateQueries({
 					queryKey: userQueryOptions.queryKey,
 				});
 			},
 		}),
-		...toggleUserAwayOptions,
+		...toggleUserActiveOptions,
 	});
 
 	const loading =
@@ -188,7 +188,7 @@ export function useProfile(
 		persistOnboardingProgressMutation.isPending ||
 		clearOnboardingProgressMutation.isPending ||
 		updateWorkspaceSettingsMutation.isPending ||
-		toggleUserAwayMutation.isPending ||
+		toggleUserActiveMutation.isPending ||
 		userProfileQuery.isLoading;
 
 	return {
@@ -212,8 +212,8 @@ export function useProfile(
 		updateWorkspaceSettingsAsync: updateWorkspaceSettingsMutation.mutateAsync,
 
 		// Toggle User Away
-		toggleUserAway: toggleUserAwayMutation.mutate,
-		toggleUserAwayAsync: toggleUserAwayMutation.mutateAsync,
+		toggleUserActive: toggleUserActiveMutation.mutate,
+		toggleUserActiveAsync: toggleUserActiveMutation.mutateAsync,
 
 		refetch: () => {
 			onboardingProgressQuery.refetch();

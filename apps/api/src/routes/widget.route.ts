@@ -1,4 +1,3 @@
-import { createAuth } from "@zero-heads-lab/auth/server";
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { signJWTToken, verifyJWTToken } from "@zero-heads-lab/crypto";
 import { createDatabase } from "@zero-heads-lab/database";
@@ -41,9 +40,9 @@ widgetRoute.post("/auth", async (c) => {
 
 	let key: string;
 	// Get api Key from cache (fallback to db)
-	const cache = new KvCacheStore(c.env.AUTH_CACHE);
+	const authCacheStore = new KvCacheStore(c.env.CACHE_STORE).withPrefix("auth");
 	// biome-ignore lint/suspicious/noExplicitAny: Returns Any type
-	const cachedKey = await cache.get<Record<string, any>>(accessKey);
+	const cachedKey = await authCacheStore.get<Record<string, any>>(accessKey);
 	if (cachedKey?.key) {
 		key = cachedKey.key;
 	} else {
@@ -56,7 +55,7 @@ widgetRoute.post("/auth", async (c) => {
 		}
 		key = apiKeyFromDb.key;
 		// Set API Key in cache for 1 hour
-		await cache.set(accessKey, apiKeyFromDb, 60 * 60); // 1 hour
+		await authCacheStore.set(accessKey, apiKeyFromDb, 60 * 60); // 1 hour
 	}
 
 	const token = await signJWTToken(
@@ -154,83 +153,83 @@ widgetRoute.post("/init", async (c) => {
 	});
 });
 
-widgetRoute.all("/chatroom/:connId", async (c) => {
-	const connId = c.req.param("connId");
-	if (!connId) return c.text("Missing connId", 400);
+// widgetRoute.all("/chatroom/:connId", async (c) => {
+// 	const connId = c.req.param("connId");
+// 	if (!connId) return c.text("Missing connId", 400);
 
-	const auth = createAuth(c.env.AUTH_CACHE);
+// 	const authCacheStore = new KvCacheStore(c.env.CACHE_STORE).withPrefix("auth");
 
-	let token =
-		c.req.query("token") ??
-		c.req.header("authorization")?.replace("Bearer ", "") ??
-		null;
+// 	let token =
+// 		c.req.query("token") ??
+// 		c.req.header("authorization")?.replace("Bearer ", "") ??
+// 		null;
 
-	// Cookie fallback
-	if (!token) {
-		const cookie = c.req.header("cookie");
-		const match = cookie?.match(/sdk_token=([^;]+)/);
-		if (match) token = decodeURIComponent(match[1]);
-	}
+// 	// Cookie fallback
+// 	if (!token) {
+// 		const cookie = c.req.header("cookie");
+// 		const match = cookie?.match(/sdk_token=([^;]+)/);
+// 		if (match) token = decodeURIComponent(match[1]);
+// 	}
 
-	let identity: Record<string, string>;
+// 	// let identity: Record<string, string>;
 
-	// 🟣 ADMIN FLOW
-	if (token) {
-		// 🔐 SDK FLOW
-		let payload: JWTPayload;
+// 	// // 🟣 ADMIN FLOW
+// 	// if (token) {
+// 	// 	// 🔐 SDK FLOW
+// 	// 	let payload: JWTPayload;
 
-		try {
-			payload = await verifyJWTToken(token, c.env.SDK_JWT_SECRET);
-		} catch (error) {
-			console.error("JWT Verification Failed:", error);
-			return c.text("Unauthorized", 401);
-		}
+// 	// 	try {
+// 	// 		payload = await verifyJWTToken(token, c.env.SDK_JWT_SECRET);
+// 	// 	} catch (error) {
+// 	// 		console.error("JWT Verification Failed:", error);
+// 	// 		return c.text("Unauthorized", 401);
+// 	// 	}
 
-		if (
-			typeof payload.orgId !== "string" ||
-			typeof payload.connectionId !== "string" ||
-			typeof payload.role !== "string" ||
-			typeof payload.sub !== "string" ||
-			typeof payload.exp !== "number" ||
-			payload.exp * 1000 < Date.now()
-		) {
-			return c.text("Unauthorized", 401);
-		}
+// 	// 	if (
+// 	// 		typeof payload.orgId !== "string" ||
+// 	// 		typeof payload.connectionId !== "string" ||
+// 	// 		typeof payload.role !== "string" ||
+// 	// 		typeof payload.sub !== "string" ||
+// 	// 		typeof payload.exp !== "number" ||
+// 	// 		payload.exp * 1000 < Date.now()
+// 	// 	) {
+// 	// 		return c.text("Unauthorized", 401);
+// 	// 	}
 
-		identity = {
-			"x-user-id": payload.sub,
-			"x-org-id": payload.orgId,
-			"x-connection-id": payload.connectionId,
-			"x-role": payload.role,
-		};
-	} else {
-		const session = await auth.api.getSession({
-			headers: c.req.raw.headers,
-		});
+// 	// 	identity = {
+// 	// 		"x-user-id": payload.sub,
+// 	// 		"x-org-id": payload.orgId,
+// 	// 		"x-connection-id": payload.connectionId,
+// 	// 		"x-role": payload.role,
+// 	// 	};
+// 	// } else {
+// 	// 	const session = await auth.api.getSession({
+// 	// 		headers: c.req.raw.headers,
+// 	// 	});
 
-		if (!session?.user) {
-			return c.text("Unauthorized", 401);
-		}
+// 	// 	if (!session?.user) {
+// 	// 		return c.text("Unauthorized", 401);
+// 	// 	}
 
-		identity = {
-			"x-user-id": session.user.id,
-			"x-org-id": session.session.activeOrganizationId!,
-			"x-role": "admin",
-		};
-	}
+// 	// 	identity = {
+// 	// 		"x-user-id": session.user.id,
+// 	// 		"x-org-id": session.session.activeOrganizationId!,
+// 	// 		"x-role": "admin",
+// 	// 	};
+// 	// }
 
-	// Forward to Durable Object
-	const id = c.env.CHAT_ROOM.idFromName(connId);
-	const stub = c.env.CHAT_ROOM.get(id);
+// 	// Forward to Durable Object
+// 	const id = c.env.CHAT_ROOM.idFromName(connId);
+// 	const stub = c.env.CHAT_ROOM.get(id);
 
-	const headers = new Headers(c.req.raw.headers);
+// 	const headers = new Headers(c.req.raw.headers);
 
-	headers.set("x-partykit-room", connId);
-	headers.set("x-partykit-namespace", "Chatroom");
+// 	headers.set("x-partykit-room", connId);
+// 	headers.set("x-partykit-namespace", "Chatroom");
 
-	for (const [key, value] of Object.entries(identity)) {
-		headers.set(key, value);
-	}
+// 	for (const [key, value] of Object.entries(identity)) {
+// 		headers.set(key, value);
+// 	}
 
-	return stub.fetch(new Request(c.req.raw, { headers }));
-});
+// 	return await stub.fetch(new Request(c.req.raw, { headers }));
+// });

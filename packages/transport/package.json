@@ -16,6 +16,7 @@
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+import { DeleteAccountDialog } from "@zero-heads-lab/auth/components/delete-account-dialog";
 import { useSession } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
@@ -22,9 +23,11 @@ import {
 	UserIcon,
 	XCircleIcon,
 } from "lucide-react";
+import { useState } from "react";
 
 export function ProfilePage() {
 	const { session, loading } = useSession();
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
 	if (loading) return <ProfileSkeleton />;
 	if (!session?.user) return null;
@@ -198,6 +201,38 @@ export function ProfilePage() {
 							<ProfileListItem title="Customer Support" />
 							<ProfileListItem title="Marketing Automation" />
 						</CardSection>
+					</div>
+				</div>
+
+				<Separator className="my-8" />
+
+				{/* Danger Zone */}
+				<div className="w-full rounded-lg border border-destructive/40 bg-destructive/10 p-6">
+					<div className="flex flex-col gap-6">
+						{/* Header */}
+						<div>
+							<h3 className="font-semibold text-destructive text-lg">
+								Danger Zone
+							</h3>
+							<p className="text-muted-foreground text-sm">
+								These actions are destructive and cannot be undone.
+							</p>
+						</div>
+						{/* Delete Account */}
+						<div className="flex flex-col gap-3 rounded-md border border-destructive/30 bg-background p-4 md:flex-row md:items-center md:justify-between">
+							<div className="space-y-1">
+								<p className="font-medium">Delete Account</p>
+								<p className="text-muted-foreground text-sm">
+									Permanently delete your account and all associated data. This
+									action cannot be reversed.
+								</p>
+							</div>
+
+							<DeleteAccountDialog
+								onOpenChange={setDeleteDialogOpen}
+								open={deleteDialogOpen}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

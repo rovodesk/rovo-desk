@@ -38,7 +38,7 @@ function UserProfileDropdown() {
 	const {
 		userProfile,
 		isLoading: isUserProfileLoading,
-		toggleUserAwayAsync,
+		toggleUserActiveAsync,
 	} = useProfile();
 
 	const loading = isUserLoading || isUserProfileLoading;
@@ -52,7 +52,7 @@ function UserProfileDropdown() {
 	const name = user?.name;
 	const email = user?.email;
 	const image =
-		user.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
+		user?.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
 
 	// Improved abbreviation logic
 	const abbreviation = (
@@ -65,7 +65,7 @@ function UserProfileDropdown() {
 
 	const handleUserAway = async (checked: boolean) => {
 		try {
-			await toggleUserAwayAsync({ isAway: !checked });
+			await toggleUserActiveAsync({ active: !checked });
 			toast.success(`User is now ${checked ? "away" : "available"}`);
 		} catch (error) {
 			console.error("Failed to update user away status", error);
@@ -88,9 +88,8 @@ function UserProfileDropdown() {
 
 							{/* Status indicator */}
 							<span
-								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${
-									isUserAvailable ? "bg-green-500" : "bg-slate-500"
-								}`}
+								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${isUserAvailable ? "bg-green-500" : "bg-slate-500"
+									}`}
 							/>
 						</div>
 					</DropdownMenuTrigger>
@@ -114,9 +113,8 @@ function UserProfileDropdown() {
 
 								{/* Status indicator */}
 								<span
-									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${
-										isUserAvailable ? "bg-green-500" : "bg-slate-500"
-									}`}
+									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${isUserAvailable ? "bg-green-500" : "bg-slate-500"
+										}`}
 								/>
 							</div>
 

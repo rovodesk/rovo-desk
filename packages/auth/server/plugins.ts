@@ -3,6 +3,7 @@ import { passkey } from "@better-auth/passkey";
 import { scim } from "@better-auth/scim";
 import { sso } from "@better-auth/sso";
 import { stripe } from "@better-auth/stripe";
+import type { Analytics } from "@zero-heads-lab/analytics/types";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import type { KvCacheStore } from "@zero-heads-lab/cache";
 import type { Database } from "@zero-heads-lab/database/conn";
@@ -27,12 +28,21 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-import { ADMIN_ROLES, accessControl, Roles } from "../access-control";
+import {
+	ADMIN_ROLES,
+	accessControl,
+	DEFAULT_ROLE,
+	Roles,
+} from "../access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { SAML_CONFIG } from "./sso-config";
 
-export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
+export const AuthPlugins = (
+	cache: KvCacheStore,
+	database: Database,
+	analytics: Analytics
+) => {
 	// const products = getProducts();
 	const cacheStore = cache;
 
@@ -125,13 +135,29 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
 					}
-					//TODO: Add analytics
-					console.log("New Organization Created", organization);
+					// Send Analytics Event
+					analytics.captureImmediate({
+						distinctId: organization.id,
+						event: "organization_created",
+						properties: {
+							id: organization.id,
+							name: organization.name,
+							slug: organization.slug,
+						},
+					});
 				},
 				// biome-ignore lint/suspicious/useAwait: No Awaited Function
 				afterDeleteOrganization: async ({ organization }) => {
-					//TODO: Add Analytics
-					console.log("Organization Deleted", organization);
+					// Send Analytics Event
+					analytics.captureImmediate({
+						distinctId: organization.id,
+						event: "organization_deleted",
+						properties: {
+							id: organization.id,
+							name: organization.name,
+							slug: organization.slug,
+						},
+					});
 				},
 			},
 		}),
@@ -175,7 +201,7 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 			roles: {
 				...Roles,
 			},
-			defaultRole: "anonymous",
+			defaultRole: DEFAULT_ROLE,
 			adminRoles: [...ADMIN_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
@@ -191,6 +217,20 @@ export const AuthPlugins = (cache: KvCacheStore, database: Database) => {
 			storage: "secondary-storage",
 			fallbackToDatabase: true,
 			enableMetadata: true,
+			customStorage: {
+				get: async (key) => {
+					// Custom get logic for API keys
+					return await cacheStore.get(key);
+				},
+				set: async (key, value, ttl) => {
+					// Custom set logic for API keys
+					await cacheStore.set(key, value, ttl);
+				},
+				delete: async (key) => {
+					// Custom delete logic for API keys
+					await cacheStore.delete(key);
+				},
+			},
 		}),
 		jwt({
 			jwks: {

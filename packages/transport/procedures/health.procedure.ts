@@ -13,4 +13,5 @@ export const healthProcedure = base
 	.handler(() => {
 		console.log("PUBLIC PROCEDURE");
 		return { status: "ok" };
-	});
+	})
+	.callable();

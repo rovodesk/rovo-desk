@@ -13,6 +13,7 @@
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*",
     "hono": "^4.11.7",
     "hono-party": "^1.0.0",
     "lib0": "^0.2.117",

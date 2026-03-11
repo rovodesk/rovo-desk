@@ -1,3 +1,4 @@
+import { getAnalyticsClient } from "@zero-heads-lab/analytics/server";
 import { createAuth } from "@zero-heads-lab/auth/server";
 import type { MiddlewareHandler } from "hono";
 import { partyserverMiddleware } from "hono-party";
@@ -5,9 +6,12 @@ import type { Bindings } from "../types";
 
 export const documenttMiddleware: MiddlewareHandler<{
 	Bindings: Bindings;
-	// biome-ignore lint/suspicious/useAwait: No Awaited Funcrion
 }> = async (c, _next) => {
-	const auth = createAuth(c.env.AUTH_CACHE);
+	const analytics = await getAnalyticsClient(
+		c.env.CACHE_STORE,
+		c.env.POSTHOG_PROJECT_API_KEY
+	);
+	const auth = createAuth(c.env.CACHE_STORE, analytics);
 
 	const handler = partyserverMiddleware({
 		options: {

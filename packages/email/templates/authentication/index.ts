@@ -1,3 +1,4 @@
+export * from "./accound-delete-verification";
 export * from "./account-linking";
 export * from "./change-email-confirmation";
 export * from "./email-verification";

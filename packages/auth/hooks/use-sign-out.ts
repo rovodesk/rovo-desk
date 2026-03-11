@@ -22,7 +22,6 @@ export const useSignOut = (
 			// Clear client state AFTER sign-out succeeds
 			queryClient.cancelQueries();
 			queryClient.clear();
-			queryClient.resetQueries();
 
 			options?.onSuccess?.();
 			replace(redirectUrl);

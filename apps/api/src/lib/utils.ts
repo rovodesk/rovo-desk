@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Add types later */
+
+import type { Analytics } from "@zero-heads-lab/analytics/types";
 import { extractOrigins } from "@zero-heads-lab/shared/utils";
 import type { Context } from "hono";
 import type { z } from "zod";
@@ -40,4 +42,8 @@ export async function validateJson<T extends z.ZodTypeAny>(
 		ok: true as const,
 		data: parsed.data,
 	};
+}
+
+export function flushAnalytics(c: Context, analytics: Analytics) {
+	c.executionCtx.waitUntil(analytics.shutdown());
 }

@@ -1,9 +1,10 @@
 import { createEnv } from "@t3-oss/env-core";
+import { keys as analyticsKeys } from "@zero-heads-lab/analytics/server/keys";
 import { keys as billingKeys } from "@zero-heads-lab/billing/keys";
 import z from "zod";
 
 export const keys = createEnv({
-	extends: [billingKeys],
+	extends: [billingKeys, analyticsKeys],
 	server: {
 		BETTER_AUTH_SECRET: z.string(),
 		BETTER_AUTH_URL: z.url(),
@@ -18,6 +19,13 @@ export const keys = createEnv({
 		ALLOWED_ORIGINS: z.string(),
 
 		END_USER_DASHBOARD_URL: z.string(),
+
+
+		AWS_COGNITO_CLIENT_ID: z.string(),
+		AWS_COGNITO_CLIENT_SECRET: z.string().optional(),
+		AWS_COGNITO_DOMAIN: z.string(),
+		AWS_REGION: z.string(),
+		AWS_COGNITO_USER_POOL_ID: z.string(),
 	},
 	runtimeEnv: {
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
@@ -33,5 +41,11 @@ export const keys = createEnv({
 		ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
 
 		END_USER_DASHBOARD_URL: process.env.END_USER_DASHBOARD_URL,
+
+		AWS_COGNITO_CLIENT_ID: process.env.AWS_COGNITO_CLIENT_ID,
+		AWS_COGNITO_CLIENT_SECRET: process.env.AWS_COGNITO_CLIENT_SECRET,
+		AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
+		AWS_REGION: process.env.AWS_REGION,
+		AWS_COGNITO_USER_POOL_ID: process.env.AWS_COGNITO_USER_POOL_ID,
 	},
 });

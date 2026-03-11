@@ -15,7 +15,7 @@ import { OrganizationGuard } from "@/middlewares/organization.middleware";
 import { base } from "../context";
 import {
 	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
-	TOGGLE_USER_AWAY_INPUT_DTO,
+	TOGGLE_USER_ACTIVE_INPUT_DTO,
 	UPDATE_ONBOARDING_PROGRESS_INPUT_DTO,
 	UPDATE_WORKSPACE_SETTINGS_INPUT_DTO,
 } from "../dto/profile.dto";
@@ -38,8 +38,6 @@ export const loadOnboardingProgress = base
 			});
 		}
 
-		// TODO: Add Analytics
-
 		return onboardingProgress;
 	})
 	.callable();
@@ -50,7 +48,9 @@ export const persistOnboardingProgress = base
 	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
 		const user = context.user;
+		const analytics = await context.analytics;
 		const database = context.database;
+
 		try {
 			await updateOnboardingProgressByUserId(database, {
 				userId: user.id,
@@ -64,7 +64,15 @@ export const persistOnboardingProgress = base
 			});
 		}
 
-		// TODO: Add Analytics
+		// Send Anlytics Event
+		analytics.captureImmediate({
+			distinctId: user.id,
+			event: "onboarding_progress",
+			properties: {
+				currentStepId: input.currentStepId,
+				flowData: input.flowData,
+			},
+		});
 	})
 	.callable();
 
@@ -82,8 +90,6 @@ export const clearOnboardingProgress = base
 				message: "Failed to clear onboarding progress",
 			});
 		}
-
-		// TODO: Add Analytics
 	})
 	.callable();
 
@@ -150,16 +156,20 @@ export const getUserProfile = base
 	})
 	.callable();
 
-export const toogleUserAway = base
-	.input(TOGGLE_USER_AWAY_INPUT_DTO)
+export const toogleUserActive = base
+	.input(TOGGLE_USER_ACTIVE_INPUT_DTO)
 	.use(BaseMiddleware)
 	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
 		const database = context.database;
+		const analytics = await context.analytics;
+
+		const userId = context.user.id;
+
 		try {
 			await toggleUserAwayField(database, {
-				userId: context.user.id,
-				isAway: input.isAway,
+				userId,
+				isAway: !input.active,
 			});
 		} catch (error) {
 			console.error(error);
@@ -167,5 +177,14 @@ export const toogleUserAway = base
 				message: "Failed to toggle user away field",
 			});
 		}
+
+		await analytics?.capture({
+			distinctId: userId,
+			event: "user_status_changed",
+			properties: {
+				active: input.active
+			}
+		});
 	})
 	.callable();
+
