@@ -37,13 +37,12 @@ export function useSignIn(options?: UseSignInOptions) {
 
 	const oauthMutation = useMutation<unknown, Error, OAuthProvider>({
 		mutationFn: (provider) => {
-			if (!callbackURL)
-				throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set")
+			if (!callbackURL) throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
 			return authClient.signIn.social({
 				requestSignUp: true,
 				provider,
 				callbackURL,
-			})
+			});
 		},
 		onSuccess: handleSessionSync,
 		onError: (err) => options?.onError?.(err),
@@ -55,8 +54,7 @@ export function useSignIn(options?: UseSignInOptions) {
 
 	const magicLinkMutation = useMutation<unknown, Error, { email: string }>({
 		mutationFn: ({ email }) => {
-			if (!callbackURL)
-				throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
+			if (!callbackURL) throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
 
 			return authClient.signIn.magicLink({
 				email,
@@ -75,8 +73,7 @@ export function useSignIn(options?: UseSignInOptions) {
 
 	const ssoMutation = useMutation<unknown, Error, { email: string }>({
 		mutationFn: ({ email }) => {
-			if (!callbackURL)
-				throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
+			if (!callbackURL) throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
 
 			return authClient.signIn.sso({
 				email,

@@ -8,9 +8,7 @@ import type { AuthUser } from "@zero-heads-lab/auth/types";
 import { getErrorStatus, Placeholder } from "@zero-heads-lab/shared/utils";
 import { useAuthContext } from "../client/context";
 
-export function useUser(
-	options?: UseQueryOptions<AuthUser | null>
-) {
+export function useUser(options?: UseQueryOptions<AuthUser | null>) {
 	const { authClient, replace } = useAuthContext();
 	const queryClient = useQueryClient();
 
@@ -48,7 +46,7 @@ export function useUser(
 
 		onSuccess: (callbackUrl) => {
 			// Clear cached auth state
-			queryClient.cancelQueries()
+			queryClient.cancelQueries();
 			queryClient.clear();
 
 			replace(callbackUrl);
@@ -63,10 +61,10 @@ export function useUser(
 
 	const user: AuthUser | null = data
 		? {
-			...data,
-			name: data.name ?? Placeholder.name(2, "-").toLowerCase(),
-			image: data.image ?? Placeholder.avatar(data.email),
-		}
+				...data,
+				name: data.name ?? Placeholder.name(2, "-").toLowerCase(),
+				image: data.image ?? Placeholder.avatar(data.email),
+			}
 		: null;
 
 	return {

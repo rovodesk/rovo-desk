@@ -27,7 +27,7 @@ export const BaseMiddleware = base.middleware(({ context, next }) => {
 	return next({
 		context: {
 			database,
-			analytics
-		}
+			analytics,
+		},
 	});
 });

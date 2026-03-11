@@ -306,9 +306,9 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 							event: "user_logged_in",
 							properties: {
 								ipAddress: session.ipAddress,
-								userAgent: session.userAgent
-							}
-						})
+								userAgent: session.userAgent,
+							},
+						});
 					},
 				},
 				delete: {
@@ -318,11 +318,11 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 							event: "user_logged_out",
 							properties: {
 								ipAddress: session.ipAddress,
-								userAgent: session.userAgent
-							}
-						})
-					}
-				}
+								userAgent: session.userAgent,
+							},
+						});
+					},
+				},
 			},
 			user: {
 				create: {

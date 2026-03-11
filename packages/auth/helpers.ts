@@ -9,9 +9,9 @@ import type { AuthClient, Session } from "./types";
  */
 export type SessionValidation =
 	| {
-		valid: false;
-		reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
-	}
+			valid: false;
+			reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
+	  }
 	| { valid: true; session: NonNullable<Session> };
 
 /**

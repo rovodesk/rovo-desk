@@ -6,7 +6,7 @@ export class KvCacheStore implements ICacheStore {
 
 	constructor(kv: KVNamespace, prefix?: string) {
 		this.kv = kv;
-		this.prefix = prefix
+		this.prefix = prefix;
 	}
 
 	// Key funxtion to set key and prefix
@@ -29,12 +29,10 @@ export class KvCacheStore implements ICacheStore {
 	}
 
 	/**
- * Creates a scoped cache store with additional prefix
- */
+	 * Creates a scoped cache store with additional prefix
+	 */
 	withPrefix(prefix: string): KvCacheStore {
-		const newPrefix = this.prefix
-			? `${this.prefix}:${prefix}`
-			: prefix;
+		const newPrefix = this.prefix ? `${this.prefix}:${prefix}` : prefix;
 
 		return new KvCacheStore(this.kv, newPrefix);
 	}

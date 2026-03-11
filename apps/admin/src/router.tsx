@@ -5,33 +5,33 @@ import { GeneralError } from "./features/errors/general-error";
 import { NotFoundError } from "./features/errors/not-found-error";
 
 export function getRouter() {
-  const queryClient = new QueryClient();
+	const queryClient = new QueryClient();
 
-  const router = createRouter({
-    routeTree,
+	const router = createRouter({
+		routeTree,
 
-    context: {
-      queryClient,
-      auth: {
-        session: null,
-        isAuthenticated: false,
-        isAdmin: false,
-      },
-    },
+		context: {
+			queryClient,
+			auth: {
+				session: null,
+				isAuthenticated: false,
+				isAdmin: false,
+			},
+		},
 
-    defaultNotFoundComponent: NotFoundError,
-    defaultErrorComponent: GeneralError,
+		defaultNotFoundComponent: NotFoundError,
+		defaultErrorComponent: GeneralError,
 
-    scrollRestoration: true,
-    defaultPreload: "intent",
-    defaultPreloadStaleTime: 0,
-  });
+		scrollRestoration: true,
+		defaultPreload: "intent",
+		defaultPreloadStaleTime: 0,
+	});
 
-  return router;
+	return router;
 }
 
 declare module "@tanstack/react-router" {
-  interface Register {
-    router: ReturnType<typeof getRouter>;
-  }
+	interface Register {
+		router: ReturnType<typeof getRouter>;
+	}
 }

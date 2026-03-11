@@ -10,7 +10,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 	}),
 	beforeLoad: ({ context }) => {
 		const auth = context.auth;
-		console.log("Sign IN route", JSON.stringify(auth, null, 2))
+		console.log("Sign IN route", JSON.stringify(auth, null, 2));
 
 		if (
 			auth?.session &&

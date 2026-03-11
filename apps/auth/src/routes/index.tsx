@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 		const auth = context.auth;
 		const role = determineAuthRole(auth.session?.user?.role);
 
-		if (!(auth.isAuthenticated) || auth.session?.user?.isAnonymous) {
+		if (!auth.isAuthenticated || auth.session?.user?.isAnonymous) {
 			throw redirect({ to: "/sign-in" });
 		}
 

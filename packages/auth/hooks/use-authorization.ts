@@ -55,6 +55,6 @@
 // 		permissions: query.data ?? {},
 // 		loading,
 // 		error: query.error,
-// 		refetch: query.refetch,	
+// 		refetch: query.refetch,
 // 	};
 // }

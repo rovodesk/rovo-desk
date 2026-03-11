@@ -182,9 +182,8 @@ export const toogleUserActive = base
 			distinctId: userId,
 			event: "user_status_changed",
 			properties: {
-				active: input.active
-			}
+				active: input.active,
+			},
 		});
 	})
 	.callable();
-

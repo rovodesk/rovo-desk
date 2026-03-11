@@ -20,7 +20,6 @@ export const keys = createEnv({
 
 		END_USER_DASHBOARD_URL: z.string(),
 
-
 		AWS_COGNITO_CLIENT_ID: z.string(),
 		AWS_COGNITO_CLIENT_SECRET: z.string().optional(),
 		AWS_COGNITO_DOMAIN: z.string(),

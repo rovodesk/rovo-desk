@@ -12,8 +12,8 @@ function defaultReplace(href: string) {
 
 const defaultAuthClient = createAuthClient(
 	keys.VITE_AUTH_SERVER_URL,
-	keys.VITE_AUTH_SERVER_BASE_PATH,
-)
+	keys.VITE_AUTH_SERVER_BASE_PATH
+);
 
 type AuthProviderProps = {
 	children: React.ReactNode;
