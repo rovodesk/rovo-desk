@@ -22,20 +22,15 @@ import {
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { Roles } from "@/access-control";
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
 
-export function createAuth(cache: KVNamespace, analytics: Analytics) {
-	if (!analytics) {
-		throw new Error("Analytics client not provided to createAuth()");
-	}
-
+export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 	const cacheStore = new KvCacheStore(cache).withPrefix("auth");
 
-	const database = createDatabase();
+	const database = await createDatabase();
 
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
 
@@ -54,7 +49,6 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 		},
 		baseURL: keys.BETTER_AUTH_URL,
 		basePath: keys.BETTER_AUTH_BASE_PATH,
-		usePlural: false,
 		emailVerification: {
 			sendOnSignUp: true,
 			sendOnSignIn: true,
@@ -121,11 +115,6 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 					required: false,
 					input: false,
 				},
-				isAnonymous: {
-					type: "boolean",
-					required: false,
-					input: false,
-				},
 				stripeCustomerId: {
 					type: "string",
 					required: false,
@@ -157,6 +146,7 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 			cookieCache: {
 				enabled: true,
 				maxAge: AUTH_CONFIG.COOKIE_MAX_AGE,
+				strategy: "jwt",
 			},
 			preserveSessionInDatabase: true,
 			additionalFields: {
@@ -172,16 +162,6 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 					defaultValue: null,
 					input: false,
 				},
-				isAnonymous: {
-					type: "boolean",
-					required: false,
-					input: false,
-				},
-				// deviceId: {
-				// 	type: "string",
-				// 	required: false,
-				// 	input: false,
-				// },
 				lastActiveAt: {
 					type: "date",
 					required: false,
@@ -198,7 +178,7 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 			encryptOAuthTokens: true,
 			accountLinking: {
 				enabled: true,
-				trustedProviders: ["github", "google"],
+				trustedProviders: ["github", "google", "cognito"],
 				updateUserInfoOnLink: true,
 			},
 		},
@@ -335,7 +315,7 @@ export function createAuth(cache: KVNamespace, analytics: Analytics) {
 							data: {
 								...user,
 								image: avatar,
-								role: Roles.owner,
+								role: user.role || "owner",
 							},
 						};
 					},

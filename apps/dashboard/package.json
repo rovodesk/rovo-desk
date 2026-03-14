@@ -37,7 +37,7 @@
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "react-rnd": "^10.5.2",
-    "recharts": "^3.7.0",
+    "recharts": "catalog:",
     "vite-tsconfig-paths": "catalog:vite",
     "y-partykit": "^0.0.33",
     "zod": "catalog:",

@@ -11,10 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedCmsRouteImport } from './routes/_authenticated/cms'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as AuthenticatedUserManagementRouteRouteImport } from './routes/_authenticated/user-management/route'
+import { Route as AuthenticatedUserManagementIndexRouteImport } from './routes/_authenticated/user-management/index'
+import { Route as AuthenticatedUserManagementOrganizationsRouteImport } from './routes/_authenticated/user-management/organizations'
+import { Route as AuthenticatedUserManagementDetailsUserIdRouteImport } from './routes/_authenticated/user-management/details.$userId'
+import { Route as AuthenticatedUserManagementDetailsOrganizationIdRouteImport } from './routes/_authenticated/user-management/details.$organizationId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -23,6 +29,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCmsRoute = AuthenticatedCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const errors500Route = errors500RouteImport.update({
@@ -45,43 +56,117 @@ const authSignInRoute = authSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedUserManagementRouteRoute =
+  AuthenticatedUserManagementRouteRouteImport.update({
+    id: '/user-management',
+    path: '/user-management',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedUserManagementIndexRoute =
+  AuthenticatedUserManagementIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedUserManagementRouteRoute,
+  } as any)
+const AuthenticatedUserManagementOrganizationsRoute =
+  AuthenticatedUserManagementOrganizationsRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => AuthenticatedUserManagementRouteRoute,
+  } as any)
+const AuthenticatedUserManagementDetailsUserIdRoute =
+  AuthenticatedUserManagementDetailsUserIdRouteImport.update({
+    id: '/details/$userId',
+    path: '/details/$userId',
+    getParentRoute: () => AuthenticatedUserManagementRouteRoute,
+  } as any)
+const AuthenticatedUserManagementDetailsOrganizationIdRoute =
+  AuthenticatedUserManagementDetailsOrganizationIdRouteImport.update({
+    id: '/details/$organizationId',
+    path: '/details/$organizationId',
+    getParentRoute: () => AuthenticatedUserManagementRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/user-management': typeof AuthenticatedUserManagementRouteRouteWithChildren
   '/sign-in': typeof authSignInRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
+  '/cms': typeof AuthenticatedCmsRoute
+  '/user-management/organizations': typeof AuthenticatedUserManagementOrganizationsRoute
+  '/user-management/': typeof AuthenticatedUserManagementIndexRoute
+  '/user-management/details/$organizationId': typeof AuthenticatedUserManagementDetailsOrganizationIdRoute
+  '/user-management/details/$userId': typeof AuthenticatedUserManagementDetailsUserIdRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
+  '/cms': typeof AuthenticatedCmsRoute
   '/': typeof AuthenticatedIndexRoute
+  '/user-management/organizations': typeof AuthenticatedUserManagementOrganizationsRoute
+  '/user-management': typeof AuthenticatedUserManagementIndexRoute
+  '/user-management/details/$organizationId': typeof AuthenticatedUserManagementDetailsOrganizationIdRoute
+  '/user-management/details/$userId': typeof AuthenticatedUserManagementDetailsUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/user-management': typeof AuthenticatedUserManagementRouteRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
+  '/_authenticated/cms': typeof AuthenticatedCmsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/user-management/organizations': typeof AuthenticatedUserManagementOrganizationsRoute
+  '/_authenticated/user-management/': typeof AuthenticatedUserManagementIndexRoute
+  '/_authenticated/user-management/details/$organizationId': typeof AuthenticatedUserManagementDetailsOrganizationIdRoute
+  '/_authenticated/user-management/details/$userId': typeof AuthenticatedUserManagementDetailsUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/401' | '/403' | '/500'
+  fullPaths:
+    | '/'
+    | '/user-management'
+    | '/sign-in'
+    | '/401'
+    | '/403'
+    | '/500'
+    | '/cms'
+    | '/user-management/organizations'
+    | '/user-management/'
+    | '/user-management/details/$organizationId'
+    | '/user-management/details/$userId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/401' | '/403' | '/500' | '/'
+  to:
+    | '/sign-in'
+    | '/401'
+    | '/403'
+    | '/500'
+    | '/cms'
+    | '/'
+    | '/user-management/organizations'
+    | '/user-management'
+    | '/user-management/details/$organizationId'
+    | '/user-management/details/$userId'
   id:
     | '__root__'
     | '/_authenticated'
+    | '/_authenticated/user-management'
     | '/(auth)/sign-in'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/500'
+    | '/_authenticated/cms'
     | '/_authenticated/'
+    | '/_authenticated/user-management/organizations'
+    | '/_authenticated/user-management/'
+    | '/_authenticated/user-management/details/$organizationId'
+    | '/_authenticated/user-management/details/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cms': {
+      id: '/_authenticated/cms'
+      path: '/cms'
+      fullPath: '/cms'
+      preLoaderRoute: typeof AuthenticatedCmsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(errors)/500': {
@@ -136,14 +228,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/user-management': {
+      id: '/_authenticated/user-management'
+      path: '/user-management'
+      fullPath: '/user-management'
+      preLoaderRoute: typeof AuthenticatedUserManagementRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/user-management/': {
+      id: '/_authenticated/user-management/'
+      path: '/'
+      fullPath: '/user-management/'
+      preLoaderRoute: typeof AuthenticatedUserManagementIndexRouteImport
+      parentRoute: typeof AuthenticatedUserManagementRouteRoute
+    }
+    '/_authenticated/user-management/organizations': {
+      id: '/_authenticated/user-management/organizations'
+      path: '/organizations'
+      fullPath: '/user-management/organizations'
+      preLoaderRoute: typeof AuthenticatedUserManagementOrganizationsRouteImport
+      parentRoute: typeof AuthenticatedUserManagementRouteRoute
+    }
+    '/_authenticated/user-management/details/$userId': {
+      id: '/_authenticated/user-management/details/$userId'
+      path: '/details/$userId'
+      fullPath: '/user-management/details/$userId'
+      preLoaderRoute: typeof AuthenticatedUserManagementDetailsUserIdRouteImport
+      parentRoute: typeof AuthenticatedUserManagementRouteRoute
+    }
+    '/_authenticated/user-management/details/$organizationId': {
+      id: '/_authenticated/user-management/details/$organizationId'
+      path: '/details/$organizationId'
+      fullPath: '/user-management/details/$organizationId'
+      preLoaderRoute: typeof AuthenticatedUserManagementDetailsOrganizationIdRouteImport
+      parentRoute: typeof AuthenticatedUserManagementRouteRoute
+    }
   }
 }
 
+interface AuthenticatedUserManagementRouteRouteChildren {
+  AuthenticatedUserManagementOrganizationsRoute: typeof AuthenticatedUserManagementOrganizationsRoute
+  AuthenticatedUserManagementIndexRoute: typeof AuthenticatedUserManagementIndexRoute
+  AuthenticatedUserManagementDetailsOrganizationIdRoute: typeof AuthenticatedUserManagementDetailsOrganizationIdRoute
+  AuthenticatedUserManagementDetailsUserIdRoute: typeof AuthenticatedUserManagementDetailsUserIdRoute
+}
+
+const AuthenticatedUserManagementRouteRouteChildren: AuthenticatedUserManagementRouteRouteChildren =
+  {
+    AuthenticatedUserManagementOrganizationsRoute:
+      AuthenticatedUserManagementOrganizationsRoute,
+    AuthenticatedUserManagementIndexRoute:
+      AuthenticatedUserManagementIndexRoute,
+    AuthenticatedUserManagementDetailsOrganizationIdRoute:
+      AuthenticatedUserManagementDetailsOrganizationIdRoute,
+    AuthenticatedUserManagementDetailsUserIdRoute:
+      AuthenticatedUserManagementDetailsUserIdRoute,
+  }
+
+const AuthenticatedUserManagementRouteRouteWithChildren =
+  AuthenticatedUserManagementRouteRoute._addFileChildren(
+    AuthenticatedUserManagementRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedUserManagementRouteRoute: typeof AuthenticatedUserManagementRouteRouteWithChildren
+  AuthenticatedCmsRoute: typeof AuthenticatedCmsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedUserManagementRouteRoute:
+    AuthenticatedUserManagementRouteRouteWithChildren,
+  AuthenticatedCmsRoute: AuthenticatedCmsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -160,12 +316,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

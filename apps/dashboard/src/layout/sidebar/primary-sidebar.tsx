@@ -115,8 +115,6 @@ export function PrimarySidebar() {
 	};
 
 	return (
-		// biome-ignore lint/a11y/noNoninteractiveElementInteractions: Need this
-		// biome-ignore lint/a11y/noStaticElementInteractions: Need this
 		<div
 			className="flex h-screen w-16 shrink-0 flex-col items-center border-r py-3"
 			onMouseEnter={handleMouseEnter}

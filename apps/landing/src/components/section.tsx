@@ -1,3 +1,4 @@
+import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import type React from "react";
 
 const Section = ({
@@ -8,7 +9,14 @@ const Section = ({
 	children: React.ReactNode;
 }) => {
 	return (
-		<section className="relative z-10 mx-auto grid h-[calc(100vh-80px)] max-w-full grid-cols-1 items-center bg-slate-900 px-6 pt-24 lg:grid-cols-2 lg:gap-24 lg:px-8" />
+		<section
+			className={cn(
+				"relative z-10 mx-auto grid h-[calc(100vh-80px)] max-w-full grid-cols-1 items-center bg-slate-900 px-6 pt-24 lg:grid-cols-2 lg:gap-24 lg:px-8",
+				className
+			)}
+		>
+			{children}
+		</section>
 	);
 };
 

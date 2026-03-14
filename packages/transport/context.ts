@@ -1,8 +1,11 @@
 import { os } from "@orpc/server";
 import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
 import type { Analytics } from "@zero-heads-lab/analytics/types";
-import type { createAuth } from "@zero-heads-lab/auth/server";
-import type { AuthSession, AuthUser } from "@zero-heads-lab/auth/types";
+import type {
+	AuthInstance,
+	AuthSession,
+	AuthUser,
+} from "@zero-heads-lab/auth/types";
 import type { Database } from "@zero-heads-lab/database";
 
 /**
@@ -15,7 +18,7 @@ import type { Database } from "@zero-heads-lab/database";
  * @property user - Auth user
  */
 export interface ORPCContext extends RequestHeadersPluginContext {
-	auth?: ReturnType<typeof createAuth>;
+	auth?: AuthInstance;
 	analytics?: Analytics;
 	database?: Database;
 	session?: AuthSession;

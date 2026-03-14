@@ -4,7 +4,7 @@ import type { Tag } from "@zero-heads-lab/design-system/components/ui/input-tag"
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useState } from "react";
 import { z } from "zod";
-import type { OrganizationRole } from "@/access-control";
+import type { AuthRole } from "../../access-control";
 import { useOrganization } from "../../hooks";
 
 const FormSchema = z.object({
@@ -27,7 +27,7 @@ type InviteMembersFormProps = {
 	submitText?: string;
 	defaultValues?: {
 		emails: Tag[];
-		role: OrganizationRole;
+		role: AuthRole;
 	};
 	maxValues?: number;
 };

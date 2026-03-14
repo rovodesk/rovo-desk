@@ -25,8 +25,8 @@ export const accessControl = createAccessControl(permissions);
 
 // Super Admin Platform Role
 export const admin = accessControl.newRole({
-	...defaultStatements,
 	...adminAc.statements,
+	user: ["list", "create"],
 	apiKey: ["update", "delete"],
 });
 
@@ -37,35 +37,48 @@ export const admin = accessControl.newRole({
 // Owns the org — full control over everything inside it,
 // including who has what role
 export const owner = accessControl.newRole({
-	...defaultStatements,
 	...ownerAc.statements,
+	apiKey: ["create", "read", "update", "delete"],
 });
 
 // Regular worker — does their job, sees their team, no admin tasks
 export const member = accessControl.newRole({
-	...defaultStatements,
 	...memberAc.statements,
+	apiKey: [],
 });
 
-export const anonymous = accessControl.newRole({
-	organization: [],
-	member: [],
-	invitation: [],
-	team: [],
-	ac: [],
+export const demoUser = accessControl.newRole({
+	apiKey: [],
+});
+export const betaUser = accessControl.newRole({
+	apiKey: [],
+});
+export const user = accessControl.newRole({
+	apiKey: [],
 });
 
 export const Roles = {
 	admin,
 	owner,
 	member,
-	anonymous,
+	demoUser,
+	betaUser,
+	user,
 } as const;
-
-export type AuthRole = keyof typeof Roles;
 
 export const ORGANIZATION_MEMBER_ROLES = ["owner", "member"];
 
 export const ADMIN_ROLES = ["admin"];
 
-export const DEFAULT_ROLE = "anonymous";
+//FIXME: Update default role to user when not in BETA
+export const DEFAULT_ROLE = "betaUser";
+
+export const AuthRoles = [
+	"admin",
+	"owner",
+	"member",
+	"demoUser",
+	"betaUser",
+	"user",
+] as const;
+export type AuthRole = (typeof AuthRoles)[number];

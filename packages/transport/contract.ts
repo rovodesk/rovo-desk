@@ -1,3 +1,4 @@
+import { getAllOrganizations } from "./procedures/admin.procedure";
 import { healthProcedure } from "./procedures/health.procedure";
 import {
 	clearOnboardingProgress,
@@ -31,6 +32,9 @@ export const RouterContract: {
 		updateSettings: typeof updateWidgetSettings;
 		get: typeof getWidget;
 	};
+	admin: {
+		listOrganizations: typeof getAllOrganizations;
+	};
 } = {
 	health: healthProcedure,
 	profile: {
@@ -51,5 +55,8 @@ export const RouterContract: {
 	widget: {
 		updateSettings: updateWidgetSettings,
 		get: getWidget,
+	},
+	admin: {
+		listOrganizations: getAllOrganizations,
 	},
 };

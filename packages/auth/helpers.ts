@@ -10,7 +10,7 @@ import type { AuthClient, Session } from "./types";
 export type SessionValidation =
 	| {
 			valid: false;
-			reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
+			reason: "no_session" | "expired" | "unverified" | "deleted";
 	  }
 	| { valid: true; session: NonNullable<Session> };
 
@@ -30,11 +30,6 @@ export function validateSession(session: Session | null): SessionValidation {
 	const isUnverified = !session.user.emailVerified;
 	if (isUnverified) {
 		return { valid: false, reason: "unverified" };
-	}
-
-	const isAnonymous = session.user.isAnonymous;
-	if (isAnonymous) {
-		return { valid: false, reason: "anonymous" };
 	}
 
 	const isDeleted = !!session.user.deletedAt;
@@ -128,6 +123,6 @@ export const determineAuthRole = (role?: string): AuthRole | null => {
 		case "member":
 			return "member";
 		default:
-			return "anonymous";
+			return null;
 	}
 };

@@ -21,7 +21,6 @@ export const user = authSchema.table("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("emailVerified").notNull().default(false),
 	image: text("image"),
-	isAnonymous: boolean("isAnonymous"),
 	lastLoginMethod: text("lastLoginMethod"),
 	role: text("role").notNull().default("unverified"),
 	banned: boolean("banned"),
@@ -305,8 +304,6 @@ export const session = authSchema.table(
 		deviceId: text("deviceId"),
 
 		expiresAt: timestamp("expiresAt").notNull(),
-
-		isAnonymous: boolean("isAnonymous"),
 
 		impersonatedBy: text("impersonatedBy").references(() => user.id, {
 			onDelete: "cascade",

@@ -35,10 +35,13 @@ export const OauthProviders: SocialProviders = {
 		userPoolId: keys.AWS_COGNITO_USER_POOL_ID,
 		mapProfileToUser(profile: CognitoProfile) {
 			return {
+				id: profile.sub,
 				name: profile.name,
 				image: profile.picture,
 				role: "admin",
 			};
 		},
+		disableSignUp: true,
+		disableImplicitSignUp: true,
 	},
 };

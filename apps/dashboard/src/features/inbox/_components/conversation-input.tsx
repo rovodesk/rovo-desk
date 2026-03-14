@@ -6,17 +6,21 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { Paperclip, Send, Smile } from "lucide-react";
 
 const ConversationInput = () => {
 	const { user } = useUser();
+
+	const userImage = user?.image || Placeholder.avatar(user?.email);
+
 	return (
 		<div className="border-border border-t px-5 py-3">
 			<div className="flex items-center gap-2">
 				<Avatar className="h-7 w-7 shrink-0">
-					<AvatarImage src={user!.image!} />
+					<AvatarImage src={userImage} />
 					<AvatarFallback className="bg-muted text-[10px] text-muted-foreground">
-						{user!.name!.slice(0, 2).toUpperCase()}
+						{user?.name.slice(0, 2).toUpperCase()}
 					</AvatarFallback>
 				</Avatar>
 				<div className="relative flex-1">

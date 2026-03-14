@@ -14,35 +14,50 @@ import { useState } from "react";
 import { DomainForm } from "./forms/domain-form";
 import { InviteMembersForm } from "./forms/invite-members-form";
 
-export function AddDomainDialog() {
-	const [open, setOpen] = useState(false);
+type AddDomainDialogProps = {
+	skipInviteStep?: boolean;
+	isOpen: boolean;
+	onOpenChange: (value: boolean) => void;
+	onSuccess?: () => void;
+};
+
+export function AddDomainDialog({
+	skipInviteStep = false,
+	isOpen,
+	onOpenChange,
+	onSuccess,
+}: AddDomainDialogProps) {
 	const [step, setStep] = useState<"create_domain" | "invite_members">(
 		"create_domain"
 	);
 
-	const handleCreateDomainSuccess: (value: {
-		name: string;
-		slug: string;
-	}) => void = (value) => {
+	const handleCreateDomainSuccess = (value: { name: string; slug: string }) => {
 		toast.success(`${value.name} created successfully!`);
+
+		if (skipInviteStep) {
+			onOpenChange(false);
+			onSuccess?.();
+			return;
+		}
+
 		setStep("invite_members");
 	};
 
-	const handleInviteMembersSuccess: (value: { emails: Tag[] }) => void = (
-		value
-	) => {
+	const handleInviteMembersSuccess = (value: { emails: Tag[] }) => {
 		toast.success(`${value.emails.length} members invited successfully!`);
-		setOpen(false);
+
+		onOpenChange(false);
 		setStep("create_domain");
+		onSuccess?.();
 	};
 
 	return (
 		<Dialog
 			onOpenChange={(v) => {
-				setOpen(v);
+				onOpenChange(v);
 				if (!v) setStep("create_domain");
 			}}
-			open={open}
+			open={isOpen}
 		>
 			<DialogTrigger asChild>
 				<SidebarGroupAction title="Add Domain">
@@ -62,7 +77,7 @@ export function AddDomainDialog() {
 
 						<DomainForm
 							cancelable
-							onCancel={() => setOpen(false)}
+							onCancel={() => onOpenChange(false)}
 							onError={(error) => {
 								console.error(error);
 								toast.error("Failed to create domain");
@@ -71,7 +86,8 @@ export function AddDomainDialog() {
 						/>
 					</>
 				)}
-				{step === "invite_members" && (
+
+				{step === "invite_members" && !skipInviteStep && (
 					<>
 						<DialogHeader>
 							<DialogTitle>Invite Members</DialogTitle>
@@ -81,7 +97,7 @@ export function AddDomainDialog() {
 						</DialogHeader>
 
 						<InviteMembersForm
-							onCancel={() => setOpen(false)}
+							onCancel={() => onOpenChange(false)}
 							onError={(error) => {
 								console.error(error);
 								toast.error("Failed to invite members");

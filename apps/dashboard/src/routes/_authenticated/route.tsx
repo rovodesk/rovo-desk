@@ -9,12 +9,6 @@ export const Route = createFileRoute("/_authenticated")({
 		const { data: session } = await authClient.getSession();
 		if (!session) {
 			console.log("NOT AUTHENTICATED, REDIRECTING TO SIGN IN");
-			// throw Route.redirect({
-			// 	to: "/sign-in",
-			// 	search: {
-			// 		redirectTo: window.location.href,
-			// 	},
-			// });
 			throw Route.redirect({
 				href: "http://localhost:3001/sign-in",
 				search: {

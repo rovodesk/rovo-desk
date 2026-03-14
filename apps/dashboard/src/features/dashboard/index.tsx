@@ -52,12 +52,7 @@ export function Dashboard() {
 
 	return (
 		<MainContent
-			headerLeftContent={
-				<div className="flex items-center gap-4">
-					<Separator orientation="vertical" />
-					<Search />
-				</div>
-			}
+			headerLeftContent={<Search />}
 			headerRightContent={
 				<div className="flex items-center gap-4">
 					{plan !== "enterprise" && (

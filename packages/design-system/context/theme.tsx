@@ -3,12 +3,12 @@
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'
 
-type Theme = 'dark' | 'light' | 'system'
+export type Theme = 'dark' | 'light' | 'system'
 type ResolvedTheme = Exclude<Theme, 'system'>
 
-const DEFAULT_THEME = 'system'
-const THEME_COOKIE_NAME = 'zero-heads-theme-color'
-const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
+export const DEFAULT_THEME = 'system'
+export const THEME_COOKIE_NAME = 'zero-heads-theme-color'
+export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
 
 export type ThemeProviderProps = {
   children: React.ReactNode
@@ -59,7 +59,7 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
 
-  const [theme, _setTheme] = useState<Theme>(decideTheme)
+  const [theme, _setTheme] = useState<Theme>(() => decideTheme())
 
   const getSystemTheme = (): ResolvedTheme => {
     if (typeof window === 'undefined') return 'light'
@@ -137,4 +137,33 @@ export const useTheme = () => {
   if (!context) throw new Error('useTheme must be used within a ThemeProvider')
 
   return context
+}
+
+export const InitThemeScript = () => {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+(function() {
+  try {
+    const cookie = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('zero-heads-theme-color='))
+      ?.split('=')[1]
+
+    let theme = cookie || 'system'
+
+    if (theme === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+
+    document.documentElement.classList.add(theme)
+  } catch (e) {}
+})();
+`,
+      }}
+    />
+  )
 }

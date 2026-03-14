@@ -19,7 +19,7 @@ import {
 } from "@zero-heads-lab/shared/defaults";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
-	admin as betterAuthAdmin,
+	admin as adminPlugin,
 	type Jwk,
 	jwt,
 	lastLoginMethod,
@@ -35,6 +35,7 @@ import {
 	Roles,
 } from "../access-control";
 import { AUTH_CONFIG } from "../config";
+import { determineAuthRole } from "../helpers";
 import { keys } from "./keys";
 import { SAML_CONFIG } from "./sso-config";
 
@@ -197,7 +198,8 @@ export const AuthPlugins = (
 				return null;
 			},
 		}),
-		betterAuthAdmin({
+		adminPlugin({
+			ac: accessControl,
 			roles: {
 				...Roles,
 			},
@@ -237,6 +239,7 @@ export const AuthPlugins = (
 				keyPairConfig: {
 					alg: AUTH_CONFIG.JWT_ALGORITHM,
 				},
+				jwksPath: "/.well-known/jwks.json",
 			},
 			jwt: {
 				issuer: keys.BETTER_AUTH_URL,
@@ -245,9 +248,8 @@ export const AuthPlugins = (
 				definePayload: ({ user }) => ({
 					id: user.id,
 					email: user.email,
-					verified: user.emailVerified,
-					role: user.role,
-					anonymous: user.isAnonymous,
+					verified: !!user.emailVerified,
+					role: determineAuthRole(user.role),
 					deleted: !!user.deletedAt,
 				}),
 			},

@@ -22,7 +22,6 @@ export async function markUserAsDeleted(
 		.update(userSchema)
 		.set({
 			deletedAt: new Date(),
-			role: "deleted",
 		})
 		.where(eq(userSchema.id, params.userId));
 }

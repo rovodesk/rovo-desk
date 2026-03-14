@@ -1,3 +1,4 @@
+import type { JWTPayload } from "jose";
 import type { permissions } from "./access-control";
 import type { authClient } from "./client";
 import type { createAuth } from "./server/better-auth";
@@ -70,3 +71,11 @@ export type PermissionAction =
 export type ClientPermissionMap = Parameters<
 	typeof authClient.organization.checkRolePermission
 >[0]["permissions"];
+
+export interface AuthJWTPayload extends JWTPayload {
+	id: string;
+	email: string;
+	role: "admin" | "owner" | "member";
+	verified: boolean;
+	deleted: boolean;
+}

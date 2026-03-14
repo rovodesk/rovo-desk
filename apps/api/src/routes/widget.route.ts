@@ -46,7 +46,7 @@ widgetRoute.post("/auth", async (c) => {
 	if (cachedKey?.key) {
 		key = cachedKey.key;
 	} else {
-		const db = createDatabase();
+		const db = await createDatabase();
 		const apiKeyFromDb = await getApiKeyByWorkspaceId(db, {
 			workspaceId: organizationId,
 		});
@@ -96,7 +96,7 @@ widgetRoute.post("/init", async (c) => {
 		return c.json({ error: "Missing credentials" }, 400);
 	}
 
-	const db = createDatabase();
+	const db = await createDatabase();
 
 	// Validate OrganizationId
 	const workspace = await getWorkspaceProfileByOrganizationId(db, {

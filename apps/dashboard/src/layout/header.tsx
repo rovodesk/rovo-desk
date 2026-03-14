@@ -75,7 +75,10 @@ export function Header({
 
 				<DynamicBreadcrumb />
 				{headerLeftContent && (
-					<div className="flex items-center gap-4">{headerLeftContent}</div>
+					<>
+						<Separator orientation="vertical" />
+						<div className="flex items-center gap-4">{headerLeftContent}</div>
+					</>
 				)}
 			</div>
 

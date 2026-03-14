@@ -3,7 +3,6 @@ import { passkeyClient } from "@better-auth/passkey/client";
 import { ssoClient } from "@better-auth/sso/client";
 import { stripeClient } from "@better-auth/stripe/client";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import type { BetterAuthClientPlugin } from "better-auth";
 import {
 	adminClient,
 	inferAdditionalFields,
@@ -19,7 +18,7 @@ import { accessControl, Roles } from "../access-control";
 import type { AuthInstance } from "../types";
 import { keys } from "./keys";
 
-const Plugins: BetterAuthClientPlugin[] = [
+const Plugins = [
 	inferAdditionalFields<AuthInstance>(),
 	organizationClient({
 		accessControl,
@@ -37,7 +36,10 @@ const Plugins: BetterAuthClientPlugin[] = [
 	stripeClient({
 		subscription: true,
 	}),
-	adminClient(),
+	adminClient({
+		accessControl,
+		roles: { ...Roles },
+	}),
 	lastLoginMethodClient(),
 	apiKeyClient(),
 	jwtClient(),
@@ -54,7 +56,6 @@ export const authClient = createBetterAuthClient({
 				toast.error("Too many requests. Please try again later.");
 			}
 		},
-		credentials: "include",
 	},
 });
 
@@ -69,7 +70,6 @@ export function createAuthClient(baseURL: string, basePath: string) {
 					toast.error("Too many requests. Please try again later.");
 				}
 			},
-			credentials: "include",
 		},
 	});
 }

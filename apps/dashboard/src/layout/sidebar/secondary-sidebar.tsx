@@ -88,8 +88,6 @@ export function SecondarySidebar({
 	};
 
 	return (
-		// biome-ignore lint/a11y/noNoninteractiveElementInteractions: Need this
-		// biome-ignore lint/a11y/noStaticElementInteractions: Need this
 		<div
 			className={cn(
 				"flex h-screen w-60 shrink-0 flex-col border-r bg-background transition-all duration-300 ease-in-out",

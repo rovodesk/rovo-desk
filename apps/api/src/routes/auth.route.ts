@@ -12,6 +12,9 @@ export const authRoute = new Hono<{
 authRoute.on(["POST", "GET"], "/:path{.*}", async (c) => {
 	const analytics = c.get("analytics");
 
-	const auth = createAuth(c.env.CACHE_STORE, analytics);
-	return await auth.handler(c.req.raw);
+	const auth = await createAuth(c.env.CACHE_STORE, analytics);
+	console.log(`[AUTH] ${c.req.method} ${c.req.url}`);
+	const response = await auth.handler(c.req.raw);
+	console.log(`[AUTH] Response: ${response.status}`);
+	return response;
 });

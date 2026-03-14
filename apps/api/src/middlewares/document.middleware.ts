@@ -11,7 +11,7 @@ export const documenttMiddleware: MiddlewareHandler<{
 		c.env.CACHE_STORE,
 		c.env.POSTHOG_PROJECT_API_KEY
 	);
-	const auth = createAuth(c.env.CACHE_STORE, analytics);
+	const auth = await createAuth(c.env.CACHE_STORE, analytics);
 
 	const handler = partyserverMiddleware({
 		options: {

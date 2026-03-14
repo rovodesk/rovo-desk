@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useIsMobile } from "@zero-heads-lab/design-system/hooks/use-mobile";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 type DomainSwitcherProps = {
 	workspaceSettingsRouteLink?: string;
@@ -25,6 +25,7 @@ type DomainSwitcherProps = {
 export function DomainSwitcher({
 	workspaceSettingsRouteLink,
 }: DomainSwitcherProps) {
+	const [isAddDomainDialogOpen, setIsAddDomainDialogOpen] = useState(false);
 	const isMobile = useIsMobile();
 
 	const {
@@ -80,7 +81,10 @@ export function DomainSwitcher({
 				<div className="flex h-12 items-center justify-between border-sidebar-accent border-b px-2">
 					<DropdownMenuLabel className="text-muted-foreground text-xs">
 						My Workspaces
-						<AddDomainDialog />
+						<AddDomainDialog
+							isOpen={isAddDomainDialogOpen}
+							onOpenChange={(value) => setIsAddDomainDialogOpen(value)}
+						/>
 					</DropdownMenuLabel>
 				</div>
 
@@ -120,8 +124,7 @@ export function DomainSwitcher({
 										<Loader2 className="ml-auto size-4 animate-spin" />
 										<span className="sr-only">Switching...</span>
 									</>
-								) : // biome-ignore lint/style/noNestedTernary: Need to show different icons based on active state
-								isActive ? (
+								) : isActive ? (
 									<a href={workspaceSettingsRouteLink ?? "/"}>
 										<Settings className="ml-auto size-4" />
 										<span className="sr-only">Settings</span>

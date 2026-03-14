@@ -46,8 +46,7 @@ export function IntegrationSettings() {
 		.filter((app) =>
 			appType === "connected"
 				? app.connected
-				: // biome-ignore lint/style/noNestedTernary: Will to
-					appType === "notConnected"
+				: appType === "notConnected"
 					? !app.connected
 					: true
 		)

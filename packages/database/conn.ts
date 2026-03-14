@@ -3,7 +3,8 @@ import postgres from "postgres";
 import { keys } from "./keys";
 import * as schema from "./schema";
 
-export function createDatabase() {
+// biome-ignore lint/suspicious/useAwait: No awaited ca;;
+export async function createDatabase() {
 	if (typeof window !== "undefined") {
 		throw new Error("Database can be used in server only");
 	}
@@ -26,4 +27,4 @@ export function createDatabase() {
 	});
 }
 
-export type Database = ReturnType<typeof createDatabase>;
+export type Database = Awaited<ReturnType<typeof createDatabase>>;

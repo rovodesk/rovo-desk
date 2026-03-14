@@ -1,3 +1,4 @@
+import { Children } from "react";
 import { Button, ButtonProps } from "./ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
@@ -9,12 +10,13 @@ type ConfirmDialogProps = {
   onConfirm: () => void;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
-  subtitle: React.ReactNode;
+  subtitle?: React.ReactNode;
   title: React.ReactNode;
-  trigger: React.ReactNode;
+  children?: React.ReactNode;
+  trigger?: React.ReactNode;
 }
 
-export const ConfirmDialog = ({ className, confirmText = "Confirm", destructive = false, disabled, onConfirm, onOpenChange, open, subtitle, title, trigger }: ConfirmDialogProps) => {
+export const ConfirmDialog = ({ className, confirmText = "Confirm", children, destructive = false, disabled, onConfirm, onOpenChange, open, subtitle, title, trigger }: ConfirmDialogProps) => {
 
   const variant: ButtonProps["variant"] = destructive
     ? "destructive"
@@ -32,6 +34,7 @@ export const ConfirmDialog = ({ className, confirmText = "Confirm", destructive 
             {subtitle}
           </DialogDescription>
         </DialogHeader>
+        {children}
         <DialogFooter>
           <Button variant="outline" asChild>
             <DialogClose>Cancel</DialogClose>

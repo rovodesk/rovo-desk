@@ -3,16 +3,12 @@ import { generateUUID, getErrorStatus } from "@zero-heads-lab/shared/utils";
 import { useMemo } from "react";
 import type { AuthRole } from "../access-control";
 import { useAuthContext } from "../client/context";
-import type { AuthClient, Organization } from "../types";
+import type { Organization } from "../types";
 import { useSession } from "./use-session";
 
 /* ------------------------------------------------ */
 /* -------------------- TYPES --------------------- */
 /* ------------------------------------------------ */
-
-type FullOrganization = Awaited<
-	ReturnType<AuthClient["organization"]["getFullOrganization"]>
->["data"];
 
 type ListOrganizationsResponse = Organization[];
 
@@ -68,7 +64,7 @@ export function useOrganization(providedOrganizationId?: string) {
 		isLoading: isLoadingOrganization,
 		error: organizationError,
 		refetch: refetchOrganization,
-	} = useQuery<FullOrganization | null>({
+	} = useQuery({
 		queryKey: ["auth", "organization", organizationId],
 		queryFn: async () => {
 			if (!organizationId) return null;

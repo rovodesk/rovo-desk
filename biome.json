@@ -11,7 +11,8 @@
       "!packages/design-system",
       "!**/*.jsonc",
       "!examples/**/*",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!apps/cms/src/payload-types.ts"
     ]
   },
   "formatter": {
@@ -24,7 +25,8 @@
       "recommended": true,
       "suspicious": {
         "noArrayIndexKey": "off",
-        "useIterableCallbackReturn": "off"
+        "useIterableCallbackReturn": "off",
+        "noShadowRestrictedNames": "off"
       },
       "style": {
         "noParameterAssign": "off",

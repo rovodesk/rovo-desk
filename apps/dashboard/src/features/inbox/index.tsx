@@ -4,6 +4,7 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
@@ -14,6 +15,8 @@ import {
 	Filter,
 	InfoIcon,
 	MessageSquare,
+	Search,
+	Sparkles,
 	Star,
 } from "lucide-react";
 import { useState } from "react";
@@ -205,8 +208,51 @@ const ConversationsPage = () => {
 	return (
 		<>
 			<MainContent
+				headerLeftContent={
+					<div className="relative">
+						<Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+						<Input
+							className="h-8 w-82 pl-8 text-xs"
+							placeholder="Search inbox..."
+						/>
+					</div>
+				}
+				headerRightContent={
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							className="mr-4 bg-purple-600 text-white"
+							onClick={handleElevateToIssue}
+							size="lg"
+						>
+							Elevate To Issue
+						</Button>
+
+						<Separator orientation="vertical" />
+
+						<Button
+							className="mr-4 text-purple-600"
+							onClick={() => toast.success("AI ")}
+							size="icon"
+							variant="ghost"
+						>
+							<Sparkles className="h-8 w-8" />
+						</Button>
+
+						<Button size="icon-lg" variant="ghost">
+							<Star
+								className={cn(
+									"h-8 w-8",
+									selected?.starred && "fill-amber-400 text-amber-400"
+								)}
+							/>
+						</Button>
+
+						<Button size="icon-lg" variant="ghost">
+							<Archive className="h-8 w-8" />
+						</Button>
+					</div>
+				}
 				secondaryHeader={<SecondarySidebarTitleHeader title="Inbox" />}
-				secondarySearchable
 				secondarySections={conversationsSections}
 			>
 				<div className="flex h-full">
@@ -278,8 +324,7 @@ const ConversationsPage = () => {
 														"ml-2 flex h-4.5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 font-medium text-[10px] text-primary-foreground",
 														conv.unreadCount > CRITICAL_THRESHOLD
 															? "bg-red-400 font-semibold"
-															: // biome-ignore lint/style/noNestedTernary: Need for UI
-																conv.unreadCount > WARNING_THRESHOLD
+															: conv.unreadCount > WARNING_THRESHOLD
 																? "bg-amber-400 font-semibold"
 																: "bg-primary font-semibold"
 													)}
@@ -328,38 +373,14 @@ const ConversationsPage = () => {
 										</p>
 									</div>
 
-									<div className="flex items-center justify-end gap-1">
-										<Button
-											className="mr-4 bg-purple-600 text-white"
-											onClick={handleElevateToIssue}
-											size="lg"
-										>
-											Elevate To Issue
-										</Button>
-
-										<Separator orientation="vertical" />
-
-										<Button size="icon-lg" variant="ghost">
-											<Star
-												className={cn(
-													"h-8 w-8",
-													selected.starred && "fill-amber-400 text-amber-400"
-												)}
-											/>
-										</Button>
-
-										<Button size="icon-lg" variant="ghost">
-											<Archive className="h-8 w-8" />
-										</Button>
-
-										<Button
-											onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-											size="icon-lg"
-											variant="ghost"
-										>
-											<InfoIcon className="h-8 w-8" />
-										</Button>
-									</div>
+									{/* right  */}
+									<Button
+										onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+										size="icon-lg"
+										variant="ghost"
+									>
+										<InfoIcon className="h-8 w-8" />
+									</Button>
 								</div>
 
 								<div className="scrollbar-thin flex-1 space-y-4 overflow-y-auto px-5 py-4">
