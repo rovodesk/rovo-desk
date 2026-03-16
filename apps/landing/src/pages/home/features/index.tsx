@@ -2,7 +2,7 @@ import BentoGrid from "./bento-grid";
 
 export default function FeaturesSection() {
 	return (
-		<section className="relative overflow-hidden px-6">
+		<section className="relative mt-24 overflow-hidden px-6">
 			{/* Header Container */}
 			<div className="mb-16 flex flex-col items-center text-center md:mb-20">
 				<h2 className="text-balance font-bold text-4xl text-neutral-900 tracking-tight sm:text-5xl dark:text-neutral-100">

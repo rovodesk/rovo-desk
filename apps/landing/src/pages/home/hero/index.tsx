@@ -1,33 +1,32 @@
 import { motion, stagger, useAnimate } from "motion/react";
 import { useEffect } from "react";
-import { env } from "@/env";
+import type { HeroBlock } from "@/lib/componen-registry/types";
 import { AvatarGroup } from "./avatar-group";
 import { ChatSequence } from "./chat-sequence";
 
 type HeroSectionProps = {
-	// biome-ignore lint/suspicious/noExplicitAny: Accepts data as object
-	data: Record<string, any>;
-} & React.ComponentProps<"section">;
+	data: HeroBlock;
+};
 
-export default function HeroSection(props: HeroSectionProps) {
-	const imageUrl = `${env.PUBLIC_API_URL}/${props.data.background.image.url}`;
+export default function HeroSection({ data }: HeroSectionProps) {
+	// const imageUrl = `${env.PUBLIC_API_URL}/${data.background.image.url}`;
+	const imageUrl = "/background.jpg";
 
 	return (
 		<section
 			className="relative z-10 mx-auto grid w-full grid-cols-1 items-start bg-slate-900 px-4 pt-20 pb-16 sm:px-6 md:h-140 md:pt-24 lg:min-h-svh lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-8"
-			{...props}
+			style={{
+				clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)",
+			}}
 		>
-			<Background
-				altText={props.data.background.image.alt}
-				imageUrl={imageUrl}
-			/>
-			{/* Left Column: Typography & CTAs */}
+			<Background altText={data.background.image.alt} imageUrl={imageUrl} />
+
 			<LeftColumn
-				ctas={props.data.ctas}
-				headline={props.data.headline}
-				subHeadline={props.data.subHeadline}
+				ctas={data.ctas ?? []}
+				headline={data.headline}
+				subHeadline={data.subHeadline ?? { text: "", enabled: false }}
 			/>
-			{/* Right Column: Animated Chat Widget */}
+
 			<RightColumn />
 		</section>
 	);
