@@ -1,12 +1,18 @@
-export type MessageType = "bot" | "user" | "external" | "system";
+import type {
+	AttachmentSchema,
+	ConversationItemSchema,
+	ConversationSchema,
+	MessageSchema,
+	ParticipantSchema,
+} from "validations/conversations";
+import type z from "zod";
 
-export interface ChatMessage {
-	id: string;
-	userId?: string;
-	username?: string;
-	message: string;
-	timestamp: number;
-	type: MessageType;
-	loading?: boolean;
-	widget?: string;
-}
+export type Conversation = z.infer<typeof ConversationSchema>;
+
+export type ConversationItem = z.infer<typeof ConversationItemSchema>;
+
+export type Message = z.infer<typeof MessageSchema>;
+
+export type Participant = z.infer<typeof ParticipantSchema>;
+
+export type Attachment = z.infer<typeof AttachmentSchema>;

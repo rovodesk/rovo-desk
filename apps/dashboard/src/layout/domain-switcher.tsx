@@ -141,22 +141,20 @@ export function DomainSwitcher({
 
 function DomainSwitcherSkeleton() {
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<button className="bg-transparent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-					{/* Avatar skeleton */}
-					<Skeleton className="size-8 rounded-lg" />
+		<div className="flex h-full w-full items-center justify-between gap-2">
+			{/* Avatar Skeleton - Matches size-8 rounded-lg */}
+			<Skeleton className="size-8 shrink-0 rounded-lg" />
 
-					{/* Text skeleton */}
-					<div className="flex flex-1 flex-col gap-1">
-						<Skeleton className="h-4 w-28" />
-						<Skeleton className="h-3 w-20" />
-					</div>
+			{/* Text Content Skeleton - Matches grid flex-1 */}
+			<div className="grid flex-1 gap-1.5 text-left">
+				{/* Workspace Name */}
+				<Skeleton className="h-3.5 w-24 rounded-sm" />
+				{/* Workspace Slug */}
+				<Skeleton className="h-3 w-16 rounded-sm opacity-60" />
+			</div>
 
-					{/* Chevron skeleton */}
-					<Skeleton className="ml-auto size-4 rounded-sm" />
-				</button>
-			</DropdownMenuTrigger>
-		</DropdownMenu>
+			{/* Chevrons Skeleton - Matches ml-4 size-4 */}
+			<Skeleton className="ml-4 size-4 shrink-0 rounded-full" />
+		</div>
 	);
 }

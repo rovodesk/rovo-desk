@@ -1,25 +1,49 @@
+import { IconClockFilled } from "@tabler/icons-react";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@zero-heads-lab/design-system/components/empty";
 import {
 	Avatar,
 	AvatarFallback,
+	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+} from "@zero-heads-lab/design-system/components/ui/dropdown-menu";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
+import { TooltipProvider } from "@zero-heads-lab/design-system/components/ui/tooltip";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
+import type { ConversationItem } from "@zero-heads-lab/shared/types";
 import {
 	Archive,
+	ArrowRight,
 	CheckCheck,
+	ChevronsUpDownIcon,
 	Clock,
-	Filter,
+	Edit,
+	Inbox,
 	InfoIcon,
+	type LucideIcon,
 	MessageSquare,
 	Search,
-	Sparkles,
 	Star,
 } from "lucide-react";
-import { useState } from "react";
+import { AnimatePresence, motion, type Variants } from "motion/react";
+import { useMemo, useState } from "react";
+import { DynamicBreadcrumb } from "@/components/dynamic-breadcrumb";
+import allConversations from "@/data/conversations.json";
 import { useDashboardLayout } from "@/layout";
 import { MainContent } from "@/layout/main-content";
 import { RightSidebar } from "@/layout/sidebar/right-sidebar";
@@ -29,6 +53,7 @@ import {
 } from "@/layout/sidebar/secondary-sidebar";
 import ConversationInput from "./_components/conversation-input";
 import { InfoPanel } from "./_components/info-pannel";
+import { NewChat } from "./_components/new-chat";
 
 const conversationsSections: SecondaryNavSection[] = [
 	{
@@ -95,337 +120,621 @@ const conversationsSections: SecondaryNavSection[] = [
 	},
 ];
 
-interface ConversationItem {
-	id: string;
-	name: string;
-	subject: string;
-	preview: string;
-	time: string;
-	channel: string;
-	status: "open" | "closed" | "snoozed";
-	starred: boolean;
-	initials: string;
-	avatarColor: string;
-	unreadCount: number;
-}
+// Update your variants
+const listVariants: Variants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.04,
+			delayChildren: 0.1,
+		},
+	},
+};
 
-const allConversations: ConversationItem[] = [
-	{
-		id: "1",
-		name: "Emma Watson",
-		subject: "Issue with billing",
-		preview: "I was charged twice for my subscription last month...",
-		time: "5m",
-		channel: "Email",
-		status: "open",
-		starred: true,
-		initials: "EW",
-		avatarColor: "hsl(340, 65%, 55%)",
-		unreadCount: 2,
+const itemVariants: Variants = {
+	hidden: { opacity: 0, y: 8 },
+	visible: {
+		opacity: 1,
+		y: 0,
+		transition: {
+			type: "spring",
+			stiffness: 400,
+			damping: 30,
+		},
 	},
-	{
-		id: "2",
-		name: "James Rodriguez",
-		subject: "Feature request: Dark mode",
-		preview: "Would love to see a dark mode option in the app...",
-		time: "12m",
-		channel: "Chat",
-		status: "open",
-		starred: false,
-		initials: "JR",
-		avatarColor: "hsl(215, 90%, 56%)",
-		unreadCount: 1,
+	exit: {
+		opacity: 0,
+		scale: 0.95,
+		transition: { duration: 0.1 },
 	},
-	{
-		id: "3",
-		name: "Sophie Chen",
-		subject: "Onboarding help needed",
-		preview: "Hi, I just signed up and I'm having trouble with...",
-		time: "25m",
-		channel: "Chat",
-		status: "open",
-		starred: false,
-		initials: "SC",
-		avatarColor: "hsl(142, 71%, 45%)",
-		unreadCount: 16,
+};
+
+const containerVariants: Variants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.05,
+			delayChildren: 0.1,
+		},
 	},
-	{
-		id: "4",
-		name: "Michael Brown",
-		subject: "API integration question",
-		preview: "We're trying to integrate your API with our system...",
-		time: "1h",
-		channel: "Email",
-		status: "open",
-		starred: true,
-		initials: "MB",
-		avatarColor: "hsl(38, 92%, 50%)",
-		unreadCount: 22,
+	exit: {
+		opacity: 0,
+		x: -20,
+		transition: { duration: 0.2 },
 	},
-	{
-		id: "5",
-		name: "Lisa Park",
-		subject: "Account deletion request",
-		preview: "I'd like to delete my account and all associated...",
-		time: "2h",
-		channel: "Email",
-		status: "snoozed",
-		starred: false,
-		initials: "LP",
-		avatarColor: "hsl(280, 65%, 55%)",
-		unreadCount: 48,
+};
+
+const messageVariants: Variants = {
+	hidden: (isAgent: boolean) => ({
+		opacity: 0,
+		scale: 0.8,
+		rotate: isAgent ? 2 : -2,
+		x: isAgent ? 10 : -10,
+		transformOrigin: isAgent ? "right bottom" : "left bottom",
+	}),
+	visible: {
+		opacity: 1,
+		scale: 1,
+		rotate: 0,
+		x: 0,
+		transition: {
+			type: "spring",
+			stiffness: 350,
+			damping: 25,
+		},
 	},
-	{
-		id: "6",
-		name: "David Kim",
-		subject: "Re: Partnership inquiry",
-		preview: "Thanks for getting back to me! We'd love to...",
-		time: "3h",
-		channel: "Social",
-		status: "closed",
-		starred: false,
-		initials: "DK",
-		avatarColor: "hsl(0, 72%, 51%)",
-		unreadCount: 69,
+	exit: {
+		opacity: 0,
+		scale: 0.9,
+		transition: { duration: 0.15 },
 	},
-];
+};
 
 //TODO: add to user settings
 const WARNING_THRESHOLD = 12;
-const CRITICAL_THRESHOLD = 24;
+// const CRITICAL_THRESHOLD = 24;
 
 const ConversationsPage = () => {
-	const [activeConv, setActiveConv] = useState("1");
-	const selected = allConversations.find((c) => c.id === activeConv);
 	const { rightSidebarOpen, setRightSidebarOpen } = useDashboardLayout();
+
+	const [activeConv, setActiveConv] = useState<string | null>(null);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [activeFilter, setActiveFilter] = useState("all");
+	const [sortBy, setSortBy] = useState<
+		"newest" | "oldest" | "unread" | "priority"
+	>("newest");
+	const [createConversationDialogOpened, setCreateConversationDialog] =
+		useState(false);
+
+	// 1. Data Logic: Filter and Search
+	const filteredConversations = useMemo(() => {
+		const filtered = allConversations.conversations.filter((conv) => {
+			const matchesSearch =
+				conv?.participants[0]?.name
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase()) ||
+				conv.subject.toLowerCase().includes(searchQuery.toLowerCase());
+
+			const matchesFilter =
+				activeFilter === "all" ||
+				conv.status === activeFilter ||
+				(activeFilter === "starred" && conv.starred);
+
+			return matchesSearch && matchesFilter;
+		});
+
+		const sorted = [...filtered].sort((a, b) => {
+			switch (sortBy) {
+				case "newest":
+					return (
+						new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+					);
+
+				case "oldest":
+					return (
+						new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+					);
+
+				case "unread":
+					return b.unreadCount - a.unreadCount;
+
+				case "priority":
+					return Number(b.starred) - Number(a.starred);
+
+				default:
+					return 0;
+			}
+		});
+
+		return sorted;
+	}, [searchQuery, activeFilter, sortBy]);
+
+	const selected = useMemo(
+		() => allConversations.conversations.find((c) => c.id === activeConv),
+		[activeConv]
+	);
 
 	const handleElevateToIssue = () => {
 		toast.success("Conversation elevated to issue", {
-			description: "Not implemented yet",
+			description: "Ticket created in Engineering backlog.",
 		});
 	};
 
 	return (
 		<>
 			<MainContent
-				headerLeftContent={
-					<div className="relative">
-						<Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-						<Input
-							className="h-8 w-82 pl-8 text-xs"
-							placeholder="Search inbox..."
-						/>
-					</div>
+				secondaryHeader={
+					<SecondarySidebarTitleHeader
+						action={() => setCreateConversationDialog(true)}
+						actionIcon={Edit}
+						title="Inbox"
+					/>
 				}
-				headerRightContent={
-					<div className="flex items-center justify-end gap-1">
-						<Button
-							className="mr-4 bg-purple-600 text-white"
-							onClick={handleElevateToIssue}
-							size="lg"
-						>
-							Elevate To Issue
-						</Button>
-
-						<Separator orientation="vertical" />
-
-						<Button
-							className="mr-4 text-purple-600"
-							onClick={() => toast.success("AI ")}
-							size="icon"
-							variant="ghost"
-						>
-							<Sparkles className="h-8 w-8" />
-						</Button>
-
-						<Button size="icon-lg" variant="ghost">
-							<Star
-								className={cn(
-									"h-8 w-8",
-									selected?.starred && "fill-amber-400 text-amber-400"
-								)}
-							/>
-						</Button>
-
-						<Button size="icon-lg" variant="ghost">
-							<Archive className="h-8 w-8" />
-						</Button>
-					</div>
-				}
-				secondaryHeader={<SecondarySidebarTitleHeader title="Inbox" />}
 				secondarySections={conversationsSections}
+				showHeader={false}
 			>
-				<div className="flex h-full">
-					{/* List */}
-					<div className="flex w-96 shrink-0 flex-col border-border border-r bg-background">
-						{/* Filter tabs */}
-						<div className="flex items-center justify-between border-b px-3 py-2.5">
-							<div className="flex items-center gap-2">
-								<Badge className="cursor-pointer bg-primary text-primary-foreground text-xs">
-									Unassigned
-								</Badge>
-								<Badge
-									className="cursor-pointer text-xs hover:bg-muted"
-									variant="outline"
-								>
-									Open
-								</Badge>
-								<Badge
-									className="cursor-pointer text-xs hover:bg-muted"
-									variant="outline"
-								>
-									All
-								</Badge>
+				<motion.div
+					animate={{ opacity: 1, y: 0 }}
+					className="flex h-full"
+					exit={{ opacity: 0, y: 20 }}
+					initial={{ opacity: 0, y: 20 }}
+					transition={{
+						duration: 0.6,
+						ease: [0.25, 1, 0.5, 1],
+					}}
+				>
+					{/* --- Sidebar List --- */}
+					<div className="flex w-96 shrink-0 flex-col border-border border-r bg-background/50 backdrop-blur-sm">
+						<div className="space-y-4 p-4">
+							{/* Breadcrumb and Dropdown */}
+							<div className="flex items-center justify-between">
+								<DynamicBreadcrumb className="ml-1" />
+								{/* Sort Dropdown */}
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button
+											aria-label="Sort conversations"
+											className="size-8"
+											size="icon"
+											title={`Sort: ${sortBy}`}
+											variant="ghost"
+										>
+											<ChevronsUpDownIcon className="text-muted-foreground" />
+										</Button>
+									</DropdownMenuTrigger>
+
+									<DropdownMenuContent
+										align="start"
+										alignOffset={12}
+										className="w-44 space-y-1 p-2"
+										side="right"
+										sideOffset={10}
+									>
+										<DropdownMenuLabel className="text-muted-foreground text-xs">
+											Sort conversations
+										</DropdownMenuLabel>
+
+										{[
+											{ value: "newest", label: "Newest first", icon: Clock },
+											{ value: "oldest", label: "Oldest first", icon: Clock },
+											{ value: "unread", label: "Unread first", icon: Inbox },
+											{
+												value: "priority",
+												label: "Priority first",
+												icon: Star,
+											},
+										].map((item, idx) => {
+											const Icon = item.icon;
+											const active = sortBy === item.value;
+
+											return (
+												<motion.div
+													key={idx}
+													whileHover={{ scale: 1.03 }}
+													whileTap={{ scale: 0.97 }}
+												>
+													<DropdownMenuItem
+														className={cn(
+															"flex items-center gap-2 rounded-md text-sm",
+															active && "bg-primary/10 text-primary"
+														)}
+														key={item.value}
+														onClick={() =>
+															setSortBy(item.value as typeof sortBy)
+														}
+													>
+														<Icon className="h-4 w-4" />
+
+														<span className="flex-1">{item.label}</span>
+
+														{active && <CheckCheck className="h-4 w-4" />}
+													</DropdownMenuItem>
+												</motion.div>
+											);
+										})}
+									</DropdownMenuContent>
+								</DropdownMenu>
 							</div>
 
-							<Button className="ml-auto h-8 w-8" size="icon">
-								<Filter className="h-3.5 w-3.5" />
-							</Button>
-						</div>
-						<div className="scrollbar-thin flex-1 overflow-y-auto">
-							{allConversations.map((conv) => (
-								<button
-									className={cn(
-										"flex w-full items-start gap-3 border-border/50 border-b px-3 py-3 text-left transition-colors",
-										activeConv === conv.id
-											? "bg-primary/10"
-											: "hover:bg-muted/50"
-									)}
-									key={conv.id}
-									onClick={() => setActiveConv(conv.id)}
-								>
-									<Avatar className="mt-0.5 h-9 w-9 shrink-0">
-										<AvatarFallback
-											className="font-medium text-[11px] text-primary-foreground"
-											style={{ backgroundColor: conv.avatarColor }}
+							{/* Search */}
+							<div className="relative">
+								<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+								<Input
+									className="h-9 bg-muted/50 pl-9"
+									onChange={(e) => setSearchQuery(e.target.value)}
+									placeholder="Search by name or subject..."
+									value={searchQuery}
+								/>
+							</div>
+
+							{/* Filters */}
+							<div className="relative flex gap-1 rounded-xl border border-border/50 bg-muted/50 p-1 shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)]">
+								{["all", "open", "pending", "closed"].map((f) => {
+									const isActive = activeFilter === f;
+									return (
+										<button
+											className={cn(
+												"relative z-10 h-7 flex-1 font-medium text-[11px] capitalize transition-colors duration-200",
+												isActive
+													? "text-white"
+													: "text-muted-foreground hover:text-foreground"
+											)}
+											key={f}
+											onClick={() => setActiveFilter(f)}
 										>
-											{conv.initials}
-										</AvatarFallback>
-									</Avatar>
-									<div className="min-w-0 flex-1">
-										<div className="flex items-center justify-between">
-											<span className="truncate font-medium text-sm">
-												{conv.name}
-											</span>
-											<span className="ml-2 shrink-0 text-[11px] text-muted-foreground">
-												{conv.time}
-											</span>
-										</div>
-										<div className="mt-0.5 truncate font-medium text-xs">
-											{conv.subject}
-										</div>
-										<div className="mt-0.5 flex items-center justify-between">
-											<span className="truncate text-muted-foreground text-xs">
-												{conv.preview}
-											</span>
-											{conv.unreadCount > 0 && (
-												<span
-													className={cn(
-														"ml-2 flex h-4.5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 font-medium text-[10px] text-primary-foreground",
-														conv.unreadCount > CRITICAL_THRESHOLD
-															? "bg-red-400 font-semibold"
-															: conv.unreadCount > WARNING_THRESHOLD
-																? "bg-amber-400 font-semibold"
-																: "bg-primary font-semibold"
-													)}
-												>
-													{conv.unreadCount}
-												</span>
+											{/* The Label */}
+											<span className="relative z-20">{f}</span>
+
+											{/* The Sliding Background */}
+											{isActive && (
+												<motion.div
+													className="absolute inset-0 z-10 rounded-lg bg-blue-600/80 shadow-sm ring-1 ring-black/5"
+													layoutId="activeTab"
+													transition={{
+														type: "spring",
+														stiffness: 400,
+														damping: 30,
+													}}
+												/>
 											)}
-										</div>
-										<div className="mt-1 flex items-center gap-1.5">
-											<Badge
-												className="h-4 px-1.5 text-[10px]"
-												variant="outline"
+										</button>
+									);
+								})}
+							</div>
+						</div>
+
+						{/* Chat lists */}
+						<div className="scrollbar-none flex-1 overflow-y-auto">
+							<motion.div
+								animate="visible" // KEY IS VITAL: Re-triggers stagger on change
+								initial="hidden"
+								key={`${activeFilter}-${sortBy}`}
+								variants={listVariants}
+							>
+								{filteredConversations.length > 0 ? (
+									<AnimatePresence initial={false} mode="popLayout">
+										{filteredConversations.map((conv) => (
+											<motion.button
+												animate="visible"
+												className={cn(
+													"flex w-full flex-col gap-1 border-border/40 border-b px-4 py-4 text-left transition-colors",
+													activeConv === conv.id
+														? "bg-primary/5 ring-1 ring-primary/20 ring-inset"
+														: "hover:bg-muted/30"
+												)}
+												exit="exit"
+												initial="hidden"
+												key={conv.id}
+												layout
+												onClick={() => setActiveConv(conv.id)}
+												variants={itemVariants}
+												whileTap={{ scale: 0.97 }}
 											>
-												{conv.channel}
-											</Badge>
-											<Badge
-												className="h-4 px-1.5 text-[10px]"
-												variant={
-													conv.status === "open" ? "default" : "secondary"
-												}
-											>
-												{conv.status}
-											</Badge>
-											{conv.starred && (
-												<Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-											)}
+												<div className="flex items-center justify-between gap-2">
+													<div className="flex min-w-0 items-center gap-2">
+														<Avatar className="h-7 w-7">
+															<AvatarImage
+																alt={conv?.participants[0]?.name}
+																src={conv?.participants[0]?.avatar || ""}
+															/>
+															<AvatarFallback
+																className="text-[10px] text-white"
+																style={{
+																	backgroundColor:
+																		conv?.participants[0]?.avatarColor,
+																}}
+															>
+																{conv?.participants[0]?.initials}
+															</AvatarFallback>
+														</Avatar>
+														<span className="truncate font-semibold text-sm">
+															{conv?.participants[0]?.name}
+														</span>
+													</div>
+													<span className="whitespace-nowrap text-[10px] text-muted-foreground">
+														{new Date(conv.createdAt).toLocaleTimeString([], {
+															hour: "2-digit",
+															minute: "2-digit",
+														})}
+													</span>
+												</div>
+
+												<div className="min-w-0 pl-9">
+													<p className="mb-0.5 truncate font-medium text-xs">
+														{conv.subject}
+													</p>
+													<p className="truncate text-[11px] text-muted-foreground leading-relaxed">
+														{conv.preview}
+													</p>
+
+													<div className="mt-2 flex items-center justify-between">
+														<div className="flex items-center gap-1.5">
+															<Badge
+																className="h-4 px-1 text-[9px] uppercase tracking-wider"
+																variant="outline"
+															>
+																{conv.channel}
+															</Badge>
+															{conv.starred && (
+																<Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+															)}
+														</div>
+														{conv.unreadCount > 0 && (
+															<Badge
+																className={cn(
+																	"h-4 min-w-4 rounded-full px-1 text-[10px]",
+																	conv.unreadCount > WARNING_THRESHOLD
+																		? "bg-orange-500"
+																		: "bg-primary"
+																)}
+															>
+																{conv.unreadCount}
+															</Badge>
+														)}
+													</div>
+												</div>
+											</motion.button>
+										))}
+									</AnimatePresence>
+								) : (
+									<div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+										<div className="mb-3 rounded-full bg-muted p-3">
+											<Search className="h-5 w-5 text-muted-foreground" />
 										</div>
+										<p className="font-medium text-sm">
+											No conversations found
+										</p>
+										<p className="mt-1 text-muted-foreground text-xs">
+											Try adjusting your filters or search terms.
+										</p>
 									</div>
-								</button>
-							))}
+								)}
+							</motion.div>
 						</div>
 					</div>
 
-					{/* Detail */}
-					<div className="flex min-w-0 flex-1 flex-col">
-						{selected ? (
-							<>
-								<div className="flex w-full items-center justify-between border-border border-b px-5 py-3">
-									<div className="flex flex-col gap-1">
-										<h2 className="font-semibold text-base">
-											{selected.subject}
-										</h2>
-										<p className="text-muted-foreground text-xs">
-											{selected.name} · via {selected.channel} · {selected.time}{" "}
-											ago
+					{/* --- Detail View --- */}
+					<div className="relative flex min-w-0 flex-1 flex-col overflow-hidden bg-background">
+						<AnimatePresence mode="wait">
+							{selected ? (
+								<motion.div
+									animate="visible"
+									className="flex min-w-0 flex-1 flex-col bg-background"
+									exit="exit"
+									initial="hidden"
+									key={selected.id}
+									transition={{ duration: 0.25 }}
+									variants={containerVariants}
+								>
+									<motion.div
+										className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/50 px-6 py-4 backdrop-blur-md"
+										variants={itemVariants}
+									>
+										{/* Header Info */}
+										<div className="min-w-0">
+											<div className="mb-1 flex items-center gap-2">
+												<h2 className="truncate font-bold text-lg leading-tight">
+													{selected.subject}
+												</h2>
+												<Badge className="capitalize" variant="secondary">
+													{selected.status}
+												</Badge>
+											</div>
+											<p className="flex items-center gap-2 text-muted-foreground text-xs">
+												<span className="font-medium text-foreground">
+													{selected?.participants[0]?.name}
+												</span>
+												<span>•</span>
+												<span>{selected.customer.location}</span>
+												<span>•</span>
+												<span>{selected.customer.company}</span>
+											</p>
+										</div>
+
+										{/* Action Buttons */}
+										<div className="flex items-center gap-2">
+											<motion.div
+												whileHover={{ scale: 1.05 }}
+												whileTap={{ scale: 0.95 }}
+											>
+												<Button
+													className="hidden gap-2 border-green-200 bg-green-50/50 text-green-600 hover:bg-green-50 md:flex"
+													size="sm"
+													variant="outline"
+												>
+													<IconClockFilled className="h-4 w-4" />
+													Active
+												</Button>
+											</motion.div>
+											<motion.div
+												whileHover={{ scale: 1.05 }}
+												whileTap={{ scale: 0.95 }}
+											>
+												<Button
+													className="bg-purple-600 hover:bg-purple-700"
+													onClick={handleElevateToIssue}
+													size="sm"
+												>
+													Elevate
+												</Button>
+											</motion.div>
+											<Separator className="mx-1 h-8" orientation="vertical" />
+											<TooltipProvider>
+												<div className="flex items-center gap-1">
+													<ActionButton active={selected.starred} icon={Star} />
+													<ActionButton icon={Archive} />
+													<ActionButton
+														active={rightSidebarOpen}
+														icon={InfoIcon}
+														onClick={() =>
+															setRightSidebarOpen(!rightSidebarOpen)
+														}
+													/>
+												</div>
+											</TooltipProvider>
+										</div>
+									</motion.div>
+
+									<div className="flex-1 space-y-6 overflow-y-auto scroll-smooth bg-muted/5 p-6">
+										<AnimatePresence initial={false}>
+											{/* Conversation History */}
+											{selected.messages.map((msg: ConversationItem) => (
+												<motion.div
+													animate="visible"
+													className={cn(
+														"flex gap-3",
+														msg.sender.role === "agent" && "flex-row-reverse"
+													)}
+													custom={msg.sender.role === "agent"}
+													exit="exit"
+													initial="hidden"
+													key={msg.id}
+													layout
+													variants={messageVariants}
+												>
+													{/* Avatar */}
+													<motion.div
+														className="mt-1 shrink-0"
+														whileHover={{ scale: 1.1 }}
+													>
+														<Avatar className="mt-1 h-8 w-8">
+															<AvatarImage
+																alt={msg.sender.name}
+																src={msg.sender.avatar}
+															/>
+															<AvatarFallback className="text-[10px]">
+																{msg.sender.name.substring(0, 2).toUpperCase()}
+															</AvatarFallback>
+														</Avatar>
+													</motion.div>
+													{/* Message */}
+													<div
+														className={cn(
+															"flex max-w-[75%] flex-col",
+															msg.sender.role === "agent"
+																? "items-end"
+																: "items-start"
+														)}
+													>
+														{/* Timestamp only shows on hover of the group to reduce noise */}
+														<motion.div
+															className="mb-1 flex items-center gap-2 px-1"
+															initial={{ opacity: 0 }}
+															whileHover={{ opacity: 1 }}
+														>
+															<span className="font-medium text-[10px] text-muted-foreground uppercase tracking-tight">
+																{msg.sender.name} • 10:42 AM
+															</span>
+														</motion.div>
+
+														{/* Message */}
+														<motion.div
+															className={cn(
+																"relative rounded-2xl px-4 py-2.5 text-sm transition-all",
+																// Apply the border/background here directly
+																msg.sender.role === "agent"
+																	? "rounded-tr-none bg-primary text-primary-foreground shadow-primary/20 shadow-sm"
+																	: "rounded-tl-none border border-border bg-muted text-muted- shadow-sm dark:bg-white dark:text-black"
+															)}
+															layoutId={`bubble-${msg.id}`}
+														>
+															{/* Content stays on top */}
+															<span className="relative z-10 block">
+																{msg.content.text}
+															</span>
+
+															<div
+																className={cn(
+																	"pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]",
+																	msg.sender.role === "agent"
+																		? "opacity-40"
+																		: "opacity-100"
+																)}
+															>
+																{/* The Gloss Gradient
+																<div
+																	className={cn(
+																		"absolute inset-0 bg-linear-to-b",
+																		msg.sender.role === "agent"
+																			? "from-white/20 to-transparent"
+																			: "from-black/2 to-transparent dark:from-white/8"
+																	)}
+																/> */}
+
+																{/* The inner 'rim' light - this replaces the ring to avoid the corner line glitch */}
+																<div
+																	className={cn(
+																		"absolute inset-0 rounded-[inherit] border border-transparent",
+																		msg.sender.role === "agent"
+																			? "border-t-white/20 border-l-white/10"
+																			: "dark:border-t-white/10 dark:border-l-white/5"
+																	)}
+																/>
+															</div>
+														</motion.div>
+													</div>
+												</motion.div>
+											))}
+										</AnimatePresence>
+
+										{/* System Event Divider */}
+										<motion.div
+											className="flex items-center gap-4 py-4"
+											variants={itemVariants}
+										>
+											<Separator className="flex-1" />
+											<span className="rounded bg-muted px-2 py-0.5 font-medium text-[10px] text-muted-foreground uppercase tracking-widest">
+												System Event
+											</span>
+											<Separator className="flex-1" />
+										</motion.div>
+
+										<p className="text-center text-muted-foreground text-xs italic">
+											Conversation assigned to{" "}
+											<span className="font-medium text-foreground">
+												{selected.assignee.name}
+											</span>
 										</p>
 									</div>
 
-									{/* right  */}
-									<Button
-										onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-										size="icon-lg"
-										variant="ghost"
+									<motion.div
+										className="border-t bg-background p-4"
+										variants={itemVariants}
 									>
-										<InfoIcon className="h-8 w-8" />
-									</Button>
-								</div>
-
-								<div className="scrollbar-thin flex-1 space-y-4 overflow-y-auto px-5 py-4">
-									<div className="flex gap-3">
-										<Avatar className="h-8 w-8 shrink-0">
-											<AvatarFallback
-												className="font-medium text-[10px] text-primary-foreground"
-												style={{ backgroundColor: selected.avatarColor }}
-											>
-												{selected.initials}
-											</AvatarFallback>
-										</Avatar>
-										<div>
-											<div className="mb-1 flex items-center gap-2">
-												<span className="font-medium text-sm">
-													{selected.name}
-												</span>
-												<span className="text-[11px] text-muted-foreground">
-													{selected.time} ago
-												</span>
-											</div>
-											<div className="max-w-[85%] rounded-xl bg-primary/10 px-3.5 py-2.5 text-sm leading-relaxed">
-												{selected.preview}
-											</div>
-										</div>
-									</div>
-								</div>
-
-								{/* Assignment note */}
-								<div className="flex justify-center">
-									<span className="text-muted-foreground text-xs italic">
-										This conversation was assigned to Sarah Spangenberg
-									</span>
-								</div>
-
-								<ConversationInput />
-							</>
-						) : (
-							<div className="flex flex-1 items-center justify-center text-muted-foreground">
-								Select a conversation
-							</div>
-						)}
+										<ConversationInput />
+									</motion.div>
+								</motion.div>
+							) : (
+								<EmptyConversationState />
+							)}
+						</AnimatePresence>
 					</div>
-				</div>
+				</motion.div>
 			</MainContent>
+
+			{/* Right Sidebar */}
 			<RightSidebar
 				headerContent={
 					<div className="flex items-center gap-2">
@@ -438,8 +747,124 @@ const ConversationsPage = () => {
 			>
 				<InfoPanel />
 			</RightSidebar>
+
+			{/* New Chat Dialog */}
+			<NewChat
+				conversations={allConversations.conversations}
+				onOpenChange={setCreateConversationDialog}
+				open={createConversationDialogOpened}
+			/>
 		</>
 	);
 };
+
+const ActionButton = ({
+	icon: Icon,
+	active,
+	onClick,
+}: {
+	icon: LucideIcon;
+	active?: boolean;
+	onClick?: () => void;
+}) => (
+	<motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+		<Button
+			className={cn(
+				"h-9 w-9",
+				active && "bg-primary/10 text-primary hover:bg-primary/20"
+			)}
+			onClick={onClick}
+			size="icon"
+			variant="ghost"
+		>
+			<Icon
+				className={cn(
+					"h-5 w-5",
+					active && Icon === Star && "fill-amber-400 text-amber-400"
+				)}
+			/>
+		</Button>
+	</motion.div>
+);
+
+export function EmptyConversationState() {
+	return (
+		<motion.div
+			animate="visible"
+			className="flex flex-1 items-center justify-center bg-muted/5"
+			initial="hidden"
+			variants={containerVariants}
+		>
+			<Empty className="max-w-md">
+				<EmptyHeader>
+					<motion.div className="flex justify-center" variants={itemVariants}>
+						<div className="relative">
+							{/* Decorative ambient glow */}
+							<div className="absolute -inset-4 rounded-full bg-primary/5 blur-2xl" />
+							<EmptyMedia
+								className="relative border bg-background shadow-sm"
+								variant="icon"
+							>
+								<Inbox className="h-6 w-6 text-primary" />
+							</EmptyMedia>
+						</div>
+					</motion.div>
+
+					<motion.div variants={itemVariants}>
+						<EmptyTitle className="text-xl tracking-tight">
+							Select a conversation
+						</EmptyTitle>
+						<EmptyDescription className="mx-auto max-w-70">
+							Pick a thread from the sidebar to manage customer inquiries and
+							tickets.
+						</EmptyDescription>
+					</motion.div>
+				</EmptyHeader>
+
+				<motion.div
+					className="mt-2 grid grid-cols-2 gap-4"
+					variants={itemVariants}
+				>
+					{[
+						{ label: "Unassigned", value: "12", color: "bg-orange-500" },
+						{ label: "Open Tickets", value: "48", color: "bg-blue-500" },
+					].map((stat, i) => (
+						<div
+							className="group relative rounded-xl border bg-background/50 p-4 transition-all hover:border-primary/20 hover:shadow-md"
+							key={i}
+						>
+							<div
+								className={cn(
+									"absolute top-3 right-3 size-1.5 rounded-full",
+									stat.color
+								)}
+							/>
+							<p className="font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
+								{stat.label}
+							</p>
+							<p className="mt-1 font-bold text-2xl tracking-tighter">
+								{stat.value}
+							</p>
+						</div>
+					))}
+				</motion.div>
+
+				<motion.div className="mt-6" variants={itemVariants}>
+					<Button
+						className="text-muted-foreground transition-colors hover:text-foreground"
+						size="sm"
+						variant="ghost"
+					>
+						<span>View keyboard shortcuts</span>
+						<kbd className="ml-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium font-mono text-[10px] opacity-100 sm:flex">
+							<span className="text-xs">⌘</span>K
+						</kbd>
+						<ArrowRight className="ml-2 h-3 w-3 opacity-50" />
+					</Button>
+				</motion.div>
+			</Empty>
+		</motion.div>
+	);
+}
 
 export default ConversationsPage;

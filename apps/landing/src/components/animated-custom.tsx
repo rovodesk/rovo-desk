@@ -46,9 +46,6 @@
 // //                                     </div> */}
 // //                                 {/* </motion.div> */}
 
-
-
-
 // // function _InsightCard() {
 // return (
 //     <div className="group relative max-w-xl">

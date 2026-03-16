@@ -16,7 +16,6 @@ import { Separator } from "@zero-heads-lab/design-system/components/ui/separator
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Columns3Cog } from "lucide-react";
 import { Search } from "@/components/search";
-import { Header } from "@/layout/header";
 import { MainContent } from "@/layout/main-content";
 import { Analytics } from "./_components/analytics";
 import { Overview } from "./_components/overview";
@@ -82,10 +81,10 @@ export function Dashboard() {
 					<div className="space-y-1">
 						<div className="flex items-center gap-3">
 							<h1 className="font-semibold text-xl tracking-tight">
-								Dashboard
+								{name}'s Dashboard
 							</h1>
 
-							<Badge variant="secondary">{role}</Badge>
+							<Badge variant="outline">{role}</Badge>
 						</div>
 
 						<p className="text-muted-foreground text-sm">
@@ -232,74 +231,104 @@ export function Dashboard() {
 
 function DashboardSkeleton() {
 	return (
-		<MainContent>
-			<Header>
-				{/* Search Skeleton */}
-				<Skeleton className="h-9 w-64 rounded-md" />
+		<MainContent
+			headerLeftContent={<Skeleton className="h-9 w-64 rounded-md" />}
+			headerRightContent={
 				<div className="ms-auto flex items-center space-x-4">
-					{/* Icons Skeleton */}
 					<Skeleton className="size-9 rounded-full" />
 					<Skeleton className="size-9 rounded-full" />
 				</div>
-			</Header>
-			{/* Top Bar Skeleton */}
-			<div className="mb-8 flex items-center justify-between px-2">
-				<Skeleton className="h-10 w-64" />
-				<Skeleton className="h-10 w-32" />
-			</div>
+			}
+			rightSidebarToggleIcon={<Columns3Cog className="h-4 w-4" />}
+		>
+			<ScrollArea className="mx-auto flex w-full max-w-[1600px] flex-col space-y-6 px-6 py-6">
+				{/* Title & Action Section */}
+				<div className="flex items-center justify-between">
+					<div className="space-y-1">
+						<div className="flex items-center gap-3">
+							<Skeleton className="h-8 w-64" />{" "}
+							{/* Name's Dashboard equivalent */}
+							<Skeleton className="h-6 w-16 rounded-md" />{" "}
+							{/* Role Badge equivalent */}
+						</div>
+						<Skeleton className="h-4 w-80" /> {/* Description */}
+					</div>
+					<Skeleton className="h-9 w-24 rounded-md" /> {/* Export Button */}
+				</div>
 
-			<div className="space-y-4">
-				{/* 4 Stats Cards Skeleton */}
-				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-					{Array.from({ length: 4 }).map((_, i) => (
-						<Card key={i}>
-							<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-								<Skeleton className="h-4 w-[100px]" />
-								<Skeleton className="size-4 rounded-full" />
+				<div className="mt-8 space-y-4">
+					{/* Top Stats Row (Matching Dashboard's 4-card grid) */}
+					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+						{Array.from({ length: 4 }).map((_, i) => (
+							<Card key={i}>
+								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+									<Skeleton className="h-4 w-24" />
+									<Skeleton className="size-4 rounded-full" />
+								</CardHeader>
+								<CardContent>
+									<Skeleton className="mb-2 h-8 w-16" />
+									<Skeleton className="h-3 w-32" />
+								</CardContent>
+							</Card>
+						))}
+					</div>
+
+					{/* Main Content Grid (Matching Dashboard's 7-column split) */}
+					<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+						{/* Conversation List (Matches Overview Chart column span) */}
+						<Card className="col-span-1 lg:col-span-4">
+							<CardHeader className="space-y-2">
+								<Skeleton className="h-6 w-32" />
+								<Skeleton className="h-4 w-48" />
 							</CardHeader>
 							<CardContent>
-								<Skeleton className="mb-2 h-8 w-[60px]" />
-								<Skeleton className="h-3 w-[120px]" />
+								<div className="space-y-6">
+									{Array.from({ length: 5 }).map((_, i) => (
+										<div
+											className="flex flex-col gap-2 border-b pb-4 last:border-0"
+											key={i}
+										>
+											<div className="flex items-center justify-between">
+												<div className="flex items-center gap-2">
+													<Skeleton className="size-8 rounded-full" />
+													<Skeleton className="h-4 w-32" />
+												</div>
+												<Skeleton className="h-3 w-10" />
+											</div>
+											<div className="space-y-2 pl-10">
+												<Skeleton className="h-3 w-full" />
+												<Skeleton className="h-3 w-2/3" />
+											</div>
+										</div>
+									))}
+								</div>
 							</CardContent>
 						</Card>
-					))}
-				</div>
 
-				{/* Main Grid Skeleton */}
-				<div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-					{/* Overview Chart Skeleton */}
-					<Card className="lg:col-span-4">
-						<CardHeader>
-							<Skeleton className="h-6 w-[140px]" />
-						</CardHeader>
-						<CardContent className="ps-2">
-							<Skeleton className="h-[350px] w-full rounded-xl" />
-						</CardContent>
-					</Card>
-
-					{/* Recent Sales Skeleton */}
-					<Card className="lg:col-span-3">
-						<CardHeader>
-							<Skeleton className="mb-2 h-6 w-[140px]" />
-							<Skeleton className="h-4 w-[200px]" />
-						</CardHeader>
-						<CardContent>
-							<div className="space-y-6">
-								{Array.from({ length: 5 }).map((_, i) => (
-									<div className="flex items-center gap-4" key={i}>
-										<Skeleton className="size-10 rounded-full" />
-										<div className="space-y-2">
-											<Skeleton className="h-4 w-[150px]" />
-											<Skeleton className="h-3 w-[100px]" />
+						{/* Recent Activity/Details (Matches Recent Sales column span) */}
+						<Card className="col-span-1 lg:col-span-3">
+							<CardHeader>
+								<Skeleton className="mb-2 h-6 w-32" />
+								<Skeleton className="h-4 w-48" />
+							</CardHeader>
+							<CardContent>
+								<div className="space-y-6">
+									{Array.from({ length: 6 }).map((_, i) => (
+										<div className="flex items-center gap-4" key={i}>
+											<Skeleton className="size-10 rounded-full" />
+											<div className="space-y-2">
+												<Skeleton className="h-4 w-32" />
+												<Skeleton className="h-3 w-24" />
+											</div>
+											<Skeleton className="ml-auto h-4 w-10" />
 										</div>
-										<Skeleton className="ml-auto h-4 w-[50px]" />
-									</div>
-								))}
-							</div>
-						</CardContent>
-					</Card>
+									))}
+								</div>
+							</CardContent>
+						</Card>
+					</div>
 				</div>
-			</div>
+			</ScrollArea>
 		</MainContent>
 	);
 }

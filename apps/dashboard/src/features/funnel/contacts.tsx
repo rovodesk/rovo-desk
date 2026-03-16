@@ -16,6 +16,7 @@ import {
 	UserPlus,
 	Users,
 } from "lucide-react";
+import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { MainContent } from "@/layout/main-content";
 import {
@@ -172,125 +173,181 @@ const contacts: Contact[] = [
 	},
 ];
 
+const containerVariants: Variants = {
+	hidden: { opacity: 0 },
+	visible: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.03, // Very fast stagger for long lists
+			delayChildren: 0.1,
+		},
+	},
+};
+
+const rowVariants: Variants = {
+	hidden: { opacity: 0, x: -4 },
+	visible: {
+		opacity: 1,
+		x: 0,
+		transition: { type: "spring", stiffness: 400, damping: 30 },
+	},
+	exit: { opacity: 0, x: 4, transition: { duration: 0.1 } },
+};
+
+const headerItemVariants: Variants = {
+	hidden: { opacity: 0, y: -8 },
+	visible: {
+		opacity: 1,
+		y: 0,
+		transition: { type: "spring", stiffness: 300, damping: 25 },
+	},
+};
+
 const ContactsPage = () => {
 	const [selectedId, setSelectedId] = useState("1");
-	// const selected = contacts.find((c) => c.id === selectedId);
 
 	return (
 		<MainContent
 			headerLeftContent={
-				<div className="relative">
-					<Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-					<Input
-						className="h-8 w-64 pl-8 text-xs"
-						placeholder="Search contacts..."
-					/>
-				</div>
+				<motion.div
+					animate="visible"
+					initial="hidden"
+					variants={headerItemVariants}
+				>
+					<div className="relative">
+						<Search className="absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+						<Input
+							className="h-8 w-64 pl-8 text-xs"
+							placeholder="Search contacts..."
+						/>
+					</div>
+				</motion.div>
 			}
 			headerRightContent={
-				<div className="flex items-center gap-2">
-					<Button className="h-8 text-xs" size="lg" variant="outline">
-						<Filter className="mr-1.5 h-3.5 w-3.5" /> Filter
-					</Button>
-					<Button className="h-8 text-foreground text-xs" size="lg">
-						<UserPlus className="mr-1.5 h-3.5 w-3.5 text-foreground" /> Add
-						Contact
-					</Button>
-				</div>
+				<motion.div
+					animate="visible"
+					className="flex items-center gap-2"
+					initial="hidden"
+					variants={containerVariants}
+				>
+					<motion.div variants={headerItemVariants}>
+						<Button className="h-8 text-xs" size="lg" variant="outline">
+							<Filter className="mr-1.5 h-3.5 w-3.5" /> Filter
+						</Button>
+					</motion.div>
+					<motion.div variants={headerItemVariants}>
+						<Button className="h-8 text-foreground text-xs" size="lg">
+							<UserPlus className="mr-1.5 h-3.5 w-3.5 text-foreground" /> Add
+							Contact
+						</Button>
+					</motion.div>
+				</motion.div>
 			}
 			secondaryHeader={<SecondarySidebarTitleHeader title="Funnels " />}
 			secondarySections={contactsSections}
 		>
-			<div className="scrollbar-thin flex h-full min-w-0 flex-1 flex-col overflow-y-auto">
-				<table className="w-full">
-					<thead className="sticky top-0 z-10 bg-muted/50 backdrop-blur-sm">
+			<div className="scrollbar-thin flex h-full min-w-0 flex-1 flex-col overflow-y-auto bg-background">
+				<table className="w-full border-separate border-spacing-0">
+					<thead className="sticky top-0 z-20 bg-background/80 backdrop-blur-md">
 						<tr className="text-left">
-							<th className="px-4 py-2.5 font-medium text-muted-foreground text-xs">
-								Name
-							</th>
-							<th className="px-4 py-2.5 font-medium text-muted-foreground text-xs">
-								Company
-							</th>
-							<th className="px-4 py-2.5 font-medium text-muted-foreground text-xs">
-								Location
-							</th>
-							<th className="px-4 py-2.5 font-medium text-muted-foreground text-xs">
-								Status
-							</th>
-							<th className="px-4 py-2.5 font-medium text-muted-foreground text-xs">
-								Last Seen
-							</th>
-							<th className="w-10 px-4 py-2.5 font-medium text-muted-foreground text-xs" />
+							{["Name", "Company", "Location", "Status", "Last Seen", ""].map(
+								(h, i) => (
+									<th
+										className="border-b px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider"
+										key={i}
+									>
+										{h}
+									</th>
+								)
+							)}
 						</tr>
 					</thead>
-					<tbody>
-						{contacts.map((contact) => (
-							<tr
-								className={cn(
-									"cursor-pointer border-border/50 border-b transition-colors",
-									selectedId === contact.id
-										? "bg-primary/5"
-										: "hover:bg-muted/30"
-								)}
-								key={contact.id}
-								onClick={() => setSelectedId(contact.id)}
-							>
-								<td className="px-4 py-3">
-									<div className="flex items-center gap-3">
-										<Avatar className="h-8 w-8">
-											<AvatarFallback
-												className="font-medium text-[10px] text-primary-foreground"
-												style={{ backgroundColor: contact.avatarColor }}
-											>
-												{contact.initials}
-											</AvatarFallback>
-										</Avatar>
-										<div>
-											<div className="font-medium text-sm">{contact.name}</div>
-											<div className="text-muted-foreground text-xs">
-												{contact.email}
+
+					<motion.tbody
+						animate="visible"
+						initial="hidden"
+						variants={containerVariants}
+					>
+						<AnimatePresence initial={false} mode="popLayout">
+							{contacts.map((contact) => (
+								<motion.tr
+									className={cn(
+										"group cursor-pointer border-b outline-none transition-colors",
+										selectedId === contact.id
+											? "bg-primary/4"
+											: "hover:bg-muted/40"
+									)}
+									key={contact.id}
+									layout // Makes re-ordering smooth
+									onClick={() => setSelectedId(contact.id)}
+									variants={rowVariants}
+								>
+									<td className="px-4 py-3">
+										<div className="flex items-center gap-3">
+											<Avatar className="h-9 w-9 border-2 border-background shadow-sm">
+												<AvatarFallback
+													className="font-semibold text-[10px] text-white"
+													style={{ backgroundColor: contact.avatarColor }}
+												>
+													{contact.initials}
+												</AvatarFallback>
+											</Avatar>
+											<div className="flex flex-col">
+												<span className="font-semibold text-sm tracking-tight">
+													{contact.name}
+												</span>
+												<span className="text-[11px] text-muted-foreground">
+													{contact.email}
+												</span>
 											</div>
 										</div>
-									</div>
-								</td>
-								<td className="px-4 py-3">
-									<div className="text-sm">{contact.company}</div>
-									<div className="text-muted-foreground text-xs">
-										{contact.role}
-									</div>
-								</td>
-								<td className="px-4 py-3">
-									<div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-										<MapPin className="h-3 w-3" /> {contact.location}
-									</div>
-								</td>
-								<td className="px-4 py-3">
-									<Badge
-										className={cn(
-											"h-5 text-[10px]",
-											contact.status === "active" &&
-												"bg-success text-success-foreground",
-											contact.status === "lead" &&
-												"bg-primary text-primary-foreground"
-										)}
-										variant={
-											contact.status === "active" ? "default" : "secondary"
-										}
-									>
-										{contact.status}
-									</Badge>
-								</td>
-								<td className="px-4 py-3 text-muted-foreground text-xs">
-									{contact.lastSeen}
-								</td>
-								<td className="px-4 py-3">
-									<Button className="h-7 w-7" size="icon" variant="ghost">
-										<MoreHorizontal className="h-4 w-4" />
-									</Button>
-								</td>
-							</tr>
-						))}
-					</tbody>
+									</td>
+
+									<td className="px-4 py-3">
+										<div className="font-medium text-sm">{contact.company}</div>
+										<div className="text-[11px] text-muted-foreground">
+											{contact.role}
+										</div>
+									</td>
+
+									<td className="px-4 py-3">
+										<div className="flex items-center gap-1.5 font-medium text-muted-foreground text-xs">
+											<MapPin className="h-3 w-3 opacity-70" />{" "}
+											{contact.location}
+										</div>
+									</td>
+
+									<td className="px-4 py-3">
+										<Badge
+											className={cn(
+												"h-5 px-2 font-bold text-[10px] uppercase tracking-tighter",
+												contact.status === "active"
+													? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600"
+													: "border-blue-500/20 bg-blue-500/10 text-blue-600"
+											)}
+											variant="outline"
+										>
+											{contact.status}
+										</Badge>
+									</td>
+
+									<td className="px-4 py-3 text-muted-foreground text-xs tabular-nums">
+										{contact.lastSeen}
+									</td>
+
+									<td className="px-4 py-3 text-right">
+										<Button
+											className="h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100"
+											size="icon"
+											variant="ghost"
+										>
+											<MoreHorizontal className="h-4 w-4" />
+										</Button>
+									</td>
+								</motion.tr>
+							))}
+						</AnimatePresence>
+					</motion.tbody>
 				</table>
 			</div>
 		</MainContent>

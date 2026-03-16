@@ -1,83 +1,181 @@
 import {
 	Avatar,
 	AvatarFallback,
+	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
+import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
+import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-area";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
+import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
+import { TooltipProvider } from "@zero-heads-lab/design-system/components/ui/tooltip";
+import type { Conversation } from "@zero-heads-lab/shared/types";
 
-export function InfoPanel() {
+import {
+	Calendar,
+	Clock,
+	Copy,
+	ExternalLink,
+	Globe,
+	Laptop,
+	type LucideIcon,
+	MapPin,
+	Monitor,
+	ShieldCheck,
+	UserCircle,
+} from "lucide-react";
+
+interface InfoPanelProps {
+	data?: Conversation;
+}
+
+export function InfoPanel({ data }: InfoPanelProps) {
+	const customer = data?.customer || {
+		name: "Indigo Squirrel",
+		email: "indigo@company.com",
+		initials: "IS",
+		plan: "Pro Plan",
+		status: "Active",
+		company: "Indigo Labs",
+		avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=Aneka",
+		location: { city: "Saalfelden", country: "Austria", tz: "Europe/Vienna" },
+		tech: { ip: "111.11.111.111", browser: "Chrome 120", os: "macOS" },
+	};
+
+	const copy = (text: string, label: string) => {
+		navigator.clipboard.writeText(text);
+		toast.success(`${label} copied`);
+	};
+
 	return (
-		<div className="space-y-5 p-4">
-			{/* Profile */}
-			<div className="flex flex-col items-center text-center">
-				<Avatar className="mb-3 h-16 w-16">
-					<AvatarFallback className="bg-accent font-semibold text-accent-foreground text-lg">
-						IS
-					</AvatarFallback>
-				</Avatar>
-				<h3 className="font-semibold text-crm-right-foreground">
-					Indigo Squirrel
-				</h3>
-				<p className="text-muted-foreground text-xs">indigo@company.com</p>
-				<Button className="mt-2 h-7 text-xs" size="sm" variant="outline">
-					View profile
-				</Button>
-			</div>
+		<TooltipProvider>
+			<ScrollArea className="h-full w-full">
+				<div className="flex flex-col gap-6 p-4">
+					{/* Profile */}
+					<div className="flex flex-col items-center text-center">
+						<Avatar className="h-16 w-16">
+							<AvatarImage alt={customer.name} src={customer.avatar} />
+							<AvatarFallback className="bg-primary font-semibold text-primary-foreground">
+								{customer.initials}
+							</AvatarFallback>
+						</Avatar>
 
-			<Separator />
+						<h3 className="mt-3 font-semibold text-sm">{customer.name}</h3>
 
-			{/* Info Section */}
-			<div>
-				<h4 className="mb-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-					Info
-				</h4>
-				<div className="space-y-3">
-					<InfoRow label="Signed Up" value="12/31/2024" />
-					<InfoRow label="Subscribed" value="No" />
-					<InfoRow label="Plan" value="Free Trial" />
+						<button
+							className="mt-1 text-muted-foreground text-xs hover:text-foreground"
+							onClick={() => copy(customer.email, "Email")}
+						>
+							{customer.email}
+						</button>
+
+						<div className="mt-3 flex gap-2">
+							<Badge variant="outline">{customer.plan}</Badge>
+							<Badge variant="secondary">{customer.status}</Badge>
+						</div>
+
+						<div className="mt-4 grid w-full grid-cols-2 gap-2">
+							<Button className="h-8 text-xs" size="sm" variant="outline">
+								<UserCircle className="mr-1 h-3.5 w-3.5" />
+								Profile
+							</Button>
+
+							<Button className="h-8 text-xs" size="sm" variant="outline">
+								<ExternalLink className="mr-1 h-3.5 w-3.5" />
+								Funnel
+							</Button>
+						</div>
+					</div>
+
+					<Separator />
+
+					{/* Context */}
+					<Section title="Conversation">
+						<Row icon={ShieldCheck} label="Priority" value="Critical" />
+						<Row icon={Clock} label="Status" value="Awaiting reply" />
+					</Section>
+
+					<Separator />
+
+					{/* Attributes */}
+					<Section title="Customer">
+						<Row
+							icon={MapPin}
+							label="Location"
+							value={`${customer.location.city}, ${customer.location.country}`}
+						/>
+						<Row icon={Calendar} label="Customer since" value="Jan 2025" />
+					</Section>
+
+					<Separator />
+
+					{/* Technical */}
+					<Section title="Technical">
+						<Row icon={Laptop} label="System" value={customer.tech.os} />
+						<Row icon={Globe} label="Browser" value={customer.tech.browser} />
+						<Row
+							icon={Monitor}
+							label="IP Address"
+							onCopy={() => copy(customer.tech.ip, "IP")}
+							value={customer.tech.ip}
+						/>
+					</Section>
 				</div>
-			</div>
+			</ScrollArea>
+		</TooltipProvider>
+	);
+}
 
-			<Separator />
+/* --------------------- */
 
-			{/* Location */}
-			<div>
-				<h4 className="mb-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-					Location
-				</h4>
-				<div className="space-y-3">
-					<InfoRow label="City" value="Saalfelden" />
-					<InfoRow label="Region" value="Salzburg" />
-					<InfoRow label="Country" value="Austria" />
-					<InfoRow label="Timezone" value="Europe/Vienna" />
-				</div>
-			</div>
+function Section({
+	title,
+	children,
+}: {
+	title: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<div className="space-y-2">
+			<h4 className="font-medium text-[11px] text-muted-foreground uppercase tracking-wider">
+				{title}
+			</h4>
 
-			<Separator />
-
-			{/* Technical */}
-			<div>
-				<h4 className="mb-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
-					Technical
-				</h4>
-				<div className="space-y-3">
-					<InfoRow label="IP Address" value="111.11.111.111" />
-					<InfoRow label="Last Seen" value="02/28/2026" />
-					<InfoRow label="Sessions" value="12" />
-					<InfoRow label="Browser" value="Chrome 120" />
-				</div>
-			</div>
+			<div className="rounded-md">{children}</div>
 		</div>
 	);
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
+function Row({
+	icon: Icon,
+	label,
+	value,
+	onCopy,
+}: {
+	icon: LucideIcon;
+	label: string;
+	value: string;
+	onCopy?: () => void;
+}) {
 	return (
-		<div className="flex items-start justify-between">
-			<span className="text-muted-foreground text-xs">{label}</span>
-			<span className="text-right font-medium text-crm-right-foreground text-xs">
-				{value}
-			</span>
+		<div className="flex items-center justify-between px-3 py-1.5 text-xs">
+			<div className="flex items-center gap-2 text-muted-foreground">
+				<Icon className="h-3.5 w-3.5" />
+				<span>{label}</span>
+			</div>
+
+			<div className="flex items-center gap-2 font-medium">
+				<span className="truncate">{value}</span>
+
+				{onCopy && (
+					<button
+						className="text-muted-foreground hover:text-foreground"
+						onClick={onCopy}
+					>
+						<Copy className="h-3 w-3" />
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }

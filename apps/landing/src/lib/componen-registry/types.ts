@@ -1,71 +1,70 @@
 export type Image = {
-    url: string;
-    alt: string;
+	url: string;
+	alt: string;
 };
 
 export type CTA = {
-    label: string;
-    link: string;
+	label: string;
+	link: string;
 };
 
 export type HeroBlock = {
-    id: string;
-    blockType: "hero";
+	id: string;
+	blockType: "hero";
 
-    background: {
-        image: Image;
-    };
+	background: {
+		image: Image;
+	};
 
-    headline: {
-        prefixText: string;
-        highlightText: string;
-        baseText: string;
-        accentText: string;
-    };
+	headline: {
+		prefixText: string;
+		highlightText: string;
+		baseText: string;
+		accentText: string;
+	};
 
-    subHeadline?: {
-        text: string;
-        enabled: boolean;
-    };
+	subHeadline?: {
+		text: string;
+		enabled: boolean;
+	};
 
-    ctas?: CTA[];
+	ctas?: CTA[];
 };
 
 export type ProblemBlock = {
-    id: string;
-    blockType: "problem";
+	id: string;
+	blockType: "problem";
 
-    title?: string;
-    description?: string;
+	title?: string;
+	description?: string;
 };
 
 export type FeaturesBlock = {
-    id: string;
-    blockType: "features";
+	id: string;
+	blockType: "features";
 
-    features?: {
-        title: string;
-        description: string;
-    }[];
+	features?: {
+		title: string;
+		description: string;
+	}[];
 };
 
 export type ComingSoonBlock = {
-    id: string;
-    blockType: "comingSoon";
+	id: string;
+	blockType: "comingSoon";
 
-    message?: string;
+	message?: string;
 };
 
 export type Section =
-    | HeroBlock
-    | ProblemBlock
-    | FeaturesBlock
-    | ComingSoonBlock;
+	| HeroBlock
+	| ProblemBlock
+	| FeaturesBlock
+	| ComingSoonBlock;
 
 export type Page = {
-    id: string;
-    title: string;
-    slug: string;
-    sections: Section[];
+	id: string;
+	title: string;
+	slug: string;
+	sections: Section[];
 };
-

@@ -1,309 +1,892 @@
 {
   "conversations": [
     {
-      "id": "conv1",
-      "profile": "https://randomuser.me/api/portraits/men/32.jpg",
-      "username": "alex_dev",
-      "fullName": "Alex John",
-      "title": "Senior Backend Dev",
+      "id": "conv_V7X2K9L4P1",
+      "type": "support",
+      "channel": "chat",
+      "subject": "Unable to access dashboard",
+      "preview": "I keep getting a 403 error when I try to log in...",
+      "status": "open",
+      "priority": "urgent",
+      "starred": true,
+      "archived": false,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-12T08:30:00Z",
+      "updatedAt": "2024-09-12T08:45:00Z",
+      "lastMessageAt": "2024-09-12T08:40:00Z",
+      "unreadCount": 1,
+      "totalMessages": 5,
+      "tags": ["auth", "error-403"],
+      "labels": ["technical-issue"],
+      "participants": [
+        {
+          "id": "user_402",
+          "type": "customer",
+          "name": "Marcus Thorne",
+          "email": "m.thorne@techcorp.io",
+          "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Felix",
+          "initials": "MT",
+          "avatarColor": "hsl(210,70%,45%)",
+          "joinedAt": "2024-09-12T08:29:00Z"
+        },
+        {
+          "id": "agent_tech_01",
+          "type": "agent",
+          "name": "David Chen",
+          "email": "d.chen@company.com",
+          "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Aneka",
+          "joinedAt": "2024-09-12T08:32:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_tech_01",
+        "name": "David Chen",
+        "team": "Engineering Support"
+      },
+      "customer": {
+        "id": "cust_992",
+        "name": "Marcus Thorne",
+        "email": "m.thorne@techcorp.io",
+        "phone": "+44 20 7946 0123",
+        "company": "TechCorp",
+        "location": "Berlin",
+        "createdAt": "2023-05-15T10:00:00Z"
+      },
       "messages": [
         {
-          "sender": "You",
-          "message": "See you later, Alex!",
-          "timestamp": "2024-08-24T11:15:15"
-        },
-        {
-          "sender": "Alex",
-          "message": "Alright, talk to you later!",
-          "timestamp": "2024-08-24T11:11:30"
-        },
-        {
-          "sender": "You",
-          "message": "For sure. Anyway, I should get back to reviewing the project.",
-          "timestamp": "2024-08-23T09:26:50"
-        },
-        {
-          "sender": "Alex",
-          "message": "Yeah, let me know what you think.",
-          "timestamp": "2024-08-23T09:25:15"
-        },
-        {
-          "sender": "You",
-          "message": "Oh, nice! I've been waiting for that. I'll check it out later.",
-          "timestamp": "2024-08-23T09:24:30"
-        },
-        {
-          "sender": "Alex",
-          "message": "They've added a dark mode option! It looks really sleek.",
-          "timestamp": "2024-08-23T09:23:10"
-        },
-        {
-          "sender": "You",
-          "message": "No, not yet. What's new?",
-          "timestamp": "2024-08-23T09:22:00"
-        },
-        {
-          "sender": "Alex",
-          "message": "By the way, have you seen the new feature update?",
-          "timestamp": "2024-08-23T09:21:05"
-        },
-        {
-          "sender": "You",
-          "message": "Will do! Thanks, Alex.",
-          "timestamp": "2024-08-23T09:20:10"
-        },
-        {
-          "sender": "Alex",
-          "message": "Great! Let me know if you need any help.",
-          "timestamp": "2024-08-23T09:19:20"
-        },
-        {
-          "sender": "You",
-          "message": "Almost done. Just need to review a few things.",
-          "timestamp": "2024-08-23T09:18:45"
-        },
-        {
-          "sender": "Alex",
-          "message": "I'm good, thanks! Did you finish the project?",
-          "timestamp": "2024-08-23T09:17:10"
-        },
-        {
-          "sender": "You",
-          "message": "Hey Alex, I'm doing well! How about you?",
-          "timestamp": "2024-08-23T09:16:30"
-        },
-        {
-          "sender": "Alex",
-          "message": "Hey Bob, how are you doing?",
-          "timestamp": "2024-08-23T09:15:00"
+          "id": "msg_101",
+          "type": "text",
+          "sender": {
+            "id": "cust_992",
+            "role": "customer",
+            "name": "Marcus Thorne",
+            "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Felix"
+          },
+          "content": {
+            "text": "I keep getting a 403 error when I try to log in to the dashboard."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "82.165.12.4", "userAgent": "Firefox" },
+          "createdAt": "2024-09-12T08:30:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 120,
+        "resolutionTimeSeconds": null,
+        "responseCount": 2
+      },
+      "ai": {
+        "summary": "User experiencing persistent 403 Forbidden errors on login.",
+        "sentiment": "frustrated",
+        "intent": "login_issue",
+        "confidence": 0.98
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv2",
-      "profile": "https://randomuser.me/api/portraits/women/45.jpg",
-      "username": "taylor.codes",
-      "fullName": "Taylor Grande",
-      "title": "Tech Lead",
+      "id": "conv_A3B8C2D9E4",
+      "type": "sales",
+      "channel": "email",
+      "subject": "Enterprise Pricing Inquiry",
+      "preview": "We are looking to onboard 500 seats and need a custom quote...",
+      "status": "pending",
+      "priority": "medium",
+      "starred": false,
+      "archived": false,
+      "snoozedUntil": "2024-09-15T09:00:00Z",
+      "createdAt": "2024-09-13T14:20:00Z",
+      "updatedAt": "2024-09-13T15:10:00Z",
+      "lastMessageAt": "2024-09-13T14:55:00Z",
+      "unreadCount": 0,
+      "totalMessages": 8,
+      "tags": ["sales", "enterprise", "pricing"],
+      "labels": ["high-value-lead"],
+      "participants": [
+        {
+          "id": "user_505",
+          "type": "customer",
+          "name": "Sarah Jenkins",
+          "email": "sarah.j@globalscale.com",
+          "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Milo",
+          "initials": "SJ",
+          "avatarColor": "hsl(120,50%,40%)",
+          "joinedAt": "2024-09-13T14:15:00Z"
+        },
+        {
+          "id": "agent_sales_02",
+          "type": "agent",
+          "name": "Jordan Miller",
+          "email": "j.miller@company.com",
+          "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Jordi",
+          "joinedAt": "2024-09-13T14:25:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_sales_02",
+        "name": "Jordan Miller",
+        "team": "Sales Enterprise"
+      },
+      "customer": {
+        "id": "cust_1021",
+        "name": "Sarah Jenkins",
+        "email": "sarah.j@globalscale.com",
+        "phone": "+1 555 0198",
+        "company": "GlobalScale",
+        "location": "New York",
+        "createdAt": "2024-09-13T14:15:00Z"
+      },
       "messages": [
         {
-          "sender": "Taylor",
-          "message": "Yeah, it's really well-explained. You should give it a try.",
-          "timestamp": "2024-08-23T10:35:00"
-        },
-        {
-          "sender": "You",
-          "message": "Not yet, is it good?",
-          "timestamp": "2024-08-23T10:32:00"
-        },
-        {
-          "sender": "Taylor",
-          "message": "Hey, did you check out that new tutorial?",
-          "timestamp": "2024-08-23T10:30:00"
+          "id": "msg_201",
+          "type": "text",
+          "sender": {
+            "id": "cust_1021",
+            "role": "customer",
+            "name": "Sarah Jenkins",
+            "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Milo"
+          },
+          "content": {
+            "text": "We are looking to onboard 500 seats. Do you offer volume discounts?"
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "203.0.113.42", "userAgent": "Safari" },
+          "createdAt": "2024-09-13T14:20:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 300,
+        "resolutionTimeSeconds": null,
+        "responseCount": 3
+      },
+      "ai": {
+        "summary": "Prospective enterprise client inquiring about volume discounts for 500 seats.",
+        "sentiment": "neutral",
+        "intent": "sales_inquiry",
+        "confidence": 0.95
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv3",
-      "profile": "https://randomuser.me/api/portraits/men/54.jpg",
-      "username": "john_stack",
-      "fullName": "John Doe",
-      "title": "QA",
+      "id": "conv_B2F9G4H7J1",
+      "type": "support",
+      "channel": "whatsapp",
+      "subject": "Refund for accidental renewal",
+      "preview": "I forgot to cancel my trial and was charged...",
+      "status": "closed",
+      "priority": "low",
+      "starred": false,
+      "archived": true,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-10T09:15:00Z",
+      "updatedAt": "2024-09-10T11:20:00Z",
+      "lastMessageAt": "2024-09-10T11:15:00Z",
+      "unreadCount": 0,
+      "totalMessages": 4,
+      "tags": ["billing", "refund"],
+      "labels": ["trial-user"],
+      "participants": [
+        {
+          "id": "user_772",
+          "type": "customer",
+          "name": "Liam Neeson",
+          "email": "liam@taken.com",
+          "avatar": "https://api.dicebear.com/9.x/adventurer/svg?seed=Sophie",
+          "initials": "LN",
+          "avatarColor": "hsl(10,80%,50%)",
+          "joinedAt": "2024-09-10T09:10:00Z"
+        },
+        {
+          "id": "agent_bill_01",
+          "type": "agent",
+          "name": "Elena Rodriguez",
+          "email": "e.rod@company.com",
+          "avatar": "https://api.dicebear.com/9.x/open-peeps/svg?seed=Felix",
+          "joinedAt": "2024-09-10T09:20:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_bill_01",
+        "name": "Elena Rodriguez",
+        "team": "Billing"
+      },
+      "customer": {
+        "id": "cust_445",
+        "name": "Liam Neeson",
+        "email": "liam@taken.com",
+        "phone": "+353 1 234 5678",
+        "company": "Freelance",
+        "location": "Dublin",
+        "createdAt": "2024-08-01T12:00:00Z"
+      },
       "messages": [
         {
-          "sender": "You",
-          "message": "Yep, see ya. 👋🏼",
-          "timestamp": "2024-08-22T18:59:00"
-        },
-        {
-          "sender": "John",
-          "message": "Great, see you then!",
-          "timestamp": "2024-08-22T18:55:00"
-        },
-        {
-          "sender": "You",
-          "message": "Yes, same time as usual. I'll send the invite shortly.",
-          "timestamp": "2024-08-22T18:50:00"
-        },
-        {
-          "sender": "John",
-          "message": "Are we still on for the meeting tomorrow?",
-          "timestamp": "2024-08-22T18:45:00"
+          "id": "msg_301",
+          "type": "text",
+          "sender": {
+            "id": "cust_445",
+            "role": "customer",
+            "name": "Liam Neeson"
+          },
+          "content": { "text": "Can I get a refund? I didn't mean to renew." },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "109.255.1.22", "userAgent": "WhatsApp" },
+          "createdAt": "2024-09-10T09:15:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 600,
+        "resolutionTimeSeconds": 7500,
+        "responseCount": 2
+      },
+      "ai": {
+        "summary": "Customer requesting refund for post-trial renewal charge.",
+        "sentiment": "neutral",
+        "intent": "billing_refund",
+        "confidence": 0.99
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv4",
-      "profile": "https://randomuser.me/api/portraits/women/29.jpg",
-      "username": "megan_frontend",
-      "fullName": "Megan Flux",
-      "title": "Jr Developer",
+      "id": "conv_Z9Y1X8W7V2",
+      "type": "technical",
+      "channel": "email",
+      "subject": "API Webhook Failures",
+      "preview": "Our endpoint is receiving 500 errors from your server...",
+      "status": "open",
+      "priority": "high",
+      "starred": true,
+      "archived": false,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-14T22:05:00Z",
+      "updatedAt": "2024-09-14T22:30:00Z",
+      "lastMessageAt": "2024-09-14T22:20:00Z",
+      "unreadCount": 2,
+      "totalMessages": 6,
+      "tags": ["api", "webhooks", "server-error"],
+      "labels": ["dev-support"],
+      "participants": [
+        {
+          "id": "user_112",
+          "type": "customer",
+          "name": "Alex Rivera",
+          "email": "alex@devhouse.com",
+          "avatar": "https://api.dicebear.com/9.x/open-peeps/svg?seed=Aneka",
+          "initials": "AR",
+          "avatarColor": "hsl(280,60%,40%)",
+          "joinedAt": "2024-09-14T22:00:00Z"
+        },
+        {
+          "id": "agent_tech_05",
+          "type": "agent",
+          "name": "Sam Peterson",
+          "email": "s.peterson@company.com",
+          "avatar": "https://api.dicebear.com/9.x/open-peeps/svg?seed=Milo",
+          "joinedAt": "2024-09-14T22:10:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_tech_05",
+        "name": "Sam Peterson",
+        "team": "Developer Relations"
+      },
+      "customer": {
+        "id": "cust_882",
+        "name": "Alex Rivera",
+        "email": "alex@devhouse.com",
+        "phone": "+1 415 555 9900",
+        "company": "DevHouse",
+        "location": "San Francisco",
+        "createdAt": "2022-11-20T09:00:00Z"
+      },
       "messages": [
         {
-          "sender": "You",
-          "message": "Sure ✌🏼",
-          "timestamp": "2024-08-23T11:30:00"
-        },
-        {
-          "sender": "Megan",
-          "message": "Thanks, appreciate it!",
-          "timestamp": "2024-08-23T11:30:00"
-        },
-        {
-          "sender": "You",
-          "message": "Sure thing! I'll take a look in the next hour.",
-          "timestamp": "2024-08-23T11:25:00"
-        },
-        {
-          "sender": "Megan",
-          "message": "Hey! Do you have time to review my PR today?",
-          "timestamp": "2024-08-23T11:20:00"
+          "id": "msg_401",
+          "type": "text",
+          "sender": {
+            "id": "cust_882",
+            "role": "customer",
+            "name": "Alex Rivera"
+          },
+          "content": {
+            "text": "Your webhook delivery is failing with a 500 internal server error."
+          },
+          "attachments": [
+            {
+              "id": "file_102",
+              "type": "text",
+              "name": "logs.txt",
+              "url": "https://cdn.example.com/files/logs.txt",
+              "size": 15000,
+              "mimeType": "text/plain"
+            }
+          ],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "64.233.160.1", "userAgent": "Postman" },
+          "createdAt": "2024-09-14T22:05:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 300,
+        "resolutionTimeSeconds": null,
+        "responseCount": 4
+      },
+      "ai": {
+        "summary": "Technical lead reporting server-side failures in webhook delivery.",
+        "sentiment": "negative",
+        "intent": "bug_report",
+        "confidence": 0.94
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv5",
-      "profile": "https://randomuser.me/api/portraits/men/72.jpg",
-      "username": "dev_david",
-      "fullName": "David Brown",
-      "title": "Senior UI/UX Designer",
+      "id": "conv_M1N2B3V4C5",
+      "type": "support",
+      "channel": "chat",
+      "subject": "Missing Exported Data",
+      "preview": "I triggered a CSV export but never received the link...",
+      "status": "pending",
+      "priority": "medium",
+      "starred": false,
+      "archived": false,
+      "snoozedUntil": "2024-09-16T12:00:00Z",
+      "createdAt": "2024-09-15T10:45:00Z",
+      "updatedAt": "2024-09-15T11:00:00Z",
+      "lastMessageAt": "2024-09-15T10:55:00Z",
+      "unreadCount": 0,
+      "totalMessages": 3,
+      "tags": ["data-export", "missing-email"],
+      "labels": ["admin"],
+      "participants": [
+        {
+          "id": "user_221",
+          "type": "customer",
+          "name": "Chloe Zhao",
+          "email": "chloe@filmlab.org",
+          "avatar": "https://api.dicebear.com/9.x/open-peeps/svg?seed=Luna",
+          "initials": "CZ",
+          "avatarColor": "hsl(180,45%,45%)",
+          "joinedAt": "2024-09-15T10:40:00Z"
+        },
+        {
+          "id": "agent_ops_01",
+          "type": "agent",
+          "name": "Riley Kim",
+          "email": "r.kim@company.com",
+          "avatar": "https://api.dicebear.com/9.x/open-peeps/svg?seed=Sophie",
+          "joinedAt": "2024-09-15T10:50:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_ops_01",
+        "name": "Riley Kim",
+        "team": "Operations"
+      },
+      "customer": {
+        "id": "cust_334",
+        "name": "Chloe Zhao",
+        "email": "chloe@filmlab.org",
+        "phone": "+86 10 6400 1234",
+        "company": "Film Lab",
+        "location": "Beijing",
+        "createdAt": "2024-02-14T08:30:00Z"
+      },
       "messages": [
         {
-          "sender": "You",
-          "message": "Great, I'll review them now!",
-          "timestamp": "2024-08-23T12:00:00"
+          "id": "msg_501",
+          "type": "text",
+          "sender": {
+            "id": "cust_334",
+            "role": "customer",
+            "name": "Chloe Zhao"
+          },
+          "content": {
+            "text": "My data export from this morning hasn't arrived in my inbox."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": {
+            "ipAddress": "114.242.249.5",
+            "userAgent": "Chrome Mobile"
+          },
+          "createdAt": "2024-09-15T10:45:00Z",
+          "updatedAt": null
         },
         {
-          "sender": "David",
-          "message": "Just sent you the files. Let me know if you need any changes.",
-          "timestamp": "2024-08-23T11:58:00"
-        },
-        {
-          "sender": "David",
-          "message": "I finished the design for the dashboard. Thoughts?",
-          "timestamp": "2024-08-23T11:55:00"
+          "id": "msg_502",
+          "type": "text",
+          "sender": {
+            "id": "agent_334",
+            "role": "agent",
+            "name": "Riley Kim"
+          },
+          "content": {
+            "text": "My apologies for the inconvenience. Let me check on the status of your export and get back to you shortly."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": {
+            "ipAddress": "114.298.469.5",
+            "userAgent": "Chrome Desktop"
+          },
+          "createdAt": "2024-09-16T10:45:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 450,
+        "resolutionTimeSeconds": null,
+        "responseCount": 1
+      },
+      "ai": {
+        "summary": "User reports failure to receive CSV export email.",
+        "sentiment": "neutral",
+        "intent": "feature_assistance",
+        "confidence": 0.88
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv6",
-      "profile": "https://randomuser.me/api/portraits/women/68.jpg",
-      "username": "julia.design",
-      "fullName": "Julia Carter",
-      "title": "Product Designer",
+      "id": "conv_P9Q8R7S6T5",
+      "type": "technical",
+      "channel": "chat",
+      "subject": "2FA Reset Request",
+      "preview": "I lost my phone and can't log in with 2FA...",
+      "status": "open",
+      "priority": "high",
+      "starred": false,
+      "archived": false,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-15T01:20:00Z",
+      "updatedAt": "2024-09-15T02:00:00Z",
+      "lastMessageAt": "2024-09-15T01:55:00Z",
+      "unreadCount": 1,
+      "totalMessages": 4,
+      "tags": ["security", "2fa"],
+      "labels": ["urgent-access"],
+      "participants": [
+        {
+          "id": "user_312",
+          "type": "customer",
+          "name": "Daniel Craig",
+          "email": "d.craig@mi6.gov.uk",
+          "avatar": "https://api.dicebear.com/9.x/miniavs/svg?seed=Felix",
+          "initials": "DC",
+          "avatarColor": "hsl(200,80%,30%)",
+          "joinedAt": "2024-09-15T01:15:00Z"
+        },
+        {
+          "id": "agent_sec_01",
+          "type": "agent",
+          "name": "Security Bot",
+          "email": "security@company.com",
+          "avatar": "https://api.dicebear.com/9.x/miniavs/svg?seed=Aneka",
+          "joinedAt": "2024-09-15T01:20:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_sec_01",
+        "name": "Security Bot",
+        "team": "Automated Security"
+      },
+      "customer": {
+        "id": "cust_007",
+        "name": "Daniel Craig",
+        "email": "d.craig@mi6.gov.uk",
+        "phone": "+44 7700 900007",
+        "company": "MI6",
+        "location": "London",
+        "createdAt": "2021-05-01T00:00:00Z"
+      },
       "messages": [
         {
-          "sender": "Julia",
-          "message": "Same here! It's coming together nicely.",
-          "timestamp": "2024-08-22T14:10:00"
-        },
-        {
-          "sender": "You",
-          "message": "I'm really excited to see the final product!",
-          "timestamp": "2024-08-22T14:15:00"
-        },
-        {
-          "sender": "You",
-          "message": "How's the project looking on your end?",
-          "timestamp": "2024-08-22T14:05:00"
+          "id": "msg_601",
+          "type": "text",
+          "sender": {
+            "id": "cust_007",
+            "role": "customer",
+            "name": "Daniel Craig"
+          },
+          "content": {
+            "text": "I've lost my authentication device. Need a 2FA reset."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "193.113.1.1", "userAgent": "iOS App" },
+          "createdAt": "2024-09-15T01:20:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 10,
+        "resolutionTimeSeconds": null,
+        "responseCount": 2
+      },
+      "ai": {
+        "summary": "Customer locked out of account due to lost 2FA device.",
+        "sentiment": "neutral",
+        "intent": "account_security",
+        "confidence": 0.97
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv7",
-      "profile": "https://randomuser.me/api/portraits/men/24.jpg",
-      "username": "brad_dev",
-      "fullName": "Brad Wilson",
-      "title": "CEO",
+      "id": "conv_L5K4J3H2G1",
+      "type": "support",
+      "channel": "email",
+      "subject": "Mobile App UI Feedback",
+      "preview": "The dark mode icons are hard to see on OLED screens...",
+      "status": "closed",
+      "priority": "low",
+      "starred": false,
+      "archived": true,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-08T16:00:00Z",
+      "updatedAt": "2024-09-09T09:00:00Z",
+      "lastMessageAt": "2024-09-08T16:45:00Z",
+      "unreadCount": 0,
+      "totalMessages": 2,
+      "tags": ["ux", "mobile", "feedback"],
+      "labels": ["feature-request"],
+      "participants": [
+        {
+          "id": "user_901",
+          "type": "customer",
+          "name": "Emily Blunt",
+          "email": "eb@hollywood.com",
+          "avatar": "https://api.dicebear.com/9.x/miniavs/svg?seed=Milo",
+          "initials": "EB",
+          "avatarColor": "hsl(320,60%,60%)",
+          "joinedAt": "2024-09-08T15:55:00Z"
+        },
+        {
+          "id": "agent_ux_01",
+          "type": "agent",
+          "name": "Design Team",
+          "email": "design@company.com",
+          "avatar": "https://api.dicebear.com/9.x/miniavs/svg?seed=Luna",
+          "joinedAt": "2024-09-08T16:05:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_ux_01",
+        "name": "Design Team",
+        "team": "Product Design"
+      },
+      "customer": {
+        "id": "cust_556",
+        "name": "Emily Blunt",
+        "email": "eb@hollywood.com",
+        "phone": "+1 310 555 0102",
+        "company": "SAG-AFTRA",
+        "location": "Los Angeles",
+        "createdAt": "2024-01-10T14:00:00Z"
+      },
       "messages": [
         {
-          "sender": "Brad",
-          "message": "Got it! Thanks for the update.",
-          "timestamp": "2024-08-23T15:45:00"
-        },
-        {
-          "sender": "You",
-          "message": "The release has been delayed to next week.",
-          "timestamp": "2024-08-23T15:40:00"
-        },
-        {
-          "sender": "Brad",
-          "message": "Hey, any news on the release?",
-          "timestamp": "2024-08-23T15:35:00"
+          "id": "msg_701",
+          "type": "text",
+          "sender": {
+            "id": "cust_556",
+            "role": "customer",
+            "name": "Emily Blunt"
+          },
+          "content": {
+            "text": "Dark mode icons lack contrast on high-brightness screens."
+          },
+          "attachments": [],
+          "reactions": [{ "emoji": "🎨", "users": ["agent_ux_01"] }],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "172.217.1.1", "userAgent": "Android" },
+          "createdAt": "2024-09-08T16:00:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 1200,
+        "resolutionTimeSeconds": 86400,
+        "responseCount": 1
+      },
+      "ai": {
+        "summary": "User providing specific UI/UX feedback regarding accessibility in dark mode.",
+        "sentiment": "positive",
+        "intent": "product_feedback",
+        "confidence": 0.91
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv8",
-      "profile": "https://randomuser.me/api/portraits/women/34.jpg",
-      "username": "katie_ui",
-      "fullName": "Katie Lee",
-      "title": "QA",
+      "id": "conv_F1G2H3J4K5",
+      "type": "sales",
+      "channel": "phone",
+      "subject": "Demo Request - Enterprise Analytics",
+      "preview": "Scheduled a call for Tuesday to discuss data pipelining...",
+      "status": "on-hold",
+      "priority": "medium",
+      "starred": true,
+      "archived": false,
+      "snoozedUntil": "2024-09-20T10:00:00Z",
+      "createdAt": "2024-09-14T11:00:00Z",
+      "updatedAt": "2024-09-14T11:30:00Z",
+      "lastMessageAt": "2024-09-14T11:25:00Z",
+      "unreadCount": 0,
+      "totalMessages": 1,
+      "tags": ["demo", "sales-qualified"],
+      "labels": ["enterprise"],
+      "participants": [
+        {
+          "id": "user_661",
+          "type": "customer",
+          "name": "Gordon Ramsay",
+          "email": "gordon@hellskitchen.com",
+          "avatar": "https://api.dicebear.com/9.x/miniavs/svg?seed=Sophie",
+          "initials": "GR",
+          "avatarColor": "hsl(0,100%,40%)",
+          "joinedAt": "2024-09-14T10:55:00Z"
+        },
+        {
+          "id": "agent_sales_05",
+          "type": "agent",
+          "name": "Marcus Sales",
+          "email": "m.sales@company.com",
+          "avatar": "https://api.dicebear.com/9.x/notionists/svg?seed=Felix",
+          "joinedAt": "2024-09-14T11:00:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_sales_05",
+        "name": "Marcus Sales",
+        "team": "Enterprise West"
+      },
+      "customer": {
+        "id": "cust_909",
+        "name": "Gordon Ramsay",
+        "email": "gordon@hellskitchen.com",
+        "phone": "+44 20 7946 0555",
+        "company": "GR Group",
+        "location": "London",
+        "createdAt": "2024-09-14T10:55:00Z"
+      },
       "messages": [
         {
-          "sender": "Katie",
-          "message": "I'll join the call in a few minutes.",
-          "timestamp": "2024-08-23T09:50:00"
-        },
-        {
-          "sender": "You",
-          "message": "Perfect! We'll start as soon as you're in.",
-          "timestamp": "2024-08-23T09:48:00"
-        },
-        {
-          "sender": "Katie",
-          "message": "Is the meeting still on?",
-          "timestamp": "2024-08-23T09:45:00"
+          "id": "msg_801",
+          "type": "system",
+          "systemEvent": "call_logged",
+          "data": {
+            "durationSeconds": 900,
+            "notes": "Customer interested in real-time data ingestion."
+          },
+          "createdAt": "2024-09-14T11:25:00Z"
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 0,
+        "resolutionTimeSeconds": null,
+        "responseCount": 0
+      },
+      "ai": {
+        "summary": "Demo request for Enterprise Analytics features.",
+        "sentiment": "neutral",
+        "intent": "sales_demo",
+        "confidence": 0.96
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv9",
-      "profile": "https://randomuser.me/api/portraits/men/67.jpg",
-      "username": "matt_fullstack",
-      "fullName": "Matt Green",
-      "title": "Full-stack Dev",
+      "id": "conv_X1C2V3B4N5",
+      "type": "support",
+      "channel": "email",
+      "subject": "GDPR Data Erasure Request",
+      "preview": "I would like to exercise my right to be forgotten...",
+      "status": "pending",
+      "priority": "high",
+      "starred": false,
+      "archived": false,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-12T13:40:00Z",
+      "updatedAt": "2024-09-12T14:10:00Z",
+      "lastMessageAt": "2024-09-12T13:45:00Z",
+      "unreadCount": 1,
+      "totalMessages": 5,
+      "tags": ["legal", "gdpr", "privacy"],
+      "labels": ["compliance"],
+      "participants": [
+        {
+          "id": "user_441",
+          "type": "customer",
+          "name": "Hans Zimmer",
+          "email": "hans@soundtrack.de",
+          "avatar": "https://api.dicebear.com/9.x/notionists/svg?seed=Aneka",
+          "initials": "HZ",
+          "avatarColor": "hsl(50,10%,20%)",
+          "joinedAt": "2024-09-12T13:35:00Z"
+        },
+        {
+          "id": "agent_legal_01",
+          "type": "agent",
+          "name": "Compliance Officer",
+          "email": "legal@company.com",
+          "avatar": "https://api.dicebear.com/9.x/notionists/svg?seed=Milo",
+          "joinedAt": "2024-09-12T13:50:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_legal_01",
+        "name": "Compliance Officer",
+        "team": "Legal & Privacy"
+      },
+      "customer": {
+        "id": "cust_1122",
+        "name": "Hans Zimmer",
+        "email": "hans@soundtrack.de",
+        "phone": "+49 30 1234567",
+        "company": "Remote Control",
+        "location": "Frankfurt",
+        "createdAt": "2020-05-10T10:00:00Z"
+      },
       "messages": [
         {
-          "sender": "Matt",
-          "message": "Sure thing, I'll send over the updates shortly.",
-          "timestamp": "2024-08-23T10:25:00"
-        },
-        {
-          "sender": "You",
-          "message": "Could you update the backend as well?",
-          "timestamp": "2024-08-23T10:23:00"
-        },
-        {
-          "sender": "Matt",
-          "message": "The frontend updates are done. How does it look?",
-          "timestamp": "2024-08-23T10:20:00"
+          "id": "msg_901",
+          "type": "text",
+          "sender": {
+            "id": "cust_1122",
+            "role": "customer",
+            "name": "Hans Zimmer"
+          },
+          "content": {
+            "text": "Please delete all my personal data from your systems."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": {
+            "ipAddress": "91.198.174.192",
+            "userAgent": "Thunderbird"
+          },
+          "createdAt": "2024-09-12T13:40:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 600,
+        "resolutionTimeSeconds": null,
+        "responseCount": 2
+      },
+      "ai": {
+        "summary": "Formal GDPR 'Right to Erasure' request from a German user.",
+        "sentiment": "neutral",
+        "intent": "legal_request",
+        "confidence": 1.0
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     },
     {
-      "id": "conv10",
-      "profile": "https://randomuser.me/api/portraits/women/56.jpg",
-      "username": "sophie_dev",
-      "fullName": "Sophie Alex",
-      "title": "Jr. Frontend Dev",
+      "id": "conv_Q1W2E3R4T5",
+      "type": "technical",
+      "channel": "chat",
+      "subject": "Bulk Upload failing at 99%",
+      "preview": "I've tried 3 times and it keeps timing out at the very end...",
+      "status": "open",
+      "priority": "high",
+      "starred": false,
+      "archived": false,
+      "snoozedUntil": null,
+      "createdAt": "2024-09-15T15:00:00Z",
+      "updatedAt": "2024-09-15T15:10:00Z",
+      "lastMessageAt": "2024-09-15T15:05:00Z",
+      "unreadCount": 0,
+      "totalMessages": 12,
+      "tags": ["import", "timeout", "bug"],
+      "labels": ["vip-customer"],
+      "participants": [
+        {
+          "id": "user_1010",
+          "type": "customer",
+          "name": "Serena Williams",
+          "email": "serena@tennis.com",
+          "avatar": "https://api.dicebear.com/9.x/notionists/svg?seed=Luna",
+          "initials": "SW",
+          "avatarColor": "hsl(140,80%,30%)",
+          "joinedAt": "2024-09-15T14:55:00Z"
+        },
+        {
+          "id": "agent_tech_11",
+          "type": "agent",
+          "name": "Tom Hardey",
+          "email": "t.hardey@company.com",
+          "avatar": "https://api.dicebear.com/9.x/notionists/svg?seed=Sophie",
+          "joinedAt": "2024-09-15T15:02:00Z"
+        }
+      ],
+      "assignee": {
+        "id": "agent_tech_11",
+        "name": "Tom Hardey",
+        "team": "Technical Support"
+      },
+      "customer": {
+        "id": "cust_4040",
+        "name": "Serena Williams",
+        "email": "serena@tennis.com",
+        "phone": "+1 555 987 6543",
+        "company": "S-Ventures",
+        "location": "Florida",
+        "createdAt": "2023-08-20T09:00:00Z"
+      },
       "messages": [
         {
-          "sender": "You",
-          "message": "Thanks! I'll review your code and get back to you.",
-          "timestamp": "2024-08-23T16:10:00"
-        },
-        {
-          "sender": "Sophie",
-          "message": "Let me know if you need anything else.",
-          "timestamp": "2024-08-23T16:05:00"
-        },
-        {
-          "sender": "Sophie",
-          "message": "The feature is implemented. Can you review it?",
-          "timestamp": "2024-08-23T16:00:00"
+          "id": "msg_1001",
+          "type": "text",
+          "sender": {
+            "id": "cust_4040",
+            "role": "customer",
+            "name": "Serena Williams"
+          },
+          "content": {
+            "text": "My bulk upload of 10,000 records keeps timing out right at 99%."
+          },
+          "attachments": [],
+          "reactions": [],
+          "edited": false,
+          "deleted": false,
+          "metadata": { "ipAddress": "72.14.201.1", "userAgent": "Edge" },
+          "createdAt": "2024-09-15T15:00:00Z",
+          "updatedAt": null
         }
-      ]
+      ],
+      "metrics": {
+        "firstResponseTimeSeconds": 120,
+        "resolutionTimeSeconds": null,
+        "responseCount": 5
+      },
+      "ai": {
+        "summary": "VIP customer experiencing timeout issues during final stages of bulk data import.",
+        "sentiment": "frustrated",
+        "intent": "performance_issue",
+        "confidence": 0.93
+      },
+      "permissions": { "canReply": true, "canAssign": true, "canClose": true }
     }
   ]
 }

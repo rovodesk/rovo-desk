@@ -5,43 +5,68 @@ import {
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import { Input } from "@zero-heads-lab/design-system/components/ui/input";
+import { Textarea } from "@zero-heads-lab/design-system/components/ui/textarea";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { Paperclip, Send, Smile } from "lucide-react";
+import { useState } from "react";
 
 const ConversationInput = () => {
 	const { user } = useUser();
+	const [message, setMessage] = useState("");
 
 	const userImage = user?.image || Placeholder.avatar(user?.email);
 
+	const handleSend = () => {
+		if (!message.trim()) return;
+
+		console.log("send message", message);
+		setMessage("");
+	};
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			handleSend();
+		}
+	};
+
 	return (
-		<div className="border-border border-t px-5 py-3">
-			<div className="flex items-center gap-2">
-				<Avatar className="h-7 w-7 shrink-0">
-					<AvatarImage src={userImage} />
-					<AvatarFallback className="bg-muted text-[10px] text-muted-foreground">
-						{user?.name.slice(0, 2).toUpperCase()}
-					</AvatarFallback>
-				</Avatar>
-				<div className="relative flex-1">
-					<Input
-						className="h-10 pr-20 text-sm"
-						placeholder="Type your comment..."
-					/>
-					<div className="absolute top-1/2 right-1.5 flex -translate-y-1/2 items-center gap-0.5">
-						<Button className="h-7 w-7" size="icon" variant="ghost">
-							<Smile className="h-4 w-4 text-muted-foreground" />
-						</Button>
-						<Button className="h-7 w-7" size="icon" variant="ghost">
-							<Paperclip className="h-4 w-4 text-muted-foreground" />
-						</Button>
-						<Button
-							className="h-7 w-7 bg-primary text-primary-foreground"
-							size="icon"
-						>
-							<Send className="h-3.5 w-3.5" />
-						</Button>
-					</div>
+		<div className="flex items-center gap-2">
+			{/* Avatar */}
+			<Avatar className="h-8 w-8 shrink-0">
+				<AvatarImage src={userImage} />
+				<AvatarFallback className="bg-muted text-[10px] text-muted-foreground">
+					{user?.name?.slice(0, 2)?.toUpperCase()}
+				</AvatarFallback>
+			</Avatar>
+
+			{/* Input Area */}
+			<div className="flex flex-1 items-end gap-2 rounded-md px-2 py-1 focus-within:ring-1 focus-within:ring-ring">
+				<Textarea
+					className="min-h-[36px] resize-none border-0 bg-transparent p-2 text-sm shadow-none focus-visible:ring-0"
+					onChange={(e) => setMessage(e.target.value)}
+					onKeyDown={handleKeyDown}
+					placeholder="Type a message…"
+					value={message}
+				/>
+
+				<div className="flex items-center gap-1 pb-0.5">
+					<Button className="h-8 w-8" size="icon" variant="ghost">
+						<Smile className="h-4 w-4 text-muted-foreground" />
+					</Button>
+
+					<Button className="h-8 w-8" size="icon" variant="ghost">
+						<Paperclip className="h-4 w-4 text-muted-foreground" />
+					</Button>
+
+					<Button
+						className="h-8 w-8"
+						disabled={!message.trim()}
+						onClick={handleSend}
+						size="icon"
+					>
+						<Send className="h-4 w-4" />
+					</Button>
 				</div>
 			</div>
 		</div>
