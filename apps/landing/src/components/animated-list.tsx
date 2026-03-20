@@ -2,7 +2,8 @@ import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { AnimatePresence, motion, useAnimationControls } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
 
-type AnimationPhase = "idle"
+type AnimationPhase =
+	| "idle"
 	| "forming_column"
 	| "scrolling_down"
 	| "resetting";
@@ -18,7 +19,6 @@ type AnimatedListProps = {
 	trigger?: boolean;
 	runOnce?: boolean;
 	onComplete?: () => void;
-
 };
 
 type AnimatedListItemProps = {
@@ -183,12 +183,7 @@ export function AnimatedList({
 		} else {
 			listControls.set({ y: 0 });
 		}
-	}, [
-		animationPhase,
-		listControls,
-		totalHeight,
-		scrollDownDuration
-	]);
+	}, [animationPhase, listControls, totalHeight, scrollDownDuration]);
 
 	const handleListAnimationComplete = (definition: { y?: number }) => {
 		if (definition.y === totalHeight && animationPhase === "scrolling_down") {

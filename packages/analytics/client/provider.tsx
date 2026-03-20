@@ -25,9 +25,5 @@ if (typeof window !== "undefined") {
 }
 
 export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
-	return (
-		<PostHogProvider client={posthog}>
-			{children}
-		</PostHogProvider>
-	);
+	return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 };

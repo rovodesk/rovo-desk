@@ -8,7 +8,7 @@ export type CTA = {
 	id?: string;
 	label: string;
 	link: string;
-	type: 'primary' | 'secondary';
+	type: "primary" | "secondary";
 };
 
 export type HeroBlock = {

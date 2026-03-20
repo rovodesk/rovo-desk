@@ -43,7 +43,8 @@ export const data: { pages: Page[] } = {
 					id: "problem-section",
 					blockType: "problem",
 					title: "Everything you need to scale faster",
-					description: "Explore the features that make RovoDesk the perfect choice for your business.",
+					description:
+						"Explore the features that make RovoDesk the perfect choice for your business.",
 				},
 				{
 					id: "features-section",

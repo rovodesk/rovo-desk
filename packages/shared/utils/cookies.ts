@@ -13,7 +13,7 @@ export function getCookie(name: string): string | undefined {
 
 	const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
 	if (match) return match[2];
-	
+
 	return undefined;
 }
 
@@ -25,7 +25,8 @@ export function setCookie(
 	value: string,
 	maxAge = DEFAULT_MAX_AGE,
 	sameSite: "Lax" | "None" | "Strict" = "Lax",
-	secure = typeof window !== "undefined" && window.location.protocol === "https:",
+	secure = typeof window !== "undefined" &&
+		window.location.protocol === "https:",
 	httpOnly = false
 ): void {
 	if (typeof document === "undefined") return;

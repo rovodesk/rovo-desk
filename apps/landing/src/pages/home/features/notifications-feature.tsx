@@ -82,7 +82,11 @@ export function NotificationsFeature({ className }: { className?: string }) {
 				className
 			)}
 		>
-			<AnimatedList columnGap={96} formationDuration={1.4} scrollDownDuration={8}>
+			<AnimatedList
+				columnGap={96}
+				formationDuration={1.4}
+				scrollDownDuration={8}
+			>
 				{notifications.map((item, idx) => (
 					<Notification {...item} key={idx} />
 				))}
