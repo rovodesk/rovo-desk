@@ -8,49 +8,47 @@ export const data: { pages: Page[] } = {
 			slug: "home",
 			sections: [
 				{
-					id: "section1",
+					id: "hero-section",
 					blockType: "hero",
 					background: {
 						image: {
-							url: "path/to/hero-background.jpg",
+							url: "/background.jpg",
 							alt: "Hero Background Image",
 						},
 					},
 					headline: {
-						prefixText: "Welcome to",
-						highlightText: "Our Product",
-						baseText: "The best solution for your needs.",
+						prefixText: "The",
+						highlightText: "AI-Powered",
+						baseText: "Helpdesk & CRM for the AI-First Era",
 						accentText: "Get Started Today!",
 					},
 					subHeadline: {
-						text: "Join thousands of satisfied customers.",
+						text: "Replace your CRM and helpdesk stack with only one AI tool to handle all for . you so you can chill and grab a beer",
 						enabled: true,
 					},
 					ctas: [
 						{
-							label: "Sign Up",
+							type: "primary",
+							label: "Get Started for Free",
 							link: "/signup",
 						},
 						{
-							label: "Learn More",
+							type: "secondary",
+							label: "Book a Demo",
 							link: "/learn-more",
 						},
 					],
 				},
 				{
-					id: "section2",
+					id: "problem-section",
 					blockType: "problem",
-					// ... other properties for problem section
+					title: "Everything you need to scale faster",
+					description: "Explore the features that make RovoDesk the perfect choice for your business.",
 				},
 				{
-					id: "section3",
+					id: "features-section",
 					blockType: "features",
 					// ... other properties for features section
-				},
-				{
-					id: "section4",
-					blockType: "comingSoon",
-					// ... other properties for coming soon section
 				},
 			],
 		},

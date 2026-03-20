@@ -19,6 +19,8 @@
     "@tanstack/react-router-ssr-query": "catalog:tanstack",
     "@tanstack/react-start": "catalog:tanstack",
     "@tanstack/router-plugin": "catalog:tanstack",
+    "@zero-heads-lab/ai": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
     "dotenv": "^17.3.1",
     "graphql-request": "^7.4.0",
@@ -26,6 +28,7 @@
     "motion": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
+    "rough-notation": "^0.5.1",
     "zod": "catalog:"
   },
   "devDependencies": {

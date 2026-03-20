@@ -1,0 +1,9 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "strictNullChecks": true
+  },
+  "include": ["**/*.ts", "**/*.tsx", "../design-system/components/message.tsx"],
+  "exclude": ["node_modules"]
+}

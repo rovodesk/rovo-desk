@@ -3,6 +3,7 @@ import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import {
 	motion,
+	useMotionTemplate,
 	useMotionValue,
 	useTransform,
 	type Variants,
@@ -48,16 +49,31 @@ const BentoCard = ({ item }: { item?: FeatureItem }) => {
 	const rotateX = useTransform(y, [-100, 100], [2, -2]);
 	const rotateY = useTransform(x, [-100, 100], [-2, 2]);
 
+	const glowX = useMotionValue(50); // %
+	const glowY = useMotionValue(50); // %
+	const glow = useMotionTemplate`
+	radial-gradient(
+		600px circle at ${glowX}% ${glowY}%,
+		rgba(255,255,255,0.08),
+		transparent 60%
+	)
+`;
+
 	function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
 		const rect = event.currentTarget.getBoundingClientRect();
-		const width = rect.width;
-		const height = rect.height;
+
 		const mouseX = event.clientX - rect.left;
 		const mouseY = event.clientY - rect.top;
-		const xPct = mouseX / width - 0.5;
-		const yPct = mouseY / height - 0.5;
-		x.set(xPct * 100);
-		y.set(yPct * 100);
+
+		const xPct = (mouseX / rect.width) * 100;
+		const yPct = (mouseY / rect.height) * 100;
+
+		glowX.set(xPct);
+		glowY.set(yPct);
+
+		// existing tilt logic
+		x.set((xPct / 100 - 0.5) * 100);
+		y.set((yPct / 100 - 0.5) * 100);
 	}
 
 	function handleMouseLeave() {
@@ -85,11 +101,30 @@ const BentoCard = ({ item }: { item?: FeatureItem }) => {
 		>
 			<Link
 				aria-label={`${item.title} - ${item.description}`}
-				className={`group relative flex h-full flex-col gap-4 rounded-xl border border-neutral-200/60 bg-linear-to-b from-neutral-50/60 via-neutral-50/40 to-neutral-50/30 p-5 shadow-[0_4px_20px_rgb(0,0,0,0.04)] backdrop-blur-xs transition-all duration-500 ease-out before:absolute before:inset-0 before:rounded-xl before:bg-linear-to-b before:from-white/10 before:via-white/20 before:to-transparent before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:z-[-1] after:rounded-xl after:bg-neutral-50/70 hover:border-neutral-300/50 hover:bg-linear-to-b hover:from-neutral-50/60 hover:via-neutral-50/30 hover:to-neutral-50/20 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:backdrop-blur-[6px] dark:border-neutral-800/60 dark:from-neutral-900/60 dark:via-neutral-900/40 dark:to-neutral-900/30 dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] dark:hover:border-neutral-700/50 dark:hover:from-neutral-800/60 dark:hover:via-neutral-800/30 dark:hover:to-neutral-800/20 dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)] dark:after:bg-neutral-900/70 dark:before:from-black/10 dark:before:via-black/20 dark:before:to-transparent ${item.className}
-                `}
+				className={cn(
+					"group relative flex h-full flex-col gap-4 rounded-xl border p-5 transition-all duration-500 ease-out",
+
+					// 🔥 Base (dark glass)
+					"border-white/10 bg-white/3 backdrop-blur-xl",
+
+					// Depth
+					"shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]",
+
+					// Hover (subtle lift + light)
+					"hover:border-white/20 hover:bg-white/5 hover:shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]",
+
+					// Inner glow (very important)
+					"before:absolute before:inset-0 before:rounded-xl before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100",
+
+					item.className
+				)}
 				tabIndex={0}
 				to={item.href || "#"}
 			>
+				<motion.div
+					className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+					style={{ background: glow }}
+				/>
 				<div
 					className="relative z-10 flex h-full flex-col gap-3"
 					style={{ transform: "translateZ(20px)" }}
@@ -182,7 +217,7 @@ export default function BentoGrid({ className }: { className?: string }) {
 						<BentoCard item={featureItems[2]} />
 					</motion.div>
 					<motion.div
-						className="overflow-hidden rounded-xl border border-neutral-200/50 bg-linear-to-b from-neutral-50/80 to-neutral-50 transition-all duration-300 hover:border-neutral-400/30 hover:shadow-lg hover:shadow-neutral-200/20 md:col-span-1 dark:border-neutral-800/50 dark:from-neutral-900/80 dark:to-neutral-900 dark:hover:border-neutral-600/30 dark:hover:shadow-neutral-900/20"
+						className="overflow-hidden rounded-xl border border-white/10 bg-linear-to-b from-neutral-50/80 to-neutral-50 transition-all duration-300 hover:border-neutral-400/30 hover:shadow-lg hover:shadow-neutral-200/20 md:col-span-1 dark:border-neutral-800/50 dark:from-neutral-900/80 dark:to-neutral-900 dark:hover:border-neutral-600/30 dark:hover:shadow-neutral-900/20"
 						variants={fadeInUp}
 					>
 						<div className="p-5">

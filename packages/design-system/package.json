@@ -5,11 +5,11 @@
   "devDependencies": {
     "@tailwindcss/postcss": "catalog:tailwindcss",
     "@types/bun": "latest",
-    "tailwindcss": "catalog:tailwindcss",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "@zero-heads-lab/shared": "workspace:*",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "tailwindcss": "catalog:tailwindcss"
   },
   "peerDependencies": {
     "typescript": "catalog:"

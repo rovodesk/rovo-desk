@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { Header } from "@/components/header";
+import { SmoothCursor } from "@/components/smooth-cursor";
 import type {
-	ComingSoonBlock,
 	FeaturesBlock,
 	HeroBlock,
 	Page,
@@ -8,81 +9,55 @@ import type {
 	Section,
 } from "@/lib/componen-registry/types";
 import { getHomePage } from "@/lib/utils/queries";
-
-import ComingSoonSection from "./coming-soon";
 import FeaturesSection from "./features";
-import Header from "./header";
-import HeroSection from "./hero";
+import { HeroSection } from "./hero";
 import ProblemSection from "./problem";
-import WaitlistSection from "./waitlist";
-
-/* -----------------------------
-   Block Component Map
------------------------------ */
 
 type SectionComponentMap = {
-	hero: React.ComponentType<{ data: HeroBlock }>;
-	problem: React.ComponentType<{ data: ProblemBlock }>;
-	features: React.ComponentType<{ data: FeaturesBlock }>;
-	comingSoon: React.ComponentType<{ data: ComingSoonBlock }>;
+	hero: React.ComponentType<{ data: HeroBlock; className?: string }>;
+	problem: React.ComponentType<{ data: ProblemBlock; className?: string }>;
+	features: React.ComponentType<{ data: FeaturesBlock; className?: string }>;
 };
 
-const blocks: SectionComponentMap = {
-	hero: HeroSection,
-	problem: ProblemSection,
-	features: FeaturesSection,
-	comingSoon: ComingSoonSection,
-};
+export type BlockType = keyof SectionComponentMap;
 
-export type BlockType = keyof SectionComponentMap &
-	React.ComponentType<HTMLDivElement>;
+const blockRegistry: {
+	[K in BlockType]: {
+		component: SectionComponentMap[K];
+		className: string;
+	};
+} = {
+	hero: {
+		component: HeroSection,
+		className: "w-full",
+	},
+	problem: {
+		component: ProblemSection,
+		className: "w-full py-20",
+	},
+	features: {
+		component: FeaturesSection,
+		className: "w-full py-20",
+	},
+} as const;
 
-/* -----------------------------
-   Renderer
------------------------------ */
+const SectionRenderer = ({
+	section,
+	index,
+}: {
+	section: Section;
+	index: number;
+}) => {
+	const key = section.id || `${section.blockType}-${index}`;
 
-const renderSection = (section: Section) => {
-	const Component = blocks[section.blockType];
+	const block = blockRegistry[section.blockType];
+	if (!block) return null;
 
-	if (!Component) return null;
-
-	switch (section.blockType) {
-		case "hero":
-			return (
-				<Component
-					className="w-full"
-					data={section as HeroBlock}
-					key={section.id}
-				/>
-			);
-		case "problem":
-			return (
-				// <Component
-				// 	className="w-full pt-20 lg:pt-40"
-				// 	data={section as ProblemBlock}
-				// 	key={section.id}
-				// />
-				<WaitlistSection />
-			);
-		case "features":
-			return (
-				<Component
-					className="w-full py-20"
-					data={section as FeaturesBlock}
-					key={section.id}
-				/>
-			);
-		// case "comingSoon":
-		// 	return (
-		// 		<Component
-		// 			className="w-full"
-		// 			data={section as ComingSoonBlock}
-		// 			key={section.id}
-		// 		/>
-		// 	);
-		default:
-			return null;
-	}
+	const Component = block.component as React.ComponentType<{
+		data: Section;
+		className?: string;
+	}>;
+	return <Component className={block.className} data={section} key={key} />;
 };
 
 /* -----------------------------
@@ -104,11 +79,16 @@ const HomePage = () => {
 
 	return (
 		<>
+			<SmoothCursor />
 			<Header />
 
-			<main className="relative min-h-screen w-full overflow-hidden pb-40">
-				{page.sections?.map(renderSection)}
-			</main>
+			<div className="relative min-h-screen w-full overflow-hidden bg-black text-white">
+				<main className="relative pb-20">
+					{page.sections?.map((section, index) => (
+						<SectionRenderer index={index} key={section.id} section={section} />
+					))}
+				</main>
+			</div>
 		</>
 	);
 };

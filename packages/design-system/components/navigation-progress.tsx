@@ -18,7 +18,7 @@ export function NavigationProgress({ isNavigating }: NavigationProgressProps) {
 
   return (
     <LoadingBar
-      color="var(--muted-foreground)"
+      color="var(--accent)"
       height={2}
       ref={ref}
       shadow={true}

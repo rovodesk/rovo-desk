@@ -101,7 +101,7 @@ const Routes: Route[] = [
 	{ id: "developers", label: "Developers" },
 ];
 
-const Header = () => {
+export const Header = () => {
 	const [isVisible, setIsVisible] = useState(true);
 	const [activeMenu, setActiveMenu] = useState<string | null>(null);
 

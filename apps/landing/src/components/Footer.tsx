@@ -61,7 +61,12 @@ export default function Footer() {
 	if (!mounted) return null;
 
 	return (
-		<footer className="w-full border-t bg-background pt-16">
+		<footer className="relative w-full border-white/10 border-t bg-black pt-16">
+			{/* Background glow */}
+			<div className="pointer-events-none absolute inset-0 -z-10">
+				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(37,99,235,0.12),transparent_70%)]" />
+			</div>
+
 			<div className="container mx-auto px-6">
 				<div className="grid grid-cols-1 gap-12 pb-12 lg:grid-cols-12">
 					{/* Left Side: Brand & Newsletter */}
@@ -69,11 +74,11 @@ export default function Footer() {
 						<div className="flex flex-col gap-4">
 							<Link className="flex items-center gap-2" to="/">
 								<Logo className="h-8 w-8" />
-								<span className="font-bold text-xl tracking-tight">
+								<span className="font-bold text-white text-xl tracking-tight">
 									Rovo Desk
 								</span>
 							</Link>
-							<p className="max-w-sm text-muted-foreground text-sm leading-relaxed">
+							<p className="max-w-sm text-sm text-white/60 leading-relaxed">
 								Empowering modern enterprises with scalable, high-performance
 								desk solutions. Built for the future of work.
 							</p>
@@ -96,7 +101,7 @@ export default function Footer() {
 						<div className="flex gap-3">
 							{data().socialLinks.map(({ icon: Icon, label, href }) => (
 								<Link
-									className="text-muted-foreground transition-colors hover:text-primary"
+									className="text-white/50 transition-colors hover:text-white"
 									key={label}
 									to={href}
 								>
@@ -104,7 +109,7 @@ export default function Footer() {
 								</Link>
 							))}
 							<button
-								className="ml-2 border-l pl-4 text-muted-foreground transition-colors hover:text-primary"
+								className="ml-2 border-l pl-4 text-white/50 transition-colors hover:text-white"
 								onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
 							>
 								{theme === "dark" ? (
@@ -161,8 +166,8 @@ export default function Footer() {
 						</div>
 					</div>
 
-					{/* Background Faded Text */}
-					<h1 className="pointer-events-none absolute right-0 -bottom-6 left-0 select-none bg-linear-to-b from-foreground/5 to-transparent bg-clip-text text-center font-bold text-[12vw] text-transparent leading-none opacity-50 dark:from-white/10">
+					{/* 🔥 Huge subtle background text */}
+					<h1 className="pointer-events-none absolute inset-x-0 -bottom-16 select-none text-center font-bold text-[12vw] text-white/6 leading-none">
 						ROVO DESK
 					</h1>
 				</div>

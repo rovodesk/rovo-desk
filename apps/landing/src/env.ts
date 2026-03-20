@@ -1,16 +1,18 @@
 import { createEnv } from "@t3-oss/env-core";
+import { keys as analyticsClientKeys } from "@zero-heads-lab/analytics/client/keys";
 import { z } from "zod";
 
 export const env = createEnv({
+	extends: [analyticsClientKeys],
 	server: {
-		API_URL: z.url(),
+		BASE_API_URL: z.url(),
 	},
-	clientPrefix: "PUBLIC_",
+	clientPrefix: "VITE_",
 	client: {
-		PUBLIC_API_URL: z.url(),
+		VITE_BASE_API_URL: z.url(),
 	},
 	runtimeEnv: {
-		API_URL: process.env.API_URL,
-		PUBLIC_API_URL: import.meta.env.PUBLIC_API_URL,
+		BASE_API_URL: process.env.BASE_API_URL,
+		VITE_BASE_API_URL: import.meta.env.VITE_BASE_API_URL,
 	},
 });

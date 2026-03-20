@@ -1,4 +1,3 @@
-import { useTheme } from "../context/theme";
 import { cn } from "../lib/utils";
 import type * as React from "react";
 import { useMemo } from "react";
@@ -18,11 +17,6 @@ export function Logo({
     title = "RovoDesk",
     ...props
 }: LogoProps) {
-    const { resolvedTheme } = useTheme()
-
-    const strokeColor =
-        resolvedTheme === "dark" ? "#FFFFFF" : "#000000"
-
     return (
         <svg
             viewBox="0 0 64 64"
@@ -60,7 +54,7 @@ export function Logo({
            C46 31 42 34 36 34
            H22
            M36 34L46 46"
-                stroke={strokeColor}
+                className="stroke-black dark:stroke-white"
                 strokeWidth="4.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

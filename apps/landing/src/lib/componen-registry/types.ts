@@ -1,15 +1,18 @@
 export type Image = {
+	id?: string;
 	url: string;
 	alt: string;
 };
 
 export type CTA = {
+	id?: string;
 	label: string;
 	link: string;
+	type: 'primary' | 'secondary';
 };
 
 export type HeroBlock = {
-	id: string;
+	id?: string;
 	blockType: "hero";
 
 	background: {
@@ -32,7 +35,7 @@ export type HeroBlock = {
 };
 
 export type ProblemBlock = {
-	id: string;
+	id?: string;
 	blockType: "problem";
 
 	title?: string;
@@ -40,7 +43,7 @@ export type ProblemBlock = {
 };
 
 export type FeaturesBlock = {
-	id: string;
+	id?: string;
 	blockType: "features";
 
 	features?: {
@@ -49,21 +52,10 @@ export type FeaturesBlock = {
 	}[];
 };
 
-export type ComingSoonBlock = {
-	id: string;
-	blockType: "comingSoon";
-
-	message?: string;
-};
-
-export type Section =
-	| HeroBlock
-	| ProblemBlock
-	| FeaturesBlock
-	| ComingSoonBlock;
+export type Section = HeroBlock | ProblemBlock | FeaturesBlock;
 
 export type Page = {
-	id: string;
+	id?: string;
 	title: string;
 	slug: string;
 	sections: Section[];

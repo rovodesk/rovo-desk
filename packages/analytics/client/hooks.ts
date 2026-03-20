@@ -1,1 +1,1 @@
-export { usePostHog } from "@posthog/react";
+export { useFeatureFlagEnabled, usePostHog } from "@posthog/react";

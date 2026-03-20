@@ -9,7 +9,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-	envPrefix: "PUBLIC_",
+	envPrefix: "VITE_",
 	plugins: [
 		devtools(),
 		// cloudflare({ viteEnvironment: { name: "ssr" } }),

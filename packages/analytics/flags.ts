@@ -1,0 +1,1 @@
+export const WAITLIST_FLAG = "waitlist";

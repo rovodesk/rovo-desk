@@ -52,7 +52,8 @@
       },
       "correctness": {
         "useImageSize": "off",
-        "noChildrenProp": "off"
+        "noChildrenProp": "off",
+        "noUnusedFunctionParameters": "warn"
       },
       "complexity": {
         "noForEach": "off",
