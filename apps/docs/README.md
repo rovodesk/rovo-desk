@@ -1,6 +1,10 @@
 # docs
 
+<<<<<<< HEAD
 This is a Next.js application generated with
+=======
+This is a Tanstack Start application generated with
+>>>>>>> b290694 (refactor: Moved docs from tools to apps)
 [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
 
 Run development server:
@@ -11,9 +15,6 @@ npm run dev
 pnpm dev
 # or
 <<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> feat/chatbot
 bun run dev
 # or
 yarn dev
@@ -49,8 +50,7 @@ resources:
   features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 - [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
-
+=======
 yarn dev
 ```
 >>>>>>> b290694 (refactor: Moved docs from tools to apps)
->>>>>>> feat/chatbot

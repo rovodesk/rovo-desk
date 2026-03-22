@@ -2,9 +2,15 @@ import "@zero-heads-lab/design-system/styles/default.css";
 
 // import { OnboardingProvider } from "@/providers/onboarding";
 import {
+<<<<<<< HEAD
 	QueryCache,
 	QueryClient,
 	QueryClientProvider,
+=======
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AuthProvider, authClient } from "@zero-heads-lab/auth/client";
@@ -25,6 +31,7 @@ import "@tanstack/react-router";
 // import { useOnboarding } from "@onboardjs/react";
 
 export const queryClient = new QueryClient({
+<<<<<<< HEAD
 	defaultOptions: {
 		queries: {
 			retry: (failureCount, error) => {
@@ -71,20 +78,78 @@ export const queryClient = new QueryClient({
 			}
 		},
 	}),
+=======
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        // eslint-disable-next-line no-console
+        if (import.meta.env.DEV) console.log({ failureCount, error });
+
+        if (failureCount >= 0 && import.meta.env.DEV) return false;
+        if (failureCount > 3 && import.meta.env.PROD) return false;
+
+        return !(
+          error instanceof AxiosError &&
+          [401, 403].includes(error.response?.status ?? 0)
+        );
+      },
+      refetchOnWindowFocus: import.meta.env.PROD,
+      staleTime: 10 * 1000, // 10s
+    },
+    mutations: {
+      onError: (error) => {
+        handleMutationError(error);
+
+        if (error instanceof AxiosError && error.response?.status === 304) {
+          toast.error("Content not modified!");
+        }
+      },
+    },
+  },
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          toast.error("Session expired!");
+        }
+        if (error.response?.status === 500) {
+          toast.error("Internal Server Error!");
+          // Only navigate to error page in production to avoid disrupting HMR in development
+          if (import.meta.env.PROD) {
+            router.navigate({ to: "/500" });
+          }
+        }
+        if (error.response?.status === 403) {
+          router.navigate({ to: "/403", replace: true });
+        }
+      }
+    },
+  }),
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });
 
 // Create a new router instance
 const router = createRouter({
+<<<<<<< HEAD
 	routeTree,
 	defaultPreload: "intent",
 	context: { queryClient, auth: undefined! },
 	defaultNotFoundComponent: () => <NotFoundError />,
 	defaultErrorComponent: () => <GeneralError />,
 	scrollRestoration: true,
+=======
+  routeTree,
+  defaultPreload: "intent",
+  context: { queryClient, auth: undefined! },
+  defaultNotFoundComponent: () => <NotFoundError />,
+  defaultErrorComponent: () => <GeneralError />,
+  scrollRestoration: true,
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
+<<<<<<< HEAD
 	const root = createRoot(rootElement);
 	root.render(
 		<StrictMode>
@@ -128,11 +193,68 @@ function App() {
 			<RouterProvider context={{ auth: authContext }} router={router} />
 		</UIProvider>
 	);
+=======
+  const root = createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <AppErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider authClient={authClient}>
+            {/* <OnboardingProvider> */}
+            <App />
+            {/* </OnboardingProvider> */}
+          </AuthProvider>
+        </QueryClientProvider>
+      </AppErrorBoundary>
+    </StrictMode>
+  );
+}
+
+function App() {
+  const { session, isAuthenticated, loading } = useSession();
+  // const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
+
+  if (loading)
+    return (
+      <Loader
+        subtitle="Something Great is Cooking..."
+        title="Loading your profile..."
+      />
+    );
+
+  const authContext = {
+    session,
+    isAuthenticated,
+    // onboarding: {
+    // isCompleted: onboardingIsCompleted ?? false,
+    // currentStep: String(currentStep?.id ?? ""),
+    // },
+  };
+  console.log(authContext);
+
+  return (
+    <UIProvider>
+      <RouterProvider context={{ auth: authContext }} router={router} />
+    </UIProvider>
+  );
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 }
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
+<<<<<<< HEAD
 	interface Register {
 		router: typeof router;
 	}
+	interface StaticDataRouteOption {
+		breadcrumb?: string | ((params: Record<string, unknown>) => string);
+	}
+=======
+  interface Register {
+    router: typeof router;
+  }
+  interface StaticDataRouteOption {
+    breadcrumb?: string | ((params: Record<string, unknown>) => string);
+  }
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 }

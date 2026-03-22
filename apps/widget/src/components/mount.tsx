@@ -13,15 +13,16 @@ const globalStore =
 		mode: "visitor",
 		isOpen: false,
 		activeTab: "welcome",
-		isInitialized: false,
+		isInitialized: false
 	});
 
 (window as any).__ROVODESK_STORE__ = globalStore;
 
 const store = globalStore;
 
-const globalActions =
-	(window as any).__ROVODESK_ACTIONS__ ?? new ActionProvider(store);
+const globalActions = 
+	(window as any).__ROVODESK_ACTIONS__ ??
+	new ActionProvider(store);
 
 (window as any).__ROVODESK_ACTIONS__ = globalActions;
 

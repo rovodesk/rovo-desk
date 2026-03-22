@@ -10,7 +10,7 @@ import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { fonts } from "@zero-heads-lab/design-system/context/font";
 import { CookieConsent } from "@/components/cookie-consent";
-import Footer from "@/components/footer";
+import Footer from "@/components/Footer";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRouteWithContext<{

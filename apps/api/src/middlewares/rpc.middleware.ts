@@ -12,6 +12,7 @@ import type { Bindings } from "../types";
 export const rpcMiddleware: MiddlewareHandler<{
 	Bindings: Bindings;
 }> = async (c, next) => {
+
 	const analytics = await getAnalyticsClient(
 		c.env.CACHE_STORE,
 		c.env.POSTHOG_PROJECT_API_KEY

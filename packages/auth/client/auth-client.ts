@@ -3,6 +3,10 @@ import { passkeyClient } from "@better-auth/passkey/client";
 import { ssoClient } from "@better-auth/sso/client";
 import { stripeClient } from "@better-auth/stripe/client";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
+<<<<<<< HEAD
+=======
+import type { BetterAuthClientPlugin } from "better-auth";
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import {
 	adminClient,
 	inferAdditionalFields,
@@ -44,7 +48,11 @@ const Plugins = [
 	apiKeyClient(),
 	jwtClient(),
 	ssoClient(),
+<<<<<<< HEAD
 ];
+=======
+] satisfies BetterAuthClientPlugin[];
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 
 export const authClient = createBetterAuthClient({
 	baseURL: keys.VITE_AUTH_SERVER_URL,

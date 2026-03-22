@@ -23,20 +23,20 @@ export interface Store<T extends WidgetState> {
 	subscribe: StateSubscriber<T>;
 }
 
-export const initialStore = <T extends WidgetState>(
-	initialState: T
-): Store<T> => {
+export const initialStore = <T extends WidgetState>(initialState: T): Store<T> => {
 	// Create a deep copy of the initial state to avoid mutating the original object.
 	//⚠️ StructuredClone can break in some environments.
 	// Not supported in older browsers
 	// Slower than necessary
 	// Unnecessary if initialState is not mutated
+
 	// let state = structuredClone(initialState);
 
 	let state: T = { ...initialState };
 
 	// Use a Set to store the listeners to avoid duplicate listeners.
 	const listeners = new Set<StateListener<T>>();
+
 
 	// Get the current state
 	const getState = () => state;

@@ -1,6 +1,6 @@
 import type { WidgetState } from "@zero-heads-lab/engine";
 import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/types";
-import { type ScreenKey, screenRegistry } from "./screens";
+import { ScreenKey, screenRegistry } from "./screens";
 import { WelcomeScreen } from "./screens/welcome";
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {

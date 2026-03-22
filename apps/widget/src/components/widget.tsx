@@ -1,15 +1,15 @@
 import { useWidgetActions } from "@/hooks/use-widget-actions";
 import { useWidgetState } from "@/hooks/use-widget-state";
-import { resolveScreen } from "@/utils";
 import { ChatIcon, CloseIcon } from "./icons";
 import { Navigation } from "./navigation";
+import { resolveScreen } from "@/utils";
 
 const DEFAULT_WIDGET_CONFIG = {
 	launcher: { position: "bottom-right" },
 	theme: {
 		shadow: true,
-	},
-};
+	}
+}
 
 const DEFAULT_WIDGET_WIDTH = 400;
 const DEFAULT_WIDGET_HEIGHT = 704;
@@ -25,19 +25,21 @@ export function Widget() {
 	const width = DEFAULT_WIDGET_WIDTH;
 	const height = DEFAULT_WIDGET_HEIGHT;
 
+
 	// 🔹 Resolve screen (typed)
 	const Screen = resolveScreen(state);
+
 
 	return (
 		<div className="relative h-full w-full">
 			<div className="absolute right-6 bottom-6 flex flex-col items-end gap-3">
 				{/* Panel */}
 				<div
-					className={`rovodesk-widget flex origin-bottom-right transform-gpu flex-col overflow-hidden transition-[transform,opacity,box-shadow] duration-300 will-change-transform ease-out${
-						state.isOpen
-							? "open pointer-events-auto translate-y-0 scale-100 opacity-100"
-							: "pointer-events-none translate-y-4 scale-95 opacity-0"
-					}
+					className={`rovodesk-widget flex flex-col overflow-hidden transform-gpu will-change-transform origin-bottom-right transition-[transform,opacity,box-shadow] duration-300 ease-out
+         					${state.isOpen
+							? "open opacity-100 translate-y-0 scale-100 pointer-events-auto"
+							: "opacity-0 translate-y-4 scale-95 pointer-events-none"
+						}
         `}
 					style={{
 						width,
@@ -77,9 +79,9 @@ function Launcher() {
 
 	return (
 		<button
-			className={`relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 ease-out ${isInitialized ? "" : "cursor-not-allowed opacity-50"}`}
-			disabled={!isInitialized}
+			className={`relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 ease-out ${!isInitialized ? 'opacity-50 cursor-not-allowed' : ''}`}
 			onClick={toggle}
+			disabled={!isInitialized}
 		>
 			{/* 🔥 Gradient background */}
 			<div className="absolute inset-0 rounded-full bg-linear-to-br from-black via-indigo-900 to-blue-900" />
@@ -96,4 +98,4 @@ function Launcher() {
 			</div>
 		</button>
 	);
-}
+}	

@@ -31,32 +31,55 @@ const BlogsPostSlugRoute = BlogsPostSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+<<<<<<< HEAD
+  '/about': typeof AboutRoute
   '/blogs/': typeof BlogsIndexRoute
   '/blogs/post/$slug': typeof BlogsPostSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/blogs': typeof BlogsIndexRoute
   '/blogs/post/$slug': typeof BlogsPostSlugRoute
+=======
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+>>>>>>> be67e8a (feat: Introduce a new landing page with various sections and UI components, refactor header and footer, and remove legacy routes and styles.)
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+<<<<<<< HEAD
+  '/about': typeof AboutRoute
   '/blogs/': typeof BlogsIndexRoute
   '/blogs/post/$slug': typeof BlogsPostSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/blogs/' | '/blogs/post/$slug'
+  fullPaths: '/' | '/about' | '/blogs/' | '/blogs/post/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/blogs' | '/blogs/post/$slug'
-  id: '__root__' | '/' | '/blogs/' | '/blogs/post/$slug'
+  to: '/' | '/about' | '/blogs' | '/blogs/post/$slug'
+  id: '__root__' | '/' | '/about' | '/blogs/' | '/blogs/post/$slug'
+=======
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/'
+  id: '__root__' | '/'
+>>>>>>> be67e8a (feat: Introduce a new landing page with various sections and UI components, refactor header and footer, and remove legacy routes and styles.)
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+<<<<<<< HEAD
+  AboutRoute: typeof AboutRoute
   BlogsIndexRoute: typeof BlogsIndexRoute
   BlogsPostSlugRoute: typeof BlogsPostSlugRoute
+=======
+>>>>>>> be67e8a (feat: Introduce a new landing page with various sections and UI components, refactor header and footer, and remove legacy routes and styles.)
 }
 
 declare module '@tanstack/react-router' {
@@ -87,8 +110,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+<<<<<<< HEAD
+  AboutRoute: AboutRoute,
   BlogsIndexRoute: BlogsIndexRoute,
   BlogsPostSlugRoute: BlogsPostSlugRoute,
+=======
+>>>>>>> be67e8a (feat: Introduce a new landing page with various sections and UI components, refactor header and footer, and remove legacy routes and styles.)
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
