@@ -9,9 +9,6 @@ export const WidgetAppearanceSchema = z.object({
 	userBubbleColor: z.string(),
 	agentBubbleColor: z.string(),
 
-	borderRadius: z.number(),
-	widgetWidth: z.number(),
-	widgetHeight: z.number(),
 	shadow: z.boolean(),
 });
 
@@ -34,6 +31,7 @@ export const WidgetAdvancedConfigSchema = z.object({
 export const TabTypeSchema = z.enum([
 	"welcome",
 	"conversation",
+	"inbox",
 	"knowledge_base",
 	"publications",
 ]);
@@ -118,16 +116,23 @@ export const PublicationsBlockSchema = z.object({
 	config: PublicationsConfigSchema,
 });
 
+export const InboxBlockSchema = z.object({
+	id: z.string(),
+	type: z.literal("inbox"),
+});
+
 export const AnyBlockSchema = z.discriminatedUnion("type", [
 	WelcomeBlockSchema,
 	ConversationBlockSchema,
 	KnowledgeBaseBlockSchema,
 	PublicationsBlockSchema,
+	InboxBlockSchema,
 ]);
 
 export const WidgetScreenSchema = z.object({
 	id: z.string(),
-	tab: TabTypeSchema,
+	tab: TabTypeSchema.optional(),
+	route: z.string().optional(),
 	title: z.string(),
 	blocks: z.array(AnyBlockSchema),
 });

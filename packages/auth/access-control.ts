@@ -81,4 +81,5 @@ export const AuthRoles = [
 	"betaUser",
 	"user",
 ] as const;
+
 export type AuthRole = (typeof AuthRoles)[number];

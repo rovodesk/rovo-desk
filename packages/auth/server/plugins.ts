@@ -28,6 +28,7 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
+
 import {
 	ADMIN_ROLES,
 	accessControl,
@@ -147,10 +148,9 @@ export const AuthPlugins = (
 						},
 					});
 				},
-				// biome-ignore lint/suspicious/useAwait: No Awaited Function
 				afterDeleteOrganization: async ({ organization }) => {
 					// Send Analytics Event
-					analytics.captureImmediate({
+					await analytics.captureImmediate({
 						distinctId: organization.id,
 						event: "organization_deleted",
 						properties: {

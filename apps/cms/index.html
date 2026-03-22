@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="icon" type="image/svg+xml" href="/vite.svg">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>auth</title>
+
+		<!-- <script>
+		"use strict";
+		(() => {
+			try {
+				const cookieName = "zero-heads-theme-color";
+
+				const cookie = document.cookie
+					.split("; ")
+					.find((row) => row.startsWith(`${cookieName}=`))
+					?.split("=")[1];
+
+				let theme = cookie;
+
+				// First visit: no cookie yet
+				if (!theme || theme === "system") {
+					theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+						? "dark"
+						: "light";
+				}
+
+				document.documentElement.classList.add(theme);
+				console.log(theme);
+				// biome-ignore lint/suspicious/noEmptyBlockStatements: not required
+			} catch (_e) {}
+		})();
+		</script> -->
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>

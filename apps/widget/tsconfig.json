@@ -1,0 +1,13 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/vite.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@zero-heads-lab/engine": ["../../packages/engine/index.ts"],
+      "@zero-heads-lab/shared/*": ["../../packages/shared/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "src/embed.js"],
+  "exclude": ["node_modules", "dist"]
+}

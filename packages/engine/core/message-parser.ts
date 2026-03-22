@@ -1,13 +1,16 @@
-import type { BotState, StateUpdater } from "../types";
+import type { StateUpdater, WidgetState } from "../types";
 
 export type MessageType =
 	| "ai"
-	| "visitor"
 	| "user"
+	| "visitor"
 	| "admin"
 	| "system"
 	| "error";
 
+/**
+ * The Message Interface
+ */
 export interface Message {
 	id: string;
 	userId?: string;
@@ -32,6 +35,16 @@ export interface IMessageParser {
 		options?: Partial<Omit<Message, "id" | "type" | "message">>
 	): void;
 
+	addVisitorMessage(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	): void;
+
+	addAdminMessage(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	): void;
+
 	addSystemMessage(
 		message: string,
 		options?: Partial<Omit<Message, "id" | "type" | "message">>
@@ -45,7 +58,7 @@ export interface IMessageParser {
 	setLoading(id: string, loading: boolean): void;
 }
 
-export class MessageParser<T extends BotState> implements IMessageParser {
+export class MessageParser<T extends WidgetState> implements IMessageParser {
 	private readonly setState: StateUpdater<T>;
 
 	constructor(setState: StateUpdater<T>) {
@@ -103,6 +116,22 @@ export class MessageParser<T extends BotState> implements IMessageParser {
 		this.pushMessage(msg);
 	}
 
+	addAdminMessage(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) {
+		const msg = this.createMessage(message, "admin", options);
+		this.pushMessage(msg);
+	}
+
+	addVisitorMessage(
+		message: string,
+		options?: Partial<Omit<Message, "id" | "type" | "message">>
+	) {
+		const msg = this.createMessage(message, "visitor", options);
+		this.pushMessage(msg);
+	}
+
 	addSystemMessage(
 		message: string,
 		options?: Partial<Omit<Message, "id" | "type" | "message">>
@@ -122,16 +151,20 @@ export class MessageParser<T extends BotState> implements IMessageParser {
 	setLoading(id: string, loading: boolean) {
 		this.setState((state) => ({
 			...state,
-			messages: state.messages.map((m) =>
+			messages: state.messages?.map((m) =>
 				m.id === id ? { ...m, loading } : m
 			),
 		}));
 	}
 
 	private pushMessage(message: Message) {
-		this.setState((state) => ({
-			...state,
-			messages: [...state.messages, message],
-		}));
+		this.setState((state) => {
+			const messages = state.messages ?? [];
+			messages.push(message);
+			return {
+				...state,
+				messages,
+			};
+		});
 	}
 }

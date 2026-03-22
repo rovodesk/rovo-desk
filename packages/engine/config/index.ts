@@ -10,7 +10,6 @@ export const DisplayOptionsSchema = z.object({
 			zIndex: z.number().optional(),
 		})
 		.optional(),
-
 	themeMode: ThemeModeSchema.optional(),
 });
 
@@ -26,13 +25,8 @@ export const SDKConfigSchema = z.object({
 	accessKey: z.string(),
 	organizationId: z.string(),
 	apiBaseUrl: z.url(),
-
 	user: UserSchema.optional(),
-
 	customLauncherComponent: z.string().optional(),
 	display: DisplayOptionsSchema.optional(),
-
 	sessionDuration: z.number().optional(),
 });
-
-export type SDKConfig = z.infer<typeof SDKConfigSchema>;

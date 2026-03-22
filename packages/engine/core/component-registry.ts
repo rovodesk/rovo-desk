@@ -1,6 +1,15 @@
 import type { AnyBlock } from "@zero-heads-lab/shared/types";
-import { scrollIntoView } from "../utils";
 import type { IActionProvider } from "./action-provider.js";
+
+const scrollIntoView = (): void => {
+	const chatContainer = document.querySelector<HTMLElement>(
+		".rovodesk-widget-chat-message-container"
+	);
+
+	if (!chatContainer) return;
+
+	chatContainer.scrollTop = chatContainer.scrollHeight;
+};
 
 export interface RenderContext<B extends AnyBlock = AnyBlock> {
 	block: B;

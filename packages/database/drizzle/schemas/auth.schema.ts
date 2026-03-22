@@ -512,6 +512,7 @@ export const ssoProvider = authSchema.table("ssoProvider", {
 	samlConfig: text("samlConfig").notNull(),
 	userId: text("userId").references(() => user.id, { onDelete: "cascade" }),
 	providerId: text("providerId").notNull(),
+
 	organizationId: text("organizationId").references(() => organization.id, {
 		onDelete: "cascade",
 	}),

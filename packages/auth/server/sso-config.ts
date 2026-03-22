@@ -5,24 +5,24 @@ export const SAML_CONFIG: SAMLConfig = {
 	issuer: "http://localhost:3000/api/auth/sso/saml2/sp/metadata",
 	entryPoint: "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP EntityID
 	cert: `-----BEGIN CERTIFICATE-----
-MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
+	MIIDBzCCAe + gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
 BQAwEzERMA8GA1UEAwwIZHVtbXlpZHAwHhcNMjQwNTEzMjE1NDE2WhcNMzQwNTEx
 MjE1NDE2WjATMREwDwYDVQQDDAhkdW1teWlkcDCCASIwDQYJKoZIhvcNAQEBBQAD
 ggEPADCCAQoCggEBAKhmgQmWb8NvGhz952XY4SlJlpWIK72RilhOZS9frDYhqWVJ
-HsGH9Z7sSzrM/0+YvCyEWuZV9gpMeIaHZxEPDqW3RJ7KG51fn/s/qFvwctf+CZDj
-yfGDzYs+XIgf7p56U48EmYeWpB/aUW64gSbnPqrtWmVFBisOfIx5aY3NubtTsn+g
-0XbdX0L57+NgSvPQHXh/GPXA7xCIWm54G5kqjozxbKEFA0DS3yb6oHRQWHqIAM/7
-mJMdUVZNIV1q7c2JIgAl23uDWq+2KTE2R5liP/KjvjwKonVKtTqGqX6ei25rsTHO
-aDpBH/LdQK2txgsm7R7+IThWNvUI0TttrmwBqyMCAwEAAaNTMFEwHQYDVR0OBBYE
+HsGH9Z7sSzrM / 0 + YvCyEWuZV9gpMeIaHZxEPDqW3RJ7KG51fn / s / qFvwctf + CZDj
+yfGDzYs + XIgf7p56U48EmYeWpB / aUW64gSbnPqrtWmVFBisOfIx5aY3NubtTsn + g
+0XbdX0L57 + NgSvPQHXh / GPXA7xCIWm54G5kqjozxbKEFA0DS3yb6oHRQWHqIAM / 7
+mJMdUVZNIV1q7c2JIgAl23uDWq + 2KTE2R5liP / KjvjwKonVKtTqGqX6ei25rsTHO
+aDpBH / LdQK2txgsm7R7 + IThWNvUI0TttrmwBqyMCAwEAAaNTMFEwHQYDVR0OBBYE
 FD142gxIAJMhpgMkgpzmRNoW9XbEMB8GA1UdIwQYMBaAFD142gxIAJMhpgMkgpzm
-RNoW9XbEMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBADQd6k6z
-FIc20GfGHY5C2MFwyGOmP5/UG/JiTq7Zky28G6D0NA0je+GztzXx7VYDfCfHxLcm
-2k5t9nYhb9kVawiLUUDVF6s+yZUXA4gUA3KoTWh1/oRxR3ggW7dKYm9fsNOdQAbx
-UUkzp7HLZ45ZlpKUS0hO7es+fPyF5KVw0g0SrtQWwWucnQMAQE9m+B0aOf+92y7J
-QkdgdR8Gd/XZ4NZfoOnKV7A1utT4rWxYCgICeRTHx9tly5OhPW4hQr5qOpngcsJ9
-vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m+
-jzGhYL6m9gFTm/8=
------END CERTIFICATE-----`,
+RNoW9XbEMA8GA1UdEwEB / wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBADQd6k6z
+FIc20GfGHY5C2MFwyGOmP5 / UG / JiTq7Zky28G6D0NA0je + GztzXx7VYDfCfHxLcm
+2k5t9nYhb9kVawiLUUDVF6s + yZUXA4gUA3KoTWh1 / oRxR3ggW7dKYm9fsNOdQAbx
+UUkzp7HLZ45ZlpKUS0hO7es + fPyF5KVw0g0SrtQWwWucnQMAQE9m + B0aOf + 92y7J
+QkdgdR8Gd / XZ4NZfoOnKV7A1utT4rWxYCgICeRTHx9tly5OhPW4hQr5qOpngcsJ9
+vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m +
+	jzGhYL6m9gFTm / 8=
+----- END CERTIFICATE-----`,
 	spMetadata: {
 		metadata: `
 				  <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://localhost:3000/api/auth/sso/saml2/sp/metadata">
@@ -71,8 +71,8 @@ jzGhYL6m9gFTm/8=
 			{
 				Binding: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
 				Location:
-					"https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP redirect url
-			},
+					"https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso",
+			}, // IDP redirect url,
 		],
 		cert: `-----BEGIN CERTIFICATE-----
 MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
@@ -94,5 +94,5 @@ vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m+
 jzGhYL6m9gFTm/8=
 -----END CERTIFICATE-----`,
 	},
-	callbackUrl: `${keys.END_USER_DASHBOARD_URL}/dashboard`,
+	callbackUrl: `${keys.END_USER_DASHBOARD_URL}`,
 };

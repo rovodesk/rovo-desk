@@ -1,10 +1,28 @@
 import type { Command } from "../types";
 
+/**
+ * The Command Queue Interface
+ */
 export interface ICommandQueue<T = Command> {
+	/**
+	 * Enqueue a command
+	 */
 	enqueue(key: string, element: T): void;
+	/**
+	 * Dequeue a command
+	 */
 	dequeue(key: string): T | undefined;
+	/**
+	 * Peek at the next command
+	 */
 	peek(key: string): T | undefined;
+	/**
+	 * Check if the queue is empty
+	 */
 	isEmpty(key: string): boolean;
+	/**
+	 * Get the size of the queue
+	 */
 	size(key: string): number;
 	flush(key?: string): void;
 }

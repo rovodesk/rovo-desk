@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { authClient } from "@zero-heads-lab/auth/client";
-import { z } from "zod";
+import z from "zod";
 import { DashboardLayout } from "@/layout";
 
 export const Route = createFileRoute("/_authenticated")({

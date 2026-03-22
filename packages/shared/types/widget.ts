@@ -52,9 +52,11 @@ export type WidgetTabType = z.input<typeof TabTypeSchema>;
 export const WidgetTabs = [
 	"welcome",
 	"conversation",
+	"inbox",
 	"knowledge_base",
 	"publications",
 ];
+
 export const WidgetConfigKeys = [
 	"launcher",
 	"appearance",

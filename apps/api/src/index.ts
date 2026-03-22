@@ -14,6 +14,7 @@ const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 app.use("*", corsMiddleware);
 app.use("*", analyticsMiddleware);
+app.use("*", analyticsMiddleware);
 app.use("/rpc/*", rpcMiddleware);
 
 app.route("/ws/document", documentRoute);

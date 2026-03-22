@@ -11,7 +11,7 @@ type Props = {
 	data: ProblemBlock;
 };
 
-export default function ProblemSection({ className, data }: Props) {
+export default function ProblemSection({ className }: Props) {
 	return (
 		<section
 			className={cn(

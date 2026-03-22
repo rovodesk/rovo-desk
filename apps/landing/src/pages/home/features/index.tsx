@@ -8,7 +8,7 @@ type Props = {
 	data: FeaturesBlock;
 };
 
-export default function FeaturesSection({ className, data }: Props) {
+export default function FeaturesSection({ className }: Props) {
 	return (
 		<section
 			className={cn(

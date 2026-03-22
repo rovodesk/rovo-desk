@@ -8,6 +8,11 @@
     },
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["drizzle.config.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "drizzle.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "apps/widget/src/embed.js"
+  ],
   "exclude": ["node_modules", "dist"]
 }

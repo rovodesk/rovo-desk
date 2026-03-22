@@ -13,13 +13,22 @@ import FeaturesSection from "./features";
 import { HeroSection } from "./hero";
 import ProblemSection from "./problem";
 
+/* -----------------------------
+   Block Component Map
+----------------------------- */
+
+export type BlockType = keyof SectionComponentMap &
+	React.ComponentType<HTMLDivElement>;
+
+/* -----------------------------
+   Renderer
+----------------------------- */
+
 type SectionComponentMap = {
 	hero: React.ComponentType<{ data: HeroBlock; className?: string }>;
 	problem: React.ComponentType<{ data: ProblemBlock; className?: string }>;
 	features: React.ComponentType<{ data: FeaturesBlock; className?: string }>;
 };
-
-export type BlockType = keyof SectionComponentMap;
 
 const blockRegistry: {
 	[K in BlockType]: {

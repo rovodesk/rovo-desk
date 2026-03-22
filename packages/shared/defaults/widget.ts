@@ -14,9 +14,6 @@ export function defaultWidgetConfig(
 			userBubbleColor: "#2563eb",
 			agentBubbleColor: "#f1f5f9",
 
-			borderRadius: 16,
-			widgetWidth: 380,
-			widgetHeight: 640,
 			shadow: true,
 		},
 
@@ -71,6 +68,26 @@ export function defaultWidgetConfig(
 									showSearchBar: true,
 									showCategoryCount: true,
 									showArticlesPerCategoryCount: true,
+									enableLanguageSwitcher: false,
+								},
+							},
+						],
+					},
+					{
+						id: "article-detail",
+						route: "article_detail",
+						title: "Article",
+
+						blocks: [
+							{
+								id: "kb-article",
+								type: "knowledge_base",
+								enabled: true,
+
+								config: {
+									showSearchBar: false,
+									showCategoryCount: false,
+									showArticlesPerCategoryCount: false,
 									enableLanguageSwitcher: false,
 								},
 							},
@@ -157,6 +174,26 @@ export function defaultWidgetConfig(
 									showAuthorName: true,
 									showBannerImage: true,
 									showTeamAvatar: true,
+								},
+							},
+						],
+					},
+					{
+						id: "article-detail",
+						route: "article_detail",
+						title: "Article",
+
+						blocks: [
+							{
+								id: "kb-article",
+								type: "knowledge_base",
+								enabled: true,
+
+								config: {
+									showSearchBar: false,
+									showCategoryCount: false,
+									showArticlesPerCategoryCount: false,
+									enableLanguageSwitcher: false,
 								},
 							},
 						],

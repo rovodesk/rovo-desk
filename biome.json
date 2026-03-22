@@ -12,7 +12,8 @@
       "!**/*.jsonc",
       "!examples/**/*",
       "!**/*.d.ts",
-      "!apps/cms/src/payload-types.ts"
+      "!apps/cms/src/**/*",
+      "!apps/widget/src/*"
     ]
   },
   "formatter": {

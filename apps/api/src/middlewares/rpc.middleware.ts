@@ -16,8 +16,8 @@ export const rpcMiddleware: MiddlewareHandler<{
 		c.env.CACHE_STORE,
 		c.env.POSTHOG_PROJECT_API_KEY
 	);
-	const auth = createAuth(c.env.CACHE_STORE, analytics);
-	const database = createDatabase();
+	const auth = await createAuth(c.env.CACHE_STORE, analytics);
+	const database = await createDatabase();
 
 	const { matched, response } = await orpcHandler.handle(c.req.raw, {
 		prefix: "/rpc",

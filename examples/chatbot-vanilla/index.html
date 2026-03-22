@@ -25,43 +25,98 @@
 			<p>Use this page to test rendering, positioning, and UI behavior.</p>
 		</section>
 	</div>
-
 	<script>
-		"use strict";
+		window.RovodeskSettings = {
+			organizationId: "MkDmE1y9HPFSFGFyIPJqgHiAltho70B8",
+			accessKey:
+				"org_NXkYjUsOajFucgQjvruPkwRNkkYqzFbLIvALTyJZrLQLGcfFYtpZpNPLQoEkutfA",
+			apiBaseUrl: "http://localhost:5001/widget",
+			user: {
+				id: "user_1",
+				email: "test@test.com",
+				name: "Test User",
+				createdAt: "2022-01-01T00:00:00.000Z",
+				signature: "signature",
+			},
+		};
+	</script>
+	<script>
 		(function () {
-			var rd = window.RovoDesk;
+			var w = window, d = document;
 
-			// Prevent duplicate loader execution
-			if (typeof rd === "function") return;
+			var rd = w.Rovodesk;
+			if (typeof rd === "function") {
+				rd("update", w.RovodeskSettings);
+				return;
+			}
 
-			rd = function () {
-				rd.q.push(Array.prototype.slice.call(arguments));
-			};
-
+			rd = function () { rd.q.push(arguments); };
 			rd.q = [];
-			window.RovoDesk = rd;
+			w.Rovodesk = rd;
 
-			// Queue init command
-			rd("init", {
-				organizationId: "m442OYL2phMdMcw5tnSTJDd3QMRbSdNV",
-				accessKey:
-					"org_mfIAWXEfnEKmYXqBetwLWPwiFgcXNZjAYLzLIdIvJDCMHzlWEmeaxBPlNwCQTrGx",
-				apiBaseUrl: "http://localhost:5001/widget",
-				user: {
-					id: "user_1",
-					email: "test@test.com",
-					name: "Test User",
-					createdAt: "2022-01-01T00:00:00.000Z",
-					signature: "signature",
-				},
-			});
+			function load() {
+				var settings = w.RovodeskSettings || {};
+				var base = "http://localhost:3006";
 
-			// Load SDK script
-			var s = document.createElement("script");
-			s.src = "../../packages/engine/dist/index.global.js";
-			s.async = true;
+				var iframe = d.createElement("iframe");
+				iframe.src = base;
+				iframe.id = "rovodesk-widget";
+				Object.assign(iframe.style, {
+					position: "fixed",
+					bottom: "0px",
+					right: "0px",
+					border: "none",
+					background: "transparent",
+					zIndex: "9999",
+					overflow: "hidden"
+				});
 
-			document.head.appendChild(s);
+				d.body.appendChild(iframe);
+
+				var widgetOrigin;
+
+				// ✅ Send INIT after load
+				iframe.onload = function () {
+					widgetOrigin = new URL(iframe.src).origin;
+
+					iframe.contentWindow.postMessage(
+						{ type: "init", payload: settings },
+						widgetOrigin
+					);
+				};
+
+				// ✅ Handle resize
+				function onMsg(e) {
+					if (widgetOrigin && e.origin !== widgetOrigin) return;
+
+					var data = e.data || {};
+
+					if (data.type === "resize") {
+						if (data.width) iframe.style.width = data.width + "px";
+						if (data.height) iframe.style.height = data.height + "px";
+					}
+				}
+
+				w.addEventListener("message", onMsg);
+
+				// ✅ Public API
+				w.Rovodesk = function (cmd, payload) {
+					if (!iframe.contentWindow || !widgetOrigin) return;
+
+					iframe.contentWindow.postMessage(
+						{ type: cmd, payload },
+						widgetOrigin
+					);
+				};
+
+				// Flush queued calls
+				rd.q.forEach(function (args) {
+					w.Rovodesk.apply(null, args);
+				});
+			}
+
+			if (d.readyState === "complete") load();
+			else w.addEventListener("load", load);
 		})();
 	</script>
 </body>

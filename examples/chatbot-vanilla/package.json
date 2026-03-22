@@ -1,0 +1,9 @@
+{
+  "name": "chatbot-vanilla",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "serve": "bunx serve ."
+  }
+}

@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+	--font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+	--bg-background: #000000;
+}
+
+:root[data-theme="dark"] {
+	--bg-background: #0a1418;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--bg-background: #0a1418;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#rovodesk-root {
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#rovodesk-root {
+	position: relative;
+}
+
+.rovodesk-widget {
+	overflow: hidden;
+	border-radius: 24px;
+
+	/* Smooth, subtle shadow for closed state */
+	box-shadow:
+		0 2px 4px rgba(0, 0, 0, 0.02),
+		0 4px 8px rgba(0, 0, 0, 0.02),
+		0 8px 16px rgba(0, 0, 0, 0.02);
+}
+
+.rovodesk-widget.open {
+	/* Deep, multi-layered smooth shadow for open state */
+	box-shadow:
+		0 0 1px rgba(0, 0, 0, 0.12),
+		0 2px 4px rgba(0, 0, 0, 0.03),
+		0 8px 16px rgba(0, 0, 0, 0.03),
+		0 16px 32px rgba(0, 0, 0, 0.04),
+		0 32px 64px rgba(0, 0, 0, 0.06),
+		0 48px 96px rgba(0, 0, 0, 0.08);
+}

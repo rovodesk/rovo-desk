@@ -7,8 +7,6 @@ export const authRoute = new Hono<{
 	Variables: Variables;
 }>();
 
-// The catch-all Better Auth handler goes LAST
-// Use :path{.*} to ensure all nested segments (like /sign-in/magic-link) are caught
 authRoute.on(["POST", "GET"], "/:path{.*}", async (c) => {
 	const analytics = c.get("analytics");
 

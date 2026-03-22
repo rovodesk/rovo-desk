@@ -62,6 +62,7 @@ export function useSignIn(options?: UseSignInOptions) {
 				callbackURL,
 			});
 		},
+
 		onSuccess: () => {
 			toast.success("Email Sent", {
 				description: "Login link sent to your email inbox.",
