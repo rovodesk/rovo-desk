@@ -25,25 +25,9 @@
     "date-fns": "^4.1.0",
     "nitro": "npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e",
     "yjs": "^13.6.29",
-    "tsx": "4.21.0",
-    "dotenv": "16.4.7",
-    "recharts": "^3.8.0"
+    "@biomejs/biome": "2.3.10"
   },
   "catalogs": {
-    "payload": {
-      "@payloadcms/admin-bar": "3.79.0",
-      "@payloadcms/live-preview-react": "3.79.0",
-      "@payloadcms/next": "3.79.0",
-      "@payloadcms/plugin-form-builder": "3.79.0",
-      "@payloadcms/plugin-nested-docs": "3.79.0",
-      "@payloadcms/plugin-redirects": "3.79.0",
-      "@payloadcms/plugin-search": "3.79.0",
-      "@payloadcms/plugin-seo": "3.79.0",
-      "@payloadcms/richtext-lexical": "3.79.0",
-      "@payloadcms/ui": "3.79.0",
-      "@payloadcms/db-mongodb": "3.79.0",
-      "payload": "3.79.0"
-    },
     "react19": {
       "react": "^19.2.0",
       "react-dom": "^19.2.0",
@@ -98,8 +82,7 @@
     "cloudflare": {
       "wrangler": "^4.71.0",
       "@cloudflare/workers-types": "^4.20260130.0",
-      "@cloudflare/vite-plugin": "^1.26.0",
-      "@opennextjs/cloudflare": "^1.17.1"
+      "@cloudflare/vite-plugin": "^1.26.0"
     },
     "betterauth": {
       "better-auth": "1.5.5",

@@ -240,7 +240,9 @@ export function ProfilePage() {
 						<p className="text-muted-foreground text-xs">
 							Last updated on {session?.user.updatedAt.toLocaleDateString()}
 						</p>
-						<Button className="min-w-[120px]">Save Changes</Button>
+						<Button className="min-w-[120px]">
+							Save Changes
+						</Button>
 					</div>
 				</div>
 			</div>

@@ -1,8 +1,13 @@
 import type { WidgetConfig, WidgetTabType } from "@zero-heads-lab/shared/types";
-import type { SDKConfigSchema } from "config";
-import type z from "zod";
+import type { SDKConfigSchema } from "../config";
 import type { Message } from "../core/message-parser";
+import type { z } from "zod";
 
+export type SDKConfig = z.infer<typeof SDKConfigSchema>;
+
+/**
+ * The User available to the widget
+ */
 export interface User {
 	id: string;
 	email: string;
@@ -100,9 +105,7 @@ export type RovoDeskFunction = (...args: CommandArgs) => void;
 /**
  * The State Updater
  */
-export type StateUpdater<T extends WidgetState> = (
-	updater: NewState<T>
-) => void;
+export type StateUpdater<T extends WidgetState> = (updater: NewState<T>) => void;
 
 /**
  * The State Listener
@@ -125,5 +128,3 @@ export type StateSubscriber<T extends WidgetState> = (
 export type NewState<T extends WidgetState> =
 	| Partial<T>
 	| ((state: T) => Partial<T>);
-
-export type SDKConfig = z.infer<typeof SDKConfigSchema>;

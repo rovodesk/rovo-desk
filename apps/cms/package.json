@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD:apps/admin/package.json
   "name": "admin",
   "private": true,
   "version": "0.0.0",
@@ -8,6 +9,29 @@
     "dev": "vite",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
+=======
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "Website template for Payload",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev -p 3005",
+    "start:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
+    "gen:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "gen:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "ii": "cross-env NODE_OPTIONS=--no-deprecation pnpm --ignore-workspace install",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "test": "pnpm run test:int && pnpm run test:e2e",
+    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application):apps/cms/package.json
   },
   "dependencies": {
     "@zero-heads-lab/transport": "workspace:*",
@@ -17,6 +41,7 @@
     "@zero-heads-lab/auth": "workspace:*",
     "@zero-heads-lab/cms": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
+<<<<<<< HEAD:apps/admin/package.json
     "axios": "catalog:",
     "lucide-react": "catalog:",
     "motion": "catalog:",
@@ -30,13 +55,59 @@
     "vite-tsconfig-paths": "catalog:vite",
     "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/typescript-config": "workspace:*",
+=======
+    "@payloadcms/admin-bar": "3.79.0",
+    "@payloadcms/live-preview-react": "3.79.0",
+    "@payloadcms/next": "3.79.0",
+    "@payloadcms/plugin-form-builder": "3.79.0",
+    "@payloadcms/plugin-nested-docs": "3.79.0",
+    "@payloadcms/plugin-redirects": "3.79.0",
+    "@payloadcms/plugin-search": "3.79.0",
+    "@payloadcms/plugin-seo": "3.79.0",
+    "@payloadcms/richtext-lexical": "3.79.0",
+    "@payloadcms/ui": "3.79.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "16.4.7",
+    "graphql": "^16.8.2",
+    "lucide-react": "0.563.0",
+    "next": "15.4.11",
+    "next-sitemap": "^4.2.3",
+    "payload": "3.79.0",
+    "prism-react-renderer": "^2.3.1",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "react-hook-form": "7.71.1",
+    "sharp": "0.34.2",
+    "@payloadcms/db-mongodb": "3.79.0"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@playwright/test": "catalog:testing",
+    "@tailwindcss/postcss": "catalog:tailwindcss",
+    "@tailwindcss/typography": "catalog:tailwindcss",
+    "@testing-library/react": "catalog:testing",
+    "@types/escape-html": "^1.0.2",
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application):apps/cms/package.json
     "@types/bun": "catalog:",
     "@tanstack/router-cli": "catalog:tanstack",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
+<<<<<<< HEAD:apps/admin/package.json
     "@vitejs/plugin-react-swc": "catalog:vite",
     "globals": "^16.5.0",
     "typescript": "catalog:",
     "vite": "catalog:vite"
+=======
+    "@vitejs/plugin-react": "4.5.2",
+    "jsdom": "catalog:testing",
+    "tailwindcss": "catalog:tailwindcss",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:vite",
+    "vitest": "catalog:testing"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0",
+    "bun": "^1.3.5"
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application):apps/cms/package.json
   }
 }

@@ -22,6 +22,10 @@ import {
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+<<<<<<< HEAD
+=======
+import { Roles } from "@/access-control";
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
@@ -198,7 +202,11 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 			useSecureCookies: process.env.NODE_ENV === "production", // FALSE on HTTP
 			crossSubDomainCookies: {
 				enabled: true,
+<<<<<<< HEAD
 				domain: "localhost",
+=======
+				domain: 'localhost',
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 			},
 			// cookies: {
 			// 	session_token: {
@@ -315,7 +323,11 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 							data: {
 								...user,
 								image: avatar,
+<<<<<<< HEAD
 								role: user.role || "owner",
+=======
+								role: Roles.owner,
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 							},
 						};
 					},

@@ -1,5 +1,6 @@
 {
   "name": "docs",
+<<<<<<< HEAD
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -28,5 +29,56 @@
     "@zero-heads-lab/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwindcss",
     "typescript": "catalog:"
+=======
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite dev",
+    "generate-routes": "tsr generate",
+    "build": "vite build && mv .output/dist/client/ .output/public/",
+    "start": "serve .output/public --config ../../serve.json",
+    "preview": "vite preview",
+    "types:check": "fumadocs-mdx && tsc --noEmit",
+    "postinstall": "fumadocs-mdx"
+  },
+  "dependencies": {
+    "@orama/orama": "^3.1.18",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-presence": "^1.1.5",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-start": "catalog:tanstack",
+    "@tanstack/start-static-server-functions": "catalog:tanstack",
+    "@zero-heads-lab/design-system": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "fumadocs-core": "16.6.2",
+    "fumadocs-mdx": "14.2.7",
+    "fumadocs-ui": "16.6.2",
+    "lucide-react": "catalog:",
+    "next-themes": "^0.4.6",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "scroll-into-view-if-needed": "^3.1.0",
+    "tailwind-merge": "^3.4.1",
+    "vite": "catalog:vite"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@tanstack/router-cli": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tailwindcss/vite": "catalog:vite",
+    "@types/mdx": "^2.0.13",
+    "@types/bun": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react-swc": "catalog:vite",
+    "nitro": "catalog:",
+    "serve": "^14.2.5",
+    "srvx": "^0.11.4",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:vite"
+>>>>>>> b290694 (refactor: Moved docs from tools to apps)
   }
 }

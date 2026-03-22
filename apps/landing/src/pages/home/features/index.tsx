@@ -8,8 +8,9 @@ type Props = {
 	data: FeaturesBlock;
 };
 
-export default function FeaturesSection({ className }: Props) {
+export default function FeaturesSection({ className, data }: Props) {
 	return (
+<<<<<<< HEAD
 		<section
 			className={cn(
 				"relative overflow-hidden bg-black",
@@ -19,6 +20,15 @@ export default function FeaturesSection({ className }: Props) {
 		>
 			{/* Background gradient fix */}
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-black via-black/80 to-transparent" />
+=======
+		<section className="relative mt-24 overflow-hidden px-6">
+			{/* Header Container */}
+			<div className="mb-16 flex flex-col items-center text-center md:mb-20">
+				<h2 className="text-balance font-bold text-4xl text-neutral-900 tracking-tight sm:text-5xl dark:text-neutral-100">
+					Everything you need to{" "}
+					<span className="text-blue-600 dark:text-blue-600">scale faster</span>
+				</h2>
+>>>>>>> 8b8c11c (feat: Add animated components and cursor trail for enhanced UI experience)
 
 			<div className="relative mx-auto mb-20 max-w-7xl">
 				<div

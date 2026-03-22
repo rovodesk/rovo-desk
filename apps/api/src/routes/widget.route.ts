@@ -1,3 +1,4 @@
+import { createAuth } from "@zero-heads-lab/auth/server";
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { signJWTToken, verifyJWTToken } from "@zero-heads-lab/crypto";
 import { createDatabase } from "@zero-heads-lab/database";
@@ -6,6 +7,7 @@ import { getWorkspaceProfileByOrganizationId } from "@zero-heads-lab/database/re
 import { getWidgetByOrganizationId } from "@zero-heads-lab/database/repositories/widget/queries";
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
+import { cors } from "hono/cors";
 import type { JWTPayload } from "hono/utils/jwt/types";
 import type { Bindings, Variables } from "../types";
 
@@ -186,7 +188,7 @@ widgetRoute.post("/init", async (c) => {
 // 			"x-role": payload.role,
 // 		};
 // 	} else {
-// 		// Admin Flow for
+// 		// Admin Flow for 
 // 		const session = await auth.api.getSession({
 // 			headers: c.req.raw.headers,
 // 		});

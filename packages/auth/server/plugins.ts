@@ -28,13 +28,16 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-
+<<<<<<< HEAD
 import {
 	ADMIN_ROLES,
 	accessControl,
 	DEFAULT_ROLE,
 	Roles,
 } from "../access-control";
+=======
+import { ADMIN_ROLES, accessControl, Roles } from "../access-control";
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import { AUTH_CONFIG } from "../config";
 import { determineAuthRole } from "../helpers";
 import { keys } from "./keys";
@@ -150,7 +153,7 @@ export const AuthPlugins = (
 				},
 				afterDeleteOrganization: async ({ organization }) => {
 					// Send Analytics Event
-					await analytics.captureImmediate({
+					analytics.captureImmediate({
 						distinctId: organization.id,
 						event: "organization_deleted",
 						properties: {
@@ -203,7 +206,11 @@ export const AuthPlugins = (
 			roles: {
 				...Roles,
 			},
+<<<<<<< HEAD
 			defaultRole: DEFAULT_ROLE,
+=======
+			defaultRole: "anonymous",
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 			adminRoles: [...ADMIN_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # deps
 /node_modules
 
@@ -24,3 +25,23 @@ yarn-error.log*
 .env*.local
 .vercel
 next-env.d.ts
+=======
+node_modules
+
+.DS_Store
+.cache
+.vercel
+.output
+.nitro
+/build/
+/api/
+/server/build
+/public/build
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.tanstack
+
+.source
+>>>>>>> b290694 (refactor: Moved docs from tools to apps)

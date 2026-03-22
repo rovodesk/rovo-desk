@@ -1,6 +1,7 @@
 import { createAuth } from "@zero-heads-lab/auth/server";
 import { Hono } from "hono";
 import type { Bindings, Variables } from "../types";
+import { getAnalyticsClient } from "@zero-heads-lab/analytics/server";
 
 export const authRoute = new Hono<{
 	Bindings: Bindings;

@@ -1,6 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
 import Logo from "@zero-heads-lab/design-system/components/logo";
-import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import {
 	ArrowRight,
@@ -20,7 +18,7 @@ import {
 	Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type MenuItem = {
 	icon?: LucideIcon;
@@ -84,55 +82,35 @@ const company: MenuItem[] = [
 ];
 
 const menuConfig = {
-	product: { core: coreFeatures, advanced: advancedFeatures },
-	solutions: { resources, company },
+	Product: { core: coreFeatures, advanced: advancedFeatures },
+	Solutions: { resources, company },
 };
-
-type Route = {
-	id: string;
-	label: string;
-	href?: string;
-};
-
-const Routes: Route[] = [
-	{ id: "product", label: "Product" },
-	{ id: "pricing", label: "Pricing", href: "/" },
-	{ id: "blogs", label: "Blogs", href: "/blogs" },
-	{ id: "developers", label: "Developers" },
-];
 
 export const Header = () => {
 	const [isVisible, setIsVisible] = useState(true);
 	const [activeMenu, setActiveMenu] = useState<string | null>(null);
-
 	const [isSidebar, setSidebarOpen] = useState(false);
-	// const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Scroll Logic
 	useEffect(() => {
-		let lastScroll = 0;
-
 		const handleScroll = () => {
-			const current = window.scrollY;
-
-			if (current <= 20) {
-				setIsVisible(true);
-			} else if (current > lastScroll) {
+			// Header hides after scrolling 100px, then reappears if scrolling up or at top
+			// You can adjust '100' to any threshold you prefer
+			if (window.scrollY > 100) {
 				setIsVisible(false);
 			} else {
 				setIsVisible(true);
 			}
-
-			lastScroll = current;
 		};
-
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
 	// Desktop Hover Handlers
-	const handleEnter = (route: Route) => {
-		setActiveMenu(route.id);
+	const handleEnter = (name: string) => {
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		setActiveMenu(name);
 	};
 
 	const headerVariants = {
@@ -159,10 +137,8 @@ export const Header = () => {
 		},
 	} as const;
 
-	const router = useRouter();
-
 	return (
-		<div className="relative">
+		<>
 			<AnimatePresence>
 				{isVisible && !isSidebar && (
 					<motion.header
@@ -175,22 +151,16 @@ export const Header = () => {
 						variants={headerVariants}
 					>
 						<nav className="relative mx-auto max-w-7xl">
-							<div
-								className={cn(
-									"flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-6 py-3 shadow-2xl backdrop-blur-xl"
-								)}
-							>
+							<div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-6 py-3 shadow-2xl backdrop-blur-xl">
 								{/* Left: Logo & Mobile Toggle */}
 								<div className="flex items-center justify-between gap-4">
 									<button
-										className={cn(
-											"text-white/70 transition-colors hover:text-white md:hidden"
-										)}
+										className="text-white/70 transition-colors hover:text-white md:hidden"
 										onClick={() => setSidebarOpen(true)}
 									>
 										<Menu className="size-6" />
 									</button>
-									<div className="group flex cursor-pointer items-center gap-2 sm:hidden md:flex">
+									<div className="group hidden cursor-pointer items-center gap-2 md:flex">
 										<Logo className="h-7 w-auto transition-transform group-hover:scale-110" />
 										<span className="font-bold text-lg text-white tracking-tight">
 											Rovodesk
@@ -208,35 +178,29 @@ export const Header = () => {
 
 								{/* Center: Desktop Nav Items */}
 								<div className="hidden items-center gap-1 md:flex">
-									{Routes.map((item) => (
-										<Button
+									{["Product", "Pricing", "Developers", "Blog"].map((item) => (
+										<button
 											className={cn(
-												"relative rounded-md px-4 py-2 font-medium text-sm transition-colors hover:bg-transparent hover:text-white",
-												activeMenu === item.id
+												"relative rounded-md px-4 py-2 font-medium text-sm transition-colors",
+												activeMenu === item
 													? "text-white"
 													: "text-gray-400 hover:text-white"
 											)}
-											key={item.id}
-											onClick={() =>
-												item.href && router.navigate({ to: item.href })
-											}
+											key={item}
 											onMouseEnter={() => handleEnter(item)}
-											variant="ghost"
 										>
 											<span className="relative z-10 flex items-center gap-1">
-												{item.label}
-
-												{item.id === "product" && (
+												{item}
+												{item === "Product" && (
 													<ChevronDown
 														className={cn(
 															"size-3 transition-transform",
-															activeMenu === "product" && "rotate-180"
+															activeMenu === item && "rotate-180"
 														)}
 													/>
 												)}
 											</span>
-
-											{activeMenu === item.id && (
+											{activeMenu === item && (
 												<motion.div
 													className="absolute inset-0 rounded-md bg-white/10"
 													layoutId="nav-pill"
@@ -247,7 +211,7 @@ export const Header = () => {
 													}}
 												/>
 											)}
-										</Button>
+										</button>
 									))}
 								</div>
 
@@ -267,33 +231,36 @@ export const Header = () => {
 
 							{/* MegaMenu Dropdown */}
 							<AnimatePresence>
-								{activeMenu === "product" && (
-									<motion.div
-										animate={{ opacity: 1, y: 0, scale: 1 }}
-										className="absolute inset-x-0 top-[calc(100%+12px)] mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0B]/90 shadow-2xl backdrop-blur-3xl"
-										exit={{ opacity: 0, y: 10, scale: 0.98 }}
-										initial={{ opacity: 0, y: 10, scale: 0.98 }}
-									>
-										<MegaMenuContent activeMenu="product" />
-									</motion.div>
-								)}
+								{activeMenu &&
+									(activeMenu === "Product" || activeMenu === "Solutions") && (
+										<motion.div
+											animate={{ opacity: 1, y: 0, scale: 1 }}
+											className="absolute inset-x-0 top-[calc(100%+12px)] mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0B]/90 shadow-2xl backdrop-blur-3xl"
+											exit={{ opacity: 0, y: 10, scale: 0.98 }}
+											initial={{ opacity: 0, y: 10, scale: 0.98 }}
+											onMouseEnter={() => handleEnter(activeMenu)}
+										>
+											<MegaMenuContent activeMenu={activeMenu} />
+										</motion.div>
+									)}
 							</AnimatePresence>
 						</nav>
 					</motion.header>
 				)}
 			</AnimatePresence>
 			<Sidebar isOpen={isSidebar} onClose={() => setSidebarOpen(false)} />
-		</div>
+		</>
 	);
 };
+
+// --- Subcomponents ---
 
 const MegaMenuContent = ({ activeMenu }: { activeMenu: string }) => {
 	const data = menuConfig[activeMenu as keyof typeof menuConfig];
 
-	if (!data) return null;
-
 	return (
 		<div className="grid grid-cols-12 gap-0">
+			{/* Left Content Area */}
 			<div className="col-span-8 grid grid-cols-2 gap-8 p-8">
 				{Object.entries(data).map(([title, items]) => (
 					<div className="space-y-4" key={title}>
@@ -302,10 +269,10 @@ const MegaMenuContent = ({ activeMenu }: { activeMenu: string }) => {
 						</h4>
 						<div className="grid gap-2">
 							{items.map((item) => (
-								<Link
+								<a
 									className="group flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/5"
+									href={item.href}
 									key={item.label}
-									to={item.href}
 								>
 									<div className="mt-1 rounded-lg bg-white/5 p-2 text-white transition-colors group-hover:bg-blue-600 group-hover:text-white">
 										{item.icon && <item.icon className="size-4" />}
@@ -318,7 +285,7 @@ const MegaMenuContent = ({ activeMenu }: { activeMenu: string }) => {
 											{item.description}
 										</div>
 									</div>
-								</Link>
+								</a>
 							))}
 						</div>
 					</div>
@@ -407,12 +374,12 @@ const Sidebar = ({
 							>
 								Pricing
 							</a>
-							<Link
+							<a
 								className="block border-white/5 border-b py-3 font-medium text-lg text-white"
-								to="/blogs"
+								href="/"
 							>
-								Blogs
-							</Link>
+								Blog
+							</a>
 						</nav>
 
 						<div className="grid gap-6 pt-6">

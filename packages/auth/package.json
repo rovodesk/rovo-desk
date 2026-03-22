@@ -8,11 +8,19 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@better-auth/api-key": "catalog:betterauth",
     "@better-auth/passkey": "catalog:betterauth",
     "@better-auth/scim": "catalog:betterauth",
     "@better-auth/sso": "catalog:betterauth",
     "@better-auth/stripe": "catalog:betterauth",
+=======
+    "@better-auth/api-key": "^1.5.1",
+    "@better-auth/passkey": "^1.5.1",
+    "@better-auth/scim": "^1.5.4",
+    "@better-auth/sso": "^1.5.4",
+    "@better-auth/stripe": "^1.5.1",
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",
     "@zero-heads-lab/transport": "workspace:*",

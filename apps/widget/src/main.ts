@@ -37,12 +37,12 @@ import "./style/widget.css";
 
 		clearTimeout(resizeTimeout);
 
-		if (state.isOpen) {
-			window.parent.postMessage({ type: "resize", ...payload }, parentOrigin);
-		} else {
+		if (!state.isOpen) {
 			resizeTimeout = setTimeout(() => {
 				window.parent.postMessage({ type: "resize", ...payload }, parentOrigin);
 			}, 300);
+		} else {
+			window.parent.postMessage({ type: "resize", ...payload }, parentOrigin);
 		}
 	};
 	// Send initial size immediately
@@ -75,6 +75,7 @@ import "./style/widget.css";
 				actions.init(result.data);
 				break;
 			}
+
 
 			case "open":
 				actions.open();

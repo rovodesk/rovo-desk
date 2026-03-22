@@ -1,9 +1,13 @@
 /** biome-ignore-all lint/suspicious/useAwait: No awaited functions are used here*/
 
 import type { WidgetTabType } from "@zero-heads-lab/shared/types";
-import type { Route, SDKConfig, User, WidgetState } from "../types";
+import type { User, WidgetState, SDKConfig, Route } from "../types";
 import { type Message, MessageParser } from "./message-parser";
 import type { Store } from "./store";
+
+function isSDKInitialized(state: WidgetState) {
+	return Boolean(state.isInitialized);
+}
 
 interface IActionProvider {
 	/**
@@ -66,7 +70,7 @@ interface IActionProvider {
 class ActionProvider<T extends WidgetState> implements IActionProvider {
 	private readonly store: Store<T>;
 	private readonly messageParser: MessageParser<T>;
-	private readonly actionQueue: Array<() => void> = [];
+	private actionQueue: Array<() => void> = [];
 
 	constructor(store: Store<T>) {
 		this.store = store;
@@ -205,7 +209,7 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 			this.actionQueue.push(() => this.open());
 			return;
 		}
-
+		
 		console.log("RovoDesk: open");
 
 		this.store.setState((state) => ({

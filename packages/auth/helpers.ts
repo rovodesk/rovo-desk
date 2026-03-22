@@ -9,9 +9,13 @@ import type { AuthClient, Session } from "./types";
  */
 export type SessionValidation =
 	| {
-			valid: false;
-			reason: "no_session" | "expired" | "unverified" | "deleted";
-	  }
+		valid: false;
+<<<<<<< HEAD
+		reason: "no_session" | "expired" | "unverified" | "deleted";
+=======
+		reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
+	}
 	| { valid: true; session: NonNullable<Session> };
 
 /**
@@ -125,4 +129,8 @@ export const determineAuthRole = (role?: string): AuthRole | null => {
 		default:
 			return null;
 	}
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)

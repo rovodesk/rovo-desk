@@ -3,6 +3,7 @@ import { determineAuthRole } from "@zero-heads-lab/auth/helpers";
 import { env } from "@/env";
 
 export const Route = createFileRoute("/")({
+<<<<<<< HEAD
 	beforeLoad: ({ context }) => {
 		const auth = context.auth;
 		const role = determineAuthRole(auth.session?.user?.role);
@@ -21,4 +22,24 @@ export const Route = createFileRoute("/")({
 
 		throw redirect({ to: "/403" });
 	},
+=======
+    beforeLoad: ({ context }) => {
+        const auth = context.auth;
+        const role = determineAuthRole(auth.session?.user?.role);
+
+        if (!(auth.isAuthenticated && role) || auth.session?.user?.isAnonymous) {
+            throw redirect({ to: "/sign-in" });
+        }
+
+        if (auth.isAuthenticated && role === "admin") {
+            throw redirect({ href: env.VITE_ADMIN_DASHBOARD_URL });
+        }
+
+        if (auth.isAuthenticated && (role === "owner" || role === "member")) {
+            throw redirect({ href: env.VITE_CLIENT_DASHBOARD_URL });
+        }
+
+        throw redirect({ to: "/403" });
+    },
+>>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });

@@ -93,5 +93,8 @@
   "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "postman.settings.dotenv-detection-notification-visibility": false,
-  "reactSnippets.settings.typescript": true
+  "reactSnippets.settings.typescript": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
 }
