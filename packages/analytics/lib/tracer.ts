@@ -49,7 +49,7 @@ export const SpanID = () => {
 	return crypto.randomUUID().slice(0, 8);
 };
 
-export class Tracer {
+export class Tracer implements ITracer {
 	private static readonly prefix: string = "rovodesk_";
 	private readonly app: string;
 	private readonly version: string;

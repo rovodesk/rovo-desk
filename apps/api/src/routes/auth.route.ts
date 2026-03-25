@@ -1,7 +1,7 @@
 import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
 import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
 import type { Tracer } from "@zero-heads-lab/analytics/lib/tracer";
-import { createAuth } from "@zero-heads-lab/auth/server";
+import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
 import { Hono } from "hono";
 import { AuthError } from "../lib/errors/auth.error";
 import type { Bindings, Variables } from "../types";

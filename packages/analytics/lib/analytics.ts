@@ -27,17 +27,16 @@ export type AnalyticsOptions = {
 	posthogApiKey: string;
 	posthogHost: string;
 	flagCache: KVNamespace;
+	posthogClient?: PostHog;
 };
 
 export class Analytics implements IAnalytics {
 	private readonly posthog: PostHog;
 
 	constructor(opts: AnalyticsOptions) {
-		this.posthog = getPostHogClient(
-			opts.flagCache,
-			opts.posthogApiKey,
-			opts.posthogHost
-		);
+		this.posthog =
+			opts.posthogClient ??
+			getPostHogClient(opts.flagCache, opts.posthogApiKey, opts.posthogHost);
 	}
 
 	// biome-ignore lint/suspicious/useAwait: No Awaited function

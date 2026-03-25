@@ -1,5 +1,10 @@
 # zero-heads
 
+| Statements                  | Branches                | Functions                 | Lines             |
+| --------------------------- | ----------------------- | ------------------------- | ----------------- |
+| ![Statements](#statements#) | ![Branches](#branches#) | ![Functions](#functions#) | ![Lines](#lines#) |
+
+
 #### Analytics Events
 
 - user_deleted

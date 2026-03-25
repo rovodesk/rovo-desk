@@ -25,6 +25,8 @@ app.route("/ws/document", documentRoute);
 app.route("/auth", authRoute);
 app.route("/widget", widgetRoute);
 
+export default app;
+
 // const config: ResolveConfigFn<Bindings> = (env) => ({
 // 	exporter: {
 // 		url: `https://${env.AXIOM_DOMAIN}/v1/traces`,

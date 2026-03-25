@@ -29,6 +29,7 @@
     "@zero-heads-lab/design-system": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*",
     "axios": "^1.13.4",
     "canvas-confetti": "^1.9.4",
     "date-fns": "catalog:",
@@ -44,6 +45,7 @@
     "yjs": "catalog:"
   },
   "devDependencies": {
+    "@zero-heads-lab/testing": "workspace:*",
     "@tailwindcss/postcss": "catalog:tailwindcss",
     "@tailwindcss/vite": "catalog:tailwindcss",
     "@tanstack/devtools-vite": "catalog:tanstack",
@@ -62,7 +64,7 @@
     "jsdom": "catalog:testing",
     "typescript": "catalog:",
     "vite": "catalog:vite",
-    "vitest": "catalog:vite",
+    "vitest": "catalog:testing",
     "web-vitals": "catalog:vite"
   }
 }

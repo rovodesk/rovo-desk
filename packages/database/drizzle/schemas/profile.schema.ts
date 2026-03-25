@@ -11,8 +11,8 @@ import {
 	text,
 	timestamp,
 } from "drizzle-orm/pg-core";
-import { subscription } from "schema";
 import { organization, user } from "./auth.schema";
+import { subscription } from "./billing.schema";
 
 export const profileSchema = pgSchema("profile");
 

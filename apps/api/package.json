@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "gen:types": "wrangler types ./src/worker-configuration.d.ts --env-interface CloudflareBindings",
+    "test": "vitest run"
   },
   "dependencies": {
     "@microlabs/otel-cf-workers": "^1.0.0-rc.52",
@@ -25,7 +26,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "wrangler": "^4.4.0",
-    "@types/bun": "catalog:"
+    "vitest": "catalog:testing",
+    "@cloudflare/vitest-pool-workers": "catalog:testing",
+    "@types/node": "catalog:",
+    "@zero-heads-lab/testing": "workspace:*",
+    "wrangler": "catalog:cloudflare"
   }
 }

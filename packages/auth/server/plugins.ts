@@ -24,6 +24,7 @@ import {
 	defaultWorkspaceSettings,
 } from "@zero-heads-lab/shared/defaults";
 import { Placeholder } from "@zero-heads-lab/shared/utils";
+import type { BetterAuthPlugin } from "better-auth";
 import {
 	admin as adminPlugin,
 	anonymous,
@@ -46,15 +47,27 @@ import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { SAML_CONFIG } from "./sso-config";
 
-export const AuthPlugins = (
+type AuthPluginOptions = {
+	minimal?: boolean;
+	enableEnterprise?: boolean;
+	enableBilling?: boolean;
+};
+
+export const AuthPlugins = async (
 	cache: KvCacheStore,
 	database: Database,
-	analytics: IAnalytics
-) => {
+	analytics: IAnalytics,
+	options: AuthPluginOptions = {}
+): Promise<BetterAuthPlugin[]> => {
+	const {
+		minimal = false,
+		enableEnterprise = !minimal,
+		enableBilling = !minimal,
+	} = options;
 	// const products = getProducts();
 	const cacheStore = cache;
 
-	return [
+	const basePlugins = [
 		// Magic Link Plugin
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
@@ -247,25 +260,6 @@ export const AuthPlugins = (
 		}),
 		// OPENAPI Plugin
 		...(process.env.NODE_ENV !== "production" ? [openAPI()] : []),
-		// Stripe Plugin
-		stripe({
-			stripeClient,
-			stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
-			createCustomerOnSignUp: false, // Will be handled manually
-			subscription: {
-				enabled: true,
-				plans: () => {
-					return UserPlans.map((plan) => ({
-						id: plan.priceId,
-						name: plan.name,
-						annualDiscountPriceId: plan.annualDiscountPriceId,
-						limits: plan.limits,
-						freeTrial: plan.freeTrial,
-					}));
-				},
-				requireEmailVerification: true,
-			},
-		}),
 		lastLoginMethod({
 			storeInDatabase: true,
 			customResolveMethod: (ctx) => {
@@ -428,4 +422,50 @@ export const AuthPlugins = (
 			},
 		}),
 	];
+
+	const billingPlugins = enableBilling
+		? [
+				stripe({
+					stripeClient,
+					stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
+					createCustomerOnSignUp: false,
+					subscription: {
+						enabled: true,
+						plans: () =>
+							UserPlans.map((plan) => ({
+								id: plan.priceId,
+								name: plan.name,
+								annualDiscountPriceId: plan.annualDiscountPriceId,
+								limits: plan.limits,
+								freeTrial: plan.freeTrial,
+							})),
+						requireEmailVerification: true,
+					},
+				}),
+			]
+		: [];
+
+	const enterprisePlugins = enableEnterprise
+		? await (async () => {
+				const [{ sso }, { scim }] = await Promise.all([
+					import("@better-auth/sso"),
+					import("@better-auth/scim"),
+				]);
+
+				return [
+					sso({
+						defaultSSO: [
+							{
+								domain: keys.BETTER_AUTH_URL,
+								providerId: "sso",
+								samlConfig: SAML_CONFIG,
+							},
+						],
+					}),
+					scim(),
+				];
+			})()
+		: [];
+
+	return [...basePlugins, ...billingPlugins, ...enterprisePlugins];
 };

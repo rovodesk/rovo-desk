@@ -8,7 +8,7 @@ import {
 	validateApiKey,
 	// verifySignature,
 } from "../lib/utils";
-import { widgetAuthMiddleware } from "../middlewares/widget.middleware";
+// import { widgetAuthMiddleware } from "../middlewares/widget.middleware";
 import type { Bindings, Variables } from "../types";
 
 export const widgetRoute = new Hono<{
@@ -103,7 +103,7 @@ widgetRoute.post("/identify", async (c) => {
 /**
  * sessionId = user?.id ? `user_${user.id}` : `visitor_${sessionId}`
  */
-widgetRoute.use("/chatroom/*", widgetAuthMiddleware);
+// widgetRoute.use("/chatroom/*", widgetAuthMiddleware);
 widgetRoute.all("/chatroom/*", async (c) => {
 	const identity = c.get("Identity");
 

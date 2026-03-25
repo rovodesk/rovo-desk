@@ -2,7 +2,6 @@ import type {
 	WidgetConfig,
 	WorkspaceSettings,
 } from "@zero-heads-lab/shared/types";
-import { widget } from "drizzle/schemas/widget.schema";
 import { eq } from "drizzle-orm";
 import type { Database } from "../../conn";
 import {
@@ -13,6 +12,7 @@ import {
 	userProfile,
 	workspaceProfile,
 } from "../../drizzle/schemas/profile.schema";
+import { widget } from "../../drizzle/schemas/widget.schema";
 
 export async function markUserAsDeleted(
 	database: Database,

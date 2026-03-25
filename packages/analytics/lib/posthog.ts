@@ -24,3 +24,8 @@ export function getPostHogClient(
 
 	return posthog;
 }
+
+// test helper
+export function __resetPostHogClientForTests() {
+	posthog = undefined;
+}

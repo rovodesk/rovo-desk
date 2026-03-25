@@ -1,14 +1,14 @@
 {
+  "references": [{ "path": "./tsconfig.test.json" }],
+  "extends": "@zero-heads-lab/typescript-config/hono.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "strict": true,
-    "skipLibCheck": true,
-    "lib": ["ESNext"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
-    "types": ["@cloudflare/workers-types"]
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@zero-heads-lab/*": ["../../packages/*"]
+    },
+    "types": ["@cloudflare/vitest-pool-workers"]
   },
-  "exclude": ["node_modules"]
+  "include": ["./src"],
+  "exclude": ["node_modules", "test"]
 }

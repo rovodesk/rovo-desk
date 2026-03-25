@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Add types later */
 
-import { createAuth } from "@zero-heads-lab/auth/server";
+import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
 import { signJWTToken, verifyJWTToken } from "@zero-heads-lab/crypto";
 import { extractOrigins } from "@zero-heads-lab/shared/utils";
 import type { Context } from "hono";

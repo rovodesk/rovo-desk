@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["vitest/globals", "@cloudflare/workers-types"],
+    "baseUrl": "../../.",
+    "paths": {
+      "@zero-heads-lab/*": ["../../packages/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "test"],
+  "exclude": ["node_modules"]
+}

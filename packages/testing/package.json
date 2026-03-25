@@ -1,0 +1,21 @@
+{
+  "name": "@zero-heads-lab/testing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./vitest.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "vitest": "catalog:testing"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

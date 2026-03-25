@@ -9,7 +9,7 @@ import {
 	timestamp,
 	unique,
 } from "drizzle-orm/pg-core";
-import { userProfile, workspaceProfile } from "schema";
+import { userProfile, workspaceProfile } from "./profile.schema";
 
 export const authSchema = pgSchema("auth");
 

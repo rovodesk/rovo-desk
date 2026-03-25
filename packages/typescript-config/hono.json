@@ -2,14 +2,20 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Hono",
   "compilerOptions": {
+    "composite": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
     "lib": ["ESNext"],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  }
+    "jsxImportSource": "hono/jsx",
+    "types": ["@cloudflare/workers-types"],
+    "paths": {
+      "@zero-heads-lab/*": ["../../packages/*"]
+    }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }

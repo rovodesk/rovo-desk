@@ -1,6 +1,6 @@
-import { createAuth } from "@zero-heads-lab/auth/server";
+import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
 import { createDatabase } from "@zero-heads-lab/database";
-import { orpcHandler } from "@zero-heads-lab/transport/server";
+import { orpcHandler } from "@zero-heads-lab/transport/server/orpc-server";
 import type { MiddlewareHandler } from "hono";
 import type { Bindings, Variables } from "../types";
 

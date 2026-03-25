@@ -1,5 +1,5 @@
 import pino from "pino";
-import { keys } from "@/server/keys";
+import { keys } from "../server/keys";
 import type { IAnalytics } from "./analytics";
 
 export type AuthContext = {

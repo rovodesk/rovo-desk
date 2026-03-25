@@ -1,4 +1,4 @@
-import { createAuth } from "@zero-heads-lab/auth/server";
+import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
 import type { MiddlewareHandler } from "hono";
 import { partyserverMiddleware } from "hono-party";
 import type { Bindings, Variables } from "../types";

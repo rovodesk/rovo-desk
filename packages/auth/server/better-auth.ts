@@ -45,7 +45,12 @@ export async function createAuth(
 
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
 
-	const Plugins = AuthPlugins(cacheStore, database, analytics);
+	//TODO: Implement Feature Flags
+	const Plugins = await AuthPlugins(cacheStore, database, analytics, {
+		minimal: false,
+		enableBilling: true,
+		// enableEnterprise: true,
+	});
 
 	return betterAuth({
 		database: drizzleAdapter(database, {

@@ -3,6 +3,8 @@
   "compilerOptions": {
     "noEmit": true,
     "strictNullChecks": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "paths": {
       "@zero-heads-lab/*": ["./*"]
     },

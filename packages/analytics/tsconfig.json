@@ -1,10 +1,13 @@
 {
   "extends": "@zero-heads-lab/typescript-config/react-library.json",
+  "references": [{ "path": "./tsconfig.test.json" }],
   "compilerOptions": {
     "baseUrl": ".",
     "strictNullChecks": true,
+    "incremental": true,
+    "composite": true,
     "types": ["@cloudflare/workers-types", "vite/client"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "test"]
 }

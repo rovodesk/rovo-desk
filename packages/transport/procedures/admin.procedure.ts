@@ -1,11 +1,9 @@
 import { ORPCError } from "@orpc/client";
 import z from "zod";
-
-import { AdminGuard } from "@/middlewares/admin.middleware";
-import { AuthGuard } from "@/middlewares/auth.middleware";
-import { BaseMiddleware } from "@/middlewares/base.middleware";
-
 import { base } from "../context";
+import { AdminGuard } from "../middlewares/admin.middleware";
+import { AuthGuard } from "../middlewares/auth.middleware";
+import { BaseMiddleware } from "../middlewares/base.middleware";
 
 export const getAllOrganizations = base
 	.use(BaseMiddleware)
@@ -42,6 +40,8 @@ export const getAllOrganizations = base
 		try {
 			const { limit, offset, slug, sortBy, sortDirection } = input.query;
 
+			// @ts-expect-error it is not in the contract but in docs
+			// @https://better-auth.com/docs/plugins/organization#list-users-organizations
 			const organizations = await auth.api.listOrganizations({
 				headers,
 			});

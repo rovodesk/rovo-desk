@@ -5,7 +5,7 @@ import {
 	sign,
 	verify,
 } from "crypto";
-import { fromBase58, toBase58 } from "encoding";
+import { fromBase58, toBase58 } from "./encoding";
 
 export interface KeyPair {
 	publicKey: string;

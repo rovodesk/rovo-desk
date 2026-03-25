@@ -1,9 +1,8 @@
 import { createEnv } from "@t3-oss/env-core";
-import { keys as billingKeys } from "@zero-heads-lab/billing/keys";
 import z from "zod";
 
 export const keys = createEnv({
-	extends: [billingKeys],
+	extends: [],
 	server: {
 		LOG_LEVEL: z
 			.enum(["debug", "info", "warn", "error"])

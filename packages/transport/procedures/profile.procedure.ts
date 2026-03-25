@@ -12,8 +12,6 @@ import {
 	getUserProfileByUserId,
 	getWorkspaceProfileByOrganizationId,
 } from "@zero-heads-lab/database/repositories/profile/queries";
-import { BaseMiddleware } from "@/middlewares/base.middleware";
-import { OrganizationGuard } from "@/middlewares/organization.middleware";
 import { base } from "../context";
 import {
 	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
@@ -22,6 +20,8 @@ import {
 	UPDATE_WORKSPACE_SETTINGS_INPUT_DTO,
 } from "../dto/profile.dto";
 import { AuthGuard } from "../middlewares/auth.middleware";
+import { BaseMiddleware } from "../middlewares/base.middleware";
+import { OrganizationGuard } from "../middlewares/organization.middleware";
 
 export const loadOnboardingProgress = base
 	.use(BaseMiddleware)
