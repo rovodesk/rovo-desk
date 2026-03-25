@@ -4,10 +4,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@zero-heads-lab/engine": ["../../packages/engine/index.ts"],
-      "@zero-heads-lab/shared/*": ["../../packages/shared/*"]
+      "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/embed.js"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "src/embed.js"]
 }

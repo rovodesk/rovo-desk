@@ -1,6 +1,6 @@
 import type { WidgetState } from "@zero-heads-lab/engine";
 import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/types";
-import { ScreenKey, screenRegistry } from "./screens";
+import { type ScreenKey, screenRegistry } from "./screens";
 import { WelcomeScreen } from "./screens/welcome";
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {
@@ -21,12 +21,11 @@ export const scrollIntoView = (): void => {
 };
 
 export function resolveActiveBlocks(state: WidgetState): AnyBlock[] {
-	// biome-ignore lint/suspicious/noExplicitAny: To support legacy API structure
-	const widgetScreens = state.widgetConfig?.screens as Record<string, any>;
-	console.log("Widget Screens", widgetScreens);
+	// biome-ignore lint/suspicious/noExplicitAny: Any
+	const widgetScreens = state.config?.widget?.screens as Record<string, any>;
 	if (!widgetScreens) return [];
 
-	let modeConfig = widgetScreens[state.mode];
+	let modeConfig = widgetScreens[state.session.mode];
 
 	// Handle old schema fallback
 	if (!modeConfig && widgetScreens.screens) {
@@ -35,7 +34,7 @@ export function resolveActiveBlocks(state: WidgetState): AnyBlock[] {
 
 	if (!modeConfig) return [];
 
-	const activeTab = state.activeTab ?? modeConfig.defaultTab;
+	const activeTab = state.ui?.activeTab ?? modeConfig.defaultTab;
 	const screen = modeConfig.screens.find(
 		(screen: { tab: WidgetTabType }) => screen.tab === activeTab
 	);
@@ -96,16 +95,6 @@ const TAB_TO_SCREEN: Partial<Record<WidgetTabType, ScreenKey>> = {
 };
 
 export function resolveScreen(state: WidgetState) {
-	// 1. If there's a route pushed to the stack, respect it
-	const routes = state.routes || [];
-	if (routes.length > 0) {
-		const currentRoute = routes[routes.length - 1];
-		if (currentRoute?.name && screenRegistry[currentRoute.name as ScreenKey]) {
-			return screenRegistry[currentRoute.name as ScreenKey];
-		}
-	}
-
-	// 2. Otherwise fallback to activeTab's default screen
 	const tab = resolveActiveTab(state);
 	const screenKey = TAB_TO_SCREEN[tab];
 
@@ -117,15 +106,15 @@ export function resolveScreen(state: WidgetState) {
 }
 
 export function resolveActiveTab(state: WidgetState) {
-	const modeConfig = state.widgetConfig?.screens?.[state.mode];
+	const modeConfig = state.config.widget?.screens?.[state.session.mode];
 
 	if (!modeConfig) return "welcome";
 
 	const availableTabs = Object.keys(screenRegistry);
 
 	// 🚨 DO NOT override valid tab
-	if (state.activeTab && availableTabs.includes(state.activeTab)) {
-		return state.activeTab;
+	if (state.ui.activeTab && availableTabs.includes(state.ui.activeTab)) {
+		return state.ui.activeTab;
 	}
 
 	return modeConfig.defaultTab;

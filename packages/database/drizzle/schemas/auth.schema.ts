@@ -22,7 +22,8 @@ export const user = authSchema.table("user", {
 	emailVerified: boolean("emailVerified").notNull().default(false),
 	image: text("image"),
 	lastLoginMethod: text("lastLoginMethod"),
-	role: text("role").notNull().default("unverified"),
+	role: text("role").notNull().default("anonymous"),
+	isAnonymous: boolean("isAnonymous"),
 	banned: boolean("banned"),
 	banReason: text("banReason"),
 	banExpires: timestamp("banExpires"),
@@ -502,13 +503,9 @@ export const jwksSchema = authSchema.table("jwks", {
 });
 
 export const ssoProvider = authSchema.table("ssoProvider", {
-<<<<<<< HEAD
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-=======
-	id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 	issuer: text("issuer").notNull(),
 	domain: text("domain").notNull(),
 	domainVerified: boolean().notNull(),
@@ -516,12 +513,7 @@ export const ssoProvider = authSchema.table("ssoProvider", {
 	samlConfig: text("samlConfig").notNull(),
 	userId: text("userId").references(() => user.id, { onDelete: "cascade" }),
 	providerId: text("providerId").notNull(),
-<<<<<<< HEAD
 	organizationId: text("organizationId").references(() => organization.id, {
 		onDelete: "cascade",
 	}),
 });
-=======
-	organizationId: text("organizationId").references(() => organization.id, { onDelete: "cascade" }),
-});
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)

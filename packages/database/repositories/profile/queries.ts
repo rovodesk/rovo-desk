@@ -70,7 +70,7 @@ export async function getUserProfileByUserId(
 	return await database
 		.select({
 			settings: userProfile.settings,
-			isAway: userProfile.isAway,
+			isActive: userProfile.isActive,
 			workspaceProfileId: userProfile.workspaceProfileId,
 		})
 		.from(userProfile)

@@ -1,6 +1,7 @@
+import type { ApiKey } from "@better-auth/api-key";
 import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose";
 import { Globe2Icon, MonitorIcon, SmartphoneIcon } from "lucide-react";
-import type { AuthRole } from "./access-control";
+import { AppAccessRoles, type AuthRole } from "./access-control";
 import { AUTH_CONFIG } from "./config";
 import type { AuthClient, Session } from "./types";
 
@@ -9,13 +10,9 @@ import type { AuthClient, Session } from "./types";
  */
 export type SessionValidation =
 	| {
-		valid: false;
-<<<<<<< HEAD
-		reason: "no_session" | "expired" | "unverified" | "deleted";
-=======
-		reason: "no_session" | "expired" | "unverified" | "anonymous" | "deleted";
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
-	}
+			valid: false;
+			reason: "no_session" | "expired" | "unverified" | "deleted";
+	  }
 	| { valid: true; session: NonNullable<Session> };
 
 /**
@@ -116,21 +113,54 @@ export async function validateAuthToken(token: string): Promise<JWTPayload> {
 	}
 }
 
-export const determineAuthRole = (role?: string): AuthRole | null => {
-	if (!role) return null;
+export const determineAuthRoles = (role?: string): AuthRole[] => {
+	if (!role) return [];
 
-	switch (role.trim().toLowerCase()) {
-		case "owner":
-			return "owner";
-		case "admin":
-			return "admin";
-		case "member":
-			return "member";
-		default:
-			return null;
-	}
-<<<<<<< HEAD
+	const parsed = role
+		.split(/[\s,]+/)
+		.map((r) => r.trim().toLowerCase())
+		.filter(Boolean)
+		.map((r) => {
+			switch (r) {
+				case "owner":
+					return "owner";
+				case "admin":
+					return "admin";
+				case "member":
+					return "member";
+				case "user":
+					return "user";
+				case "demouser":
+					return "demoUser";
+				case "betauser":
+					return "betaUser";
+				case "anonymous":
+					return "anonymous";
+				default:
+					return "anonymous";
+			}
+		})
+		.filter((r): r is AuthRole => r !== null);
+
+	return Array.from(new Set(parsed)); // ✅ dedupe
 };
-=======
+
+export const hasAppAccess = (role: AuthRole): boolean => {
+	return AppAccessRoles.includes(role);
 };
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
+
+export const isValidApiKey = (key: Partial<ApiKey>): boolean => {
+	if (!key.id) return false;
+
+	// ✅ Enabled
+	if (!key.enabled) return false;
+
+	// ✅ Expiry
+	if (key.expiresAt && key.expiresAt < new Date()) return false;
+
+	// ✅ Remaining
+	if (key.remaining && key.remaining !== null && key.remaining <= 0)
+		return false;
+
+	return true;
+};

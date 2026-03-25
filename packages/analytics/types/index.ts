@@ -1,3 +1,6 @@
-import type { PostHog } from "posthog-node";
+export type Event = {
+	name: string;
+	properties?: Record<string, unknown>;
+};
 
-export type Analytics = PostHog;
+export type LogLevel = "debug" | "info" | "warn" | "error";

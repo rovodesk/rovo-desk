@@ -3,12 +3,9 @@ import { passkeyClient } from "@better-auth/passkey/client";
 import { ssoClient } from "@better-auth/sso/client";
 import { stripeClient } from "@better-auth/stripe/client";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-<<<<<<< HEAD
-=======
-import type { BetterAuthClientPlugin } from "better-auth";
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import {
 	adminClient,
+	anonymousClient,
 	inferAdditionalFields,
 	inferOrgAdditionalFields,
 	jwtClient,
@@ -48,24 +45,13 @@ const Plugins = [
 	apiKeyClient(),
 	jwtClient(),
 	ssoClient(),
-<<<<<<< HEAD
+	anonymousClient(),
 ];
-=======
-] satisfies BetterAuthClientPlugin[];
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 
-export const authClient = createBetterAuthClient({
-	baseURL: keys.VITE_AUTH_SERVER_URL,
-	basePath: keys.VITE_AUTH_SERVER_BASE_PATH,
-	plugins: Plugins,
-	fetchOptions: {
-		onError(e) {
-			if (e.error.status === 429) {
-				toast.error("Too many requests. Please try again later.");
-			}
-		},
-	},
-});
+export const authClient = createAuthClient(
+	keys.VITE_AUTH_SERVER_URL,
+	keys.VITE_AUTH_SERVER_BASE_PATH
+);
 
 export function createAuthClient(baseURL: string, basePath: string) {
 	return createBetterAuthClient({

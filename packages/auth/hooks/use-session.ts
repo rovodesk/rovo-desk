@@ -13,6 +13,7 @@ export type UseSessionResult = {
 	session: Session | null;
 	loading: boolean;
 	isAuthenticated: boolean;
+	isAnonymous: boolean;
 	error: unknown;
 	refetch: () => void;
 
@@ -60,12 +61,17 @@ export function useSession(): UseSessionResult {
 		},
 	});
 
-	const { session, isAuthenticated } = useMemo(() => {
+	const { session, isAuthenticated, isAnonymous } = useMemo(() => {
 		const session = sessionQuery.data ?? null;
 
 		return {
 			session,
-			isAuthenticated: Boolean(session?.user?.id),
+			isAuthenticated: Boolean(
+				session?.user?.id && session?.user?.role !== "anonymous"
+			),
+			isAnonymous: Boolean(
+				session?.user?.role === "anonymous" || session?.user?.isAnonymous
+			),
 		};
 	}, [sessionQuery.data]);
 
@@ -205,6 +211,7 @@ export function useSession(): UseSessionResult {
 		session,
 		loading,
 		isAuthenticated,
+		isAnonymous,
 		error,
 		refetch,
 

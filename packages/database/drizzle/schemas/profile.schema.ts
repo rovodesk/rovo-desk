@@ -23,7 +23,7 @@ export const userProfile = profileSchema.table("userProfile", {
 
 	settings: jsonb("settings").$type<UserSettings>().default({}),
 
-	isAway: boolean("isAway").notNull().default(false),
+	isActive: boolean("isActive").notNull().default(true),
 
 	workspaceProfileId: text("workspaceProfileId").references(
 		() => workspaceProfile.organizationId,

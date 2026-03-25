@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
+import { resolve } from "path";
 import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
-import { resolve } from "path";
 
 export default defineConfig({
 	plugins: [
@@ -19,14 +19,14 @@ export default defineConfig({
 					// We want the loader to be named widget.js for the user
 					return chunkInfo.name === "loader" ? "widget.js" : "[name].js";
 				},
-				// For the loader, we might want it to be an IIFE. 
+				// For the loader, we might want it to be an IIFE.
 				// But rollupOptions input + standard build usually makes it ESM.
 				// For a generic iframe widget loader, we want IIFE.
 			},
 		},
 	},
 	server: {
-		port: 3006,
+		port: 3003,
 		host: true,
-	}
+	},
 });

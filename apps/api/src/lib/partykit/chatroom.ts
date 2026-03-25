@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@zero-heads-lab/shared/types";
+import type { Message } from "@zero-heads-lab/shared/types";
 import { type Connection, type PartyServerOptions, Server } from "partyserver";
 import type { Bindings } from "../../types";
 
@@ -18,7 +18,7 @@ export default class ChatRoom extends Server<Bindings> {
 
 	// Persisted room state
 	async onStart() {
-		if (!(await this.ctx.storage.get<ChatMessage[]>("messages"))) {
+		if (!(await this.ctx.storage.get<Message[]>("messages"))) {
 			await this.ctx.storage.put("messages", []);
 		}
 	}
@@ -28,8 +28,7 @@ export default class ChatRoom extends Server<Bindings> {
 		console.log(`User connected: ${connection.id}`);
 
 		// Send chat history to new user
-		const history =
-			(await this.ctx.storage.get<ChatMessage[]>("messages")) || [];
+		const history = (await this.ctx.storage.get<Message[]>("messages")) || [];
 
 		connection.send(
 			JSON.stringify({
@@ -43,27 +42,30 @@ export default class ChatRoom extends Server<Bindings> {
 
 	async onMessage(connection: Connection, data: string) {
 		try {
-			await this.handleUserMessage(connection, data);
+			const parsed = JSON.parse(data);
+			if (parsed.type === "message") {
+				await this.handleUserMessage(connection, parsed.data.text);
+			}
 		} catch (err) {
 			console.error("Invalid message format", err);
 		}
 	}
 
 	// When User Sends A Message
-	async handleUserMessage(connection: Connection, message: string) {
-		console.log(`Connection ${connection.id} sent a message`);
+	async handleUserMessage(connection: Connection, text: string) {
+		const userId = connection.id; // Or extract from headers if possible
+		console.log(`User ${userId} sent a message`);
 
-		const chatMessage: ChatMessage = {
+		const chatMessage: Message = {
 			id: crypto.randomUUID(),
-			userId: connection.id,
-			message,
-			timestamp: Date.now(),
-			type: "user",
+			type: "text",
+			senderId: userId,
+			text,
+			createdAt: new Date().toISOString(),
 		};
 
 		// Save message
-		const messages =
-			(await this.ctx.storage.get<ChatMessage[]>("messages")) || [];
+		const messages = (await this.ctx.storage.get<Message[]>("messages")) || [];
 		messages.push(chatMessage);
 		await this.ctx.storage.put("messages", messages);
 
@@ -71,15 +73,14 @@ export default class ChatRoom extends Server<Bindings> {
 		this.broadcast(JSON.stringify({ type: "message", data: chatMessage }));
 
 		// Generate bot reply
-		const botReply = await this.generateBotReply(message);
+		const botReply = await this.generateBotReply(text);
 
-		const botMessage: ChatMessage = {
+		const botMessage: Message = {
 			id: crypto.randomUUID(),
-			userId: "bot",
-			username: "ChatBot",
-			message: botReply,
-			timestamp: Date.now(),
-			type: "bot",
+			type: "text",
+			senderId: "bot",
+			text: botReply,
+			createdAt: new Date().toISOString(),
 		};
 
 		messages.push(botMessage);
@@ -104,13 +105,12 @@ export default class ChatRoom extends Server<Bindings> {
 
 	// Broadcast System Message
 	broadcastSystemMessage(text: string) {
-		const systemMessage: ChatMessage = {
+		const systemMessage: Message = {
 			id: crypto.randomUUID(),
-			userId: "system",
-			username: "System",
-			message: text,
-			timestamp: Date.now(),
 			type: "system",
+			senderId: "system",
+			text,
+			createdAt: new Date().toISOString(),
 		};
 
 		this.broadcast(

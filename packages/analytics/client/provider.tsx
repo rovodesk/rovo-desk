@@ -17,6 +17,14 @@ const options: Partial<PostHogConfig> = {
 	cookieless_mode: "on_reject",
 	autocapture: false,
 	capture_pageview: false,
+	session_recording: {
+		maskAllInputs: true,
+		maskInputOptions: {
+			password: true,
+		},
+		sampleRate: 0.5, // Adjust the sample rate as needed (0.5 means 50% of sessions will be recorded)
+	},
+	mask_personal_data_properties: true,
 };
 
 // Initialize once globally

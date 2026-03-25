@@ -5,11 +5,16 @@ import z from "zod";
 export const keys = createEnv({
 	extends: [billingKeys],
 	server: {
-		POSTHOG_TOKEN: z.string(),
+		LOG_LEVEL: z
+			.enum(["debug", "info", "warn", "error"])
+			.optional()
+			.default(process.env.NODE_ENV === "development" ? "debug" : "error"),
+		POSTHOG_PROJECT_API_KEY: z.string(),
 		POSTHOG_HOST: z.string(),
 	},
 	runtimeEnv: {
-		POSTHOG_TOKEN: process.env.POSTHOG_TOKEN,
+		LOG_LEVEL: process.env.LOG_LEVEL,
+		POSTHOG_PROJECT_API_KEY: process.env.POSTHOG_PROJECT_API_KEY,
 		POSTHOG_HOST: process.env.POSTHOG_HOST,
 	},
 });

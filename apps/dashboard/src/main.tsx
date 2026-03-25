@@ -109,7 +109,7 @@ if (!rootElement.innerHTML) {
 }
 
 function App() {
-	const { session, isAuthenticated, loading } = useSession();
+	const { session, isAuthenticated, isAnonymous, loading } = useSession();
 	const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
 
 	if (loading)
@@ -123,6 +123,7 @@ function App() {
 	const authContext = {
 		session,
 		isAuthenticated,
+		isAnonymous,
 		onboarding: {
 			isCompleted: onboardingIsCompleted ?? false,
 			currentStep: String(currentStep?.id ?? ""),

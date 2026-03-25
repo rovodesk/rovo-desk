@@ -25,15 +25,9 @@ export const accessControl = createAccessControl(permissions);
 
 // Super Admin Platform Role
 export const admin = accessControl.newRole({
-<<<<<<< HEAD
 	...adminAc.statements,
 	user: ["list", "create"],
 	apiKey: ["update", "delete"],
-=======
-	...defaultStatements,
-	...adminAc.statements,
-	apiKey: ["update", "delete"]
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });
 
 // ─────────────────────────────────────────────
@@ -44,16 +38,12 @@ export const admin = accessControl.newRole({
 // including who has what role
 export const owner = accessControl.newRole({
 	...ownerAc.statements,
-<<<<<<< HEAD
 	apiKey: ["create", "read", "update", "delete"],
-=======
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });
 
 // Regular worker — does their job, sees their team, no admin tasks
 export const member = accessControl.newRole({
 	...memberAc.statements,
-<<<<<<< HEAD
 	apiKey: [],
 });
 
@@ -63,20 +53,17 @@ export const demoUser = accessControl.newRole({
 export const betaUser = accessControl.newRole({
 	apiKey: [],
 });
-export const user = accessControl.newRole({
+export const anonymous = accessControl.newRole({
 	apiKey: [],
-=======
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 });
 
 export const Roles = {
 	admin,
 	owner,
 	member,
-<<<<<<< HEAD
 	demoUser,
 	betaUser,
-	user,
+	anonymous,
 } as const;
 
 export const ORGANIZATION_MEMBER_ROLES = ["owner", "member"];
@@ -84,7 +71,7 @@ export const ORGANIZATION_MEMBER_ROLES = ["owner", "member"];
 export const ADMIN_ROLES = ["admin"];
 
 //FIXME: Update default role to user when not in BETA
-export const DEFAULT_ROLE = "betaUser";
+export const DEFAULT_ROLE = "anonymous";
 
 export const AuthRoles = [
 	"admin",
@@ -92,15 +79,18 @@ export const AuthRoles = [
 	"member",
 	"demoUser",
 	"betaUser",
-	"user",
+	"anonymous",
 ] as const;
 export type AuthRole = (typeof AuthRoles)[number];
-=======
-} as const;
 
-export type AuthRole = keyof typeof Roles;
+export const ROLE_PRIORITY: AuthRole[] = [
+	"owner",
+	"admin",
+	"member",
+	"betaUser",
+	"demoUser",
+	"anonymous",
+];
 
-export const ORGANIZATION_MEMBER_ROLES = ["owner", "member"];
-
-export const ADMIN_ROLES = ["admin"];
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
+export const AppAccessRoles = ["owner", "member", "betaUser", "demoUser"];
+export const AnonymousRoles = ["anonymous"];

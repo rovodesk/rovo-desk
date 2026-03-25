@@ -1,144 +1,257 @@
+import type { WidgetState } from "@zero-heads-lab/engine";
+import {
+	ArrowLeft,
+	MessageCircle,
+	Paperclip,
+	SendHorizonal,
+	Smile,
+} from "lucide-react";
+import type { Message } from "partysocket/ws";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CloseIcon } from "@/components/icons";
+import { useChat } from "@/hooks/use-chat";
 import { useWidgetActions } from "@/hooks/use-widget-actions";
-import { useState } from "react";
-import { ArrowUp, ArrowLeft, PhoneCall, Paperclip } from "lucide-react";
-import Logo from "@/components/logo";
 
-export function ConversationScreen() {
-    const actions = useWidgetActions();
+function getConversationBlock(state: WidgetState) {
+	const screens =
+		state.session?.mode === "user"
+			? state.config?.widget?.screens.user.screens
+			: state.config?.widget?.screens.visitor.screens;
 
-    const [messages, setMessages] = useState([
-        {
-            role: "assistant",
-            content: "Hi there 👋\n\nYou are now speaking with Rovo. How can I help?",
-            time: "Just now",
-        },
-    ]);
+	const conversationScreen = screens?.find(
+		(s: { tab: string }) => s.tab === "conversation"
+	);
 
-    const [input, setInput] = useState("");
+	if (!conversationScreen) return null;
 
-    const sendMessage = () => {
-        if (!input.trim()) return;
+	return conversationScreen.blocks.find(
+		(b: { type: string }) => b.type === "conversation"
+	);
+}
 
-        setMessages((prev) => [
-            ...prev,
-            { role: "user", content: input, time: "Now" },
-            {
-                role: "assistant",
-                content: "Got it — let me help you with that.",
-                time: "Now",
-            },
-        ]);
+export function ConversationScreen({ state }: { state: WidgetState }) {
+	const actions = useWidgetActions();
+	const block = getConversationBlock(state);
+	const scrollRef = useRef<HTMLDivElement>(null);
 
-        setInput("");
-    };
+	const config = block?.config ?? {};
+	const session = state.session;
+	const currentUserId = session?.user?.id;
 
-    return (
-        <div className="relative flex h-full flex-col overflow-hidden bg-black text-white">
-            <div className="relative z-10 flex h-full flex-col">
-                {/* Header */}
-                <div className="flex items-center justify-between border-b bg-[#161618] border-white/10 px-4 py-3">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => actions.navigate("inbox")}>
-                            <ArrowLeft className="h-4 w-4/ text-white/60 hover:text-white" />
-                        </button>
-                        <div className="flex items-center gap-2">
-                            <Logo size={8} />
-                            <div>
-                                <p className="text-sm font-medium">Rovo</p>
-                                <p className="text-xs text-white/50">
-                                    The team can also help
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+	const onMessagesChange = useCallback(
+		(messages: Message[]) => {
+			for (const message of messages) {
+				actions.addMessage(message);
+			}
+		},
+		[actions]
+	);
 
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => actions.navigate("help")}
-                            className="text-white/60 hover:text-white"
-                            disabled={true}
-                        >
-                            <PhoneCall className="h-4 w-4 data-disabled:text-white/20" />
-                        </button>
-                        <button
-                            onClick={() => actions.close()}
-                            className="text-white/60 hover:text-white"
-                        >
-                            <CloseIcon />
-                        </button>
-                    </div>
-                </div>
+	const { messages, sendMessage, isConnected } = useChat({
+		roomId: session?.user?.id || session?.sessionId || "default",
+		token: session?.token,
+		initialMessages: state.chat?.messages,
+		senderId: currentUserId || session?.sessionId,
+		onMessagesChange,
+	});
 
-                {/* Messages */}
-                <div className="flex-1 space-y-4 overflow-y-auto px-4 py-6">
-                    {messages.map((msg, i) => {
-                        const isUser = msg.role === "user";
+	const [input, setInput] = useState("");
 
-                        return (
-                            <div
-                                key={i}
-                                className={`flex ${isUser ? "justify-end" : "justify-start"
-                                    }`}
-                            >
-                                <div className="max-w-[80%]">
-                                    {/* Bubble */}
-                                    <div
-                                        className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-white/10 text-white/90 backdrop-blur"
-                                            }`}
-                                    >
-                                        {msg.content}
-                                    </div>
+	// Auto-scroll to bottom
+	useEffect(() => {
+		if (scrollRef.current && messages.length > 0) {
+			scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+		}
+	}, [messages]);
 
-                                    {/* Meta */}
-                                    {!isUser && (
-                                        <p className="mt-2 text-xs text-white/40">
-                                            Fin • AI Agent • {msg.time}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+	const handleSendMessage = () => {
+		if (!input.trim()) return;
+		sendMessage(input);
+		setInput("");
+	};
 
-                {/* Floating Input */}
-                <div className="pointer-events-none absolute bottom-4 left-0 right-0 px-4">
-                    <div className="pointer-events-auto rounded-2xl border border-white/20 bg-white/5 p-2 backdrop-blur-xl shadow-xl">
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={sendMessage}
-                                className="flex h-9 w-9 items-center justify-center rounded-full text-white/60 transition hover:text-white"
-                            >
-                                <Paperclip className="h-4 w-4" />
-                            </button>
-                            <input
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={(e) =>
-                                    e.key === "Enter" && sendMessage()
-                                }
-                                placeholder="Ask a question..."
-                                className="flex-1 bg-transparent px-2 text-sm text-white outline-none placeholder:text-white/40"
-                            />
+	return (
+		<div className="relative flex h-full flex-col bg-slate-50 text-slate-900">
+			{/* INTERCOM-STYLE HEADER */}
+			<div className="z-10 flex items-center justify-between border-slate-100 border-b bg-white px-4 py-4 shadow-sm">
+				<button
+					className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-slate-100"
+					onClick={() => actions.switchTab("welcome")}
+					type="button"
+				>
+					<ArrowLeft className="h-5 w-5 text-blue-600" />
+				</button>
 
-                            <button
-                                onClick={sendMessage}
-                                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-                            >
-                                <ArrowUp className="h-4 w-4" />
-                            </button>
-                        </div>
-                    </div>
+				<div className="flex flex-col items-center gap-0.5">
+					<div className="flex -space-x-2">
+						<img
+							alt="A"
+							className="h-7 w-7 rounded-full border-2 border-white bg-slate-200"
+							src="https://github.com/haydenbleasel.png"
+						/>
+						<img
+							alt="B"
+							className="h-7 w-7 rounded-full border-2 border-white bg-slate-200"
+							src="https://github.com/shadcn.png"
+						/>
+					</div>
+					<p className="font-bold text-[13px] text-slate-800 tracking-tight">
+						{config.headerTitle || "Support Team"}
+					</p>
+					<div className="flex items-center gap-1">
+						<span
+							className={`h-1.5 w-1.5 rounded-full ${isConnected ? "bg-green-500" : "bg-orange-400"} animate-pulse`}
+						/>
+						<p className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">
+							{isConnected ? "Replies in minutes" : "Connecting..."}
+						</p>
+					</div>
+				</div>
 
-                    {/* Footer */}
-                    <p className="mt-2 text-center text-[11px] text-white/30">
-                        By chatting with us, you agree to our Privacy Policy
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
+				<button
+					className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-slate-100"
+					onClick={() => actions.close()}
+					type="button"
+				>
+					<CloseIcon />
+				</button>
+			</div>
+
+			{/* MESSAGES TRANSCRIPT */}
+			<div
+				className="flex-1 space-y-6 overflow-y-auto scroll-smooth px-5 py-8"
+				ref={scrollRef}
+			>
+				{messages.length === 0 && (
+					<div className="flex h-full flex-col items-center justify-center opacity-40">
+						<div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-200">
+							<MessageCircle className="h-8 w-8 text-slate-400" />
+						</div>
+						<p className="font-medium text-sm">No messages yet</p>
+						<p className="text-xs">Ask us anything!</p>
+					</div>
+				)}
+
+				{messages.map((msg, i) => {
+					const isUser = msg.senderId === currentUserId;
+					const showAvatar =
+						!isUser &&
+						(i === messages.length - 1 ||
+							messages[i + 1]?.senderId === currentUserId);
+
+					return (
+						<div
+							className={`fade-in slide-in-from-bottom-2 flex animate-in ${isUser ? "justify-end" : "justify-start"}`}
+							key={msg.id}
+						>
+							<div
+								className={`flex max-w-[85%] items-end gap-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}
+							>
+								{!isUser && (
+									<div className="h-7 w-7 shrink-0 translate-y-[2px] overflow-hidden rounded-full border bg-slate-200">
+										{showAvatar ? (
+											<img
+												alt="S"
+												className="h-full w-full object-cover"
+												src="https://github.com/haydenbleasel.png"
+											/>
+										) : (
+											<div className="h-full w-full" />
+										)}
+									</div>
+								)}
+
+								<div className="space-y-1">
+									<div
+										className="px-4 py-2.5 font-medium text-sm leading-normal shadow-sm ring-1 ring-black/5"
+										style={{
+											borderRadius: "18px",
+											borderBottomRightRadius: isUser ? "4px" : "18px",
+											borderBottomLeftRadius: isUser ? "18px" : "4px",
+											background: isUser ? "#2563eb" : "#ffffff",
+											color: isUser ? "#ffffff" : "#1e293b",
+										}}
+									>
+										{msg.text || msg.message}
+									</div>
+
+									{config.showTimestamp && (
+										<p
+											className={`font-bold text-[10px] text-slate-400 uppercase tracking-widest ${isUser ? "mr-1 text-right" : "ml-1 text-left"}`}
+										>
+											{new Date(
+												msg.createdAt || msg.timestamp
+											).toLocaleTimeString([], {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* INTERCOM-STYLE INPUT BAR */}
+			<div className="border-slate-100 border-t bg-white px-4 pt-3 pb-6">
+				<div className="flex flex-col gap-2 overflow-hidden rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-200 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+					<textarea
+						className="max-h-32 min-h-[44px] w-full resize-none bg-transparent px-3 pt-2 font-medium text-sm outline-none placeholder:text-slate-400"
+						onChange={(e) => setInput(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								handleSendMessage();
+							}
+						}}
+						placeholder={config.placeholder || "Write a reply..."}
+						rows={1}
+						value={input}
+					/>
+
+					<div className="flex items-center justify-between border-slate-50 border-t px-1 pt-2">
+						<div className="flex items-center gap-1">
+							<button
+								className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-50 hover:text-blue-600"
+								type="button"
+							>
+								<Smile className="h-5 w-5" />
+							</button>
+							{config.allowAttachments && (
+								<button
+									className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-50 hover:text-blue-600"
+									type="button"
+								>
+									<Paperclip className="h-5 w-5" />
+								</button>
+							)}
+						</div>
+
+						<button
+							className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${
+								input.trim()
+									? "bg-blue-600 text-white shadow-lg active:scale-95"
+									: "bg-slate-100 text-slate-400 opacity-50"
+							}`}
+							disabled={!input.trim()}
+							onClick={handleSendMessage}
+							type="button"
+						>
+							<SendHorizonal className="h-4 w-4" />
+						</button>
+					</div>
+				</div>
+
+				<p className="mt-3 text-center font-bold text-[10px] text-slate-300 uppercase tracking-widest">
+					Press{" "}
+					<span className="rounded bg-slate-100 px-1 py-0.5 text-slate-400">
+						Enter
+					</span>{" "}
+					to send
+				</p>
+			</div>
+		</div>
+	);
 }

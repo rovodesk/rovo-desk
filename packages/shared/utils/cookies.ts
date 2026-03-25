@@ -24,10 +24,10 @@ export function setCookie(
 	name: string,
 	value: string,
 	maxAge = DEFAULT_MAX_AGE,
-	sameSite: "Lax" | "None" | "Strict" = "Lax",
+	sameSite: "lax" | "none" | "strict" = "lax",
 	secure = typeof window !== "undefined" &&
 		window.location.protocol === "https:",
-	httpOnly = false
+	httpOnly = true
 ): void {
 	if (typeof document === "undefined") return;
 

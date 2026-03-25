@@ -92,20 +92,20 @@ export async function updateWorkspaceSettingsByOrganizationId(
 		});
 }
 
-export async function toggleUserAwayField(
+export async function toggleUserActiveField(
 	database: Database,
 	params: {
 		userId: string;
-		isAway: boolean;
+		isActive: boolean;
 	}
 ) {
 	return await database
 		.update(userProfile)
 		.set({
-			isAway: params.isAway,
+			isActive: params.isActive,
 		})
 		.where(eq(userProfile.userId, params.userId))
 		.catch(() => {
-			throw new Error("Failed to toggle user away field");
+			throw new Error("Failed to toggle user active field");
 		});
 }

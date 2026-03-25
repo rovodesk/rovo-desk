@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { documenttMiddleware } from "../middlewares/document.middleware";
+import { documentMiddleware } from "../middlewares/document.middleware";
 import type { Bindings } from "../types";
 
 export const documentRoute = new Hono<{ Bindings: Bindings }>();
@@ -26,4 +26,4 @@ documentRoute
 
 		return await stub.fetch(new Request(c.req.raw, { headers }));
 	})
-	.use(documenttMiddleware);
+	.use(documentMiddleware);

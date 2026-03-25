@@ -1,4 +1,11 @@
-import type { Analytics } from "@zero-heads-lab/analytics/types";
+import {
+	USER_DELETED_EVENT,
+	USER_LOGGED_IN_EVENT,
+	USER_LOGGED_OUT_EVENT,
+	USER_SIGNED_UP_EVENT,
+} from "@zero-heads-lab/analytics/events";
+import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
+import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
 import { KvCacheStore } from "@zero-heads-lab/cache";
 import { createDatabase } from "@zero-heads-lab/database";
 import {
@@ -22,16 +29,16 @@ import {
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-<<<<<<< HEAD
-=======
-import { Roles } from "@/access-control";
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
 
-export async function createAuth(cache: KVNamespace, analytics: Analytics) {
+export async function createAuth(
+	cache: KVNamespace,
+	analytics: IAnalytics,
+	logger: ILogger
+) {
 	const cacheStore = new KvCacheStore(cache).withPrefix("auth");
 
 	const database = await createDatabase();
@@ -84,12 +91,8 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 				},
 				afterDelete: async (user) => {
 					// Send Analytics Event
-					await analytics.captureImmediate({
-						distinctId: user.id,
-						event: "user_deleted",
-						properties: {
-							email: user.email,
-						},
+					await analytics.captureEvent(user.id, USER_DELETED_EVENT, {
+						email: user.email,
 					});
 				},
 			},
@@ -129,6 +132,12 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 					required: false,
 					defaultValue: null,
 					input: false,
+				},
+				isAnonymous: {
+					type: "boolean",
+					required: false,
+					input: false,
+					defaultValue: true,
 				},
 			},
 			changeEmail: {
@@ -183,15 +192,27 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 			accountLinking: {
 				enabled: true,
 				trustedProviders: ["github", "google", "cognito"],
-				updateUserInfoOnLink: true,
+				allowDifferentEmails: false,
+				allowUnlinkingAll: false,
 			},
+			// FIXME: CRITICAL SECURITY FLAW [REMOVE IN PRODUCTION, skipping state verification can lead to CSRF attacks]
+			skipStateCookieCheck: process.env.NODE_ENV !== "production", // TRUE in development for ease of testing, FALSE in production for security
 		},
-		// rateLimit: {
-		// 	enabled: true,
-		// 	window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
-		// 	limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
-		// 	storage: "secondary-storage",
-		// },
+		verification: {
+			storeIdentifier: "hashed",
+		},
+		rateLimit: {
+			enabled: process.env.NODE_ENV === "production",
+			window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
+			limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
+			storage: "secondary-storage",
+			// customRules: {
+			// 	"/example/path": {
+			// 		window: 10,
+			// 		max: 100,
+			// 	},
+			// },
+		},
 		plugins: Plugins,
 		socialProviders: OauthProviders,
 		advanced: {
@@ -200,21 +221,18 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 				disableIpTracking: false, // Enable IP Tracking [SECURITY]
 			},
 			useSecureCookies: process.env.NODE_ENV === "production", // FALSE on HTTP
+			skipTrailingSlashes: true,
 			crossSubDomainCookies: {
 				enabled: true,
-<<<<<<< HEAD
 				domain: "localhost",
-=======
-				domain: 'localhost',
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 			},
 			// cookies: {
 			// 	session_token: {
-			// 		name: AUTH_CONFIG.SESSION_TOKEN_NAME,
+			// 		// name: AUTH_CONFIG.SESSION_TOKEN_NAME,
 			// 		attributes: {
 			// 			httpOnly: true,
 			// 			path: "/",
-			// 			sameSite: "lax",
+			// 			sameSite: "none",
 			// 			secure: process.env.NODE_ENV === "production", // TRUE on HTTPS
 			// 		},
 			// 	},
@@ -222,7 +240,8 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 			// defaultCookieAttributes: {
 			// 	httpOnly: true,
 			// 	secure: process.env.NODE_ENV === "production",
-			// 	sameSite: "lax",
+			// 	sameSite: "none",
+			// 	// domain: "localhost",
 			// },
 			// cookiePrefix: AUTH_CONFIG.COOKIE_PREFIX,
 		},
@@ -231,12 +250,25 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 			disableColors: process.env.NODE_ENV === "production",
 			level: process.env.NODE_ENV === "production" ? "error" : "debug", //FUTURE: Change to warn when completed
 			log: (level, message, ...args) => {
-				// TODO: Add Logger from observability
-				console.log(
-					["AUTH", new Date().toDateString(), level.toUpperCase()].join(" "),
-					message,
-					...args
-				);
+				const data = { auth_args: args };
+				switch (level.toLowerCase()) {
+					case "debug":
+						logger.debug("auth.logger", data);
+						break;
+					case "info":
+						logger.info("auth.logger", data);
+						break;
+					case "error":
+						logger.error(message, data);
+						break;
+					case "warn":
+						// Auth Warnings are critical
+						logger.warn(true, message, data);
+						break;
+					default:
+						logger.info(message, data);
+						break;
+				}
 			},
 		},
 		databaseHooks: {
@@ -289,26 +321,22 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 						}
 
 						// Send Analytics
-						analytics.captureImmediate({
-							distinctId: session.userId,
-							event: "user_logged_in",
-							properties: {
-								ipAddress: session.ipAddress,
-								userAgent: session.userAgent,
-							},
+						analytics.captureEvent(session.userId, USER_LOGGED_IN_EVENT, {
+							ipAddress: session.ipAddress,
+							userAgent: session.userAgent,
 						});
 					},
 				},
 				delete: {
 					after: async (session) => {
-						await analytics.captureImmediate({
-							distinctId: session.userId,
-							event: "user_logged_out",
-							properties: {
+						await analytics.captureEvent(
+							session.userId,
+							USER_LOGGED_OUT_EVENT,
+							{
 								ipAddress: session.ipAddress,
 								userAgent: session.userAgent,
-							},
-						});
+							}
+						);
 					},
 				},
 			},
@@ -323,11 +351,7 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 							data: {
 								...user,
 								image: avatar,
-<<<<<<< HEAD
 								role: user.role || "owner",
-=======
-								role: Roles.owner,
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 							},
 						};
 					},
@@ -365,14 +389,10 @@ export async function createAuth(cache: KVNamespace, analytics: Analytics) {
 
 						// Send event to Analytics
 						console.log("USER SIGNED UP", user);
-						analytics.captureImmediate({
-							distinctId: user.id,
-							event: "user_signed_up",
-							properties: {
-								email: user.email,
-								provider: user.lastLoginMethod ?? "email",
-								role: user.role,
-							},
+						analytics.captureEvent(user.id, USER_SIGNED_UP_EVENT, {
+							email: user.email,
+							provider: user.lastLoginMethod ?? "email",
+							role: user.role,
 						});
 					},
 				},

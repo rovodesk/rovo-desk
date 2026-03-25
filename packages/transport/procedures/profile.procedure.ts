@@ -1,7 +1,9 @@
 import { ORPCError } from "@orpc/server";
+import { USER_STATUS_CHANGED_EVENT } from "@zero-heads-lab/analytics/events";
+import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
 import {
 	clearOnboardingProgressByUserId,
-	toggleUserAwayField,
+	toggleUserActiveField,
 	updateOnboardingProgressByUserId,
 	updateWorkspaceSettingsByOrganizationId,
 } from "@zero-heads-lab/database/repositories/profile/mutations";
@@ -65,13 +67,9 @@ export const persistOnboardingProgress = base
 		}
 
 		// Send Anlytics Event
-		analytics.captureImmediate({
-			distinctId: user.id,
-			event: "onboarding_progress",
-			properties: {
-				currentStepId: input.currentStepId,
-				flowData: input.flowData,
-			},
+		analytics.captureEvent(user.id, "onboarding_progress", {
+			currentStepId: input.currentStepId,
+			flowData: input.flowData,
 		});
 	})
 	.callable();
@@ -161,29 +159,37 @@ export const toogleUserActive = base
 	.use(BaseMiddleware)
 	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
-		const database = context.database;
-		const analytics = await context.analytics;
+		const { database, analytics, logger, tracer, user, session } = context;
+		const userId = user.id;
 
-		const userId = context.user.id;
+		// 🚀 Create a child span for the DB operation
+		return await tracer?.withSpan("db.fetch_workspace_full", async (span) => {
+			// Add custom attributes for the span
+			span.setAttribute("user.id", user.id);
+			span.setAttribute("session.id", session.id);
+			span.setAttribute("user.role", determineAuthRoles(user.role));
 
-		try {
-			await toggleUserAwayField(database, {
-				userId,
-				isAway: !input.active,
-			});
-		} catch (error) {
-			console.error(error);
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to toggle user away field",
-			});
-		}
+			try {
+				await toggleUserActiveField(database, {
+					userId,
+					isActive: input.active,
+				});
+			} catch (error) {
+				span.setAttribute("error.type", "not_found");
+				logger?.error("rpc.profile.toogleUserActive", error);
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "Failed to toggle user active field",
+				});
+			}
 
-		await analytics?.capture({
-			distinctId: userId,
-			event: "user_status_changed",
-			properties: {
-				active: input.active,
-			},
+			try {
+				analytics?.captureEvent(userId, USER_STATUS_CHANGED_EVENT, {
+					previousStatus: input.active,
+					newStatus: !input.active,
+				});
+			} catch {
+				//Ignore
+			}
 		});
 	})
 	.callable();

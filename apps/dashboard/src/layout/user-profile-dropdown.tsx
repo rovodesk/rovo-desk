@@ -43,9 +43,9 @@ function UserProfileDropdown() {
 
 	const loading = isUserLoading || isUserProfileLoading;
 
-	const isUserAvailable = useMemo(() => {
-		return userProfile?.isAway === false;
-	}, [userProfile?.isAway]);
+	const isUserActive = useMemo(() => {
+		return userProfile?.isActive === true;
+	}, [userProfile?.isActive]);
 
 	if (loading) return <ProfileDropdownSkeleton />;
 
@@ -63,13 +63,13 @@ function UserProfileDropdown() {
 			.slice(0, 2) || "??"
 	).toUpperCase();
 
-	const handleUserAway = async (checked: boolean) => {
+	const handleUserActiveToggle = async (checked: boolean) => {
 		try {
-			await toggleUserActiveAsync({ active: !checked });
-			toast.success(`User is now ${checked ? "away" : "available"}`);
+			await toggleUserActiveAsync({ active: checked });
+			toast.success(`User is now ${checked ? "Available" : "Away"}`);
 		} catch (error) {
-			console.error("Failed to update user away status", error);
-			toast.error("Failed to update user away status");
+			console.error("Failed to update user active status", error);
+			toast.error("Failed to update user active status");
 		}
 	};
 
@@ -89,7 +89,7 @@ function UserProfileDropdown() {
 							{/* Status indicator */}
 							<span
 								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${
-									isUserAvailable ? "bg-green-500" : "bg-slate-500"
+									isUserActive ? "bg-green-500" : "bg-slate-500"
 								}`}
 							/>
 						</div>
@@ -115,7 +115,7 @@ function UserProfileDropdown() {
 								{/* Status indicator */}
 								<span
 									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${
-										isUserAvailable ? "bg-green-500" : "bg-slate-500"
+										isUserActive ? "bg-green-500" : "bg-slate-500"
 									}`}
 								/>
 							</div>
@@ -131,11 +131,11 @@ function UserProfileDropdown() {
 						{/* AWAY TOGGLE */}
 						<div className="flex items-center justify-between px-2 py-2 text-sm">
 							<span className="text-muted-foreground">
-								Status: {isUserAvailable ? "Available" : "Away"}
+								Status: {isUserActive ? "Available" : "Away"}
 							</span>
 							<Switch
-								checked={isUserAvailable}
-								onCheckedChange={handleUserAway}
+								checked={isUserActive}
+								onCheckedChange={handleUserActiveToggle}
 							/>
 						</div>
 
@@ -249,15 +249,6 @@ function ProfileDropdownSkeleton() {
 				<div className="flex items-center gap-3 p-2">
 					{/* Avatar */}
 					<Skeleton className="h-8 w-8 shrink-0 rounded-full" />
-
-					{/* Text */}
-					<div className="flex min-w-0 flex-col gap-1">
-						<Skeleton className="h-3 w-24 rounded-md" />
-						<Skeleton className="h-3 w-36 rounded-md" />
-					</div>
-
-					{/* Kebab menu placeholder */}
-					<Skeleton className="ml-auto h-4 w-4 shrink-0 rounded-sm" />
 				</div>
 			</SidebarMenuItem>
 		</SidebarMenu>

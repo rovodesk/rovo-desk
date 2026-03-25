@@ -1,15 +1,15 @@
 import { useWidgetActions } from "@/hooks/use-widget-actions";
 import { useWidgetState } from "@/hooks/use-widget-state";
+import { resolveScreen } from "@/utils";
 import { ChatIcon, CloseIcon } from "./icons";
 import { Navigation } from "./navigation";
-import { resolveScreen } from "@/utils";
 
 const DEFAULT_WIDGET_CONFIG = {
 	launcher: { position: "bottom-right" },
 	theme: {
 		shadow: true,
-	}
-}
+	},
+};
 
 const DEFAULT_WIDGET_WIDTH = 400;
 const DEFAULT_WIDGET_HEIGHT = 704;
@@ -19,27 +19,25 @@ export function Widget() {
 	const state = useWidgetState();
 
 	// Default widget config
-	const widgetConfig = state.widgetConfig ?? DEFAULT_WIDGET_CONFIG;
+	const widgetConfig = state.config?.widget ?? DEFAULT_WIDGET_CONFIG;
 
 	const theme = widgetConfig.theme;
 	const width = DEFAULT_WIDGET_WIDTH;
 	const height = DEFAULT_WIDGET_HEIGHT;
 
-
 	// 🔹 Resolve screen (typed)
 	const Screen = resolveScreen(state);
-
 
 	return (
 		<div className="relative h-full w-full">
 			<div className="absolute right-6 bottom-6 flex flex-col items-end gap-3">
 				{/* Panel */}
 				<div
-					className={`rovodesk-widget flex flex-col overflow-hidden transform-gpu will-change-transform origin-bottom-right transition-[transform,opacity,box-shadow] duration-300 ease-out
-         					${state.isOpen
-							? "open opacity-100 translate-y-0 scale-100 pointer-events-auto"
-							: "opacity-0 translate-y-4 scale-95 pointer-events-none"
-						}
+					className={`rovodesk-widget flex origin-bottom-right transform-gpu flex-col overflow-hidden transition-[transform,opacity,box-shadow] duration-300 will-change-transform ease-out${
+						state.ui?.isOpen
+							? "open pointer-events-auto translate-y-0 scale-100 opacity-100"
+							: "pointer-events-none translate-y-4 scale-95 opacity-0"
+					}
         `}
 					style={{
 						width,
@@ -65,12 +63,12 @@ export function Widget() {
 }
 
 function Launcher() {
-	const { isOpen, isInitialized } = useWidgetState();
+	const { ui } = useWidgetState();
 	const actions = useWidgetActions();
 
 	const toggle = () => {
-		if (!isInitialized) return;
-		if (isOpen) {
+		if (!ui?.isInitialized) return;
+		if (ui?.isOpen) {
 			actions.close();
 		} else {
 			actions.open();
@@ -79,9 +77,9 @@ function Launcher() {
 
 	return (
 		<button
-			className={`relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 ease-out ${!isInitialized ? 'opacity-50 cursor-not-allowed' : ''}`}
+			className={`relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full transition-all duration-300 ease-out ${ui?.isInitialized ? "" : "cursor-not-allowed opacity-50"}`}
+			disabled={!ui?.isInitialized}
 			onClick={toggle}
-			disabled={!isInitialized}
 		>
 			{/* 🔥 Gradient background */}
 			<div className="absolute inset-0 rounded-full bg-linear-to-br from-black via-indigo-900 to-blue-900" />
@@ -91,11 +89,11 @@ function Launcher() {
 
 			{/* 🔥 Icon */}
 			<div
-				className={`relative z-10 flex items-center justify-center text-white transition-all duration-300 ${isOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"}
+				className={`relative z-10 flex items-center justify-center text-white transition-all duration-300 ${ui?.isOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"}
         `}
 			>
-				{isOpen ? <CloseIcon /> : <ChatIcon />}
+				{ui?.isOpen ? <CloseIcon /> : <ChatIcon />}
 			</div>
 		</button>
 	);
-}	
+}

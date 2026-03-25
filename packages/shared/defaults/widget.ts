@@ -7,13 +7,10 @@ export function defaultWidgetConfig(
 	return {
 		theme: {
 			primaryColor: "#2563eb",
-			backgroundColor: "#ffffff",
-			textColor: "#1e293b",
-
+			secondaryColor: "#f1f5f9",
+			brandColor: "#2563eb",
 			bubbleStyle: "rounded",
-			userBubbleColor: "#2563eb",
-			agentBubbleColor: "#f1f5f9",
-
+			borderRadius: 24,
 			shadow: true,
 		},
 

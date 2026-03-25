@@ -11,10 +11,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@tailwindcss/vite": "catalog:tailwindcss",
     "@zero-heads-lab/engine": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
-    "@tailwindcss/vite": "catalog:tailwindcss",
     "lucide-react": "catalog:",
+    "partysocket": "catalog:partykit",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "tailwindcss": "catalog:tailwindcss"

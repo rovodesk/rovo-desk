@@ -1,3 +1,4 @@
+import type { Message } from "@zero-heads-lab/shared/types";
 import type { StateUpdater, WidgetState } from "../types";
 
 export type MessageType =
@@ -8,31 +9,17 @@ export type MessageType =
 	| "system"
 	| "error";
 
-/**
- * The Message Interface
- */
-export interface Message {
-	id: string;
-	userId?: string;
-	username?: string;
-	message: string;
-	timestamp: number;
-	type: MessageType;
-	loading?: boolean;
-	widget?: string;
-}
-
 export interface IMessageParser {
 	parse(message: string): void;
 
 	addAIMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	): void;
 
 	addUserMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	): void;
 
 	addVisitorMessage(
@@ -85,20 +72,20 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 	private createMessage(
 		message: string,
 		type: MessageType,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	): Message {
 		return {
 			id: crypto.randomUUID(),
-			message,
+			text: message,
 			type,
-			timestamp: Date.now(),
+			createdAt: new Date().toISOString(),
 			...options,
-		};
+		} as Message;
 	}
 
 	addAIMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "ai", {
 			loading: true,
@@ -110,7 +97,7 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 
 	addUserMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "user", options);
 		this.pushMessage(msg);
@@ -118,7 +105,7 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 
 	addAdminMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "admin", options);
 		this.pushMessage(msg);
@@ -126,7 +113,7 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 
 	addVisitorMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "visitor", options);
 		this.pushMessage(msg);
@@ -134,7 +121,7 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 
 	addSystemMessage(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "system", options);
 		this.pushMessage(msg);
@@ -142,7 +129,7 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 
 	addError(
 		message: string,
-		options?: Partial<Omit<Message, "id" | "type" | "message">>
+		options?: Partial<Omit<Message, "id" | "type" | "text">>
 	) {
 		const msg = this.createMessage(message, "error", options);
 		this.pushMessage(msg);
@@ -151,20 +138,25 @@ export class MessageParser<T extends WidgetState> implements IMessageParser {
 	setLoading(id: string, loading: boolean) {
 		this.setState((state) => ({
 			...state,
-			messages: state.messages?.map((m) =>
-				m.id === id ? { ...m, loading } : m
-			),
+			chat: {
+				...state.chat,
+				messages: state.chat?.messages?.map((m) =>
+					m.id === id ? { ...m, loading } : m
+				),
+			},
 		}));
 	}
 
 	private pushMessage(message: Message) {
 		this.setState((state) => {
-			const messages = state.messages ?? [];
-			messages.push(message);
+			const messages = [...(state.chat?.messages ?? []), message];
 			return {
 				...state,
-				messages,
-			};
+				chat: {
+					...state.chat,
+					messages,
+				},
+			} as T;
 		});
 	}
 }

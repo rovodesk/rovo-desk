@@ -64,6 +64,9 @@ export function useApiKeys() {
 				"organizationId" | "metadata"
 			>
 		) => {
+			if (!session?.session?.activeOrganizationId) {
+				throw new Error("No active organization found");
+			}
 			return await authClient.apiKey.create({
 				...vars,
 				organizationId: session?.session?.activeOrganizationId,

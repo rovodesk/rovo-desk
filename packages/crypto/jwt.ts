@@ -13,7 +13,7 @@ export async function signJWTToken<T extends JWTPayload>(
 	const secretKey = new TextEncoder().encode(secret);
 
 	return await new SignJWT({ ...payload })
-		.setProtectedHeader({ alg: "HS256" })
+		.setProtectedHeader({ alg: "RS256" })
 		.setIssuer(iss)
 		.setSubject(sub)
 		.setAudience(aud)
@@ -32,13 +32,19 @@ export async function verifyJWTToken<T extends JWTPayload>(
 
 	try {
 		const { payload } = await jwtVerify(token, secretKey, {
-			algorithms: ["HS256"],
+			algorithms: ["RS256"],
 			...options,
 		});
+		// Check token expiry
+		if (payload.exp && payload.exp < Date.now() / 1000) {
+			throw new Error("Token expired");
+		}
 
 		return payload as T; // Typed Payload
 	} catch (error) {
-		console.log(error);
+		if (error instanceof Error && error.message === "Token expired") {
+			throw error;
+		}
 		throw error;
 	}
 }

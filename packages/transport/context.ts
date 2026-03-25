@@ -1,6 +1,8 @@
 import { os } from "@orpc/server";
 import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
-import type { Analytics } from "@zero-heads-lab/analytics/types";
+import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
+import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
+import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
 import type {
 	AuthInstance,
 	AuthSession,
@@ -19,7 +21,9 @@ import type { Database } from "@zero-heads-lab/database";
  */
 export interface ORPCContext extends RequestHeadersPluginContext {
 	auth?: AuthInstance;
-	analytics?: Analytics;
+	analytics?: IAnalytics;
+	logger?: ILogger;
+	tracer?: ITracer;
 	database?: Database;
 	session?: AuthSession;
 	user?: AuthUser;

@@ -26,3 +26,7 @@ export const USER_PROFILE_DTO = z.object({
 	active: z.boolean(),
 	workspaceProfileId: z.string().nullable(),
 });
+
+export const GET_WORKSPACE_PROFILE_DTO = {
+	settings: z.record(z.string(), z.unknown()).nullable(),
+};

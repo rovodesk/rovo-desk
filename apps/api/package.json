@@ -1,26 +1,28 @@
 {
   "name": "api",
   "type": "module",
+  "version": "0.0.1_alpha",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@microlabs/otel-cf-workers": "^1.0.0-rc.52",
+    "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/auth": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*",
-    "@zero-heads-lab/transport": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
-    "@zero-heads-lab/analytics": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/transport": "workspace:*",
     "hono": "^4.11.7",
-    "hono-party": "^1.0.0",
+    "hono-party": "catalog:partykit",
     "lib0": "^0.2.117",
-    "partyserver": "^0.1.5",
+    "partyserver": "catalog:partykit",
     "y-protocols": "^1.0.7",
-    "zod": "catalog:",
-    "yjs": "catalog:"
+    "yjs": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "wrangler": "^4.4.0",

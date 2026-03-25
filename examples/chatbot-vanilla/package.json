@@ -4,6 +4,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "serve": "bunx serve ."
+    "dev": "bunx serve ."
   }
 }

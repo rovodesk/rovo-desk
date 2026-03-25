@@ -2,12 +2,11 @@ import z from "zod";
 
 export const WidgetAppearanceSchema = z.object({
 	primaryColor: z.string(),
-	backgroundColor: z.string(),
-	textColor: z.string(),
+	secondaryColor: z.string(),
+	brandColor: z.string(),
 
 	bubbleStyle: z.enum(["rounded", "square"]),
-	userBubbleColor: z.string(),
-	agentBubbleColor: z.string(),
+	borderRadius: z.number(),
 
 	shadow: z.boolean(),
 });
@@ -154,4 +153,35 @@ export const WidgetConfigSchema = z.object({
 	launcher: WidgetLauncherSchema,
 	screens: WidgetModeConfigSchema,
 	advanced: WidgetAdvancedConfigSchema,
+});
+
+export const SDKThemeModeSchema = z.enum(["dark", "light", "system"]);
+
+export const SDKDisplayOptionsSchema = z.object({
+	offset: z
+		.object({
+			horizontal: z.number().optional(),
+			vertical: z.number().optional(),
+			zIndex: z.number().optional(),
+		})
+		.optional(),
+	themeMode: SDKThemeModeSchema.optional(),
+});
+
+export const SDKUserSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	email: z.email(),
+	createdAt: z.string(),
+	signature: z.string(),
+});
+
+export const SDKConfigSchema = z.object({
+	accessKey: z.string(),
+	organizationId: z.string(),
+	apiBaseUrl: z.url(),
+	user: SDKUserSchema.optional(),
+	customLauncherComponent: z.string().optional(),
+	display: SDKDisplayOptionsSchema.optional(),
+	sessionDuration: z.number().optional(),
 });

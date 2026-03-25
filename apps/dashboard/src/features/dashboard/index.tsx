@@ -1,5 +1,5 @@
 import { IconPackageExport } from "@tabler/icons-react";
-import { determineAuthRole } from "@zero-heads-lab/auth/helpers";
+import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
 import { useOrganization, useSession } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
@@ -42,7 +42,7 @@ export function Dashboard() {
 
 	const name = organization?.name ?? "Unknown";
 	const plan = findPlan(organization?.metadata?.plan ?? "basic");
-	const role = determineAuthRole(session?.user?.role);
+	const roles = determineAuthRoles(session?.user?.role);
 
 	const isLoading = isSessionLoading || isOrganizationLoading;
 	if (isLoading) {
@@ -84,7 +84,13 @@ export function Dashboard() {
 								{name}'s Dashboard
 							</h1>
 
-							<Badge variant="outline">{role}</Badge>
+							<div className="flex items-center gap-2">
+								{roles.map((role, idx) => (
+									<Badge key={idx} variant="outline">
+										{role}
+									</Badge>
+								))}
+							</div>
 						</div>
 
 						<p className="text-muted-foreground text-sm">

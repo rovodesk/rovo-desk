@@ -1,3 +1,4 @@
+import type { BetterAuthError } from "better-auth";
 import type { JWTPayload } from "jose";
 import type { permissions } from "./access-control";
 import type { authClient } from "./client";
@@ -79,3 +80,5 @@ export interface AuthJWTPayload extends JWTPayload {
 	verified: boolean;
 	deleted: boolean;
 }
+
+export type AuthError = BetterAuthError;

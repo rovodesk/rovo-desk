@@ -46,12 +46,6 @@
 // //                                     </div> */}
 // //                                 {/* </motion.div> */}
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 8b8c11c (feat: Add animated components and cursor trail for enhanced UI experience)
 // // function _InsightCard() {
 // return (
 //     <div className="group relative max-w-xl">
@@ -132,8 +126,4 @@
 //         <div className="absolute -right-20 -bottom-20 h-40 w-40 rounded-full bg-blue-600/40 opacity-20 blur-3xl transition-opacity duration-500 group-hover:opacity-40" />
 //     </div>
 // );
-<<<<<<< HEAD
 // }
-=======
-// }
->>>>>>> 8b8c11c (feat: Add animated components and cursor trail for enhanced UI experience)

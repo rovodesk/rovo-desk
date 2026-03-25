@@ -1,13 +1,11 @@
 /** biome-ignore-all lint/suspicious/useAwait: No awaited functions are used here*/
 
-import type { WidgetTabType } from "@zero-heads-lab/shared/types";
-import type { User, WidgetState, SDKConfig, Route } from "../types";
-import { type Message, MessageParser } from "./message-parser";
+import { WIDGET_INIT_RESPONSE } from "@zero-heads-lab/shared/contracts/api/widget";
+import type { Message, WidgetTabType } from "@zero-heads-lab/shared/types";
+import { SDKConfigSchema } from "@zero-heads-lab/shared/validations/widget";
+import type { SDKConfig, User, WidgetState } from "../types";
+import { MessageParser } from "./message-parser";
 import type { Store } from "./store";
-
-function isSDKInitialized(state: WidgetState) {
-	return Boolean(state.isInitialized);
-}
 
 interface IActionProvider {
 	/**
@@ -37,24 +35,15 @@ interface IActionProvider {
 	 */
 	track(event: string, data?: unknown): void;
 	/**
-	 * Update the widget config
+	 * Update the widget sdk config
 	 * @param {Partial<SDKConfig>} config
 	 */
-	update(config: Partial<SDKConfig>): void;
+	updateConfig(config: Partial<SDKConfig>): void;
 	/**
 	 * Navigate to a tab
 	 * @param {WidgetTabType} tab
 	 */
-	navigate(tab: WidgetTabType): void;
-	/**
-	 * Push a new route to the navigation stack
-	 * @param {Route} route
-	 */
-	pushRoute(route: Route): void;
-	/**
-	 * Pop the current route from the navigation stack
-	 */
-	popRoute(): void;
+	switchTab(tab: WidgetTabType): void;
 	/**
 	 * Shutdown the widget
 	 */
@@ -65,12 +54,29 @@ interface IActionProvider {
 	 * @param {Message} message
 	 */
 	addMessage(message: Message): void;
+
+	/**
+	 * Set messages to the widget
+	 * @param {Message[]} messages
+	 */
+	setMessages(messages: Message[]): void;
 }
+
+export type WidgetAction =
+	| { type: "INIT"; payload: SDKConfig }
+	| { type: "OPEN" }
+	| { type: "CLOSE" }
+	| { type: "IDENTIFY"; payload: User }
+	| { type: "SWITCH_TAB"; payload: WidgetTabType }
+	| { type: "ADD_MESSAGE"; payload: Message }
+	| { type: "SET_MESSAGES"; payload: Message[] }
+	| { type: "UPDATE_CONFIG"; payload: Partial<SDKConfig> }
+	| { type: "SHUTDOWN" };
 
 class ActionProvider<T extends WidgetState> implements IActionProvider {
 	private readonly store: Store<T>;
 	private readonly messageParser: MessageParser<T>;
-	private actionQueue: Array<() => void> = [];
+	private readonly actionQueue: Array<() => void> = [];
 
 	constructor(store: Store<T>) {
 		this.store = store;
@@ -80,6 +86,7 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 	private initPromise: Promise<void> | null = null;
 	private identifyPromise: Promise<string> | null = null;
 
+	// Flush the queue of pending actions
 	private flushQueue() {
 		while (this.actionQueue.length > 0) {
 			const action = this.actionQueue.shift();
@@ -94,54 +101,61 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 			console.log("RovoDesk: init");
 
 			try {
-				// store sdk config  in state immediately
-				this.store.setState((state) => ({ ...state, sdkConfig: config }));
+				// ✅ Validate config
+				const validatedConfig = SDKConfigSchema.parse(config);
 
-				// If the user is provided in the config, identify the user via API
-				let token: string | undefined;
-				if (config.user) {
-					token = await this.identify(config.user);
-				}
-
-				const headers: Record<string, string> = {
-					"Content-Type": "application/json",
-				};
-				if (token) {
-					headers.Authorization = `Bearer ${token}`;
-				}
-
-				const res = await fetch(`${config.apiBaseUrl}/init`, {
+				// ✅ Call API (single call only)
+				const res = await fetch(`${validatedConfig.apiBaseUrl}/init`, {
 					method: "POST",
-					headers,
+					headers: {
+						"Content-Type": "application/json",
+					},
 					body: JSON.stringify({
-						workspaceId: config.organizationId,
-						user: config.user,
+						organizationId: validatedConfig.organizationId,
+						accessKey: validatedConfig.accessKey,
+						user: validatedConfig.user,
 					}),
 				});
+
 				if (!res.ok) {
 					throw new Error(`Init failed: ${res.status}`);
 				}
-				const data = await res.json();
-				const widgetConfig = data.widgetConfig?.config ?? data.widgetConfig;
-				const mode = data.mode ?? (config.user ? "user" : "visitor");
 
-				let modeConfig = widgetConfig?.screens?.[mode];
+				const raw = await res.json();
+				const data = WIDGET_INIT_RESPONSE.parse(raw);
 
-				// Handle old schema fallback
-				if (!modeConfig && widgetConfig?.screens?.screens) {
-					modeConfig = widgetConfig.screens;
-				}
+				const widgetConfig = data.widgetConfig;
+				const mode = data.mode;
+				const defaultTab = widgetConfig.screens[mode].defaultTab;
 
+				// ✅ Unified state update
 				this.store.setState((state) => ({
 					...state,
-					mode,
-					user: data.user,
-					widgetConfig,
-					activeTab: modeConfig?.defaultTab,
-					isInitialized: true,
+					ui: {
+						...state.ui,
+						isInitialized: true,
+						activeTab: defaultTab,
+					},
+					// session:
+					// 	mode === "visitor"
+					// 		? {
+					// 				mode,
+					// 				sessionId: data,
+					// 			}
+					// 		: {
+					// 				mode,
+					// 				user: data.user,
+					// 				token: data.token, //Short lived token
+					// 			},
+					config: {
+						...state.config,
+						sdk: validatedConfig,
+						widget: widgetConfig,
+					},
 				}));
 
-				console.log("RovoDesk: widget config", widgetConfig);
+				console.log("RovoDesk initialized:", mode);
+
 				this.flushQueue();
 			} catch (err) {
 				console.error("RovoDesk init failed", err);
@@ -163,13 +177,13 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 		this.identifyPromise = (async () => {
 			console.log("RovoDesk: identify", user?.id);
 
-			const config = this.store.getState().sdkConfig;
+			const config = this.store.getState().config.sdk;
 			if (!config) {
 				throw new Error("SDK config not found");
 			}
 
 			try {
-				const res = await fetch(`${config.apiBaseUrl}/auth`, {
+				const res = await fetch(`${config.apiBaseUrl}/identify`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -190,7 +204,14 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 				}
 
 				// store user immediately
-				this.store.setState((state) => ({ ...state, user: config.user }));
+				this.store.setState((state) => ({
+					...state,
+					session: {
+						mode: "user",
+						user,
+						token, //Short lived token
+					},
+				}));
 
 				return token;
 			} catch (err) {
@@ -204,22 +225,25 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 	}
 
 	open() {
-		if (!this.store.getState().isInitialized) {
+		if (!this.store.getState().ui.isInitialized) {
 			console.warn("RovoDesk: queued 'open' action");
 			this.actionQueue.push(() => this.open());
 			return;
 		}
-		
+
 		console.log("RovoDesk: open");
 
 		this.store.setState((state) => ({
 			...state,
-			isOpen: true,
+			ui: {
+				...state.ui,
+				isOpen: true,
+			},
 		}));
 	}
 
 	close() {
-		if (!this.store.getState().isInitialized) {
+		if (!this.store.getState().ui.isInitialized) {
 			this.actionQueue.push(() => this.close());
 			return;
 		}
@@ -227,120 +251,134 @@ class ActionProvider<T extends WidgetState> implements IActionProvider {
 		console.log("RovoDesk: close");
 		this.store.setState((state) => ({
 			...state,
-			isOpen: false,
+			ui: {
+				...state.ui,
+				isOpen: false,
+			},
 		}));
 	}
 
 	track(event: string, data?: unknown) {
-		if (!this.store.getState().isInitialized) {
+		if (!this.store.getState().ui.isInitialized) {
 			this.actionQueue.push(() => this.track(event, data));
 			return;
 		}
 		console.log("Track event", event, data);
 	}
 
-	update(config: Partial<SDKConfig>) {
-		if (!this.store.getState().isInitialized) {
-			this.actionQueue.push(() => this.update(config));
+	updateConfig(config: Partial<SDKConfig>) {
+		if (!this.store.getState().ui.isInitialized) {
+			this.actionQueue.push(() => this.updateConfig(config));
 			return;
 		}
 
 		this.store.setState((state) => ({
 			...state,
-			sdkConfig: {
-				...(state.sdkConfig ?? {}),
-				...config,
+			config: {
+				...state.config,
+				sdk: {
+					...(state.config.sdk ?? {}),
+					...config,
+				},
 			},
 		}));
 	}
 
-	navigate(tab: WidgetTabType) {
-		if (!this.store.getState().isInitialized) {
-			this.actionQueue.push(() => this.navigate(tab));
+	switchTab(tab: WidgetTabType) {
+		if (!this.store.getState().ui.isInitialized) {
+			this.actionQueue.push(() => this.switchTab(tab));
 			return;
 		}
 
 		this.store.setState((state) => ({
 			...state,
-			activeTab: tab,
-			routes: [], // clear route stack when changing tab
+			ui: {
+				...state.ui,
+				activeTab: tab,
+			},
 		}));
 		this.track("navigate", { tab });
 		console.log("RovoDesk: navigate", tab);
 	}
 
-	pushRoute(route: Route) {
-		if (!this.store.getState().isInitialized) {
-			this.actionQueue.push(() => this.pushRoute(route));
-			return;
-		}
-
-		this.store.setState((state) => ({
-			...state,
-			routes: [...(state.routes || []), route],
-		}));
-		this.track("push-route", { route });
-	}
-
-	popRoute() {
-		if (!this.store.getState().isInitialized) {
-			this.actionQueue.push(() => this.popRoute());
-			return;
-		}
-
-		this.store.setState((state) => {
-			const routes = state.routes || [];
-			return {
-				...state,
-				routes: routes.slice(0, -1),
-			};
-		});
-		this.track("pop-route");
-	}
-
 	shutdown() {
-		if (!this.store.getState().isInitialized) {
+		if (!this.store.getState().ui.isInitialized) {
 			this.actionQueue.push(() => this.shutdown());
 			return;
 		}
 
 		this.store.setState((state) => ({
 			...state,
-			isOpen: false,
-			messages: [],
-			routes: [],
+			ui: {
+				...state.ui,
+				isInitialized: false,
+				isOpen: false,
+				activeTab: "welcome",
+			},
+			session: {
+				...state.session,
+				mode: "visitor",
+				user: null,
+				token: null,
+				sessionId: null,
+			},
+			chat: {
+				...state.chat,
+				messages: [],
+			},
+			config: {
+				...state.config,
+				widget: null,
+				sdk: null,
+			},
 		}));
 	}
 
 	addMessage(message: Message): void {
-		if (!this.store.getState().isInitialized) {
+		if (!this.store.getState().ui.isInitialized) {
 			this.actionQueue.push(() => this.addMessage(message));
 			return;
 		}
 
 		switch (message.type) {
 			case "ai":
-				this.messageParser.addAIMessage(message.message, message);
+				this.messageParser.addAIMessage(message.text || "", message);
 				break;
+			case "text":
 			case "user":
-				this.messageParser.addUserMessage(message.message, message);
+				this.messageParser.addUserMessage(message.text || "", message);
 				break;
 			case "visitor":
-				this.messageParser.addVisitorMessage(message.message, message);
+				this.messageParser.addVisitorMessage(message.text || "", message);
 				break;
 			case "admin":
-				this.messageParser.addAdminMessage(message.message, message);
+				this.messageParser.addAdminMessage(message.text || "", message);
 				break;
 			case "system":
-				this.messageParser.addSystemMessage(message.message, message);
+				this.messageParser.addSystemMessage(message.text || "", message);
 				break;
 			case "error":
-				this.messageParser.addError(message.message, message);
+				this.messageParser.addError(message.text || "", message);
 				break;
 			default:
-				this.messageParser.addError("Invalid message type", message);
+				console.warn("Unhandled message type", message.type);
 				break;
 		}
+	}
+
+	setMessages(messages: Message[]): void {
+		if (!this.store.getState().ui.isInitialized) {
+			this.actionQueue.push(() => this.setMessages(messages));
+			return;
+		}
+
+		this.store.setState((state) => ({
+			...state,
+			chat: {
+				...state.chat,
+				messages,
+			},
+		}));
 	}
 }
 

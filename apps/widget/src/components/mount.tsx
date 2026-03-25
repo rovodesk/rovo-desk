@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Window is of any type */
 import {
 	ActionProvider,
 	initialStore,
@@ -10,19 +11,30 @@ import { Widget } from "./widget";
 const globalStore =
 	(window as any).__ROVODESK_STORE__ ??
 	initialStore<WidgetState>({
-		mode: "visitor",
-		isOpen: false,
-		activeTab: "welcome",
-		isInitialized: false
+		ui: {
+			isOpen: false,
+			isInitialized: false,
+			activeTab: "welcome",
+			routes: [],
+		},
+		session: {
+			mode: "visitor",
+		},
+		chat: {
+			messages: [],
+		},
+		config: {
+			widget: null as any,
+			sdk: null as any,
+		},
 	});
 
 (window as any).__ROVODESK_STORE__ = globalStore;
 
 const store = globalStore;
 
-const globalActions = 
-	(window as any).__ROVODESK_ACTIONS__ ??
-	new ActionProvider(store);
+const globalActions =
+	(window as any).__ROVODESK_ACTIONS__ ?? new ActionProvider(store);
 
 (window as any).__ROVODESK_ACTIONS__ = globalActions;
 

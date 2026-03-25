@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { capitalize, Placeholder } from "@zero-heads-lab/shared/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { keys } from "../client";
 import { useAuthContext } from "../client/context";
 import type { MutationOptions, OAuthProvider } from "../types";
@@ -60,27 +60,18 @@ export function useSignIn(options?: UseSignInOptions) {
 				email,
 				name: capitalize(Placeholder.name(2, " ")),
 				callbackURL,
-<<<<<<< HEAD
 			});
 		},
-=======
-			}),
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 		onSuccess: () => {
 			toast.success("Email Sent", {
 				description: "Login link sent to your email inbox.",
 			});
-<<<<<<< HEAD
 			handleSessionSync();
-=======
-			handleSessionSync;
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 		},
 		onError: (err) => options?.onError?.(err),
 	});
 
 	const ssoMutation = useMutation<unknown, Error, { email: string }>({
-<<<<<<< HEAD
 		mutationFn: ({ email }) => {
 			if (!callbackURL) throw new Error("VITE_SIGN_IN_CALLBACK_URL is not set");
 
@@ -89,13 +80,6 @@ export function useSignIn(options?: UseSignInOptions) {
 				callbackURL,
 			});
 		},
-=======
-		mutationFn: ({ email }) =>
-			authClient.signIn.sso({
-				email,
-				callbackURL,
-			}),
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 		onSuccess: handleSessionSync,
 		onError: (err) => options?.onError?.(err),
 	});
@@ -134,6 +118,35 @@ export function useSignIn(options?: UseSignInOptions) {
 			options?.onError?.(err);
 		},
 	});
+
+	// Anonymous user
+	const hasRun = useRef(false);
+	const anonymousUserMutation = useMutation<unknown, Error, void>({
+		mutationFn: async () => {
+			await authClient.signIn.anonymous();
+		},
+		onSuccess: handleSessionSync,
+		onError: (err) => options?.onError?.(err),
+	});
+	useEffect(() => {
+		if (hasRun.current) return;
+
+		hasRun.current = true;
+
+		const run = async () => {
+			try {
+				// 🔑 KEY CHECK
+				const { data } = await authClient.getSession();
+				if (!data?.session?.id) {
+					anonymousUserMutation.mutate();
+				}
+			} catch (err) {
+				options?.onError?.(err as Error);
+			}
+		};
+
+		run();
+	}, [anonymousUserMutation.mutate, authClient.getSession, options?.onError]);
 
 	/* ================================================= */
 	/* ============== PASSKEY AUTO FILL ================ */

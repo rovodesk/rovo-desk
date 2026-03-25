@@ -3,7 +3,13 @@ import { passkey } from "@better-auth/passkey";
 import { scim } from "@better-auth/scim";
 import { sso } from "@better-auth/sso";
 import { stripe } from "@better-auth/stripe";
-import type { Analytics } from "@zero-heads-lab/analytics/types";
+import {
+	MAGIC_LINK_SENT_EVENT,
+	ORGANIZATION_CREATED_EVENT,
+	ORGANIZATION_DELETED_EVENT,
+	ORGANIZATION_INVITATION_SENT_EVENT,
+} from "@zero-heads-lab/analytics/events";
+import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
 import type { KvCacheStore } from "@zero-heads-lab/cache";
 import type { Database } from "@zero-heads-lab/database/conn";
@@ -20,6 +26,7 @@ import {
 import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	admin as adminPlugin,
+	anonymous,
 	type Jwk,
 	jwt,
 	lastLoginMethod,
@@ -28,25 +35,21 @@ import {
 	openAPI,
 	organization,
 } from "better-auth/plugins";
-<<<<<<< HEAD
+import { determineAuthRoles } from "@/helpers";
 import {
 	ADMIN_ROLES,
 	accessControl,
 	DEFAULT_ROLE,
 	Roles,
 } from "../access-control";
-=======
-import { ADMIN_ROLES, accessControl, Roles } from "../access-control";
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 import { AUTH_CONFIG } from "../config";
-import { determineAuthRole } from "../helpers";
 import { keys } from "./keys";
 import { SAML_CONFIG } from "./sso-config";
 
 export const AuthPlugins = (
 	cache: KvCacheStore,
 	database: Database,
-	analytics: Analytics
+	analytics: IAnalytics
 ) => {
 	// const products = getProducts();
 	const cacheStore = cache;
@@ -55,11 +58,32 @@ export const AuthPlugins = (
 		// Magic Link Plugin
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
-				await sendEmail({
-					to: email,
-					subject: "Sign in to your account",
-					react: MagicLinkTemplate({ url }),
-				});
+				try {
+					await sendEmail({
+						to: email,
+						subject: "Sign in to your account",
+						react: MagicLinkTemplate({ url }),
+					});
+					try {
+						analytics.captureEvent(email, MAGIC_LINK_SENT_EVENT, { url });
+					} catch (error) {
+						await analytics.captureException({
+							error,
+							distinctId: email,
+							properties: {
+								url,
+							},
+						});
+					}
+				} catch (error) {
+					await analytics.captureException({
+						error,
+						distinctId: email,
+						properties: {
+							url,
+						},
+					});
+				}
 			},
 		}),
 		//Passkey Plugin
@@ -96,25 +120,57 @@ export const AuthPlugins = (
 				},
 			},
 			sendInvitationEmail: async ({ organization, invitation, inviter }) => {
-				await sendEmail({
-					to: invitation.email,
-					subject: "Invitation to join organization",
-					react: OrganizationInviteTemplate({
-						inviter: {
-							name: inviter.user.name,
-							email: inviter.user.email,
+				try {
+					await sendEmail({
+						to: invitation.email,
+						subject: "Invitation to join organization",
+						react: OrganizationInviteTemplate({
+							inviter: {
+								name: inviter.user.name,
+								email: inviter.user.email,
+							},
+							organization: {
+								name: organization.name,
+								slug: organization.slug,
+							},
+							email: invitation.email,
+							invitation: {
+								id: invitation.id,
+							},
+							acceptLink: "https://localhost:3001/accept-invite",
+						}),
+					});
+					try {
+						await analytics.captureEvent(
+							invitation.email,
+							ORGANIZATION_INVITATION_SENT_EVENT,
+							{
+								organizationId: organization.id,
+								invitationId: invitation.id,
+								role: invitation.role,
+								inviterId: inviter.userId,
+								inviterRole: inviter.role,
+							}
+						);
+					} catch (error) {
+						console.error(
+							"Failed to send organization invitation event",
+							error
+						);
+					}
+				} catch (error) {
+					await analytics.captureException({
+						error,
+						distinctId: invitation.email,
+						properties: {
+							organizationId: organization.id,
+							invitationId: invitation.id,
+							role: invitation.role,
+							inviterId: inviter.userId,
+							inviterRole: inviter.role,
 						},
-						organization: {
-							name: organization.name,
-							slug: organization.slug,
-						},
-						email: invitation.email,
-						invitation: {
-							id: invitation.id,
-						},
-						acceptLink: "https://localhost:3001/accept-invite",
-					}),
-				});
+					});
+				}
 			},
 			organizationHooks: {
 				// biome-ignore lint/suspicious/useAwait: No AWaited function
@@ -140,28 +196,48 @@ export const AuthPlugins = (
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
 					}
-					// Send Analytics Event
-					analytics.captureImmediate({
-						distinctId: organization.id,
-						event: "organization_created",
-						properties: {
-							id: organization.id,
-							name: organization.name,
-							slug: organization.slug,
-						},
-					});
+					try {
+						// Send Analytics Event
+						analytics.captureEvent(
+							organization.id,
+							ORGANIZATION_CREATED_EVENT,
+							{
+								id: organization.id,
+								name: organization.name,
+								slug: organization.slug,
+							}
+						);
+					} catch (error) {
+						console.error("Failed to send organization created event", error);
+					}
 				},
 				afterDeleteOrganization: async ({ organization }) => {
-					// Send Analytics Event
-					analytics.captureImmediate({
-						distinctId: organization.id,
-						event: "organization_deleted",
-						properties: {
-							id: organization.id,
-							name: organization.name,
-							slug: organization.slug,
-						},
-					});
+					try {
+						// Send Analytics Event
+						await analytics.captureEvent(
+							organization.id,
+							ORGANIZATION_DELETED_EVENT,
+							{
+								id: organization.id,
+								name: organization.name,
+								slug: organization.slug,
+							}
+						);
+					} catch (error) {
+						try {
+							await analytics.captureException({
+								error,
+								distinctId: organization.id,
+								properties: {
+									id: organization.id,
+									name: organization.name,
+									slug: organization.slug,
+								},
+							});
+						} catch (error) {
+							console.error("Failed to delete organization", error);
+						}
+					}
 				},
 			},
 		}),
@@ -206,67 +282,88 @@ export const AuthPlugins = (
 			roles: {
 				...Roles,
 			},
-<<<<<<< HEAD
 			defaultRole: DEFAULT_ROLE,
-=======
-			defaultRole: "anonymous",
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 			adminRoles: [...ADMIN_ROLES],
 			impersonationSessionDuration:
 				AUTH_CONFIG.IMPERSONATION_SESSION_DURATION_IN_SECS,
 		}),
-		apiKey({
-			defaultPrefix: AUTH_CONFIG.API_KEY_DEFAULT_PREFIX,
-			references: "organization", // Owned by organizations
-			rateLimit: {
-				enabled: true,
-				maxRequests: AUTH_CONFIG.API_KEY_RATE_LIMIT_MAX_REQUESTS,
-				timeWindow: AUTH_CONFIG.API_KEY_RATE_LIMIT_TIME_WINDOW,
+		apiKey([
+			{
+				configId: "public",
+				defaultPrefix: "rovodesk_pk_",
+				references: "organization",
+				rateLimit: {
+					enabled: true,
+					maxRequests: 100,
+					timeWindow: 1000 * 60 * 60, // 1 hour
+				},
+				disableKeyHashing: true,
+				fallbackToDatabase: true,
+				customStorage: {
+					get: async (key) => {
+						// Custom get logic for API keys
+						return await cacheStore.get(key);
+					},
+					set: async (key, value, ttl) => {
+						// Custom set logic for API keys
+						await cacheStore.set(key, value, ttl);
+					},
+					delete: async (key) => {
+						// Custom delete logic for API keys
+						await cacheStore.delete(key);
+					},
+				},
 			},
-			storage: "secondary-storage",
-			fallbackToDatabase: true,
-			enableMetadata: true,
-			customStorage: {
-				get: async (key) => {
-					// Custom get logic for API keys
-					return await cacheStore.get(key);
+			{
+				configId: "secret",
+				defaultPrefix: "rovodesk_sk_",
+				references: "organization", // Owned by organizations
+				enableMetadata: true,
+				fallbackToDatabase: true,
+				rateLimit: {
+					enabled: true,
+					maxRequests: 1000,
+					timeWindow: 1000 * 60 * 60, // 1 hour
 				},
-				set: async (key, value, ttl) => {
-					// Custom set logic for API keys
-					await cacheStore.set(key, value, ttl);
-				},
-				delete: async (key) => {
-					// Custom delete logic for API keys
-					await cacheStore.delete(key);
+				customStorage: {
+					get: async (key) => {
+						// Custom get logic for API keys
+						return await cacheStore.get(key);
+					},
+					set: async (key, value, ttl) => {
+						// Custom set logic for API keys
+						await cacheStore.set(key, value, ttl);
+					},
+					delete: async (key) => {
+						// Custom delete logic for API keys
+						await cacheStore.delete(key);
+					},
 				},
 			},
-		}),
+		]),
 		jwt({
-			jwks: {
-				keyPairConfig: {
-					alg: AUTH_CONFIG.JWT_ALGORITHM,
-				},
-				jwksPath: "/.well-known/jwks.json",
-			},
+			alg: AUTH_CONFIG.JWT_ALGORITHM,
+			jwksPath: "/.well-known/jwks.json",
 			jwt: {
 				issuer: keys.BETTER_AUTH_URL,
 				expirationTime: "1h",
 				getSubject: (session) => session.user.id,
-				definePayload: ({ user }) => ({
-					id: user.id,
-					email: user.email,
-					verified: !!user.emailVerified,
-					role: determineAuthRole(user.role),
-					deleted: !!user.deletedAt,
-				}),
+				definePayload: ({ user }) => {
+					return {
+						id: user.id,
+						email: user.email,
+						verified: !!user.emailVerified,
+						role: determineAuthRoles(user.role),
+						isAnonymous: !!user.isAnonymous,
+						deleted: !!user.deletedAt,
+					};
+				},
 			},
 			adapter: {
 				async getJwks() {
 					const keys = await cacheStore.get<Jwk[]>("jwks");
-
 					return keys ?? [];
 				},
-
 				async createJwk(data) {
 					const id = crypto.randomUUID();
 
@@ -300,5 +397,35 @@ export const AuthPlugins = (
 			],
 		}),
 		scim(),
+		// Anonymous Users Plugin
+		anonymous({
+			generateName: () => {
+				return `anonymous-${Placeholder.name(2, "-")}`;
+			},
+			onLinkAccount: async ({ anonymousUser, newUser }) => {
+				// Send Analytics Event
+				try {
+					// 2️⃣ Identify the real user
+					await analytics.identify(newUser.user.id, anonymousUser.user.id, {
+						name: newUser.user.name,
+						email: newUser.user.email,
+						avatar: newUser.user.image,
+					});
+				} catch (error) {
+					try {
+						await analytics.captureException({
+							error,
+							distinctId: newUser.user.id,
+							properties: {
+								anonymousUserId: anonymousUser.user.id,
+								newUserId: newUser.user.id,
+							},
+						});
+					} catch (error) {
+						console.error("Failed to link anonymous account", error);
+					}
+				}
+			},
+		}),
 	];
 };

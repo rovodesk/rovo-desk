@@ -6,6 +6,7 @@ export type RouterContext = {
 	auth: {
 		session: Session | null;
 		isAuthenticated: boolean;
+		isAnonymous: boolean;
 		onboarding?: {
 			isCompleted: boolean;
 			currentStep: string;

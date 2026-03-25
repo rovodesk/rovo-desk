@@ -2,15 +2,9 @@ import type { SAMLConfig } from "@better-auth/sso";
 import { keys } from "./keys";
 
 export const SAML_CONFIG: SAMLConfig = {
-<<<<<<< HEAD
 	issuer: "http://localhost:3000/api/auth/sso/saml2/sp/metadata",
 	entryPoint: "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP EntityID
 	cert: `-----BEGIN CERTIFICATE-----
-=======
-    issuer: "http://localhost:3000/api/auth/sso/saml2/sp/metadata",
-    entryPoint: "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP EntityID
-    cert: `-----BEGIN CERTIFICATE-----
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
 BQAwEzERMA8GA1UEAwwIZHVtbXlpZHAwHhcNMjQwNTEzMjE1NDE2WhcNMzQwNTEx
 MjE1NDE2WjATMREwDwYDVQQDDAhkdW1teWlkcDCCASIwDQYJKoZIhvcNAQEBBQAD
@@ -29,13 +23,8 @@ QkdgdR8Gd/XZ4NZfoOnKV7A1utT4rWxYCgICeRTHx9tly5OhPW4hQr5qOpngcsJ9
 vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m+
 jzGhYL6m9gFTm/8=
 -----END CERTIFICATE-----`,
-<<<<<<< HEAD
 	spMetadata: {
 		metadata: `
-=======
-    spMetadata: {
-        metadata: `
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 				  <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://localhost:3000/api/auth/sso/saml2/sp/metadata">
 		  <md:SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
 			  <md:KeyDescriptor use="signing">
@@ -72,7 +61,6 @@ jzGhYL6m9gFTm/8=
 		  </md:ContactPerson>
 		  </md:EntityDescriptor>
 		  `,
-<<<<<<< HEAD
 	},
 	idpMetadata: {
 		entityURL:
@@ -87,22 +75,6 @@ jzGhYL6m9gFTm/8=
 			},
 		],
 		cert: `-----BEGIN CERTIFICATE-----
-=======
-    },
-    idpMetadata: {
-        entityURL:
-            "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/metadata", // IDP metadata url
-        entityID: "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6", // IDP EntityID
-        redirectURL: "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP redirect url
-        singleSignOnService: [
-            {
-                Binding: "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-                Location:
-                    "https://dummyidp.com/apps/app_01kkbv3a3nm36xk4drs8p2d8b6/sso", // IDP redirect url
-            },
-        ],
-        cert: `-----BEGIN CERTIFICATE-----
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 MIIDBzCCAe+gAwIBAgIUCLBK4f75EXEe4gyroYnVaqLoSp4wDQYJKoZIhvcNAQEL
 BQAwEzERMA8GA1UEAwwIZHVtbXlpZHAwHhcNMjQwNTEzMjE1NDE2WhcNMzQwNTEx
 MjE1NDE2WjATMREwDwYDVQQDDAhkdW1teWlkcDCCASIwDQYJKoZIhvcNAQEBBQAD
@@ -121,11 +93,6 @@ QkdgdR8Gd/XZ4NZfoOnKV7A1utT4rWxYCgICeRTHx9tly5OhPW4hQr5qOpngcsJ9
 vhr86IjznQXhfj3hql5lA3VbHW04ro37ROIkh2bShDq5dwJJHpYCGrF3MQv8S3m+
 jzGhYL6m9gFTm/8=
 -----END CERTIFICATE-----`,
-<<<<<<< HEAD
 	},
 	callbackUrl: `${keys.END_USER_DASHBOARD_URL}/dashboard`,
-=======
-    },
-    callbackUrl: `${keys.END_USER_DASHBOARD_URL}/dashboard`,
->>>>>>> a5d2a16 (feat: added sso auth with dummy idp and created shared auth application)
 };

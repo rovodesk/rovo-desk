@@ -15,6 +15,7 @@
   "dependencies": {
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "drizzle-orm": "^0.45.1",
     "postgres": "^3.4.8",

@@ -20,19 +20,6 @@ type WorkspaceProfileData = Awaited<
 	ReturnType<typeof orpcQuery.profile.workspace.get.call>
 >;
 
-type UpdateWorkspaceSettingsInput = Parameters<
-	typeof orpcQuery.profile.workspace.update.call
->[0];
-
-type UpdateWorkspaceSettingsMutationOptions = Omit<
-	UseMutationOptions<
-		Awaited<ReturnType<typeof orpcQuery.profile.workspace.update.call>>,
-		Error,
-		UpdateWorkspaceSettingsInput
-	>,
-	"mutationFn"
->;
-
 type clearOnboardingProgressMutationOptions = Omit<
 	UseMutationOptions<
 		Awaited<ReturnType<typeof orpcQuery.profile.onboarding.clear.call>>,
@@ -69,26 +56,11 @@ type PersistOnboardingProgressMutationOptions = Omit<
 	"mutationFn"
 >;
 
-type ToggleUserActiveInput = Parameters<
-	typeof orpcQuery.profile.user.toggleActive.call
->[0];
-
-type ToggleUserActiveMutationOptions = Omit<
-	UseMutationOptions<
-		Awaited<ReturnType<typeof orpcQuery.profile.user.toggleActive.call>>,
-		Error,
-		ToggleUserActiveInput
-	>,
-	"mutationFn"
->;
-
 export function useProfile(
 	workspaceProfileQueryOptions?: WorkspaceProfileQueryOptions,
 	onboardingProgressQueryOptions?: OnboardingProgressQueryOptions,
-	updateWorkspaceSettingsOptions?: UpdateWorkspaceSettingsMutationOptions,
 	clearOnboardingProgressOptions?: clearOnboardingProgressMutationOptions,
 	persistOnboardingProgressOptions?: PersistOnboardingProgressMutationOptions,
-	toggleUserActiveOptions?: ToggleUserActiveMutationOptions,
 	userProfileQueryOptions?: UserProfileQueryOptions
 ) {
 	const queryClient = useQueryClient();
@@ -161,24 +133,67 @@ export function useProfile(
 
 	const updateWorkspaceSettingsMutation = useMutation({
 		...orpcQuery.profile.workspace.update.mutationOptions({
-			onSuccess: () => {
+			onMutate: async (variables) => {
+				await queryClient.cancelQueries({
+					queryKey: workspaceQueryOptions.queryKey,
+				});
+
+				const previous = queryClient.getQueryData(
+					workspaceQueryOptions.queryKey
+				);
+
+				queryClient.setQueryData(
+					workspaceQueryOptions.queryKey,
+					(old: WorkspaceProfileData) => ({
+						...old,
+						settings: variables.settings,
+					})
+				);
+
+				return { previous };
+			},
+			onError: (_err, _vars, context) => {
+				queryClient.setQueryData(
+					workspaceQueryOptions.queryKey,
+					context?.previous
+				);
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries({
 					queryKey: workspaceQueryOptions.queryKey,
 				});
 			},
 		}),
-		...updateWorkspaceSettingsOptions,
 	});
 
 	const toggleUserActiveMutation = useMutation({
 		...orpcQuery.profile.user.toggleActive.mutationOptions({
-			onSuccess: () => {
+			onMutate: async (variables) => {
+				await queryClient.cancelQueries({
+					queryKey: userQueryOptions.queryKey,
+				});
+
+				const previous = queryClient.getQueryData(userQueryOptions.queryKey);
+
+				queryClient.setQueryData(
+					userQueryOptions.queryKey,
+					(old: UserProfileData) => ({
+						...old,
+						isActive: variables.active,
+					})
+				);
+
+				return { previous };
+			},
+			onError: (_err, _vars, context) => {
+				queryClient.setQueryData(userQueryOptions.queryKey, context?.previous);
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries({
 					queryKey: userQueryOptions.queryKey,
 				});
 			},
 		}),
-		...toggleUserActiveOptions,
 	});
 
 	const loading =
@@ -211,7 +226,7 @@ export function useProfile(
 		updateWorkspaceSettings: updateWorkspaceSettingsMutation.mutate,
 		updateWorkspaceSettingsAsync: updateWorkspaceSettingsMutation.mutateAsync,
 
-		// Toggle User Away
+		// Toggle User Active
 		toggleUserActive: toggleUserActiveMutation.mutate,
 		toggleUserActiveAsync: toggleUserActiveMutation.mutateAsync,
 
