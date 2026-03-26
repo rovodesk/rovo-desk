@@ -30,9 +30,9 @@ export const observabilityMiddleware: MiddlewareHandler<{
 	// Initial context
 	logger.setContext({ rayId });
 
-	c.set("Analytics", analytics);
-	c.set("Logger", logger);
-	c.set("Tracer", tracer);
+	c.set("ANALYTICS", analytics);
+	c.set("LOGGER", logger);
+	c.set("TRACER", tracer);
 
 	const start = Date.now();
 

@@ -22,13 +22,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_DB: zero-heads
-      POSTGRES_PASSWORD: Password
+      POSTGRES_USER: test
+      POSTGRES_DB: testdb
+      POSTGRES_PASSWORD: test
     volumes:
       - ./.docker/data/postgres/data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d zero-heads"]
+      test: ["CMD-SHELL", "pg_isready -U test -d testdb"]
       interval: 10s
 
   # mongodb:

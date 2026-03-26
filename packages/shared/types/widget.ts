@@ -12,7 +12,7 @@ import type {
 	WidgetScreenConfigSchema,
 	WidgetScreenSchema,
 } from "validations/widget";
-import type z from "zod";
+import type { z } from "zod";
 
 export type WidgetAppearance = z.infer<typeof WidgetAppearanceSchema>;
 

@@ -1,12 +1,12 @@
 {
   "Servers": {
     "1": {
-      "Name": "Local PostgreSQL",
+      "Name": "Local PostgreSQL Test Server",
       "Group": "Local Servers",
       "Host": "postgres",
       "Port": 5432,
-      "MaintenanceDB": "zero-heads",
-      "Username": "user",
+      "MaintenanceDB": "testdb",
+      "Username": "test",
       "ConnectionParameters": {
         "sslmode": "prefer",
         "connect_timeout": 10

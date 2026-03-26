@@ -1,4 +1,4 @@
-import type { PostHog } from "posthog-node";
+import type { FlagEvaluationOptions, PostHog } from "posthog-node";
 import { getPostHogClient } from "./posthog";
 
 export interface IAnalytics {
@@ -90,6 +90,16 @@ export class Analytics implements IAnalytics {
 				$anon_id: anonId,
 			},
 		});
+	}
+
+	async getFeatureFlag({
+		featureFlag,
+		options,
+	}: {
+		featureFlag: string;
+		options?: FlagEvaluationOptions;
+	}) {
+		return await this.posthog.getFeatureFlagResult(featureFlag, options);
 	}
 
 	async shutdown(timeout?: number) {

@@ -2,7 +2,7 @@ import { ORPCError } from "@orpc/server";
 import { base } from "../context";
 
 export const AuthGuard = base.middleware(async ({ context, next }) => {
-	const auth = await context.auth;
+	const { auth, reqHeaders } = context;
 	if (!auth) {
 		// This should NEVER happen if wired correctly
 		throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -10,14 +10,13 @@ export const AuthGuard = base.middleware(async ({ context, next }) => {
 		});
 	}
 
-	const headers = context.reqHeaders;
-	if (!headers) {
+	if (!reqHeaders) {
 		throw new ORPCError("BAD_REQUEST", {
 			message: "No headers provided",
 		});
 	}
 
-	const sessionData = await auth.api.getSession({ headers });
+	const sessionData = await auth.api.getSession({ headers: reqHeaders });
 
 	if (!(sessionData?.session && sessionData?.user)) {
 		throw new ORPCError("UNAUTHORIZED", {

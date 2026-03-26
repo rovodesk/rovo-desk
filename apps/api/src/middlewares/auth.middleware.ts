@@ -1,5 +1,6 @@
 import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
 import { createAuth } from "@zero-heads-lab/auth/server";
+import { createDatabase } from "@zero-heads-lab/database";
 import type { MiddlewareHandler } from "hono";
 import type { Bindings, Variables } from "../types";
 // middleware/auth-middleware.ts
@@ -8,16 +9,20 @@ export const authMiddleware = (): MiddlewareHandler<{
 	Variables: Variables;
 }> => {
 	return async (c, next) => {
-		const logger = c.get("Logger");
-		const tracer = c.get("Tracer");
-		const analytics = c.get("Analytics");
+		const logger = c.get("LOGGER");
+		const tracer = c.get("TRACER");
+		const analytics = c.get("ANALYTICS");
+		const database = c.get("DATABASE");
 
+		const { db } = await createDatabase(c.env.DATABASE_URL, logger);
 		// 1. Trace the session lookup
 		const session = await tracer.withSpan("auth.get_session", async (span) => {
 			const auth = await createAuth(
 				c.env.CACHE_STORE,
+				database,
 				analytics,
-				logger.derive({ component: "better-auth" })
+				logger.derive({ component: "auth" }),
+				tracer
 			);
 
 			const sessionData = await auth.api.getSession({
@@ -45,8 +50,8 @@ export const authMiddleware = (): MiddlewareHandler<{
 		}
 
 		// 3. Inject for Route Handlers
-		c.set("User", session.user);
-		c.set("Session", session.session);
+		c.set("USER", session.user);
+		c.set("SESSION", session.session);
 
 		await next();
 	};

@@ -1,17 +1,21 @@
 import { defineConfig } from "drizzle-kit";
-import { keys } from "../keys";
 
 export function createDrizzleConfig(
+	url: string,
 	schemaFile: string,
 	migrationFolder?: string,
 	overrides?: Partial<Parameters<typeof defineConfig>[0]>
 ) {
+	if (!url) {
+		throw new Error("Database URL is required for Drizzle config");
+	}
+
 	return defineConfig({
 		schema: schemaFile,
 		out: migrationFolder ?? "./drizzle/migrations",
 		dialect: "postgresql",
 		dbCredentials: {
-			url: keys.DATABASE_URL,
+			url,
 		},
 		migrations: {
 			table: "__migrations__",
@@ -22,6 +26,6 @@ export function createDrizzleConfig(
 				provider: "postgres",
 			},
 		},
-		...overrides, // Must be at the end
+		...overrides,
 	});
 }

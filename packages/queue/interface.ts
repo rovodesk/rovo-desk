@@ -1,9 +1,26 @@
-export interface IQueue {
-	publish(queue: string, message: string, jobName?: string): Promise<void>;
-	consume(
-		queue: string,
-		callback: (message: string) => Promise<void>
-	): Promise<void> | void;
+export interface QueueJob<T = unknown> {
+	data: T;
+	job: string;
+	metadata?: {
+		id?: string;
+		traceId?: string;
+		userId?: string;
+		orgId?: string;
+		timestamp?: string;
+	};
 }
 
-export type QueueBindings = Record<string, Queue>;
+export interface IQueueService {
+	enqueue<T>(data: T, options?: QueueSendOptions): Promise<void>;
+	enqueueBatch<T>(data: T[], options?: QueueSendBatchOptions): Promise<void>;
+
+	enqueueJob<T>(
+		payload: QueueJob<T>,
+		options?: QueueSendOptions
+	): Promise<void>;
+
+	enqueueJobBatch<T>(
+		payloads: QueueJob<T>[],
+		options?: QueueSendBatchOptions
+	): Promise<void>;
+}

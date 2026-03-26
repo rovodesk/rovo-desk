@@ -26,7 +26,8 @@
     "nitro": "npm:nitro-nightly@3.0.1-20260128-211656-ae83c97e",
     "yjs": "^13.6.29",
     "@biomejs/biome": "2.3.10",
-    "recharts": "^3.8.0"
+    "recharts": "^3.8.0",
+    "dotenv": "^17.2.3"
   },
   "catalogs": {
     "partykit": {
@@ -60,7 +61,8 @@
       "jsdom": "^27.0.0",
       "@playwright/test": "1.58.2",
       "@cloudflare/vitest-pool-workers": "^0.13.4",
-      "@vitest/ui": "^4.1.1"
+      "@vitest/ui": "^4.1.1",
+      "testcontainers": "^11.13.0"
     },
     "tanstack": {
       "@tanstack/react-devtools": "^0.7.0",
@@ -99,6 +101,10 @@
       "@better-auth/scim": "1.5.5",
       "@better-auth/sso": "1.5.5",
       "@better-auth/stripe": "1.5.5"
+    },
+    "drizzle": {
+      "drizzle-orm": "^0.45.1",
+      "drizzle-kit": "^0.31.8"
     }
   },
   "scripts": {
@@ -114,8 +120,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@types/bun": "latest",
     "@zero-heads-lab/typescript-config": "workspace:*",
     "commitizen": "^4.3.1",

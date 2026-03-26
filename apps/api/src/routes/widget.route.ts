@@ -1,5 +1,4 @@
-import { createDatabase } from "@zero-heads-lab/database";
-import { getWidgetByOrganizationId } from "@zero-heads-lab/database/repositories/widget/queries";
+import { WidgetRepository } from "@zero-heads-lab/database/repositories/widget";
 import { WIDGET_INIT_REQUEST } from "@zero-heads-lab/shared/contracts/api/widget";
 import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
@@ -27,9 +26,13 @@ widgetRoute.post("/init", async (c) => {
 
 	const { organizationId } = parsed.data;
 
+	const database = c.get("DATABASE");
+	const tracer = c.get("TRACER");
+
+	const repo = new WidgetRepository(database, tracer);
+
 	// Load widget config
-	const db = await createDatabase();
-	const widget = await getWidgetByOrganizationId(db, { organizationId });
+	const widget = await repo.query.getWidgetByOrganizationId({ organizationId });
 	if (!widget) {
 		return c.json(
 			{ error: "Widget not found, please check your organizationId" },
@@ -105,7 +108,7 @@ widgetRoute.post("/identify", async (c) => {
  */
 // widgetRoute.use("/chatroom/*", widgetAuthMiddleware);
 widgetRoute.all("/chatroom/*", async (c) => {
-	const identity = c.get("Identity");
+	const identity = c.get("IDENTITY");
 
 	const roomId =
 		identity["x-role"] === "authenticated"

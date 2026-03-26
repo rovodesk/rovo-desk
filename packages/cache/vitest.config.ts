@@ -7,6 +7,7 @@ export default mergeConfig(
 		test: {
 			name: "cache",
 			environment: "node",
+			include: ["test/**/*.test.ts", "test/**/*.spec.ts"],
 		},
 	})
 );

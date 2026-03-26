@@ -1,10 +1,13 @@
 {
   "extends": "@zero-heads-lab/typescript-config/base.json",
+  "references": [{ "path": "./tsconfig.test.json" }],
   "compilerOptions": {
+    "incremental": true,
+    "composite": true,
     "baseUrl": ".",
     "strictNullChecks": true,
-    "types": ["@cloudflare/workers-types", "@types/bun"]
+    "types": ["@cloudflare/workers-types"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "test"]
 }

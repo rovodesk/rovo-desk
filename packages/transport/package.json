@@ -20,8 +20,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "catalog:"

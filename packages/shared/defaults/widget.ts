@@ -1,9 +1,10 @@
+import { Placeholder } from "utils";
 import type { WidgetConfig } from "../types/widget";
 
-export function defaultWidgetConfig(
+export const defaultWidgetConfig = (
 	companyName = "Acme",
-	logo?: string
-): WidgetConfig {
+	logo: string = Placeholder.logo(companyName, "shapes")
+): WidgetConfig => {
 	return {
 		theme: {
 			primaryColor: "#2563eb",
@@ -207,4 +208,4 @@ export function defaultWidgetConfig(
 			programmaticControl: false,
 		},
 	};
-}
+};

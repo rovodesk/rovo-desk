@@ -1,6 +1,3 @@
-import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
-import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
-import type { Tracer } from "@zero-heads-lab/analytics/lib/tracer";
 import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
 import { Hono } from "hono";
 import { AuthError } from "../lib/errors/auth.error";
@@ -12,9 +9,11 @@ export const authRoute = new Hono<{
 }>();
 
 authRoute.on(["POST", "GET"], "/:path{.*}", async (c) => {
-	const analytics: IAnalytics = c.get("Analytics");
-	const logger: ILogger = c.get("Logger");
-	const tracer: Tracer = c.get("Tracer");
+	const analytics = c.get("ANALYTICS");
+	const logger = c.get("LOGGER");
+	const tracer = c.get("TRACER");
+	const database = c.get("DATABASE");
+	const cache = c.env.CACHE_STORE;
 
 	return await tracer.withSpan("auth.handler", async (span) => {
 		const path = c.req.param("path");
@@ -23,7 +22,7 @@ authRoute.on(["POST", "GET"], "/:path{.*}", async (c) => {
 		span.setAttribute("auth.path", path);
 		span.setAttribute("auth.method", c.req.method);
 
-		const auth = await createAuth(c.env.CACHE_STORE, analytics, logger);
+		const auth = await createAuth(cache, database, analytics, logger);
 
 		try {
 			const response = await auth.handler(c.req.raw);

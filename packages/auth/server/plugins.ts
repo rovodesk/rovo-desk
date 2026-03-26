@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/useAwait: need to await */
 import { apiKey } from "@better-auth/api-key";
 import { passkey } from "@better-auth/passkey";
 import { scim } from "@better-auth/scim";
@@ -11,9 +12,8 @@ import {
 } from "@zero-heads-lab/analytics/events";
 import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
 import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import type { KvCacheStore } from "@zero-heads-lab/cache";
-import type { Database } from "@zero-heads-lab/database/conn";
-import { createOrganizationWithProfileAndWidgetTX } from "@zero-heads-lab/database/repositories/auth/mutations";
+import type { ICacheStore } from "@zero-heads-lab/cache";
+import type { IAuthRepository } from "@zero-heads-lab/database/repositories/auth/auth.types";
 import { sendEmail } from "@zero-heads-lab/email";
 import {
 	MagicLinkTemplate,
@@ -35,6 +35,7 @@ import {
 	multiSession,
 	openAPI,
 	organization,
+	testUtils,
 } from "better-auth/plugins";
 import { determineAuthRoles } from "@/helpers";
 import {
@@ -47,23 +48,11 @@ import { AUTH_CONFIG } from "../config";
 import { keys } from "./keys";
 import { SAML_CONFIG } from "./sso-config";
 
-type AuthPluginOptions = {
-	minimal?: boolean;
-	enableEnterprise?: boolean;
-	enableBilling?: boolean;
-};
-
 export const AuthPlugins = async (
-	cache: KvCacheStore,
-	database: Database,
-	analytics: IAnalytics,
-	options: AuthPluginOptions = {}
+	cache: ICacheStore,
+	authRepository: IAuthRepository,
+	analytics: IAnalytics
 ): Promise<BetterAuthPlugin[]> => {
-	const {
-		minimal = false,
-		enableEnterprise = !minimal,
-		enableBilling = !minimal,
-	} = options;
 	// const products = getProducts();
 	const cacheStore = cache;
 
@@ -186,7 +175,6 @@ export const AuthPlugins = async (
 				}
 			},
 			organizationHooks: {
-				// biome-ignore lint/suspicious/useAwait: No AWaited function
 				beforeCreateOrganization: async ({ organization }) => {
 					//TODO: Check billing plan
 					console.log("Creating Organization", organization);
@@ -201,11 +189,13 @@ export const AuthPlugins = async (
 					try {
 						const logo =
 							organization.logo || Placeholder.logo(organization.name, "glass");
-						await createOrganizationWithProfileAndWidgetTX(database, {
-							organizationId: organization.id,
-							workspaceConfig: defaultWorkspaceSettings(logo),
-							widgetConfig: defaultWidgetConfig(organization.name, logo),
-						});
+						await authRepository.mutation.createOrganizationWithProfileAndWidgetTX(
+							{
+								organizationId: organization.id,
+								workspaceConfig: defaultWorkspaceSettings(logo),
+								widgetConfig: defaultWidgetConfig(organization.name, logo),
+							}
+						);
 					} catch (error) {
 						console.error("Failed to create chatbot", error);
 					}
@@ -260,6 +250,9 @@ export const AuthPlugins = async (
 		}),
 		// OPENAPI Plugin
 		...(process.env.NODE_ENV !== "production" ? [openAPI()] : []),
+		// Test Utils
+		...(process.env.NODE_ENV !== "production" ? [testUtils()] : []),
+		//Last Login Method Plugin
 		lastLoginMethod({
 			storeInDatabase: true,
 			customResolveMethod: (ctx) => {
@@ -421,51 +414,34 @@ export const AuthPlugins = async (
 				}
 			},
 		}),
+		stripe({
+			stripeClient,
+			stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
+			createCustomerOnSignUp: false,
+			subscription: {
+				enabled: true,
+				plans: () =>
+					UserPlans.map((plan) => ({
+						id: plan.priceId,
+						name: plan.name,
+						annualDiscountPriceId: plan.annualDiscountPriceId,
+						limits: plan.limits,
+						freeTrial: plan.freeTrial,
+					})),
+				requireEmailVerification: true,
+			},
+		}),
+		sso({
+			defaultSSO: [
+				{
+					domain: keys.BETTER_AUTH_URL,
+					providerId: "sso",
+					samlConfig: SAML_CONFIG,
+				},
+			],
+		}),
+		scim(),
 	];
 
-	const billingPlugins = enableBilling
-		? [
-				stripe({
-					stripeClient,
-					stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
-					createCustomerOnSignUp: false,
-					subscription: {
-						enabled: true,
-						plans: () =>
-							UserPlans.map((plan) => ({
-								id: plan.priceId,
-								name: plan.name,
-								annualDiscountPriceId: plan.annualDiscountPriceId,
-								limits: plan.limits,
-								freeTrial: plan.freeTrial,
-							})),
-						requireEmailVerification: true,
-					},
-				}),
-			]
-		: [];
-
-	const enterprisePlugins = enableEnterprise
-		? await (async () => {
-				const [{ sso }, { scim }] = await Promise.all([
-					import("@better-auth/sso"),
-					import("@better-auth/scim"),
-				]);
-
-				return [
-					sso({
-						defaultSSO: [
-							{
-								domain: keys.BETTER_AUTH_URL,
-								providerId: "sso",
-								samlConfig: SAML_CONFIG,
-							},
-						],
-					}),
-					scim(),
-				];
-			})()
-		: [];
-
-	return [...basePlugins, ...billingPlugins, ...enterprisePlugins];
+	return [...basePlugins];
 };

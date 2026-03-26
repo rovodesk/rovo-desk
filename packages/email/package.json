@@ -11,15 +11,15 @@
     "@react-email/render": "catalog:email",
     "@t3-oss/env-core": "catalog:",
     "react": "catalog:react19",
-    "react-dom": "catalog:react19",
     "resend": "catalog:email",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@zero-heads-lab/queue": "workspace:*",
+    "@zero-heads-lab/analytics": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
     "@types/react": "catalog:react19",
-    "@types/react-dom": "catalog:react19",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "catalog:"

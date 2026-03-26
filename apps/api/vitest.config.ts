@@ -18,7 +18,7 @@ export default mergeConfig(
 		},
 		test: {
 			name: "api",
-			include: ["test/**/*.spec.ts", "test/**/*.test.ts"],
+			include: ["**/*.spec.ts", "**/*.test.ts"],
 			coverage: {
 				enabled: true,
 			},

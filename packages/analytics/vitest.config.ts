@@ -6,6 +6,7 @@ export default mergeConfig(
 	defineConfig({
 		test: {
 			name: "analytics",
+			include: ["test/**/*.test.ts", "test/**/*.spec.ts"],
 		},
 	})
 );

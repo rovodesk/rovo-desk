@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 export const WidgetAppearanceSchema = z.object({
 	primaryColor: z.string(),

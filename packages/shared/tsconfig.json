@@ -1,10 +1,11 @@
 {
   "extends": "@zero-heads-lab/typescript-config/base.json",
+  "references": [{ "path": "./tsconfig.test.json" }],
   "compilerOptions": {
+    "composite": false,
     "baseUrl": ".",
-    "strictNullChecks": true,
-    "types": ["@types/bun"]
+    "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "test", "dist"]
 }

@@ -13,8 +13,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
   },
   "peerDependencies": {
     "typescript": "catalog:"

@@ -5,7 +5,6 @@ import type { AuthSession, AuthUser } from "@zero-heads-lab/auth/types";
 import type { Database } from "@zero-heads-lab/database";
 
 export type Bindings = {
-	DATABASE: Database;
 	KNOWLEDGE_BASE: DurableObjectNamespace;
 	CHAT_ROOM: DurableObjectNamespace;
 	CACHE_STORE: KVNamespace;
@@ -22,12 +21,13 @@ export type Bindings = {
 };
 
 export type Variables = {
-	Analytics: Analytics;
-	Identity: Identity;
-	Logger: Logger;
-	Tracer: Tracer;
-	Session: AuthSession | null;
-	User: AuthUser | null;
+	ANALYTICS: Analytics;
+	IDENTITY: Identity;
+	LOGGER: Logger;
+	TRACER: Tracer;
+	DATABASE: Database;
+	SESSION: AuthSession | null;
+	USER: AuthUser | null;
 };
 
 export type Identity = {

@@ -7,14 +7,13 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@t3-oss/env-core": "catalog:",
-    "@zero-heads-lab/shared": "workspace:*",
-    "bullmq": "^5.67.2",
-    "zod": "catalog:"
+    "@zero-heads-lab/analytics": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
-    "@zero-heads-lab/typescript-config": "workspace:*"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
   },
   "peerDependencies": {
     "typescript": "catalog:"

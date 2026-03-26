@@ -1,10 +1,11 @@
 import { createEnv } from "@t3-oss/env-core";
 import { keys as analyticsKeys } from "@zero-heads-lab/analytics/server/keys";
 import { keys as billingKeys } from "@zero-heads-lab/billing/keys";
+import { keys as databaseKeys } from "@zero-heads-lab/database/keys";
 import z from "zod";
 
 export const keys = createEnv({
-	extends: [billingKeys, analyticsKeys],
+	extends: [billingKeys, analyticsKeys, databaseKeys],
 	server: {
 		BETTER_AUTH_SECRET: z.string(),
 		BETTER_AUTH_URL: z.url(),

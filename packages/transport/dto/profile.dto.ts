@@ -6,11 +6,14 @@ export const UPDATE_ONBOARDING_PROGRESS_INPUT_DTO = z.object({
 });
 
 export const GET_ONBOARDING_PROGRESS_OUTPUT_DTO = z.object({
+	userId: z.string(),
 	currentStepId: z.string().nullable(),
-	flowData: z.record(z.string(), z.unknown()).optional(),
+	flowData: z.record(z.string(), z.unknown()).nullable(),
 	startedAt: z.date().nullable(),
 	completedAt: z.date().nullable(),
 	skippedAt: z.date().nullable(),
+	updatedAt: z.date().nullable(),
+	deletedAt: z.date().nullable(),
 });
 
 export const UPDATE_WORKSPACE_SETTINGS_INPUT_DTO = z.object({

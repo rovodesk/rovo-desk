@@ -1,6 +1,5 @@
 import { createAuth } from "@zero-heads-lab/auth/server/better-auth";
-import { createDatabase } from "@zero-heads-lab/database";
-import { orpcHandler } from "@zero-heads-lab/transport/server/orpc-server";
+import { orpcHandler } from "@zero-heads-lab/transport/server";
 import type { MiddlewareHandler } from "hono";
 import type { Bindings, Variables } from "../types";
 
@@ -8,9 +7,11 @@ export const rpcMiddleware: MiddlewareHandler<{
 	Bindings: Bindings;
 	Variables: Variables;
 }> = async (c, next) => {
-	const tracer = c.get("Tracer");
-	const logger = c.get("Logger");
-	const analytics = c.get("Analytics");
+	const tracer = c.get("TRACER");
+	const logger = c.get("LOGGER");
+	const analytics = c.get("ANALYTICS");
+	const database = c.get("DATABASE");
+	const cache = c.env.CACHE_STORE;
 
 	// 1. Wrap the entire RPC execution in a span
 	return await tracer.withSpan("rpc.handler", async (span) => {
@@ -19,9 +20,8 @@ export const rpcMiddleware: MiddlewareHandler<{
 
 		// 2. Reuse or Contextualize Dependencies
 		// We pass the request-scoped logger so DB queries are linked to this RPC trace
-		const auth = await createAuth(c.env.CACHE_STORE, analytics, logger);
-		const database = await createDatabase(c.env.DATABASE_URL, logger);
-		const tracer = c.get("Tracer");
+
+		const auth = await createAuth(cache, database, analytics, logger, tracer);
 
 		const { matched, response } = await orpcHandler.handle(c.req.raw, {
 			prefix: "/rpc",

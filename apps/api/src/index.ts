@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { corsMiddleware } from "./middlewares/cors.middleware";
+import { databaseMiddleware } from "./middlewares/database.middleware";
 import { observabilityMiddleware } from "./middlewares/observability.middleware";
 import { rpcMiddleware } from "./middlewares/rpc.middleware";
 import { authRoute } from "./routes/auth.route";
@@ -19,6 +20,7 @@ const app = new Hono<AppEnv>();
 
 app.use("*", corsMiddleware);
 app.use("*", observabilityMiddleware);
+app.use("*", databaseMiddleware);
 app.use("/rpc/*", rpcMiddleware);
 
 app.route("/ws/document", documentRoute);
@@ -26,28 +28,3 @@ app.route("/auth", authRoute);
 app.route("/widget", widgetRoute);
 
 export default app;
-
-// const config: ResolveConfigFn<Bindings> = (env) => ({
-// 	exporter: {
-// 		url: `https://${env.AXIOM_DOMAIN}/v1/traces`,
-// 		headers: {
-// 			Authorization: `Bearer ${env.AXIOM_TOKEN}`,
-// 			"X-Axiom-Dataset": `${env.AXIOM_DATASET}`,
-// 		},
-// 	},
-// 	service: {
-// 		name: `rovodesk-${name}`,
-// 		version,
-// 	},
-// });
-
-// export default instrument<
-// 	AppEnv,
-// 	Request<unknown, IncomingRequestCfProperties<unknown>>,
-// 	ResolveConfigFn<Bindings>
-// >(
-// 	{
-// 		fetch: (request, env, ctx) => app.fetch(request, env, ctx),
-// 	},
-// 	config
-// )

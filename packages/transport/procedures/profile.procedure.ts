@@ -1,17 +1,7 @@
 import { ORPCError } from "@orpc/server";
 import { USER_STATUS_CHANGED_EVENT } from "@zero-heads-lab/analytics/events";
 import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
-import {
-	clearOnboardingProgressByUserId,
-	toggleUserActiveField,
-	updateOnboardingProgressByUserId,
-	updateWorkspaceSettingsByOrganizationId,
-} from "@zero-heads-lab/database/repositories/profile/mutations";
-import {
-	getOnboardingProgressByUserId,
-	getUserProfileByUserId,
-	getWorkspaceProfileByOrganizationId,
-} from "@zero-heads-lab/database/repositories/profile/queries";
+import { ProfileRepository } from "@zero-heads-lab/database/repositories/profile";
 import { base } from "../context";
 import {
 	GET_ONBOARDING_PROGRESS_OUTPUT_DTO,
@@ -28,13 +18,13 @@ export const loadOnboardingProgress = base
 	.use(AuthGuard)
 	.output(GET_ONBOARDING_PROGRESS_OUTPUT_DTO)
 	.handler(async ({ context }) => {
-		const user = context.user;
-		const database = context.database;
+		const { user, database } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
 
-		const onboardingProgress = await getOnboardingProgressByUserId(database, {
+		const onboardingProgress = await repo.query.getOnboardingProgressByUserId({
 			userId: user.id,
 		});
-		if (!onboardingProgress) {
+		if (!onboardingProgress || onboardingProgress.deletedAt) {
 			throw new ORPCError("NOT_FOUND", {
 				message: "Onboarding progress not found",
 			});
@@ -49,12 +39,11 @@ export const persistOnboardingProgress = base
 	.use(BaseMiddleware)
 	.use(AuthGuard)
 	.handler(async ({ context, input }) => {
-		const user = context.user;
-		const analytics = await context.analytics;
-		const database = context.database;
+		const { user, analytics, database } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
 
 		try {
-			await updateOnboardingProgressByUserId(database, {
+			await repo.mutation.updateOnboardingProgressByUserId({
 				userId: user.id,
 				currentStepId: input.currentStepId,
 				flowData: input.flowData,
@@ -78,10 +67,12 @@ export const clearOnboardingProgress = base
 	.use(BaseMiddleware)
 	.use(AuthGuard)
 	.handler(async ({ context }) => {
-		const user = context.user;
-		const database = context.database;
+		const { user, database } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
 		try {
-			await clearOnboardingProgressByUserId(database, { userId: user.id });
+			await repo.mutation.clearOnboardingProgressByUserId({
+				userId: user.id,
+			});
 		} catch (error) {
 			console.error(error);
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -97,10 +88,11 @@ export const updateWorkspaceSettings = base
 	.use(AuthGuard)
 	.use(OrganizationGuard)
 	.handler(async ({ context, input }) => {
-		const database = context.database;
+		const { database, organizationId } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
 		try {
-			await updateWorkspaceSettingsByOrganizationId(database, {
-				organizationId: context.organizationId,
+			await repo.mutation.updateWorkspaceSettingsByOrganizationId({
+				organizationId,
 				settings: input.settings,
 			});
 		} catch (error) {
@@ -117,14 +109,14 @@ export const getWorkspaceProfile = base
 	.use(AuthGuard)
 	.use(OrganizationGuard)
 	.handler(async ({ context }) => {
-		const database = context.database;
+		const { database, organizationId } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
 		try {
-			const workspaceSettings = await getWorkspaceProfileByOrganizationId(
-				database,
-				{
-					organizationId: context.organizationId,
-				}
-			);
+			const workspaceSettings =
+				await repo.query.getWorkspaceProfileByOrganizationId({
+					organizationId,
+				});
+
 			return workspaceSettings;
 		} catch (error) {
 			console.error(error);
@@ -139,10 +131,12 @@ export const getUserProfile = base
 	.use(BaseMiddleware)
 	.use(AuthGuard)
 	.handler(async ({ context }) => {
-		const database = context.database;
+		const { database, user } = context;
+		const repo = new ProfileRepository(database, context.tracer!);
+
 		try {
-			const userProfile = await getUserProfileByUserId(database, {
-				userId: context.user.id,
+			const userProfile = await repo.query.getUserProfileByUserId({
+				userId: user.id,
 			});
 			return userProfile;
 		} catch (error) {
@@ -161,6 +155,7 @@ export const toogleUserActive = base
 	.handler(async ({ context, input }) => {
 		const { database, analytics, logger, tracer, user, session } = context;
 		const userId = user.id;
+		const repo = new ProfileRepository(database, tracer!);
 
 		// 🚀 Create a child span for the DB operation
 		return await tracer?.withSpan("db.fetch_workspace_full", async (span) => {
@@ -170,7 +165,7 @@ export const toogleUserActive = base
 			span.setAttribute("user.role", determineAuthRoles(user.role));
 
 			try {
-				await toggleUserActiveField(database, {
+				await repo.mutation.toggleUserActiveField({
 					userId,
 					isActive: input.active,
 				});

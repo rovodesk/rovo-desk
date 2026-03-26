@@ -8,9 +8,10 @@ export const documentMiddleware: MiddlewareHandler<{
 	Variables: Variables;
 	// biome-ignore lint/suspicious/useAwait: no await needed
 }> = async (c, _next) => {
-	const analytics = c.get("Analytics");
-	const logger = c.get("Logger");
-	const tracer = c.get("Tracer"); // Ensure you're getting the tracer
+	const analytics = c.get("ANALYTICS");
+	const logger = c.get("LOGGER");
+	const tracer = c.get("TRACER");
+	const database = c.get("DATABASE");
 
 	const handler = partyserverMiddleware({
 		options: {
@@ -21,8 +22,10 @@ export const documentMiddleware: MiddlewareHandler<{
 					async (span) => {
 						const auth = await createAuth(
 							c.env.CACHE_STORE,
+							database,
 							analytics,
-							logger.derive({ component: "party-auth" })
+							logger.derive({ component: "party-auth" }),
+							tracer
 						);
 
 						const res = await auth.api.getSession({

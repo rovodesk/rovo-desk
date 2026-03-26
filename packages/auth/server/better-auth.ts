@@ -1,31 +1,19 @@
+/** biome-ignore-all lint/suspicious/useAwait: Analytics events are captured asynchronously */
 import {
 	USER_DELETED_EVENT,
-	USER_LOGGED_IN_EVENT,
 	USER_LOGGED_OUT_EVENT,
 	USER_SIGNED_UP_EVENT,
 } from "@zero-heads-lab/analytics/events";
 import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
 import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
-import { KvCacheStore } from "@zero-heads-lab/cache";
-import { createDatabase } from "@zero-heads-lab/database";
-import {
-	createNewUserWithProfileTX,
-	markUserAsDeleted,
-} from "@zero-heads-lab/database/repositories/auth/mutations";
-import {
-	getUserEmailVerificationStatus,
-	getUserSessionBootstrap,
-	getUserSessions,
-} from "@zero-heads-lab/database/repositories/auth/queries";
-import * as schema from "@zero-heads-lab/database/schema";
-import { sendEmail } from "@zero-heads-lab/email";
-import {
-	AccountDeleteVerifiactionTemplate,
-	ChangeEmailConfirmationTemplate,
-	EmailVerificationLinkTemplate,
-	LoginAlertTemplate,
-	UserWelcomeTemplate,
-} from "@zero-heads-lab/email/templates";
+import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ICacheStore } from "@zero-heads-lab/cache/interface";
+import type { Database } from "@zero-heads-lab/database";
+import * as schema from "@zero-heads-lab/database/drizzle/schemas";
+import { AuthRepository } from "@zero-heads-lab/database/repositories/auth";
+import type { IAuthRepository } from "@zero-heads-lab/database/repositories/auth/auth.types";
+import type { IEmailQueueService } from "@zero-heads-lab/email/interface";
+import { loadTransactionalTemplate } from "@zero-heads-lab/email/templates";
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -35,22 +23,18 @@ import { AuthPlugins } from "./plugins";
 import { OauthProviders } from "./social-providers";
 
 export async function createAuth(
-	cache: KVNamespace,
+	cache: ICacheStore,
+	database: Database,
+	emailService: IEmailQueueService,
 	analytics: IAnalytics,
-	logger: ILogger
+	logger: ILogger,
+	tracer: ITracer
 ) {
-	const cacheStore = new KvCacheStore(cache).withPrefix("auth");
-
-	const database = await createDatabase();
-
+	const cacheStore: ICacheStore = cache.withPrefix("auth");
 	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
+	const authRepo: IAuthRepository = new AuthRepository(database, tracer);
 
-	//TODO: Implement Feature Flags
-	const Plugins = await AuthPlugins(cacheStore, database, analytics, {
-		minimal: false,
-		enableBilling: true,
-		// enableEnterprise: true,
-	});
+	const Plugins = await AuthPlugins(cacheStore, authRepo, analytics);
 
 	return betterAuth({
 		database: drizzleAdapter(database, {
@@ -71,16 +55,20 @@ export async function createAuth(
 			sendVerificationEmail: async ({ user, url }) => {
 				// Find If already verified
 				const userEmailVerificationStatus =
-					await getUserEmailVerificationStatus(database, {
+					await authRepo.query.findUserEmailVerificationStatus({
 						userId: user.id,
 					});
 				if (userEmailVerificationStatus?.emailVerified) {
 					return;
 				}
-				await sendEmail({
+				const template = await loadTransactionalTemplate(
+					"EmailVerificationLinkTemplate"
+				);
+
+				await emailService.sendTransactional({
 					to: user.email,
 					subject: "Verify your email",
-					react: EmailVerificationLinkTemplate({ url }),
+					react: template({ url }),
 				});
 			},
 		},
@@ -88,15 +76,19 @@ export async function createAuth(
 			deleteUser: {
 				enabled: true,
 				sendDeleteAccountVerification: async ({ url, user }) => {
-					await sendEmail({
+					const template = await loadTransactionalTemplate(
+						"AccountDeleteVerifiactionTemplate"
+					);
+
+					await emailService.sendTransactional({
 						to: user.email,
 						subject: "Confirm Account Deletion",
-						react: AccountDeleteVerifiactionTemplate({ url }),
+						react: template({ url }),
 					});
 				},
 				afterDelete: async (user) => {
 					// Send Analytics Event
-					await analytics.captureEvent(user.id, USER_DELETED_EVENT, {
+					analytics.captureEvent(user.id, USER_DELETED_EVENT, {
 						email: user.email,
 					});
 				},
@@ -148,10 +140,13 @@ export async function createAuth(
 			changeEmail: {
 				enabled: true,
 				sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-					await sendEmail({
+					const template = await loadTransactionalTemplate(
+						"ChangeEmailConfirmationTemplate"
+					);
+					await emailService.sendTransactional({
 						to: newEmail,
 						subject: "Verify your new email",
-						react: ChangeEmailConfirmationTemplate({
+						react: template({
 							user,
 							newEmail,
 							url,
@@ -278,76 +273,17 @@ export async function createAuth(
 		},
 		databaseHooks: {
 			session: {
-				create: {
+				delete: {
 					after: async (session) => {
-						try {
-							const rows = await getUserSessionBootstrap(database, {
-								userId: session.userId,
-							});
-
-							if (!rows.length) {
-								throw new APIError("BAD_REQUEST", {
-									message: "User not found",
-								});
-							}
-
-							const firstRow = rows[0];
-
-							// Set active organization
-							const org = rows.find((r) => r.organizationId);
-							if (org) {
-								session.activeOrganizationId = org.organizationId;
-							}
-
-							// Set active team
-							const team = rows.find((r) => r.teamId);
-							if (team) {
-								session.activeTeamId = team.teamId;
-							}
-
-							// Send login alert email
-							if (firstRow?.email) {
-								await sendEmail({
-									to: firstRow.email,
-									subject: "New login to your account",
-									react: LoginAlertTemplate({
-										ipAddress: session.ipAddress || "Unknown",
-										userAgent: session.userAgent || "Unknown",
-										time: session.createdAt.toDateString(),
-										securityUrl: `${keys.END_USER_DASHBOARD_URL}/settings/security`,
-									}),
-								});
-							}
-						} catch (error) {
-							console.error("Failed to bootstrap user session", error);
-							throw new APIError("INTERNAL_SERVER_ERROR", {
-								message: "Failed to initialize user session",
-							});
-						}
-
-						// Send Analytics
-						analytics.captureEvent(session.userId, USER_LOGGED_IN_EVENT, {
+						analytics.captureEvent(session.userId, USER_LOGGED_OUT_EVENT, {
 							ipAddress: session.ipAddress,
 							userAgent: session.userAgent,
 						});
 					},
 				},
-				delete: {
-					after: async (session) => {
-						await analytics.captureEvent(
-							session.userId,
-							USER_LOGGED_OUT_EVENT,
-							{
-								ipAddress: session.ipAddress,
-								userAgent: session.userAgent,
-							}
-						);
-					},
-				},
 			},
 			user: {
 				create: {
-					// biome-ignore lint/suspicious/useAwait: No awaited function used
 					before: async (user) => {
 						const avatar: string = user.image
 							? user.image
@@ -363,7 +299,7 @@ export async function createAuth(
 					after: async (user) => {
 						// Create A New User Profile
 						try {
-							await createNewUserWithProfileTX(database, {
+							await authRepo.mutation.createNewUserWithProfileTX({
 								userId: user.id,
 							});
 						} catch (error) {
@@ -377,10 +313,14 @@ export async function createAuth(
 
 						// Send Welcome Email
 						try {
-							await sendEmail({
+							const template = await loadTransactionalTemplate(
+								"UserWelcomeTemplate"
+							);
+
+							await emailService.sendTransactional({
 								to: user.email,
 								subject: "Welcome to Zero Heads",
-								react: UserWelcomeTemplate({
+								react: template({
 									user,
 									dashboardUrl: keys.END_USER_DASHBOARD_URL,
 								}),
@@ -404,13 +344,13 @@ export async function createAuth(
 				delete: {
 					before: async (user) => {
 						try {
-							await markUserAsDeleted(database, { userId: user.id });
+							await authRepo.mutation.markUserAsDeleted({ userId: user.id });
 
 							// Delete from Storage
-							const userSessions = await getUserSessions(database, {
+							const userSessions = await authRepo.query.findUserSessions({
 								userId: user.id,
 							});
-							if (userSessions.length > 0) {
+							if (userSessions && userSessions.length > 0) {
 								await Promise.all(
 									userSessions.map((session) =>
 										cacheStore.delete(`session:${session.id}`)

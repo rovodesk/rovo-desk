@@ -1,17 +1,16 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ESNext",
-    "moduleResolution": "Bundler",
+    "composite": true,
     "types": [
       "@cloudflare/vitest-pool-workers",
       "vitest/globals",
       "@cloudflare/workers-types"
     ],
     "paths": {
+      "@/*": ["./src/*"],
       "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
-  "include": ["./**/*.ts", "./**/*.d.ts", "test"]
+  "include": ["./**/*.spec.ts", "./**/*.test.ts", "./**/*.d.ts", "test"]
 }

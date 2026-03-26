@@ -84,7 +84,7 @@ export const subscriptionRelations = relations(subscription, ({ one }) => ({
 	}),
 }));
 
-export const usageEvents = billingSchema.table("usage_events", {
+export const usageEvents = billingSchema.table("usage", {
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
