@@ -1,11 +1,9 @@
-import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
+import type { ILogger } from "@zero-heads-lab/analytics/types";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./drizzle/schemas";
 
-export type Database = PostgresJsDatabase<
-	typeof import("/Users/dev/Desktop/SAAS/RovoDesk/rovodesk/packages/database/drizzle/schemas/index")
->;
+export type Database = PostgresJsDatabase<typeof schema>;
 
 // biome-ignore lint/suspicious/noExplicitAny: Can't find a way to type this
 export type DatabaseClient = postgres.Sql<any>;

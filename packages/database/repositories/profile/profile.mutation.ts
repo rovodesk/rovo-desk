@@ -1,6 +1,6 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
+import type { Database } from "@zero-heads-lab/database";
 import { eq } from "drizzle-orm";
-import type { Database } from "../../conn";
 import {
 	onboarding as onboardingSchema,
 	userProfile,

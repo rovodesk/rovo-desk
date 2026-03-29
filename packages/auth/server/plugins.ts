@@ -10,15 +10,16 @@ import {
 	ORGANIZATION_DELETED_EVENT,
 	ORGANIZATION_INVITATION_SENT_EVENT,
 } from "@zero-heads-lab/analytics/events";
-import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
-import { stripeClient, UserPlans } from "@zero-heads-lab/billing";
-import type { ICacheStore } from "@zero-heads-lab/cache";
+import type {
+	IAnalytics,
+	ILogger,
+	ITracer,
+} from "@zero-heads-lab/analytics/types";
+import { Billing } from "@zero-heads-lab/billing";
+import type { ICacheStore } from "@zero-heads-lab/cache/interface";
 import type { IAuthRepository } from "@zero-heads-lab/database/repositories/auth/auth.types";
-import { sendEmail } from "@zero-heads-lab/email";
-import {
-	MagicLinkTemplate,
-	OrganizationInviteTemplate,
-} from "@zero-heads-lab/email/templates";
+import type { IEmailQueueService } from "@zero-heads-lab/email/interface";
+import { loadTransactionalTemplate } from "@zero-heads-lab/email/templates";
 import {
 	defaultWidgetConfig,
 	defaultWorkspaceSettings,
@@ -37,7 +38,6 @@ import {
 	organization,
 	testUtils,
 } from "better-auth/plugins";
-import { determineAuthRoles } from "@/helpers";
 import {
 	ADMIN_ROLES,
 	accessControl,
@@ -45,31 +45,45 @@ import {
 	Roles,
 } from "../access-control";
 import { AUTH_CONFIG } from "../config";
-import { keys } from "./keys";
-import { SAML_CONFIG } from "./sso-config";
+import { determineAuthRoles } from "../helpers";
+import type { AuthEnv } from "./keys";
+import { getSAMLConfig } from "./sso-config";
 
 export const AuthPlugins = async (
 	cache: ICacheStore,
 	authRepository: IAuthRepository,
-	analytics: IAnalytics
+	emailService: IEmailQueueService,
+	analytics: IAnalytics,
+	logger: ILogger,
+	tracer: ITracer,
+	env: AuthEnv
 ): Promise<BetterAuthPlugin[]> => {
 	// const products = getProducts();
 	const cacheStore = cache;
+	const billing = new Billing({
+		env,
+		logger,
+		tracer,
+	});
+	const stripeClient = billing.getStripeClient();
+	const billingPlans = await billing.findAvailablePlan();
+	const samlConfig = getSAMLConfig(env);
 
 	const basePlugins = [
 		// Magic Link Plugin
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
 				try {
-					await sendEmail({
+					const template = await loadTransactionalTemplate("MagicLinkTemplate");
+					await emailService.sendTransactional({
 						to: email,
 						subject: "Sign in to your account",
-						react: MagicLinkTemplate({ url }),
+						react: template({ url }),
 					});
 					try {
 						analytics.captureEvent(email, MAGIC_LINK_SENT_EVENT, { url });
 					} catch (error) {
-						await analytics.captureException({
+						analytics.captureException({
 							error,
 							distinctId: email,
 							properties: {
@@ -78,7 +92,7 @@ export const AuthPlugins = async (
 						});
 					}
 				} catch (error) {
-					await analytics.captureException({
+					analytics.captureException({
 						error,
 						distinctId: email,
 						properties: {
@@ -123,10 +137,13 @@ export const AuthPlugins = async (
 			},
 			sendInvitationEmail: async ({ organization, invitation, inviter }) => {
 				try {
-					await sendEmail({
+					const template = await loadTransactionalTemplate(
+						"WorkspaceInvitationTemplate"
+					);
+					await emailService.sendTransactional({
 						to: invitation.email,
 						subject: "Invitation to join organization",
-						react: OrganizationInviteTemplate({
+						react: template({
 							inviter: {
 								name: inviter.user.name,
 								email: inviter.user.email,
@@ -155,13 +172,10 @@ export const AuthPlugins = async (
 							}
 						);
 					} catch (error) {
-						console.error(
-							"Failed to send organization invitation event",
-							error
-						);
+						logger.error("Failed to send organization invitation event", error);
 					}
 				} catch (error) {
-					await analytics.captureException({
+					analytics.captureException({
 						error,
 						distinctId: invitation.email,
 						properties: {
@@ -177,7 +191,7 @@ export const AuthPlugins = async (
 			organizationHooks: {
 				beforeCreateOrganization: async ({ organization }) => {
 					//TODO: Check billing plan
-					console.log("Creating Organization", organization);
+					logger.info("Creating Organization", organization);
 					return {
 						data: {
 							...organization,
@@ -197,7 +211,7 @@ export const AuthPlugins = async (
 							}
 						);
 					} catch (error) {
-						console.error("Failed to create chatbot", error);
+						logger.error("Failed to create chatbot", error);
 					}
 					try {
 						// Send Analytics Event
@@ -211,13 +225,13 @@ export const AuthPlugins = async (
 							}
 						);
 					} catch (error) {
-						console.error("Failed to send organization created event", error);
+						logger.error("Failed to send organization created event", error);
 					}
 				},
 				afterDeleteOrganization: async ({ organization }) => {
 					try {
 						// Send Analytics Event
-						await analytics.captureEvent(
+						analytics.captureEvent(
 							organization.id,
 							ORGANIZATION_DELETED_EVENT,
 							{
@@ -228,7 +242,7 @@ export const AuthPlugins = async (
 						);
 					} catch (error) {
 						try {
-							await analytics.captureException({
+							analytics.captureException({
 								error,
 								distinctId: organization.id,
 								properties: {
@@ -238,7 +252,7 @@ export const AuthPlugins = async (
 								},
 							});
 						} catch (error) {
-							console.error("Failed to delete organization", error);
+							logger.error("Failed to delete organization", error);
 						}
 					}
 				},
@@ -249,7 +263,14 @@ export const AuthPlugins = async (
 			maximumSessions: AUTH_CONFIG.MAXIMUM_SESSIONS,
 		}),
 		// OPENAPI Plugin
-		...(process.env.NODE_ENV !== "production" ? [openAPI()] : []),
+		...(process.env.NODE_ENV !== "production"
+			? [
+					openAPI({
+						path: "/open-api",
+						disableDefaultReference: true,
+					}),
+				]
+			: []),
 		// Test Utils
 		...(process.env.NODE_ENV !== "production" ? [testUtils()] : []),
 		//Last Login Method Plugin
@@ -332,7 +353,7 @@ export const AuthPlugins = async (
 			alg: AUTH_CONFIG.JWT_ALGORITHM,
 			jwksPath: "/.well-known/jwks.json",
 			jwt: {
-				issuer: keys.BETTER_AUTH_URL,
+				issuer: env.BETTER_AUTH_URL,
 				expirationTime: "1h",
 				getSubject: (session) => session.user.id,
 				definePayload: ({ user }) => {
@@ -377,9 +398,9 @@ export const AuthPlugins = async (
 		sso({
 			defaultSSO: [
 				{
-					domain: keys.BETTER_AUTH_URL,
+					domain: env.BETTER_AUTH_URL,
 					providerId: "sso",
-					samlConfig: SAML_CONFIG,
+					samlConfig,
 				},
 			],
 		}),
@@ -393,14 +414,14 @@ export const AuthPlugins = async (
 				// Send Analytics Event
 				try {
 					// 2️⃣ Identify the real user
-					await analytics.identify(newUser.user.id, anonymousUser.user.id, {
+					analytics.identify(newUser.user.id, anonymousUser.user.id, {
 						name: newUser.user.name,
 						email: newUser.user.email,
 						avatar: newUser.user.image,
 					});
 				} catch (error) {
 					try {
-						await analytics.captureException({
+						analytics.captureException({
 							error,
 							distinctId: newUser.user.id,
 							properties: {
@@ -409,19 +430,19 @@ export const AuthPlugins = async (
 							},
 						});
 					} catch (error) {
-						console.error("Failed to link anonymous account", error);
+						logger.error("Failed to link anonymous account", error);
 					}
 				}
 			},
 		}),
 		stripe({
 			stripeClient,
-			stripeWebhookSecret: keys.STRIPE_WEBHOOK_SECRET,
+			stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET!,
 			createCustomerOnSignUp: false,
 			subscription: {
 				enabled: true,
 				plans: () =>
-					UserPlans.map((plan) => ({
+					billingPlans.map((plan) => ({
 						id: plan.priceId,
 						name: plan.name,
 						annualDiscountPriceId: plan.annualDiscountPriceId,
@@ -434,9 +455,9 @@ export const AuthPlugins = async (
 		sso({
 			defaultSSO: [
 				{
-					domain: keys.BETTER_AUTH_URL,
+					domain: env.BETTER_AUTH_URL,
 					providerId: "sso",
-					samlConfig: SAML_CONFIG,
+					samlConfig,
 				},
 			],
 		}),

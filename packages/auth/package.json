@@ -16,7 +16,6 @@
     "@better-auth/stripe": "catalog:betterauth",
     "@t3-oss/env-core": "catalog:",
     "@tanstack/react-query": "catalog:tanstack",
-    "@zero-heads-lab/transport": "workspace:*",
     "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/billing": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",

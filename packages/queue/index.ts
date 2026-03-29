@@ -1,15 +1,13 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { IQueueService, QueueJob } from "./interface";
 
 export class QueueService implements IQueueService {
 	private readonly queue: Queue;
 	private readonly tracer: ITracer;
-	private readonly queueName: string;
 
-	constructor(queue: Queue, tracer: ITracer, queueName?: string) {
+	constructor(queue: Queue, tracer: ITracer) {
 		this.queue = queue;
 		this.tracer = tracer;
-		this.queueName = queueName ?? "default";
 	}
 
 	private now() {
@@ -47,7 +45,6 @@ export class QueueService implements IQueueService {
 			span.setAttributes({
 				"messaging.system": "cloudflare_queues",
 				"messaging.operation": "publish",
-				"messaging.destination.name": this.queueName,
 			});
 
 			try {
@@ -71,7 +68,6 @@ export class QueueService implements IQueueService {
 			span.setAttributes({
 				"messaging.system": "cloudflare_queues",
 				"messaging.operation": "publish",
-				"messaging.destination.name": this.queueName,
 				"queue.batch.size": data.length,
 			});
 
@@ -103,7 +99,6 @@ export class QueueService implements IQueueService {
 			span.setAttributes({
 				"messaging.system": "cloudflare_queues",
 				"messaging.operation": "publish",
-				"messaging.destination.name": this.queueName,
 				"queue.job": payload.job ?? "anonymous",
 			});
 
@@ -128,7 +123,6 @@ export class QueueService implements IQueueService {
 			span.setAttributes({
 				"messaging.system": "cloudflare_queues",
 				"messaging.operation": "publish",
-				"messaging.destination.name": this.queueName,
 				"queue.batch.size": payloads.length,
 				"queue.hasNamedJobs": payloads.some((p) => !!p.job),
 			});

@@ -4,51 +4,65 @@ import {
 	USER_LOGGED_OUT_EVENT,
 	USER_SIGNED_UP_EVENT,
 } from "@zero-heads-lab/analytics/events";
-import type { IAnalytics } from "@zero-heads-lab/analytics/lib/analytics";
-import type { ILogger } from "@zero-heads-lab/analytics/lib/logger";
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type {
+	IAnalytics,
+	ILogger,
+	ITracer,
+} from "@zero-heads-lab/analytics/types";
 import type { ICacheStore } from "@zero-heads-lab/cache/interface";
 import type { Database } from "@zero-heads-lab/database";
 import * as schema from "@zero-heads-lab/database/drizzle/schemas";
 import { AuthRepository } from "@zero-heads-lab/database/repositories/auth";
 import type { IAuthRepository } from "@zero-heads-lab/database/repositories/auth/auth.types";
-import type { IEmailQueueService } from "@zero-heads-lab/email/interface";
+import { EmailQueueService } from "@zero-heads-lab/email/email-queue-service";
 import { loadTransactionalTemplate } from "@zero-heads-lab/email/templates";
+import type { IQueueService } from "@zero-heads-lab/queue/interface";
 import { extractOrigins, Placeholder } from "@zero-heads-lab/shared/utils";
 import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { AUTH_CONFIG } from "../config";
-import { keys } from "./keys";
+import type { AuthEnv } from "./keys";
 import { AuthPlugins } from "./plugins";
-import { OauthProviders } from "./social-providers";
+import { getOauthProviders } from "./social-providers";
 
 export async function createAuth(
 	cache: ICacheStore,
 	database: Database,
-	emailService: IEmailQueueService,
+	queueService: IQueueService,
 	analytics: IAnalytics,
 	logger: ILogger,
-	tracer: ITracer
+	tracer: ITracer,
+	env: AuthEnv
 ) {
 	const cacheStore: ICacheStore = cache.withPrefix("auth");
-	const trustedAuthOrigins = extractOrigins(keys.ALLOWED_ORIGINS);
+	const trustedOrigins = extractOrigins(env.ALLOWED_ORIGINS);
 	const authRepo: IAuthRepository = new AuthRepository(database, tracer);
+	const emailService = new EmailQueueService(queueService);
+	logger = logger.derive({ component: "auth" });
 
-	const Plugins = await AuthPlugins(cacheStore, authRepo, analytics);
+	const plugins = await AuthPlugins(
+		cacheStore,
+		authRepo,
+		emailService,
+		analytics,
+		logger,
+		env
+	);
+	const socialProviders = getOauthProviders(env);
 
 	return betterAuth({
 		database: drizzleAdapter(database, {
 			provider: "pg",
 			schema,
 		}),
-		trustedOrigins: trustedAuthOrigins,
+		trustedOrigins,
 		secondaryStorage: {
 			get: (key) => cacheStore.get(key),
 			set: (key, value, ttl) => cacheStore.set(key, value, ttl),
 			delete: (key) => cacheStore.delete(key),
 		},
-		baseURL: keys.BETTER_AUTH_URL,
-		basePath: keys.BETTER_AUTH_BASE_PATH,
+		baseURL: env.BETTER_AUTH_URL,
+		basePath: env.BETTER_AUTH_BASE_PATH,
 		emailVerification: {
 			sendOnSignUp: true,
 			sendOnSignIn: true,
@@ -196,13 +210,13 @@ export async function createAuth(
 				allowUnlinkingAll: false,
 			},
 			// FIXME: CRITICAL SECURITY FLAW [REMOVE IN PRODUCTION, skipping state verification can lead to CSRF attacks]
-			skipStateCookieCheck: process.env.NODE_ENV !== "production", // TRUE in development for ease of testing, FALSE in production for security
+			skipStateCookieCheck: !env.PROD, // TRUE in development for ease of testing, FALSE in production for security
 		},
 		verification: {
 			storeIdentifier: "hashed",
 		},
 		rateLimit: {
-			enabled: process.env.NODE_ENV === "production",
+			enabled: env.PROD,
 			window: AUTH_CONFIG.RATE_LIMIT_WINDOW_IN_SECS,
 			limit: AUTH_CONFIG.RATE_LIMIT_MAX_REQUESTS,
 			storage: "secondary-storage",
@@ -213,14 +227,14 @@ export async function createAuth(
 			// 	},
 			// },
 		},
-		plugins: Plugins,
-		socialProviders: OauthProviders,
+		plugins,
+		socialProviders,
 		advanced: {
 			ipAddress: {
 				ipAddressHeaders: ["x-client-ip", "x-forwarded-for"],
 				disableIpTracking: false, // Enable IP Tracking [SECURITY]
 			},
-			useSecureCookies: process.env.NODE_ENV === "production", // FALSE on HTTP
+			useSecureCookies: env.PROD, // FALSE on HTTP
 			skipTrailingSlashes: true,
 			crossSubDomainCookies: {
 				enabled: true,
@@ -233,13 +247,13 @@ export async function createAuth(
 			// 			httpOnly: true,
 			// 			path: "/",
 			// 			sameSite: "none",
-			// 			secure: process.env.NODE_ENV === "production", // TRUE on HTTPS
+			// 			secure: env.PROD, // TRUE on HTTPS
 			// 		},
 			// 	},
 			// },
 			// defaultCookieAttributes: {
 			// 	httpOnly: true,
-			// 	secure: process.env.NODE_ENV === "production",
+			// 	secure: env.PROD,
 			// 	sameSite: "none",
 			// 	// domain: "localhost",
 			// },
@@ -247,8 +261,8 @@ export async function createAuth(
 		},
 		logger: {
 			disabled: false,
-			disableColors: process.env.NODE_ENV === "production",
-			level: process.env.NODE_ENV === "production" ? "error" : "debug", //FUTURE: Change to warn when completed
+			disableColors: env.PROD,
+			level: env.PROD ? "error" : "debug", //FUTURE: Change to warn when completed
 			log: (level, message, ...args) => {
 				const data = { auth_args: args };
 				switch (level.toLowerCase()) {
@@ -304,7 +318,7 @@ export async function createAuth(
 							});
 						} catch (error) {
 							// Log the actual error to see why the DB rejected it (e.g., FK constraint)
-							console.error("CRITICAL: Profile creation failed:", error);
+							logger.error("CRITICAL: Profile creation failed:", error);
 
 							throw new APIError("INTERNAL_SERVER_ERROR", {
 								message: "Failed to create  user profile",
@@ -322,18 +336,18 @@ export async function createAuth(
 								subject: "Welcome to Zero Heads",
 								react: template({
 									user,
-									dashboardUrl: keys.END_USER_DASHBOARD_URL,
+									dashboardUrl: env.END_USER_DASHBOARD_URL,
 								}),
 							});
 						} catch (error) {
-							console.error("Failed to send welcome email", error);
+							logger.error("Failed to send welcome email", error);
 							throw new APIError("INTERNAL_SERVER_ERROR", {
 								message: "Failed to send welcome email",
 							});
 						}
 
 						// Send event to Analytics
-						console.log("USER SIGNED UP", user);
+						logger.info("USER SIGNED UP", user);
 						analytics.captureEvent(user.id, USER_SIGNED_UP_EVENT, {
 							email: user.email,
 							provider: user.lastLoginMethod ?? "email",
@@ -360,7 +374,7 @@ export async function createAuth(
 
 							await cacheStore.delete(`user:${user.id}`);
 						} catch (error) {
-							console.error("Failed to mark user as deleted", error);
+							logger.error("Failed to mark user as deleted", error);
 							throw new APIError("INTERNAL_SERVER_ERROR");
 						}
 					},
@@ -369,7 +383,7 @@ export async function createAuth(
 					// 	// try {
 					// 	// 	await deleteCustomer(user.id);
 					// 	// } catch (error) {
-					// 	// 	console.error("Failed to delete customer", error);
+					// 	// 	logger.error("Failed to delete customer", error);
 					// 	// 	throw new APIError("INTERNAL_SERVER_ERROR");
 					// 	// }
 					// },

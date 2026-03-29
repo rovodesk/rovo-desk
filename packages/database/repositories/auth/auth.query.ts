@@ -1,6 +1,6 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
+import type { Database } from "@zero-heads-lab/database";
 import { eq, sql } from "drizzle-orm";
-import type { Database } from "../../conn";
 import {
 	apikey as apiKeySchema,
 	member as memberSchema,

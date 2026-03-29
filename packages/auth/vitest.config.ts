@@ -6,7 +6,8 @@ export default mergeConfig(
 	defineConfig({
 		test: {
 			name: "auth",
-			setupFiles: ["./test/setup/vitest.setup.ts"],
+			setupFiles: ["./test/setup/env.test.ts"],
+			include: ["test/**/*.test.ts", "test/**/*.spec.ts"],
 		},
 	})
 );

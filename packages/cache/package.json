@@ -2,9 +2,13 @@
   "name": "@zero-heads-lab/cache",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",

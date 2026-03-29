@@ -1,10 +1,10 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
+import type { Database } from "@zero-heads-lab/database";
 import type {
 	WidgetConfig,
 	WorkspaceSettings,
 } from "@zero-heads-lab/shared/types";
 import { eq } from "drizzle-orm";
-import type { Database } from "../../conn";
 import {
 	organization as orgSchema,
 	user as userSchema,

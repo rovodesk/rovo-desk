@@ -4,9 +4,10 @@
   "private": true,
   "workspaces": [
     "apps/*",
+    "backend/*",
+    "frontend/*",
     "packages/*",
-    "tools/*",
-    "examples/*"
+    "tools/*"
   ],
   "packageManager": "bun@1.3.5",
   "engines": {
@@ -104,7 +105,17 @@
     },
     "drizzle": {
       "drizzle-orm": "^0.45.1",
-      "drizzle-kit": "^0.31.8"
+      "drizzle-kit": "^0.31.8",
+      "drizzle-seed": "^0.3.1"
+    },
+    "hono": {
+      "hono": "^4.11.7"
+    },
+    "orpc": {
+      "@orpc/client": "^1.13.13",
+      "@orpc/contract": "^1.13.13",
+      "@orpc/server": "^1.13.13",
+      "@orpc/tanstack-query": "^1.13.13"
     }
   },
   "scripts": {

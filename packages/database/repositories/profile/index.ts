@@ -1,4 +1,4 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { ProfileMutationRepository } from "./profile.mutation";
 import { ProfileQueryRepository } from "./profile.query";

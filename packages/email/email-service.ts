@@ -1,5 +1,5 @@
 import { pretty, render } from "@react-email/render";
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
 import { Resend } from "resend";
 import type {
 	EmailServiceOptions,

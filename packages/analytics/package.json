@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
+    "@zero-heads-lab/cache": "workspace:*",
     "@posthog/react": "^1.8.2",
     "@t3-oss/env-core": "catalog:",
     "pino": "^10.3.1",
@@ -22,7 +23,6 @@
     "@zero-heads-lab/testing": "workspace:*",
     "@types/react": "catalog:react19",
     "@zero-heads-lab/typescript-config": "workspace:*",
-    "@zero-heads-lab/cache": "workspace:*",
     "vite": "catalog:vite",
     "vitest": "catalog:testing"
   },

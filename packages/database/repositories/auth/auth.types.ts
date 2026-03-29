@@ -5,6 +5,7 @@ import type {
 import type { InferSelectModel } from "drizzle-orm";
 import type {
 	apikey as apiKeySchema,
+	organization,
 	session as sessionSchema,
 } from "../../drizzle/schemas/auth.schema";
 
@@ -30,6 +31,8 @@ export type OrganizationsCount = {
 
 export type APIKey = InferSelectModel<typeof apiKeySchema>;
 export type Session = InferSelectModel<typeof sessionSchema>;
+
+export type Organization = InferSelectModel<typeof organization>;
 
 export type IAuthQueryRepository = {
 	findUserEmailVerificationStatus: (params: {

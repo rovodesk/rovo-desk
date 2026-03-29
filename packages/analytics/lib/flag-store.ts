@@ -1,22 +1,16 @@
-import { KvCacheStore } from "@zero-heads-lab/cache";
+import type { ICacheStore } from "@zero-heads-lab/cache/interface";
 import type {
 	FlagDefinitionCacheData,
 	FlagDefinitionCacheProvider,
 } from "posthog-node/experimental";
 
 export class CloudflareKVFlagCache implements FlagDefinitionCacheProvider {
-	protected cache: KvCacheStore;
+	protected cache: ICacheStore;
 	protected projectKey: string;
 
-	constructor(
-		kv: KVNamespace,
-		projectApiKey: string,
-		cacheStore?: KvCacheStore
-	) {
+	constructor(projectApiKey: string, cacheStore: ICacheStore) {
 		this.projectKey = projectApiKey;
-		this.cache =
-			cacheStore ??
-			new KvCacheStore(kv).withPrefix("posthog").withPrefix("flags");
+		this.cache = cacheStore;
 	}
 
 	protected get cacheKey() {

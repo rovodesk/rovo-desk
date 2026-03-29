@@ -1,20 +1,23 @@
+import type { ICacheStore } from "@zero-heads-lab/cache/interface";
 import { PostHog, type PostHogOptions } from "posthog-node";
 import { CloudflareKVFlagCacheReader } from "./flag-store";
 
 let posthog: PostHog | undefined;
 
 export function getPostHogClient(
-	cache: KVNamespace,
 	posthogApiKey: string,
-	posthogHost: string
+	posthogHost: string,
+	cache?: ICacheStore
 ): PostHog {
 	if (!posthog) {
 		const options: PostHogOptions = {
 			host: posthogHost,
-			flagDefinitionCacheProvider: new CloudflareKVFlagCacheReader(
-				cache,
-				posthogApiKey
-			),
+			flagDefinitionCacheProvider: cache
+				? new CloudflareKVFlagCacheReader(
+						posthogApiKey,
+						cache.withPrefix("posthog").withPrefix("flags")
+					)
+				: undefined,
 			flushAt: 1,
 			flushInterval: 0,
 		};

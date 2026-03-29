@@ -1,0 +1,37 @@
+{
+  "name": "api",
+  "type": "module",
+  "version": "0.0.1_alpha",
+  "scripts": {
+    "dev": "wrangler dev --env staging",
+    "deploy": "wrangler deploy --minify",
+    "gen:types": "wrangler types ./src/worker-configuration.d.ts --env-interface CloudflareBindings",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@zero-heads-lab/analytics": "workspace:*",
+    "@zero-heads-lab/auth": "workspace:*",
+    "@zero-heads-lab/cache": "workspace:*",
+    "@zero-heads-lab/crypto": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/queue": "workspace:*",
+    "@zero-heads-lab/contract": "workspace:*",
+    "hono": "catalog:hono",
+    "hono-party": "catalog:partykit",
+    "lib0": "^0.2.117",
+    "partyserver": "catalog:partykit",
+    "@orpc/server": "catalog:orpc",
+    "y-protocols": "^1.0.7",
+    "yjs": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "catalog:testing",
+    "@scalar/hono-api-reference": "^0.10.5",
+    "@types/node": "catalog:",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing",
+    "wrangler": "catalog:cloudflare"
+  }
+}

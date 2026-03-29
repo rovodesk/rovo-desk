@@ -2,6 +2,9 @@
   "name": "@zero-heads-lab/database",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "drizzle-kit generate --config drizzle.config.ts",
     "migrate": "npm run build && bunx drizzle-kit migrate --config drizzle.config.ts",
@@ -17,7 +20,6 @@
     "@t3-oss/env-core": "catalog:",
     "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/billing": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/testing": "workspace:*",
     "drizzle-orm": "catalog:drizzle",
@@ -25,13 +27,14 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "vitest": "catalog:testing",
+    "@types/bun": "catalog:",
     "@types/react": "catalog:react19",
     "@zero-heads-lab/typescript-config": "workspace:*",
-    "testcontainers": "catalog:testing",
-    "drizzle-kit": "catalog:drizzle",
     "dotenv": "catalog:",
-    "@types/bun": "catalog:"
+    "drizzle-kit": "catalog:drizzle",
+    "drizzle-seed": "catalog:drizzle",
+    "testcontainers": "catalog:testing",
+    "vitest": "catalog:testing"
   },
   "peerDependencies": {
     "typescript": "catalog:"

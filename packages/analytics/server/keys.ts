@@ -1,19 +1,28 @@
 import { createEnv } from "@t3-oss/env-core";
 import z from "zod";
 
-export const keys = createEnv({
-	extends: [],
-	server: {
-		LOG_LEVEL: z
-			.enum(["debug", "info", "warn", "error"])
-			.optional()
-			.default(process.env.NODE_ENV === "development" ? "debug" : "error"),
-		POSTHOG_PROJECT_API_KEY: z.string(),
-		POSTHOG_HOST: z.string(),
-	},
-	runtimeEnv: {
-		LOG_LEVEL: process.env.LOG_LEVEL,
-		POSTHOG_PROJECT_API_KEY: process.env.POSTHOG_PROJECT_API_KEY,
-		POSTHOG_HOST: process.env.POSTHOG_HOST,
-	},
+const booleanish = z.union([z.boolean(), z.string()]).transform((value) => {
+	if (typeof value === "boolean") return value;
+	return value === "true";
 });
+
+export const logLevelSchema = z.enum(["debug", "info", "warn", "error"]);
+
+export const analyticsEnvSchema = {
+	LOG_LEVEL: logLevelSchema.optional(),
+	ANALYTICS_ENABLED: booleanish.optional(),
+	POSTHOG_API_KEY: z.string().optional(),
+	POSTHOG_HOST: z.string().url().optional(),
+	DEBUG: booleanish.optional(),
+};
+
+export function createAnalyticsEnv(
+	runtimeEnv: Record<string, string | boolean | undefined>
+) {
+	return createEnv({
+		server: analyticsEnvSchema,
+		runtimeEnv,
+	});
+}
+
+export type AnalyticsEnv = ReturnType<typeof createAnalyticsEnv>;

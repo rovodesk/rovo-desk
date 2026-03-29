@@ -1,6 +1,6 @@
 import pino from "pino";
-import { keys } from "../server/keys";
-import type { IAnalytics } from "./analytics";
+import type { AnalyticsEnv } from "../server/keys";
+import type { IAnalytics, ILogger } from "../types";
 
 export type AuthContext = {
 	sessionId?: string;
@@ -9,36 +9,23 @@ export type AuthContext = {
 	role?: string | string[];
 };
 
-export interface ILogger {
-	setContext(ctx: Record<string, unknown>): void;
-	setTraceContext(traceId?: string, spanId?: string): void;
-	setAuthContext(auth: AuthContext): void;
-	info(message: string, data?: Record<string, unknown>): void;
-	warn(
-		critical: boolean,
-		message: string,
-		data?: Record<string, unknown>
-	): void;
-	error(message: string, err?: unknown, data?: Record<string, unknown>): void;
-	debug(message: string, data?: Record<string, unknown>): void;
-}
+const DEFAULT_LOG_LEVEL = "info";
 
 export type LoggerOptions = {
-	logLevel?: string;
-	enableAnalytics?: boolean;
-	analytics?: IAnalytics;
+	env: AnalyticsEnv;
+	analytics: IAnalytics;
 };
 
 export class Logger implements ILogger {
 	private readonly pino: pino.Logger;
 	private context: Record<string, unknown> = {};
 	private auth: AuthContext = {};
-	private readonly analytics?: IAnalytics;
-	private readonly enableAnalytics: boolean;
+	private readonly analytics: IAnalytics;
+	private readonly env: AnalyticsEnv;
 
-	constructor(opts?: LoggerOptions) {
+	constructor(opts: LoggerOptions) {
 		this.pino = pino({
-			level: opts?.logLevel ?? keys.LOG_LEVEL ?? "info",
+			level: opts.env.LOG_LEVEL ?? DEFAULT_LOG_LEVEL,
 			base: null,
 			timestamp: pino.stdTimeFunctions.epochTime,
 			formatters: {
@@ -46,8 +33,8 @@ export class Logger implements ILogger {
 			},
 		});
 
-		this.analytics = opts?.analytics;
-		this.enableAnalytics = opts?.enableAnalytics ?? false;
+		this.analytics = opts.analytics;
+		this.env = opts.env;
 	}
 
 	/**
@@ -82,9 +69,7 @@ export class Logger implements ILogger {
 				name: typeof e.name === "string" ? e.name : "Error",
 				code: typeof e.code === "string" ? e.code : undefined,
 				stack:
-					process.env.NODE_ENV === "development" && typeof e.stack === "string"
-						? e.stack
-						: undefined,
+					this.env.DEBUG && typeof e.stack === "string" ? e.stack : undefined,
 				cause: e.cause,
 			};
 		}
@@ -124,7 +109,7 @@ export class Logger implements ILogger {
 			message,
 		});
 
-		if (this.enableAnalytics && critical && this.analytics) {
+		if (this.env.ANALYTICS_ENABLED && critical && this.analytics) {
 			this.analytics.captureEvent("system", "warn_critical", {
 				message,
 				...this.context,
@@ -144,7 +129,7 @@ export class Logger implements ILogger {
 			message,
 		});
 
-		if (this.enableAnalytics && this.analytics) {
+		if (this.env.ANALYTICS_ENABLED && this.analytics) {
 			const properties = { ...this.context, ...data, message };
 			if (err instanceof Error) {
 				this.analytics.captureException(err, this.auth.userId, properties);
@@ -164,9 +149,8 @@ export class Logger implements ILogger {
 	 */
 	derive(ctx: Record<string, unknown>) {
 		const newLogger = new Logger({
+			env: this.env,
 			analytics: this.analytics,
-			enableAnalytics: this.enableAnalytics,
-			logLevel: this.pino.level,
 		});
 		newLogger.setContext({ ...this.context, ...ctx });
 		newLogger.setAuthContext(this.auth);

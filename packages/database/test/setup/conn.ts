@@ -5,7 +5,7 @@ import {
 	type StartedTestContainer,
 	Wait,
 } from "testcontainers";
-import { createDatabase } from "../../conn";
+import { createDatabase } from "../..";
 
 let container: StartedTestContainer;
 let database: Awaited<ReturnType<typeof createDatabase>>;

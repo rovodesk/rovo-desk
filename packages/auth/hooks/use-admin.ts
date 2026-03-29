@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Data accepts any value */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AuthRole } from "@/access-control";
+import type { AuthRole } from "../access-control";
 import { keys } from "../client";
 import { useAuthContext } from "../client/context";
 

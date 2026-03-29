@@ -1,52 +1,17 @@
 import {
 	type Attributes,
-	type Context,
 	context,
 	type Span,
 	type SpanStatusCode,
 	trace,
 } from "@opentelemetry/api";
+import type { ITracer } from "../types";
 import type { Logger } from "./logger";
 
-export interface ITracer {
-	withSpan<T>(
-		name: string,
-		fn: (span: Span) => Promise<T>,
-		attrs?: Attributes
-	): Promise<T>;
-	startSpan(
-		name: string,
-		attrs?: Attributes
-	): {
-		span: Span;
-		ctx: Context;
-		name: string;
-		startTime: number;
-	};
-	endSpan(
-		spanObj: {
-			span: Span;
-			name: string;
-			startTime: number;
-		},
-		attrs?: Attributes
-	): void;
-	recordError(
-		spanObj: {
-			span: Span;
-			name: string;
-			startTime: number;
-		},
-		// biome-ignore lint/suspicious/noExplicitAny: Error Can be of any type
-		err: any
-	): Promise<void>;
-}
-
-export const SpanID = () => {
-	if (process.env.NODE_ENV === "development") {
-		return `dev-${crypto.randomUUID().slice(0, 8)}`;
-	}
-	return crypto.randomUUID().slice(0, 8);
+export type TracerOptions = {
+	app: string;
+	version: string;
+	logger: Logger;
 };
 
 export class Tracer implements ITracer {
@@ -55,10 +20,10 @@ export class Tracer implements ITracer {
 	private readonly version: string;
 	private readonly logger: Logger;
 
-	constructor(app: string, version: string, logger: Logger) {
-		this.app = app;
-		this.version = version;
-		this.logger = logger;
+	constructor(opts: TracerOptions) {
+		this.app = opts.app;
+		this.version = opts.version;
+		this.logger = opts.logger;
 	}
 
 	private get tracer() {

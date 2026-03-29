@@ -1,6 +1,6 @@
 import type { ICacheStore } from "./interface";
 
-export class KvCacheStore implements ICacheStore {
+export class CacheStore implements ICacheStore {
 	private readonly kv: KVNamespace;
 	private readonly prefix?: string;
 
@@ -31,9 +31,9 @@ export class KvCacheStore implements ICacheStore {
 	/**
 	 * Creates a scoped cache store with additional prefix
 	 */
-	withPrefix(prefix: string): KvCacheStore {
+	withPrefix(prefix: string): CacheStore {
 		const newPrefix = this.prefix ? `${this.prefix}:${prefix}` : prefix;
 
-		return new KvCacheStore(this.kv, newPrefix);
+		return new CacheStore(this.kv, newPrefix);
 	}
 }

@@ -1,4 +1,4 @@
-import type { ITracer } from "@zero-heads-lab/analytics/lib/tracer";
+import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { WidgetMutationRepository } from "./widget.mutation";
 import { WidgetQueryRepository } from "./widget.query";

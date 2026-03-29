@@ -9,6 +9,7 @@
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
     "@zero-heads-lab/design-system": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
     "stripe": "^20.3.1",

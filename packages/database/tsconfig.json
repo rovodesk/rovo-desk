@@ -5,7 +5,10 @@
     "incremental": true,
     "composite": true,
     "baseUrl": ".",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "paths": {
+      "@zero-heads-lab/*": ["./*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "test"]
