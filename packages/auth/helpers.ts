@@ -164,3 +164,42 @@ export const isValidApiKey = (key: Partial<ApiKey>): boolean => {
 
 	return true;
 };
+
+// TEST:  Needs Testing
+export function extractNameFromEmail(email: string): string {
+	if (!email || typeof email !== "string") return "";
+
+	// Normalize
+	email = email.trim().toLowerCase();
+	if (!email) return "";
+
+	// Use the LAST @ as separator
+	const atIndex = email.lastIndexOf("@");
+
+	// No @ found → treat full string as local part
+	let local = atIndex === -1 ? email : email.slice(0, atIndex);
+
+	if (!local) return "";
+
+	// Replace all stray @ with spaces
+	local = local.replaceAll("@", " ");
+
+	// Remove aliasing (e.g. john+work -> john)
+	local = local.replace(/\+.*$/, "");
+
+	// Replace separators with spaces
+	local = local.replace(/[-_.]+/g, " ");
+
+	// Collapse whitespace
+	local = local.replace(/\s+/g, " ").trim();
+
+	if (!local) return "";
+
+	// Capitalize each word
+	const name = local
+		.split(" ")
+		.map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : ""))
+		.join(" ");
+
+	return name;
+}

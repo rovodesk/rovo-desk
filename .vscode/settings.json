@@ -35,7 +35,7 @@
     "*.css": "tailwindcss",
     "**/wrangler.json": "jsonc"
   },
-  "todo-tree.general.tags": ["TODO", "FIXME", "BUG", "FUTURE"],
+  "todo-tree.general.tags": ["TODO", "FIXME", "BUG", "FUTURE", "TEST"],
   "todo-tree.highlights.defaultHighlight": {
     "fontWeight": "bold",
     "type": "text",
@@ -52,7 +52,7 @@
     "FUTURE": {
       "foreground": "#ffffff",
       "background": "#19ad0f",
-      "icon": "check",
+      "icon": "rocket",
       "iconColour": "#19ad0f",
       "gutterIcon": true
     },
@@ -68,6 +68,13 @@
       "background": "#f44336",
       "icon": "bug",
       "iconColour": "#f44336",
+      "gutterIcon": true
+    },
+    "TEST": {
+      "foreground": "#000000",
+      "background": "#12e15e",
+      "icon": "beaker",
+      "iconColour": "#12e15e",
       "gutterIcon": true
     }
   },
