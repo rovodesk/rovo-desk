@@ -26,7 +26,7 @@ services:
       POSTGRES_DB: testdb
       POSTGRES_PASSWORD: test
     volumes:
-      - ./.docker/data/postgres/data:/var/lib/postgresql/data
+      - ./docker/data/postgres/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U test -d testdb"]
       interval: 10s
@@ -44,7 +44,7 @@ services:
   #     MONGO_INITDB_ROOT_USERNAME: user
   #     MONGO_INITDB_ROOT_PASSWORD: Password
   #   volumes:
-  #     - ./.docker/data/mongodb/data:/data/db
+  #     - ./docker/data/mongodb/data:/data/db
   #   healthcheck:
   #     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
   #     interval: 10s
@@ -57,7 +57,7 @@ services:
   #   ports:
   #     - "6379:6379"
   #   volumes:
-  #     - ./.docker/data/redis:/data
+  #     - ./docker/data/redis:/data
   #   healthcheck:
   #     test: ["CMD", "redis-cli", "ping"]
   #     interval: 10s
@@ -74,7 +74,7 @@ services:
   #     RABBITMQ_DEFAULT_USER: user
   #     RABBITMQ_DEFAULT_PASS: Password
   #   volumes:
-  #     - ./.docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
+  #     - ./docker/data/rabbitmq/lib:/var/lib/rabbitmq/mnesia
 
   # --- MANAGEMENT UIs ---
   pgadmin:
@@ -90,7 +90,7 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     volumes:
-      - ./.docker/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
       
