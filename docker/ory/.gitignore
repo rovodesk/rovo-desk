@@ -1,3 +1,2 @@
 .env.local
 .env.production
-config/kratos/kratos.yml
