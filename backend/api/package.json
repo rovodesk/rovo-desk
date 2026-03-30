@@ -1,0 +1,24 @@
+{
+  "name": "api",
+  "private": true,
+  "version": "0.0.1",
+  "description": "API",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --passWithNoTests",
+    "dev": "encore run"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@vitest/coverage-istanbul": "catalog:testing",
+    "@zero-heads-lab/testing": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:testing"
+  },
+  "dependencies": {
+    "encore.dev": "^1.56.2"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.13.0"
+  }
+}
