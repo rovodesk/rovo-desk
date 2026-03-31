@@ -10,7 +10,7 @@ import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { fonts } from "@zero-heads-lab/design-system/context/font";
 import { CookieConsent } from "@/components/cookie-consent";
-import Footer from "@/components/Footer";
+import { QueryClientProvider } from "@/lib/providers/query-client";
 import appCss from "@/styles/app.css?url";
 
 export const Route = createRootRouteWithContext<{
@@ -54,11 +54,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className={`wrap-anywhere ${fonts} antialiased`}>
-				<AnalyticsProvider>
-					<UIProvider>
-						{children}
-						<Footer />
-						{/* <TanStackDevtools
+				<QueryClientProvider>
+					<AnalyticsProvider>
+						<UIProvider>
+							{children}
+							{/* <TanStackDevtools
 					config={{
 						position: "bottom-right",
 					}}
@@ -69,15 +69,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						},
 					]}
 				/> */}
-						<Scripts />
-					</UIProvider>
+							<Scripts />
+						</UIProvider>
 
-					{/* Cookie Consent */}
-					<CookieConsent
-						onAcceptCallback={() => console.log("accepted")}
-						onDeclineCallback={() => console.log("declined")}
-					/>
-				</AnalyticsProvider>
+						{/* Cookie Consent */}
+						<CookieConsent
+							onAcceptCallback={() => console.log("accepted")}
+							onDeclineCallback={() => console.log("declined")}
+						/>
+					</AnalyticsProvider>
+				</QueryClientProvider>
 			</body>
 		</html>
 	);
