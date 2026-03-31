@@ -2,14 +2,14 @@ import { QueryClientProvider as ReactQueryProvider } from "@tanstack/react-query
 import { useRouter } from "@tanstack/react-router";
 
 export const QueryClientProvider = ({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) => {
-  const router = useRouter();
-  const queryClient = router.options.context.queryClient;
+	const router = useRouter();
+	const queryClient = router.options.context.queryClient;
 
-  return (
-    <ReactQueryProvider client={queryClient}>{children}</ReactQueryProvider>
-  );
+	return (
+		<ReactQueryProvider client={queryClient}>{children}</ReactQueryProvider>
+	);
 };
