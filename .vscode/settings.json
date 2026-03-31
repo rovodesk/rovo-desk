@@ -83,8 +83,9 @@
     "**/node_modules": true,
     "bun.lock": true,
     "bunfig.toml": true,
-    ".husky": false,
-    "**/.tanstack": true
+    ".husky": true,
+    "**/.tanstack": true,
+    "frontend/auth": true
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true

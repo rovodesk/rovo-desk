@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
+import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
 import { orpcQuery, type RPCOutputs } from "@/lib/orpc-client";
 
 type WorkspaceProfileOutput =
@@ -12,16 +13,17 @@ type UserProfileOutput = RPCOutputs["profile"]["user"]["getUserProfile"];
 
 export function useProfile() {
 	const queryClient = useQueryClient();
-	const { session, loading: isSessionLoading } = useSession();
+	const { data: user, isLoading: isSessionLoading } = useUser();
+	const { data: workspace } = useOrganization();
 
-	const userId = session?.user?.id;
+	const userId = user?.id;
 	const onboardingQueryOptions =
 		orpcQuery.profile.onboarding.loadProgress.queryOptions({
 			enabled: Boolean(userId) && !isSessionLoading,
 			queryKey: ["profile", userId],
 		});
 
-	const workspaceId = session?.session?.activeOrganizationId;
+	const workspaceId = workspace?.currentOrganization;
 	const workspaceQueryOptions =
 		orpcQuery.profile.workspace.getWorkspaceProfile.queryOptions({
 			enabled: Boolean(workspaceId) && !isSessionLoading,

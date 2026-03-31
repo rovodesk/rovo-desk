@@ -1,5 +1,4 @@
 import "@zero-heads-lab/design-system/styles/default.css";
-
 // import { OnboardingProvider } from "@/providers/onboarding";
 import {
 	QueryCache,
@@ -7,8 +6,7 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { AuthProvider, authClient } from "@zero-heads-lab/auth/client";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { AuthProvider } from "@zero-heads-lab/auth/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
@@ -22,6 +20,8 @@ import { handleMutationError } from "@/lib/utils/error";
 import { routeTree } from "@/routeTree.gen";
 
 import "@tanstack/react-router";
+import { useAuth } from "@zero-heads-lab/auth/hooks/use-auth";
+import { env } from "./env";
 // import { useOnboarding } from "@onboardjs/react";
 
 export const queryClient = new QueryClient({
@@ -86,11 +86,18 @@ const router = createRouter({
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
 	const root = createRoot(rootElement);
+
 	root.render(
 		<StrictMode>
 			<AppErrorBoundary>
 				<QueryClientProvider client={queryClient}>
-					<AuthProvider authClient={authClient}>
+					<AuthProvider
+						audience={env.VITE_KINDE_AUDIENCE ?? undefined}
+						clientId={env.VITE_KINDE_CLIENT_ID}
+						domain={env.VITE_KINDE_DOMAIN}
+						logoutUri={env.VITE_KINDE_LOGOUT_URI}
+						redirectUri={env.VITE_KINDE_REDIRECT_URI}
+					>
 						{/* <OnboardingProvider> */}
 						<App />
 						{/* </OnboardingProvider> */}
@@ -102,10 +109,10 @@ if (!rootElement.innerHTML) {
 }
 
 function App() {
-	const { session, isAuthenticated, isAnonymous, loading } = useSession();
+	const { isAuthenticated, isLoading } = useAuth();
 	// const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
 
-	if (loading)
+	if (isLoading)
 		return (
 			<Loader
 				subtitle="Something Great is Cooking..."
@@ -114,9 +121,7 @@ function App() {
 		);
 
 	const authContext = {
-		session,
 		isAuthenticated,
-		isAnonymous,
 		// onboarding: {
 		// isCompleted: onboardingIsCompleted ?? false,
 		// currentStep: String(currentStep?.id ?? ""),

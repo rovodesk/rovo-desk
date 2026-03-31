@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated")({
 		const role = determineAuthRole(auth.session?.user?.role);
 
 		if (!auth.isAuthenticated) {
-			throw redirect({ to: "/sign-in" });
+			throw redirect({ to: "/login" });
 		}
 
 		if (auth.isAuthenticated && role !== "admin") {

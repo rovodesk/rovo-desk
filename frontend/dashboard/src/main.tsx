@@ -7,8 +7,8 @@ import {
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
-import { AuthProvider } from "@zero-heads-lab/auth/client";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { useAuth } from "@zero-heads-lab/auth/hooks/use-auth";
+import { AuthProvider } from "@zero-heads-lab/auth/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
@@ -23,8 +23,9 @@ import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
 
 import "@tanstack/react-router";
-import { useOnboarding } from "@onboardjs/react";
+import { env } from "./env";
 import { SearchProvider } from "./providers/search";
+import type { RouterContext } from "./types/router-context";
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -92,7 +93,13 @@ if (!rootElement.innerHTML) {
 			<AppErrorBoundary>
 				<AnalyticsProvider>
 					<QueryClientProvider client={queryClient}>
-						<AuthProvider>
+						<AuthProvider
+							audience={env.VITE_KINDE_AUDIENCE}
+							clientId={env.VITE_KINDE_CLIENT_ID}
+							domain={env.VITE_KINDE_DOMAIN}
+							logoutUri={env.VITE_KINDE_LOGOUT_URI}
+							redirectUri={env.VITE_KINDE_REDIRECT_URI}
+						>
 							<OnboardingProvider>
 								<SearchProvider>
 									<UIProvider>
@@ -109,27 +116,25 @@ if (!rootElement.innerHTML) {
 }
 
 function App() {
-	const { session, isAuthenticated, isAnonymous, loading } = useSession();
-	const { currentStep, isCompleted: onboardingIsCompleted } = useOnboarding();
+	const { isAuthenticated, isLoading } = useAuth();
 
-	if (loading)
+	if (isLoading) {
 		return (
-			<Loader
+			<Loader // TODO: Get from feature flag
 				subtitle="Something Great is Cooking..."
 				title="Loading your profile..."
 			/>
 		);
+	}
 
-	const authContext = {
-		session,
+	const authContext: RouterContext["auth"] = {
 		isAuthenticated,
-		isAnonymous,
-		onboarding: {
-			isCompleted: onboardingIsCompleted ?? false,
-			currentStep: String(currentStep?.id ?? ""),
-		},
+		isLoading,
 	};
-	console.log(authContext);
+
+	if (import.meta.env.DEV) {
+		console.info("[AUTH]", JSON.stringify(authContext, null, 2));
+	}
 
 	return <RouterProvider context={{ auth: authContext }} router={router} />;
 }

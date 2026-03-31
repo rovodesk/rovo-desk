@@ -1,21 +1,20 @@
-import { useOnboarding } from "@onboardjs/react";
-import { InviteMembersForm } from "@zero-heads-lab/auth/components/forms/invite-members-form";
+// import { useOnboarding } from "@onboardjs/react";
+// import { InviteMembersForm } from "@zero-heads-lab/auth/components/forms/invite-members-form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import type { Tag } from "@zero-heads-lab/design-system/components/ui/input-tag";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { ArrowRight, UserPlus, Users } from "lucide-react";
 
 export function InviteStep({ className }: React.ComponentProps<"div">) {
-	const { next, updateContext, skip } = useOnboarding();
+	// const { next, updateContext, skip } = useOnboarding();
 
-	const handleInviteStepSubmit = (value: { emails: Tag[] }) => {
-		updateContext({
-			flowData: {
-				...value,
-			},
-		});
-		next();
-	};
+	// const handleInviteStepSubmit = (value: { emails: Tag[] }) => {
+	// 	updateContext({
+	// 		flowData: {
+	// 			...value,
+	// 		},
+	// 	});
+	// 	next();
+	// };
 
 	return (
 		<div
@@ -57,7 +56,7 @@ export function InviteStep({ className }: React.ComponentProps<"div">) {
 							</span>
 						</div>
 
-						<InviteMembersForm onSuccess={handleInviteStepSubmit} />
+						{/* <InviteMembersForm onSuccess={handleInviteStepSubmit} /> */}
 					</div>
 				</div>
 
@@ -65,7 +64,7 @@ export function InviteStep({ className }: React.ComponentProps<"div">) {
 				<div className="flex flex-col items-center gap-4">
 					<Button
 						className="group text-muted-foreground transition-colors hover:text-foreground"
-						onClick={() => skip()}
+						// onClick={() => skip()}
 						variant="ghost"
 					>
 						I'll invite them later

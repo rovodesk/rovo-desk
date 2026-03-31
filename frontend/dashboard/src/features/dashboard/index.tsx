@@ -1,8 +1,6 @@
 import { IconPackageExport } from "@tabler/icons-react";
-import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
-import { useOrganization, useSession } from "@zero-heads-lab/auth/hooks";
+import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
-import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	Card,
@@ -37,17 +35,13 @@ const findPlan = (plan: string) => {
 };
 
 export function Dashboard() {
-	const { session, loading: isSessionLoading } = useSession();
-	const { organization, loading: isOrganizationLoading } = useOrganization();
+	const { data: user, isLoading } = useUser();
 
-	const name = organization?.name ?? "Unknown";
-	const plan = findPlan(organization?.metadata?.plan ?? "basic");
-	const roles = determineAuthRoles(session?.user?.role);
-
-	const isLoading = isSessionLoading || isOrganizationLoading;
 	if (isLoading) {
 		return <DashboardSkeleton />;
 	}
+
+	const plan = findPlan("pro");
 
 	return (
 		<MainContent
@@ -81,20 +75,12 @@ export function Dashboard() {
 					<div className="space-y-1">
 						<div className="flex items-center gap-3">
 							<h1 className="font-semibold text-xl tracking-tight">
-								{name}'s Dashboard
+								{user?.givenName}'s Dashboard
 							</h1>
-
-							<div className="flex items-center gap-2">
-								{roles.map((role, idx) => (
-									<Badge key={idx} variant="outline">
-										{role}
-									</Badge>
-								))}
-							</div>
 						</div>
 
 						<p className="text-muted-foreground text-sm">
-							Overview of activity and performance for {name}
+							Overview of activity and performance for {user?.givenName}
 						</p>
 					</div>
 					<Button variant="secondary">

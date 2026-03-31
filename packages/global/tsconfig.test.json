@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "types": ["vitest/globals"]
+  },
+  "include": [
+    "test",
+    "**/*.ts",
+    "**/*.d.ts",
+    "../**/*.ts",
+    "../**/*.tsx",
+    "../../frontend/dashboard/src/components/tables/api-key-table.tsx",
+    "../../frontend/dashboard/src/components/tables/session-table.tsx",
+    "../../frontend/dashboard/src/components/dialogs/delete-account-dialog.tsx",
+    "../../frontend/dashboard/src/components/tables/sign-out-dialog.tsx",
+    "../../frontend/dashboard/src/components/dialogs/add-domain-dialog.tsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

@@ -7,6 +7,6 @@
       "@zero-heads-lab/*": ["../../packages/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "src/lib/auth/guards.ts"],
   "exclude": ["node_modules", "dist"]
 }

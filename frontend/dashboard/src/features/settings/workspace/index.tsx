@@ -1,4 +1,4 @@
-import { useOrganization } from "@zero-heads-lab/auth/hooks";
+import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import {
@@ -24,7 +24,7 @@ import SectionMain from "../_components/section-main";
 import { SettingRow } from "../_components/setting-row";
 
 export function WorkspaceSettings() {
-	const { organization } = useOrganization();
+	const { data: organization } = useOrganization();
 
 	const [workspaceIdCopied, setWorkspaceIdCopied] = useState(false);
 
@@ -41,10 +41,11 @@ export function WorkspaceSettings() {
 		);
 	};
 
+	const currentOrganization = organization?.currentOrganization;
 	const copyWorkspaceId = async () => {
-		if (!organization?.id) return;
+		if (!currentOrganization) return;
 
-		await navigator.clipboard.writeText(organization.id);
+		await navigator.clipboard.writeText(currentOrganization);
 		setWorkspaceIdCopied(true);
 
 		toast.success("Workspace ID copied");
@@ -71,7 +72,7 @@ export function WorkspaceSettings() {
 									className="border-dashed font-mono text-xs"
 									disabled
 									readOnly
-									value={organization?.id ?? ""}
+									value={organization?.currentOrganization ?? ""}
 								/>
 
 								<InputGroupButton
@@ -92,7 +93,7 @@ export function WorkspaceSettings() {
 
 					<div className="space-y-2">
 						<Label>Workspace Name</Label>
-						<Input defaultValue={organization?.name} />
+						<Input defaultValue={organization?.currentOrganization ?? ""} />
 					</div>
 
 					<div className="space-y-2">

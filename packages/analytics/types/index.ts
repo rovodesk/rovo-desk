@@ -80,3 +80,15 @@ export interface ITracer {
 		err: any
 	): Promise<void>;
 }
+
+export type Attributions = {
+	utm_source: string | null;
+	utm_medium: string | null;
+	utm_campaign: string | null;
+	utm_term: string | null;
+	utm_content: string | null;
+	gclid: string | null;
+	fbclid: string | null;
+	referrer: string | null;
+	timestamp: Date;
+};

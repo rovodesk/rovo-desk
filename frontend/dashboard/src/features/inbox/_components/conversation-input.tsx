@@ -1,4 +1,4 @@
-import { useUser } from "@zero-heads-lab/auth/hooks";
+import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
 import {
 	Avatar,
 	AvatarFallback,
@@ -11,10 +11,10 @@ import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
 
 const ConversationInput = () => {
-	const { user } = useUser();
+	const { data: user } = useUser();
 	const [message, setMessage] = useState("");
 
-	const userImage = user?.image || Placeholder.avatar(user?.email);
+	const userImage = user?.picture;
 
 	const handleSend = () => {
 		if (!message.trim()) return;
@@ -36,7 +36,7 @@ const ConversationInput = () => {
 			<Avatar className="h-8 w-8 shrink-0">
 				<AvatarImage src={userImage} />
 				<AvatarFallback className="bg-muted text-[10px] text-muted-foreground">
-					{user?.name?.slice(0, 2)?.toUpperCase()}
+					{Placeholder.avatar(user?.email)}
 				</AvatarFallback>
 			</Avatar>
 

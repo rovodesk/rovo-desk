@@ -1,0 +1,21 @@
+{
+  "name": "@zero-heads-lab/global",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "hono": "catalog:hono",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

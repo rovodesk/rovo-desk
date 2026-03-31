@@ -19,6 +19,7 @@ import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_authenticated/knowledge-base/index'
+import { Route as AuthenticatedGetStartedIndexRouteImport } from './routes/_authenticated/get-started/index'
 import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
 import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
 import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authenticated/settings/widget'
@@ -79,6 +80,12 @@ const AuthenticatedKnowledgeBaseIndexRoute =
   AuthenticatedKnowledgeBaseIndexRouteImport.update({
     id: '/knowledge-base/',
     path: '/knowledge-base/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedGetStartedIndexRoute =
+  AuthenticatedGetStartedIndexRouteImport.update({
+    id: '/get-started/',
+    path: '/get-started/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedFunnelsIndexRoute =
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels/': typeof AuthenticatedFunnelsIndexRoute
+  '/get-started/': typeof AuthenticatedGetStartedIndexRoute
   '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels': typeof AuthenticatedFunnelsIndexRoute
+  '/get-started': typeof AuthenticatedGetStartedIndexRoute
   '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -193,6 +202,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
+  '/_authenticated/get-started/': typeof AuthenticatedGetStartedIndexRoute
   '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/settings/widget'
     | '/settings/workspace'
     | '/funnels/'
+    | '/get-started/'
     | '/knowledge-base/'
     | '/settings/'
     | '/knowledge-base/knowledge/$knowledgeId'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/settings/widget'
     | '/settings/workspace'
     | '/funnels'
+    | '/get-started'
     | '/knowledge-base'
     | '/settings'
     | '/knowledge-base/knowledge/$knowledgeId'
@@ -255,6 +267,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/widget'
     | '/_authenticated/settings/workspace'
     | '/_authenticated/funnels/'
+    | '/_authenticated/get-started/'
     | '/_authenticated/knowledge-base/'
     | '/_authenticated/settings/'
     | '/_authenticated/knowledge-base/knowledge/$knowledgeId'
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge-base'
       fullPath: '/knowledge-base/'
       preLoaderRoute: typeof AuthenticatedKnowledgeBaseIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/get-started/': {
+      id: '/_authenticated/get-started/'
+      path: '/get-started'
+      fullPath: '/get-started/'
+      preLoaderRoute: typeof AuthenticatedGetStartedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/funnels/': {
@@ -441,6 +461,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedFunnelsIndexRoute: typeof AuthenticatedFunnelsIndexRoute
+  AuthenticatedGetStartedIndexRoute: typeof AuthenticatedGetStartedIndexRoute
   AuthenticatedKnowledgeBaseIndexRoute: typeof AuthenticatedKnowledgeBaseIndexRoute
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
 }
@@ -451,6 +472,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedFunnelsIndexRoute: AuthenticatedFunnelsIndexRoute,
+  AuthenticatedGetStartedIndexRoute: AuthenticatedGetStartedIndexRoute,
   AuthenticatedKnowledgeBaseIndexRoute: AuthenticatedKnowledgeBaseIndexRoute,
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute:
     AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute,

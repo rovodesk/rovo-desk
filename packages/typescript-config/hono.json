@@ -4,8 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "nodenext",
     "strict": true,
     "skipLibCheck": true,
     "lib": ["ESNext"],

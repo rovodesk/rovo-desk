@@ -6,25 +6,13 @@
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc -b",
     "test": "vitest run"
   },
   "dependencies": {
-    "@better-auth/api-key": "catalog:betterauth",
-    "@better-auth/passkey": "catalog:betterauth",
-    "@better-auth/scim": "catalog:betterauth",
-    "@better-auth/sso": "catalog:betterauth",
-    "@better-auth/stripe": "catalog:betterauth",
-    "@t3-oss/env-core": "catalog:",
+    "@kinde-oss/kinde-auth-react": "^5.11.0",
     "@tanstack/react-query": "catalog:tanstack",
-    "@zero-heads-lab/analytics": "workspace:*",
-    "@zero-heads-lab/billing": "workspace:*",
-    "@zero-heads-lab/cache": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
-    "@zero-heads-lab/design-system": "workspace:*",
-    "@zero-heads-lab/email": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*",
-    "better-auth": "catalog:betterauth",
-    "jose": "^6.2.1",
+    "jose": "^6.2.2",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
     "zod": "catalog:"

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
 import type {
 	UPDATE_WIDGET_CONFIG_INPUT_DTO,
 	WIDGET_DTO,
@@ -9,13 +9,15 @@ import { orpcQuery } from "@/lib/orpc-client";
 
 type WidgetData = z.infer<typeof WIDGET_DTO>;
 type UpdateWidgetSettingsInput = z.infer<typeof UPDATE_WIDGET_CONFIG_INPUT_DTO>;
+type UpdateWidgetSettingsContext = {
+	previous?: WidgetData;
+};
 
 export function useWidget() {
-	const { session, loading: isSessionLoading } = useSession();
+	const { data: workspace } = useOrganization();
 	const queryClient = useQueryClient();
 
-	const organizationId = session?.session.activeOrganizationId;
-
+	const organizationId = workspace?.currentOrganization;
 	/* ===================================================== */
 	/* ===================== QUERY KEYS ==================== */
 	/* ===================================================== */
@@ -24,18 +26,21 @@ export function useWidget() {
 		widget: ["widget", organizationId],
 	};
 
-	const enabled = Boolean(organizationId) && !isSessionLoading;
-
 	const widgetQuery = useQuery<WidgetData>({
 		...orpcQuery.widget.get.queryOptions({
-			enabled,
 			queryKey: keys.widget,
 		}),
+		enabled: !!organizationId,
 	});
 
 	/* ---------- UPDATE SETTINGS ---------- */
 
-	const updateSettings = useMutation<void, Error, UpdateWidgetSettingsInput>({
+	const updateSettings = useMutation<
+		void,
+		Error,
+		UpdateWidgetSettingsInput,
+		UpdateWidgetSettingsContext
+	>({
 		mutationFn: (input) => orpcQuery.widget.updateSettings.call(input),
 
 		onMutate: async (input) => {
