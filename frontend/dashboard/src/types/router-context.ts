@@ -1,5 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { AuthContext } from "@zero-heads-lab/auth/types";
+import type { AuthContext } from "@zero-heads-lab/auth/lib/types";
 
 export type RouterContext = {
 	queryClient: QueryClient;

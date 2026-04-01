@@ -38,3 +38,5 @@ bun.lock
 
 docker/**/data/*
 **/migrations/*
+
+backend/api/

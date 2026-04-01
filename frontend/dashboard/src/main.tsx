@@ -8,7 +8,7 @@ import {
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
 import { useAuth } from "@zero-heads-lab/auth/hooks/use-auth";
-import { AuthProvider } from "@zero-heads-lab/auth/provider";
+import { AuthProvider } from "@zero-heads-lab/auth/lib/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";

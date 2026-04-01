@@ -1,6 +1,4 @@
-import { defineConfig } from "vitest/config";
-
-const vitestBase = defineConfig({
+const vitestBase = {
 	test: {
 		globals: true,
 		clearMocks: true,
@@ -14,6 +12,6 @@ const vitestBase = defineConfig({
 		},
 		include: ["**/*.spec.ts", "**/*.test.ts"],
 	},
-});
+} as const;
 
 export default vitestBase;

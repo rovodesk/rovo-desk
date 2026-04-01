@@ -1,11 +1,10 @@
 import vitestBase from "@zero-heads-lab/testing";
 import { defineConfig, mergeConfig } from "vitest/config";
 
-export default mergeConfig(
-	vitestBase,
-	defineConfig({
+export default defineConfig(
+	mergeConfig(vitestBase, {
 		test: {
-			name: "shared",
+			name: "global",
 		},
 	})
 );

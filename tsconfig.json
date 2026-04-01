@@ -3,17 +3,14 @@
   "compilerOptions": {
     "noEmit": true,
     "strictNullChecks": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "paths": {
-      "@zero-heads-lab/*": ["./*"]
+      "@zero-heads-lab/*": ["./packages/*"]
     },
     "types": ["@cloudflare/workers-types"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "frontend/dashboard/src/lib/auth/guards.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

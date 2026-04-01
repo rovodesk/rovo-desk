@@ -2,12 +2,24 @@
   "name": "@zero-heads-lab/global",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.ts",
+  "exports": {
+    "./env": "./lib/env.ts",
+    "./middlewares": "./lib/middlewares/index.ts"
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc -p ./tsconfig.build.json"
   },
   "dependencies": {
+    "@zero-heads-lab/auth": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*",
     "hono": "catalog:hono",
+    "uuid": "^13.0.0",
     "zod": "catalog:"
   },
   "devDependencies": {

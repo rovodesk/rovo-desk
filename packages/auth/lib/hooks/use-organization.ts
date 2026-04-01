@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { organizationsQueryOptions } from "../lib/queries";
+import { organizationsQueryOptions } from "../queries";
 import { useAuth } from "./use-auth";
 
 export const useOrganization = () => {

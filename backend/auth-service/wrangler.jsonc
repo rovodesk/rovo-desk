@@ -1,0 +1,41 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "auth-service",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-31",
+  "dev": {
+    "port": 5002
+  },
+  "env": {
+    "production": {
+      "observability": {
+        "traces": {
+          "enabled": true,
+          "head_sampling_rate": 0.05
+        },
+        "logs": {
+          "enabled": true,
+          "head_sampling_rate": 0.7
+        }
+      },
+      "secrets": {
+        "required": ["DATABASE_URL", "KINDE_DOMAIN", "KINDE_ISSUER"]
+      }
+    },
+    "staging": {
+      "observability": {
+        "traces": {
+          "enabled": true,
+          "head_sampling_rate": 1
+        },
+        "logs": {
+          "enabled": true,
+          "head_sampling_rate": 1
+        }
+      },
+      "secrets": {
+        "required": ["DATABASE_URL", "KINDE_DOMAIN", "KINDE_ISSUER"]
+      }
+    }
+  }
+}

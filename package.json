@@ -90,7 +90,7 @@
       "@react-email/render": "^2.0.0"
     },
     "cloudflare": {
-      "wrangler": "^4.71.0",
+      "wrangler": "^4.79.0",
       "@cloudflare/workers-types": "^4.20260130.0",
       "@cloudflare/vite-plugin": "^1.26.0",
       "@cloudflare/vitest-pool-workers": "^0.13.4"

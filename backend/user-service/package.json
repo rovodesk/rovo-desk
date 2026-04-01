@@ -1,0 +1,21 @@
+{
+  "name": "user-service",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env staging",
+    "deploy": "wrangler deploy --minify",
+    "gen:types": "wrangler types ./src/worker-configuration.d.ts --env-interface CloudflareBindings",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^catalog:",
+    "hono": "catalog:hono"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
+  }
+}
