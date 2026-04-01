@@ -6,7 +6,7 @@ import type {
 	SpanOptions,
 } from "@opentelemetry/api";
 import { SpanStatusCode } from "@opentelemetry/api";
-import { vi, type Mock } from "vitest";
+import { type Mock, vi } from "vitest";
 import type { ITracer } from "../../lib/tracer";
 
 export type MockSpan = Span & {
