@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.ts",
+    "./schemas": "./lib/schemas/index.ts"
+  },
   "scripts": {
     "build": "drizzle-kit generate --config drizzle.config.ts",
     "migrate": "npm run build && bunx drizzle-kit migrate --config drizzle.config.ts",
@@ -18,10 +23,8 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
-    "@zero-heads-lab/analytics": "workspace:*",
-    "@zero-heads-lab/billing": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/testing": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*",
     "drizzle-orm": "catalog:drizzle",
     "postgres": "^3.4.8",
     "zod": "catalog:"

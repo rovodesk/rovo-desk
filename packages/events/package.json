@@ -1,0 +1,30 @@
+{
+  "name": "@zero-heads-lab/events",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.ts",
+  "exports": {
+    "./auth": "./lib/auth/index.ts",
+    "./integration/kinde": "./lib/integration/kinde.ts",
+    "./integration/stripe": "./lib/integration/stripe.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

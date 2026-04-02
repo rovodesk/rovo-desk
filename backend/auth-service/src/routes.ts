@@ -4,6 +4,7 @@ import {
 	createLoggerMiddleware,
 	createTracerMiddleware,
 } from "@zero-heads-lab/global/middlewares";
+import { parseBody } from "@zero-heads-lab/global/utils";
 import type { ILogger, ITracer } from "@zero-heads-lab/observability";
 import { Hono } from "hono";
 import type { AppContext } from "./types";
@@ -21,6 +22,12 @@ export function createApp({ logger, tracer }: CreateAppOptions) {
 	app.use("*", createLoggerMiddleware(logger));
 
 	app.get("/", (c) => {
+		return c.text("Hello Hono!");
+	});
+
+	app.post("/webhook/user-created", async (c) => {
+		const body = await parseBody(c.req.raw);
+		console.log(body);
 		return c.text("Hello Hono!");
 	});
 

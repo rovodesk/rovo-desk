@@ -1,7 +1,7 @@
 import type { ILogger } from "@zero-heads-lab/observability";
 import { getTraceContext } from "@zero-heads-lab/observability";
 import type { Context, MiddlewareHandler } from "hono";
-import type { GlobalEnv } from "../env";
+import type { WorkerEnv } from "../env";
 
 function getOrCreateRequestId(c: Context) {
 	return (
@@ -13,7 +13,7 @@ function getOrCreateRequestId(c: Context) {
 
 export function createLoggerMiddleware(
 	logger: ILogger
-): MiddlewareHandler<GlobalEnv> {
+): MiddlewareHandler<WorkerEnv> {
 	return async (c, next) => {
 		const requestId = getOrCreateRequestId(c);
 		const start = Date.now();
@@ -27,7 +27,7 @@ export function createLoggerMiddleware(
 			})
 			.withTrace(traceCtx.traceId, traceCtx.spanId);
 
-		c.set("logger", requestLogger);
+		c.env.logger = requestLogger;
 
 		try {
 			await next();

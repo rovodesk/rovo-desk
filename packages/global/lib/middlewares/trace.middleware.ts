@@ -1,12 +1,12 @@
 import type { ITracer } from "@zero-heads-lab/observability";
 import type { Context, MiddlewareHandler } from "hono";
-import type { GlobalEnv } from "../env";
+import type { WorkerEnv } from "../env";
 
 function generateRequestId() {
 	return crypto.randomUUID();
 }
 
-function getRequestId(c: Context<GlobalEnv>) {
+function getRequestId(c: Context<WorkerEnv>) {
 	return (
 		c.req.header("cf-ray") || `${c.env.CLOUDFLARE_ENV}-${generateRequestId()}`
 	);
@@ -14,13 +14,14 @@ function getRequestId(c: Context<GlobalEnv>) {
 
 export function createTracerMiddleware(
 	tracer: ITracer
-): MiddlewareHandler<GlobalEnv> {
+): MiddlewareHandler<WorkerEnv> {
 	return async (c, next) => {
 		const requestId = getRequestId(c);
 		const start = Date.now();
 		// Tracer with injected app metadata
 
-		c.set("tracer", tracer);
+		c.env.tracer = tracer;
+		c.set("requestId", requestId);
 
 		return await tracer.withSpan(
 			"http.request",

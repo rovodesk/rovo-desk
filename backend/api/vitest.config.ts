@@ -20,7 +20,7 @@ export default mergeConfig(
 			name: "api",
 			include: ["**/*.spec.ts", "**/*.test.ts"],
 			coverage: {
-				enabled: true,
+				enabled: false,
 			},
 		},
 	})

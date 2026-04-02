@@ -2,7 +2,7 @@ import { Analytics } from "@zero-heads-lab/analytics/lib/analytics";
 import { Logger } from "@zero-heads-lab/analytics/lib/logger";
 import { Tracer } from "@zero-heads-lab/analytics/lib/tracer";
 import { createAnalyticsEnv } from "@zero-heads-lab/analytics/server/keys";
-import { CacheStore } from "@zero-heads-lab/cache";
+import { CacheStore } from "@zero-heads-lab/cache/lib";
 import type { MiddlewareHandler } from "hono";
 import type { AppEnv } from "@/lib/context";
 import { getSpanID, resolveSecret } from "@/lib/utils";

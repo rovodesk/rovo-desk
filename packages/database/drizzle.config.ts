@@ -1,9 +1,11 @@
 import { config } from "dotenv";
-import { createDrizzleConfig } from "./drizzle/config";
+import { createDrizzleConfig } from "./lib/config";
 
-config({ path: "./.env.prod" });
+config({ path: ".env" });
 
 export default createDrizzleConfig(
 	process.env.DATABASE_URL!,
-	"./drizzle/schemas/index.ts"
+	"./lib/schemas/index.ts",
+	"./lib/relations.ts",
+	"./migrations"
 );

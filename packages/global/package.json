@@ -7,8 +7,9 @@
   "module": "./lib/index.ts",
   "types": "./lib/index.ts",
   "exports": {
-    "./env": "./lib/env.ts",
-    "./middlewares": "./lib/middlewares/index.ts"
+    ".": "./lib/index.ts",
+    "./middlewares": "./lib/middlewares/index.ts",
+    "./utils": "./lib/utils/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",

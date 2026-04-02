@@ -6,8 +6,8 @@ import type {
 	AuthUser,
 } from "@zero-heads-lab/auth/types";
 import type { IBilling } from "@zero-heads-lab/billing/types";
-import type { ICacheStore } from "@zero-heads-lab/cache/interface";
-import type { STRIPE_WEBHOOK_MESSAGE_EVENT } from "@zero-heads-lab/contract/event/stripe";
+import type { ICacheStore } from "@zero-heads-lab/cache/lib/interface";
+import type { STRIPE_WEBHOOK_MESSAGE_EVENT } from "@zero-heads-lab/contract/lib/event/stripe";
 import type { Database } from "@zero-heads-lab/database";
 import type { IQueueService } from "@zero-heads-lab/queue/interface";
 

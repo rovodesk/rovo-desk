@@ -1,0 +1,9 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": false
+  },
+  "include": ["lib/**/*.ts", "lib/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

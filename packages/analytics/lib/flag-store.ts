@@ -1,4 +1,4 @@
-import type { ICacheStore } from "@zero-heads-lab/cache/interface";
+import type { ICacheStore } from "@zero-heads-lab/cache/lib/interface";
 import type {
 	FlagDefinitionCacheData,
 	FlagDefinitionCacheProvider,

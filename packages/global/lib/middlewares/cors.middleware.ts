@@ -1,10 +1,10 @@
 import type { MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
-import type { GlobalEnv } from "../env";
+import type { WorkerEnv } from "../env";
 
 export function createCorsMiddleware(
 	allowedOrigins: string[]
-): MiddlewareHandler<GlobalEnv> {
+): MiddlewareHandler<WorkerEnv> {
 	return cors({
 		origin: (requestOrigin) => {
 			return allowedOrigins.includes(requestOrigin) ? requestOrigin : null;

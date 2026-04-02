@@ -3,8 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.ts",
+      "types": "./lib/index.ts"
+    }
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
@@ -12,7 +19,7 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "catalog:",
-    "@zero-heads-lab/shared": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

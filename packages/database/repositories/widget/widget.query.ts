@@ -1,7 +1,7 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { eq } from "drizzle-orm";
-import { widget as widgetSchema } from "../../drizzle/schemas/widget.schema";
+import { widget as widgetSchema } from "../../lib/schemas/widget.schema";
 import type { IWidgetQueryRepository, Widget } from "./widget.types";
 
 export class WidgetQueryRepository implements IWidgetQueryRepository {

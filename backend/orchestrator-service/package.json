@@ -1,0 +1,28 @@
+{
+  "name": "orchestrator-service",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env staging",
+    "deploy": "wrangler deploy --minify",
+    "gen:types": "wrangler types ./src/worker-configuration.d.ts --env-interface CloudflareBindings",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kinde/webhooks": "^1.2.0",
+    "@zero-heads-lab/events": "workspace:*",
+    "@zero-heads-lab/global": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "hono": "catalog:hono",
+    "zod": "^catalog:"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@cloudflare/vitest-pool-workers": "catalog:testing",
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
+  }
+}

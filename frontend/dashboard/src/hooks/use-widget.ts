@@ -3,7 +3,7 @@ import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
 import type {
 	UPDATE_WIDGET_CONFIG_INPUT_DTO,
 	WIDGET_DTO,
-} from "@zero-heads-lab/contract/dto/widget.dto";
+} from "@zero-heads-lab/contract/lib/dto/widget.dto";
 import type { z } from "zod";
 import { orpcQuery } from "@/lib/orpc-client";
 

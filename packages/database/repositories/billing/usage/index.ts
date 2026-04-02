@@ -1,10 +1,7 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { and, eq, gte, isNull, lte, sql } from "drizzle-orm";
-import {
-	subscription,
-	usageEvent,
-} from "../../../drizzle/schemas/billing.schema";
+import { subscription, usageEvent } from "../../../lib/schemas/billing.schema";
 import type {
 	CreateUsageEventInput,
 	UsageAggregateResult,

@@ -5,7 +5,7 @@ export default mergeConfig(
 	vitestBase,
 	defineConfig({
 		test: {
-			name: "shared",
+			name: "contract",
 		},
 	})
 );

@@ -1,4 +1,4 @@
-import type { STRIPE_WEBHOOK_MESSAGE_EVENT } from "@zero-heads-lab/contract/event/stripe";
+import type { STRIPE_WEBHOOK_MESSAGE_EVENT } from "@zero-heads-lab/contract/lib/event/stripe";
 import type { AppEnv } from "@/lib/context";
 import { BillingConsumer } from "@/modules/billing/stripe.consumer";
 import { createApp } from "./app";

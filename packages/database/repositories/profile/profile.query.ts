@@ -5,7 +5,7 @@ import {
 	onboarding as onboardingSchema,
 	userProfile,
 	workspaceProfile,
-} from "../../drizzle/schemas/profile.schema";
+} from "../../lib/schemas/profile.schema";
 import type {
 	IProfileQueryRepository,
 	OnboardingProgress,

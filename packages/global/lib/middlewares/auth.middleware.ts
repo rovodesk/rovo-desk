@@ -1,7 +1,7 @@
 import { verifyJWTToken } from "@zero-heads-lab/auth";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import type { GlobalEnv } from "../env";
+import type { WorkerEnv } from "../env";
 
 function getBearerToken(authHeader?: string | null): string | null {
 	if (!authHeader) return null;
@@ -11,16 +11,13 @@ function getBearerToken(authHeader?: string | null): string | null {
 }
 
 export const authenticationMiddleware = () =>
-	createMiddleware<GlobalEnv>(async (c, next) => {
-		const logger = c.get("logger");
-		const tracer = c.get("tracer");
-
+	createMiddleware<WorkerEnv>(async (c, next) => {
 		const authHeader =
 			c.req.header("Authorization") ?? c.req.header("authorization");
 		const token = getBearerToken(authHeader);
 
 		if (!token) {
-			logger.warn("auth.missing_bearer_token", {
+			c.env.logger.warn("auth.missing_bearer_token", {
 				path: c.req.path,
 				method: c.req.method,
 			});
@@ -29,7 +26,7 @@ export const authenticationMiddleware = () =>
 			});
 		}
 
-		await tracer.withSpan(
+		await c.env.tracer.withSpan(
 			"auth.verify_jwt",
 			async (span) => {
 				span.setAttribute("auth.type", "bearer");
@@ -38,20 +35,18 @@ export const authenticationMiddleware = () =>
 				try {
 					const payload = await verifyJWTToken(token, {
 						domain: c.env.KINDE_DOMAIN,
-						issuer: c.env.KINDE_ISSUER,
+						issuer: c.env.KINDE_ISSUER_URL,
 					});
 
 					c.set("auth", payload);
 					c.set("jwtToken", token);
 
 					// 🔥 Enrich logger with auth context for downstream handlers
-					const authLogger = logger.withUser(
+					const authLogger = c.env.logger.withUser(
 						payload.sub,
 						payload.org_code,
 						payload.roles?.[0]
 					);
-
-					c.set("logger", authLogger);
 
 					span.setAttribute("auth.user_id", payload.sub);
 					if (payload.org_code) {
@@ -67,7 +62,7 @@ export const authenticationMiddleware = () =>
 				} catch (error) {
 					span.setAttribute("auth.error", true);
 
-					logger.error("auth.verification.failed", error, {
+					c.env.logger.error("auth.verification.failed", error, {
 						path: c.req.path,
 						method: c.req.method,
 					});
@@ -85,9 +80,9 @@ export const authenticationMiddleware = () =>
 	});
 
 export const requirePermission = (permission: string) =>
-	createMiddleware<GlobalEnv>(async (c, next) => {
+	createMiddleware<WorkerEnv>(async (c, next) => {
 		const auth = c.get("auth");
-		const logger = c.get("logger");
+		const logger = c.env.logger;
 
 		if (!auth) {
 			logger.warn("auth.missing_bearer_token", {
@@ -117,12 +112,11 @@ export const requirePermission = (permission: string) =>
 	});
 
 export const requireRole = (role: string) =>
-	createMiddleware<GlobalEnv>(async (c, next) => {
+	createMiddleware<WorkerEnv>(async (c, next) => {
 		const auth = c.get("auth");
-		const logger = c.get("logger");
 
 		if (!auth) {
-			logger.warn("auth.role_check.unauthorized", {
+			c.env.logger.warn("auth.role_check.unauthorized", {
 				requiredRole: role,
 			});
 
@@ -132,7 +126,7 @@ export const requireRole = (role: string) =>
 		const roles = auth.roles ?? [];
 
 		if (!roles.includes(role)) {
-			logger.warn("auth.role_check.forbidden", {
+			c.env.logger.warn("auth.role_check.forbidden", {
 				userId: auth.sub,
 				requiredRole: role,
 				roles,
@@ -141,7 +135,7 @@ export const requireRole = (role: string) =>
 			throw new HTTPException(403, { message: "Forbidden" });
 		}
 
-		logger.debug("auth.role_check.passed", {
+		c.env.logger.debug("auth.role_check.passed", {
 			userId: auth.sub,
 			requiredRole: role,
 		});
@@ -150,12 +144,11 @@ export const requireRole = (role: string) =>
 	});
 
 export const requireWorkspace = () =>
-	createMiddleware<GlobalEnv>(async (c, next) => {
+	createMiddleware<WorkerEnv>(async (c, next) => {
 		const auth = c.get("auth");
-		const logger = c.get("logger");
 
 		if (!auth?.org_code) {
-			logger.warn("auth.workspace_required.missing", {
+			c.env.logger.warn("auth.workspace_required.missing", {
 				userId: auth?.sub,
 			});
 
@@ -164,7 +157,7 @@ export const requireWorkspace = () =>
 			});
 		}
 
-		logger.debug("auth.workspace_check.passed", {
+		c.env.logger.debug("auth.workspace_check.passed", {
 			userId: auth.sub,
 			workspaceId: auth.org_code,
 		});

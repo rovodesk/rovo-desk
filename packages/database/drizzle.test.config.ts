@@ -1,4 +1,4 @@
-import { createDrizzleConfig } from "./drizzle/config";
+import { createDrizzleConfig } from "./lib/config";
 
 const url = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
 
@@ -10,6 +10,7 @@ if (!url) {
 
 export default createDrizzleConfig(
 	url,
-	"./drizzle/schemas/index.ts",
-	"./drizzle/migrations"
+	"./lib/schemas/index.ts",
+	"./lib/relations.ts",
+	"./migrations"
 );

@@ -1,15 +1,14 @@
 {
   "extends": "@zero-heads-lab/typescript-config/base.json",
-  "references": [{ "path": "./tsconfig.test.json" }],
   "compilerOptions": {
-    "incremental": true,
-    "composite": true,
     "baseUrl": ".",
-    "strictNullChecks": true,
+    "composite": false,
     "paths": {
-      "@zero-heads-lab/*": ["./*"]
+      "@zero-heads-lab/observability": [
+        "../../packages/observability/lib/index.ts"
+      ]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "test"]
+  "include": ["lib/**/*.ts", "lib/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

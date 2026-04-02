@@ -95,16 +95,8 @@
       "@cloudflare/vite-plugin": "^1.26.0",
       "@cloudflare/vitest-pool-workers": "^0.13.4"
     },
-    "betterauth": {
-      "better-auth": "1.5.5",
-      "@better-auth/api-key": "1.5.5",
-      "@better-auth/passkey": "1.5.5",
-      "@better-auth/scim": "1.5.5",
-      "@better-auth/sso": "1.5.5",
-      "@better-auth/stripe": "1.5.5"
-    },
     "drizzle": {
-      "drizzle-orm": "^0.45.1",
+      "drizzle-orm": "^0.45.2",
       "drizzle-kit": "^0.31.8",
       "drizzle-seed": "^0.3.1"
     },
@@ -118,7 +110,9 @@
       "@orpc/tanstack-query": "^1.13.13"
     },
     "kinde": {
-      "@kinde-oss/kinde-auth-react": "^5.11.0"
+      "@kinde-oss/kinde-auth-react": "^5.11.0",
+      "@kinde/webhooks": "^1.2.0",
+      "@kinde-oss/kinde-typescript-sdk": "^2.13.2"
     }
   },
   "scripts": {

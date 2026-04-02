@@ -131,3 +131,7 @@ export class Tracer implements ITracer {
 		});
 	}
 }
+
+export function createTracer(opts: TracerOptions) {
+	return new Tracer(opts);
+}
