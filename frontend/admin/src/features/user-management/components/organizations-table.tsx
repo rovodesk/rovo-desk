@@ -202,53 +202,53 @@ export function OrganizationsTable() {
 					<TableBody>
 						{isLoading
 							? Array.from({ length: 5 }).map((_, i) => (
-								<TableRow key={i}>
-									<TableCell>
-										<Skeleton className="h-10 w-40" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-5 w-20" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-5 w-20" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-5 w-20" />
-									</TableCell>
-									<TableCell>
-										<Skeleton className="h-5 w-24" />
-									</TableCell>
-								</TableRow>
-							))
+									<TableRow key={i}>
+										<TableCell>
+											<Skeleton className="h-10 w-40" />
+										</TableCell>
+										<TableCell>
+											<Skeleton className="h-5 w-20" />
+										</TableCell>
+										<TableCell>
+											<Skeleton className="h-5 w-20" />
+										</TableCell>
+										<TableCell>
+											<Skeleton className="h-5 w-20" />
+										</TableCell>
+										<TableCell>
+											<Skeleton className="h-5 w-24" />
+										</TableCell>
+									</TableRow>
+								))
 							: organizations.map((org: Organization) => (
-								<TableRow
-									key={org.id}
-									onClick={() =>
-										router.navigate({
-											to: "/user-management/details/$organizationId",
-											params: { organizationId: org.id },
-										})
-									}
-								>
-									<TableCell>
-										<div className="flex items-center gap-3">
-											<Avatar>
-												<AvatarImage src={org.logo ?? ""} />
-												<AvatarFallback>
-													{org.name.slice(0, 2).toUpperCase()}
-												</AvatarFallback>
-											</Avatar>
+									<TableRow
+										key={org.id}
+										onClick={() =>
+											router.navigate({
+												to: "/user-management/details/$organizationId",
+												params: { organizationId: org.id },
+											})
+										}
+									>
+										<TableCell>
+											<div className="flex items-center gap-3">
+												<Avatar>
+													<AvatarImage src={org.logo ?? ""} />
+													<AvatarFallback>
+														{org.name.slice(0, 2).toUpperCase()}
+													</AvatarFallback>
+												</Avatar>
 
-											<div>
-												<div className="font-medium text-sm">{org.name}</div>
-												<div className="text-muted-foreground text-xs">
-													{org.slug}
+												<div>
+													<div className="font-medium text-sm">{org.name}</div>
+													<div className="text-muted-foreground text-xs">
+														{org.slug}
+													</div>
 												</div>
 											</div>
-										</div>
-									</TableCell>
+										</TableCell>
 
-									{/* <TableCell>
+										{/* <TableCell>
                                         {org.domainVerified ? (
                                             <Badge variant="outline">
                                                 <CheckCircle className="mr-1 h-3 w-3" />
@@ -262,11 +262,11 @@ export function OrganizationsTable() {
                                         )}
                                     </TableCell> */}
 
-									<TableCell className="text-muted-foreground text-xs">
-										{formatDateTime(org.createdAt, "date")}
-									</TableCell>
-								</TableRow>
-							))}
+										<TableCell className="text-muted-foreground text-xs">
+											{formatDateTime(org.createdAt, "date")}
+										</TableCell>
+									</TableRow>
+								))}
 					</TableBody>
 				</Table>
 			</div>
