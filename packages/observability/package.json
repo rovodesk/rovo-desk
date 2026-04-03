@@ -9,7 +9,7 @@
   "exports": {
     ".": "./lib/index.ts",
     "./instrument": "./lib/instrument.ts",
-    "./mocks": "./test/mocks/index.ts"
+    "./mocks": "./lib/mocks/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",

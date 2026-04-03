@@ -1,4 +1,4 @@
-import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
+import { useOrganization } from "@zero-heads-lab/auth/hooks";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import {

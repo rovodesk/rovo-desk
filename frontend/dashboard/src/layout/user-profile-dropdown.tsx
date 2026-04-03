@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 // import { SignOutDialog } from "@/components/dialogs/";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useAuth, useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -33,6 +34,7 @@ function UserProfileDropdown() {
 	const { isMobile } = useSidebar();
 	// const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
+	const { logout } = useAuth();
 	const { theme } = useTheme();
 
 	const { data: user, isLoading: isUserLoading } = useUser();
@@ -66,6 +68,16 @@ function UserProfileDropdown() {
 		} catch (error) {
 			console.error("Failed to update user active status", error);
 			toast.error("Failed to update user active status");
+		}
+	};
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+			toast.success("Logged out successfully");
+		} catch (error) {
+			console.error("Failed to log out", error);
+			toast.error("Failed to log out");
 		}
 	};
 
@@ -230,6 +242,7 @@ function UserProfileDropdown() {
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}
 							/> */}
+							<Button onClick={() => logout()}>Logout</Button>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

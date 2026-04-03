@@ -1,52 +1,38 @@
 import type { ITracer } from "@zero-heads-lab/observability";
-import type { Context, MiddlewareHandler } from "hono";
+import type { MiddlewareHandler } from "hono";
 import type { WorkerEnv } from "../env";
 
-function generateRequestId() {
-	return crypto.randomUUID();
-}
-
-function getRequestId(c: Context<WorkerEnv>) {
-	return (
-		c.req.header("cf-ray") || `${c.env.CLOUDFLARE_ENV}-${generateRequestId()}`
-	);
-}
-
 export function createTracerMiddleware(
-	tracer: ITracer
+	tracer: ITracer // Use the concrete class or updated interface
 ): MiddlewareHandler<WorkerEnv> {
 	return async (c, next) => {
-		const requestId = getRequestId(c);
-		const start = Date.now();
-		// Tracer with injected app metadata
-
+		// Put tracer in env
 		c.env.tracer = tracer;
-		c.set("requestId", requestId);
+		// Extract context from incoming request headers
+		const parentContext = tracer.extractContext(c.req.header());
+		const params = c.req.param();
+		const path = c.req.path;
+		const method = c.req.method;
 
 		return await tracer.withSpan(
-			"http.request",
-			async (span) => {
+			`http.request.${method}.${path}`, // name
+			async (span, ctx) => {
+				// function
+				// Store BOTH in Hono context
 				c.set("span", span);
-				span.setAttribute("http.method", c.req.method);
-				span.setAttribute("http.route", c.req.path);
-				span.setAttribute("http.request_id", requestId);
+				c.set("ctx", ctx);
+				c.set("requestId", c.req.header("cf-ray") ?? crypto.randomUUID());
 
-				try {
-					await next();
+				await next();
 
-					span.setAttribute("http.status_code", c.res.status);
-					const duration = Date.now() - start;
-					span.setAttribute("http.duration", duration);
-				} catch (err) {
-					span.setAttribute("http.error", true);
-					throw err;
-				}
+				span.setAttribute("http.status_code", c.res.status);
 			},
 			{
-				"http.method": c.req.method,
-				"http.route": c.req.path,
-				"http.request_id": requestId,
-			}
+				"http.method": method,
+				"http.path": path,
+				"http.params": JSON.stringify(params),
+			},
+			parentContext
 		);
 	};
 }

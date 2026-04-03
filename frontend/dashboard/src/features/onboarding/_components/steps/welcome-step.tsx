@@ -1,5 +1,5 @@
 import { useOnboarding } from "@onboardjs/react";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import Logo from "@zero-heads-lab/design-system/components/logo";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";

@@ -8,7 +8,7 @@ import type { ITracer } from "@zero-heads-lab/observability";
 import type { SaveUserInput, UpdateUserInput } from "./types";
 
 export interface IMutationRepository {
-	saveUser(params: SaveUserInput): Promise<void>;
+	saveUserTx(params: SaveUserInput): Promise<void>;
 	updateUser(params: UpdateUserInput): Promise<void>;
 	markUserAsDeleted(params: { userId: string }): Promise<void>;
 }
@@ -43,7 +43,7 @@ export class MutationRepository implements IMutationRepository {
 		);
 	}
 
-	async saveUser(params: SaveUserInput): Promise<void> {
+	async saveUserTx(params: SaveUserInput): Promise<void> {
 		const { user, provider } = params;
 
 		return this.tracer.withSpan(

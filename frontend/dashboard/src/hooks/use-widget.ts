@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
+import { useOrganization } from "@zero-heads-lab/auth/hooks";
 import type {
 	UPDATE_WIDGET_CONFIG_INPUT_DTO,
 	WIDGET_DTO,

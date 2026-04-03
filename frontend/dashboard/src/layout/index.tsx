@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { useAuth } from "@zero-heads-lab/auth/hooks/use-auth";
+import { useAuth } from "@zero-heads-lab/auth/hooks";
 import { SidebarProvider } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { getCookie, setCookie } from "@zero-heads-lab/shared/utils";
 import { createContext, useContext, useEffect, useState } from "react";

@@ -10,6 +10,10 @@
       "@zero-heads-lab/auth": ["../../packages/auth/lib/index.ts"]
     }
   },
-  "include": ["lib/**/*.ts", "lib/**/*.tsx"],
+  "include": [
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "../../backend/api-gateway/src/middlewares/auth.middleware.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

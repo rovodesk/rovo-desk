@@ -1,0 +1,10 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": false,
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": ["lib/**/*.ts", "lib/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

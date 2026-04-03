@@ -98,7 +98,7 @@ export class UserService implements IUserService {
 				"user.id": user.id,
 				"user.externalId": user.externalId,
 			});
-			await this.repo.mutation.saveUser({
+			await this.repo.mutation.saveUserTx({
 				user,
 				provider: params.provider,
 			});

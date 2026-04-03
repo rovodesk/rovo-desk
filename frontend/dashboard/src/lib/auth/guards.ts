@@ -7,7 +7,7 @@ export function requireAuth(context: {
 }) {
 	if (!context.auth.isAuthenticated) {
 		throw redirect({
-			href: "http://localhost:3001/login",
+			to: "/login",
 		});
 	}
 }

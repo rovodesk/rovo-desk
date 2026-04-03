@@ -7,9 +7,8 @@
   "module": "./lib/index.ts",
   "types": "./lib/index.ts",
   "exports": {
-    "./auth": "./lib/auth/index.ts",
-    "./integration/kinde": "./lib/integration/kinde.ts",
-    "./integration/stripe": "./lib/integration/stripe.ts"
+    ".": "./lib/index.ts",
+    "./archive": "./lib/archive.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -17,7 +16,9 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "@zero-heads-lab/storage": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*"
   },
   "devDependencies": {
     "@zero-heads-lab/typescript-config": "workspace:*",

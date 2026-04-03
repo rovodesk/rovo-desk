@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useOrganization, useUser } from "@zero-heads-lab/auth/hooks";
 import { orpcQuery, type RPCOutputs } from "@/lib/orpc-client";
 
 type WorkspaceProfileOutput =

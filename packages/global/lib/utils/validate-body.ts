@@ -1,3 +1,4 @@
+import { ValidationError } from "lib/errors";
 import type { ZodType, z } from "zod";
 
 export type BodyKind = "json" | "text" | "form" | "multipart" | "binary";
@@ -45,16 +46,6 @@ type ValidateBodyOptions<TSchema extends ZodType | undefined = undefined> = {
 	expected?: BodyKind;
 	schema?: TSchema;
 };
-
-export class BodyValidationError extends Error {
-	status: number;
-
-	constructor(message: string, status = 400) {
-		super(message);
-		this.name = "BodyValidationError";
-		this.status = status;
-	}
-}
 
 function normalizeContentType(contentType: string | null): string {
 	return (contentType ?? "").split(";")[0].trim().toLowerCase();
@@ -144,7 +135,7 @@ export async function readBody(request: Request): Promise<ParsedRequestBody> {
 		try {
 			data = rawText.length > 0 ? JSON.parse(rawText) : null;
 		} catch {
-			throw new BodyValidationError("Invalid JSON body", 400);
+			throw new ValidationError("Invalid JSON body", 400);
 		}
 
 		return {
@@ -235,7 +226,7 @@ function assertExpectedKind(actual: BodyKind, expected: BodyKind) {
 			binary: "binary body",
 		};
 
-		throw new BodyValidationError(
+		throw new ValidationError(
 			`Expected ${expectedMap[expected]} but received ${actual}`,
 			415
 		);

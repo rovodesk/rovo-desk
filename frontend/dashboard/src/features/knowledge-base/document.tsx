@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	type PartialBlock,
 	RichTextEditor,

@@ -1,26 +1,21 @@
-import type { JwtPayload } from "@zero-heads-lab/auth";
 import type {
-	ActiveSpan,
 	ILogger,
 	ITracer,
+	OtelContext,
+	Span,
 } from "@zero-heads-lab/observability";
 
 export type CoreBindings = {
-	KINDE_DOMAIN: string;
-	KINDE_ISSUER_URL: string;
 	WRANGLER_LOG: string;
-	CLOUDFLARE_ENV: "development" | "staging" | "production";
-	DATABASE_URL: string;
+	WORKER_ENV: "development" | "staging" | "production";
 	logger: ILogger;
 	tracer: ITracer;
 };
 
 export type CoreVariables = {
-	auth?: JwtPayload;
-	jwtToken?: string;
-	span: ActiveSpan;
 	requestId: string;
-	traceId: string;
+	span: Span;
+	ctx: OtelContext;
 };
 
 export type WorkerEnv<

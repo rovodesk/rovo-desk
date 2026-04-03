@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	getCurrentOrganization,
 	getUserOrganizations,
-} from "../lib/kinde-utils";
+} from "@kinde-oss/kinde-auth-react/utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { organizationKeys, organizationsQueryOptions } from "../lib/queries";
 
 vi.mock("@kinde-oss/kinde-auth-react/utils", () => ({

@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
-import { useAuth } from "@zero-heads-lab/auth/hooks/use-auth";
+import { useAuth } from "@zero-heads-lab/auth/hooks";
 import { AuthProvider } from "@zero-heads-lab/auth/lib/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";

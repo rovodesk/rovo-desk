@@ -9,7 +9,8 @@
   "exports": {
     ".": "./lib/index.ts",
     "./middlewares": "./lib/middlewares/index.ts",
-    "./utils": "./lib/utils/index.ts"
+    "./utils": "./lib/utils/index.ts",
+    "./errors": "./lib/errors/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",

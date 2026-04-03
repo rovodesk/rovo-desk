@@ -3,13 +3,12 @@ import {
 	type Context,
 	context,
 	type Tracer as OTelTracer,
+	propagation,
 	type Span,
 	type SpanOptions,
 	SpanStatusCode,
 	trace,
 } from "@opentelemetry/api";
-
-export type ActiveSpan = Span;
 
 export type TracerOptions = {
 	app: string;
@@ -19,16 +18,15 @@ export type TracerOptions = {
 export interface ITracer {
 	withSpan<T>(
 		name: string,
-		fn: (span: Span) => Promise<T>,
+		fn: (span: Span, ctx: Context) => Promise<T>,
 		attrs?: Attributes,
-		options?: SpanOptions,
-		ctx?: Context
+		ctx?: Context,
+		options?: SpanOptions
 	): Promise<T>;
-	startSpan(name: string, ctx?: Context, options?: SpanOptions): Span;
-	endSpan(span: Span, attrs?: Attributes): void;
 	recordError(span: Span, err: unknown): Promise<void>;
 	getTracer(): OTelTracer;
 	getActiveSpan(): Span | undefined;
+	extractContext(headers: Headers | Record<string, string>): Context;
 }
 
 export function getTraceContext() {
@@ -63,49 +61,53 @@ export class Tracer implements ITracer {
 		return trace.getActiveSpan();
 	}
 
-	startSpan(name: string, ctx?: Context, options?: SpanOptions): Span {
-		return this.otelTracer.startSpan(name, options, ctx);
+	/**
+	 * Extracts context from incoming headers (e.g., from a Hono request).
+	 * This is the "bridge" for distributed tracing.
+	 */
+	extractContext(headers: Headers | Record<string, string>): Context {
+		const headerObj: Record<string, string> = {};
+		if (headers instanceof Headers) {
+			headers.forEach((v, k) => {
+				headerObj[k] = v;
+			});
+		} else {
+			Object.assign(headerObj, headers);
+		}
+		return propagation.extract(context.active(), headerObj);
 	}
 
-	// biome-ignore lint/suspicious/useAwait: No awaitable function is used
-	async withSpan<T>(
+	withSpan<T>(
 		name: string,
-		fn: (span: Span) => Promise<T>,
+		fn: (span: Span, ctx: Context) => Promise<T>,
 		attrs?: Attributes,
-		options?: SpanOptions,
-		ctx?: Context
+		ctx?: Context,
+		options?: SpanOptions
 	): Promise<T> {
+		// 1. Determine the starting context
+		const parentContext = ctx ?? context.active();
+
+		// 2. Start the span as "Active"
+		// In CF Workers, the callback of startActiveSpan is the safest place to capture context
 		return this.otelTracer.startActiveSpan(
 			name,
-			options ?? {},
-			ctx ?? context.active(),
+			{ ...options, attributes: { ...attrs, ...options?.attributes } },
+			parentContext,
 			async (span) => {
-				try {
-					if (attrs) {
-						for (const [k, v] of Object.entries(attrs)) {
-							if (v !== undefined) span.setAttribute(k, v);
-						}
-					}
+				// 3. Create the new context explicitly for manual propagation
+				const activeContext = trace.setSpan(parentContext, span);
 
-					return await fn(span);
+				try {
+					// 4. Pass the new context into the callback
+					return await fn(span, activeContext);
 				} catch (err) {
 					await this.recordError(span, err);
 					throw err;
 				} finally {
-					this.endSpan(span);
+					span.end();
 				}
 			}
 		);
-	}
-
-	endSpan(span: Span, attrs?: Attributes) {
-		if (attrs) {
-			for (const [k, v] of Object.entries(attrs)) {
-				if (v !== undefined) span.setAttribute(k, v);
-			}
-		}
-
-		span.end();
 	}
 
 	// biome-ignore lint/suspicious/useAwait: No awaitable function is used

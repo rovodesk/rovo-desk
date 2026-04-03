@@ -1,4 +1,4 @@
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,

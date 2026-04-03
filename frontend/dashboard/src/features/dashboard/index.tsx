@@ -1,5 +1,5 @@
 import { IconPackageExport } from "@tabler/icons-react";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {

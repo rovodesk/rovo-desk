@@ -1,40 +1,91 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+
+  // DEFAULT = PRODUCTION
   "name": "auth-service",
   "main": "src/index.ts",
   "compatibility_date": "2026-03-31",
+  "compatibility_flags": ["nodejs_compat"],
+
   "dev": {
     "port": 5002
   },
-  "env": {
-    "production": {
-      "observability": {
-        "traces": {
-          "enabled": true,
-          "head_sampling_rate": 0.05
-        },
-        "logs": {
-          "enabled": true,
-          "head_sampling_rate": 0.7
-        }
-      },
-      "secrets": {
-        "required": ["DATABASE_URL", "KINDE_DOMAIN", "KINDE_ISSUER"]
-      }
+
+  "observability": {
+    "traces": {
+      "enabled": true,
+      "destinations": ["axiom-traces"],
+      "persist": false,
+      "head_sampling_rate": 1
     },
+    "logs": {
+      "enabled": true,
+      "destinations": ["axiom-logs"],
+      "head_sampling_rate": 1,
+      "persist": false,
+      "invocation_logs": true
+    }
+  },
+
+  "secrets_store_secrets": [
+    {
+      "binding": "DATABASE_URL",
+      "store_id": "cc511ff952de49388a462b443f4995ac",
+      "secret_name": "DATABASE_URL"
+    },
+    {
+      "binding": "JWT_ISSUER",
+      "store_id": "cc511ff952de49388a462b443f4995ac",
+      "secret_name": "JWT_ISSUER"
+    }
+  ],
+
+  "queues": {
+    "producers": [
+      {
+        "queue": "auth-service-queue",
+        "binding": "AUTH_SERVICE_QUEUE"
+      }
+    ]
+  },
+
+  "vars": {
+    "CLOUDFLARE_ENV": "production"
+  },
+
+  "env": {
     "staging": {
+      "name": "auth-service-staging",
+
       "observability": {
         "traces": {
           "enabled": true,
+          "persist": true,
           "head_sampling_rate": 1
         },
         "logs": {
           "enabled": true,
-          "head_sampling_rate": 1
+          "head_sampling_rate": 1,
+          "persist": true,
+          "invocation_logs": false
         }
       },
+
       "secrets": {
-        "required": ["DATABASE_URL", "KINDE_DOMAIN", "KINDE_ISSUER"]
+        "required": ["DATABASE_URL", "JWT_ISSUER"]
+      },
+
+      "queues": {
+        "producers": [
+          {
+            "queue": "auth-service-queue-staging",
+            "binding": "AUTH_SERVICE_QUEUE"
+          }
+        ]
+      },
+
+      "vars": {
+        "CLOUDFLARE_ENV": "staging"
       }
     }
   }

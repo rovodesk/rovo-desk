@@ -4,6 +4,7 @@ export const EVENT_CATEGORIES = [
 	"crm",
 	"analytics",
 	"integration",
+	"security",
 	"system",
 ] as const;
 
@@ -18,7 +19,6 @@ export const ACTOR_TYPES = [
 	"system",
 	"service",
 	"admin",
-	"api_key",
 	"anonymous",
 ] as const;
 
