@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "strictNullChecks": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["vitest/globals"]
   },
-  "include": ["**/*.ts"],
+  "include": ["./vitest.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,5 +1,4 @@
-import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
-import { useOrganization } from "@zero-heads-lab/auth/hooks";
+import { useOrganization } from "@zero-heads-lab/auth/hooks/use-organization";
 import {
 	Avatar,
 	AvatarFallback,
@@ -17,6 +16,7 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { useIsMobile } from "@zero-heads-lab/design-system/hooks/use-mobile";
 import { ChevronsUpDown, Loader2, Settings } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AddDomainDialog } from "@/components/dialogs/add-domain-dialog";
 
 type DomainSwitcherProps = {
 	workspaceSettingsRouteLink?: string;

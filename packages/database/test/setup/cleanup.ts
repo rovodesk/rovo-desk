@@ -40,7 +40,7 @@ const allTables = [
 ];
 
 beforeEach(async () => {
-	const { client } = getTestDb();
+	const { client } = await getTestDb();
 
 	await client.unsafe(`
 		TRUNCATE TABLE ${allTables.join(", ")}

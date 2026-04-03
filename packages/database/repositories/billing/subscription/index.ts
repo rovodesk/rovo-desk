@@ -1,7 +1,7 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { and, desc, eq, isNull, or } from "drizzle-orm";
-import { subscription } from "../../../drizzle/schemas/billing.schema";
+import { subscription } from "../../../lib/schemas/billing.schema";
 import type { UpsertSubscriptionInput } from "./subscription.types";
 
 export class SubscriptionRepository {

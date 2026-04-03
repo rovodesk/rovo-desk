@@ -2,6 +2,7 @@
   "extends": "@zero-heads-lab/typescript-config/base.json",
   "compilerOptions": {
     "composite": true,
+    "incremental": true,
     "baseUrl": ".",
     "strictNullChecks": true,
     "types": ["@types/bun"]

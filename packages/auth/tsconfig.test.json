@@ -1,11 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "composite": true,
-    "incremental": true,
+    "noEmit": true,
+    "esModuleInterop": true,
     "types": ["vitest/globals"]
   },
-  "include": ["test", "**/*.ts", "**/*.d.ts", "../**/*.ts", "../**/*.tsx"],
+  "include": ["lib/**/*.ts", "lib/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

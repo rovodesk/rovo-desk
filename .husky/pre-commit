@@ -1,4 +1,5 @@
 git diff --check
 bun run lint
+git add -A
 # bun run test
 # bun run test:coverage && bun run make-badges && git add 'README.md'

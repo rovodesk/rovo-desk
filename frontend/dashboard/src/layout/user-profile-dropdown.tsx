@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { SignOutDialog } from "@zero-heads-lab/auth/components/sign-out-dialog";
-import { useUser } from "@zero-heads-lab/auth/hooks";
+// import { SignOutDialog } from "@/components/dialogs/";
+import { useAuth, useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
+import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,17 +25,19 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
 import { capitalize } from "@zero-heads-lab/shared/utils";
 import { Bell, ChevronRight, CreditCard, Settings, User2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useProfile } from "@/hooks/use-profile";
-import { DomainSwitcher } from "@/layout/domain-switcher";
+
+// import { DomainSwitcher } from "@/layout/domain-switcher";
 
 function UserProfileDropdown() {
 	const { isMobile } = useSidebar();
-	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
+	// const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
+	const { logout } = useAuth();
 	const { theme } = useTheme();
 
-	const { user, isLoading: isUserLoading } = useUser();
+	const { data: user, isLoading: isUserLoading } = useUser();
 	const { userProfileQuery, toggleUserActiveMutation } = useProfile();
 
 	const loading = isUserLoading || userProfileQuery.isLoading;
@@ -45,10 +48,9 @@ function UserProfileDropdown() {
 
 	if (loading) return <ProfileDropdownSkeleton />;
 
-	const name = user?.name;
+	const name = user?.givenName;
 	const email = user?.email;
-	const image =
-		user?.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
+	const image = user?.picture;
 
 	// Improved abbreviation logic
 	const abbreviation = (
@@ -66,6 +68,16 @@ function UserProfileDropdown() {
 		} catch (error) {
 			console.error("Failed to update user active status", error);
 			toast.error("Failed to update user active status");
+		}
+	};
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+			toast.success("Logged out successfully");
+		} catch (error) {
+			console.error("Failed to log out", error);
+			toast.error("Failed to log out");
 		}
 	};
 
@@ -139,7 +151,7 @@ function UserProfileDropdown() {
 
 						{/* Domain Switcher */}
 						<div className="px-2 py-2">
-							<DomainSwitcher workspaceSettingsRouteLink="/settings/workspace" />
+							{/* <DomainSwitcher workspaceSettingsRouteLink="/settings/workspace" /> */}
 						</div>
 
 						<DropdownMenuSeparator />
@@ -226,10 +238,11 @@ function UserProfileDropdown() {
 
 						{/* LOGOUT */}
 						<DropdownMenuItem asChild className="rounded-md px-3 py-2">
-							<SignOutDialog
+							{/* <SignOutDialog
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}
-							/>
+							/> */}
+							<Button onClick={() => logout()}>Logout</Button>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

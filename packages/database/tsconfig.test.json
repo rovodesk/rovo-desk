@@ -1,4 +1,13 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["./**/*.ts", "./**/*.d.ts", "./test/**/*.ts"]
+  "compilerOptions": {
+    "composite": false,
+    "incremental": true,
+    "baseUrl": ".",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["test/**/*.spec.ts", "test/**/*.test.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

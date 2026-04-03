@@ -170,7 +170,7 @@ function FieldError({
 }) {
   const content = useMemo(() => {
     if (children) {
-      return children
+      return <>{children}</>
     }
 
     if (!errors?.length) {

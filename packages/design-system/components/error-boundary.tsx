@@ -79,6 +79,6 @@ export class AppErrorBoundary extends React.Component<
 			);
 		}
 
-		return children;
+		return <>{children}</>
 	}
 }

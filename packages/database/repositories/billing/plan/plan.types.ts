@@ -1,5 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import type { plan } from "../../../drizzle/schemas/billing.schema";
+import type { plan } from "../../../lib/schemas/billing.schema";
 
 export type Plan = InferSelectModel<typeof plan>;
 

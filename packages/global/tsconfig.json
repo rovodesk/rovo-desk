@@ -1,0 +1,19 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/hono.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": false,
+    "paths": {
+      "@zero-heads-lab/observability": [
+        "../../packages/observability/lib/index.ts"
+      ],
+      "@zero-heads-lab/auth": ["../../packages/auth/lib/index.ts"]
+    }
+  },
+  "include": [
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "../../backend/api-gateway/src/middlewares/auth.middleware.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,4 +1,4 @@
-import type { usageEventTypeEnum } from "../../../drizzle/schemas/billing.schema";
+import type { usageEventTypeEnum } from "../../../lib/schemas/billing.schema";
 
 export type UsageEventType = (typeof usageEventTypeEnum.enumValues)[number];
 

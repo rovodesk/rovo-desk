@@ -1,0 +1,20 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/hono.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@zero-heads-lab/auth": ["../../packages/auth/lib/index.ts"],
+      "@zero-heads-lab/global": ["../../packages/global/lib/index.ts"],
+      "@zero-heads-lab/observability": [
+        "../../packages/observability/lib/index.ts"
+      ],
+      "@zero-heads-lab/database": ["../../packages/database/lib/index.ts"],
+      "@zero-heads-lab/cache": ["../../packages/cache/lib/index.ts"]
+    },
+    "types": ["./src/worker-configuration.d.ts"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "test"]
+}

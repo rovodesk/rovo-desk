@@ -274,7 +274,7 @@
       "lastMessageAt": "2024-09-14T22:20:00Z",
       "unreadCount": 2,
       "totalMessages": 6,
-      "tags": ["api", "webhooks", "server-error"],
+      "tags": ["api", "webhook", "server-error"],
       "labels": ["dev-support"],
       "participants": [
         {

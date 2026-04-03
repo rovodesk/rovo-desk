@@ -1,7 +1,7 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { eq, or } from "drizzle-orm";
-import { plan } from "../../../drizzle/schemas/billing.schema";
+import { plan } from "../../../lib/schemas/billing.schema";
 import type { IPlanQueryRepository, Plan } from "./plan.types";
 
 export class PlanQueryRepository implements IPlanQueryRepository {

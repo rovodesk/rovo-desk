@@ -1,4 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
+import { useAuth } from "@zero-heads-lab/auth/hooks";
 import { SidebarProvider } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { getCookie, setCookie } from "@zero-heads-lab/shared/utils";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -33,6 +34,8 @@ export function useDashboardLayout() {
 }
 
 export function DashboardLayout() {
+	const { login, isAuthenticated } = useAuth();
+
 	const [hydrated, setHydrated] = useState(false);
 
 	const [activeSecondarySidebar, setActiveSecondarySidebar] = useState("");
@@ -42,6 +45,13 @@ export function DashboardLayout() {
 	const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
 
 	const [pinnedSecondarySidebar, setPinnedSecondarySidebar] = useState(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: No
+	useEffect(() => {
+		if (!isAuthenticated) {
+			login();
+		}
+	}, [isAuthenticated]);
 
 	// Hydration step
 	useEffect(() => {

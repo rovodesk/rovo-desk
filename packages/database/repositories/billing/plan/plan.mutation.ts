@@ -1,6 +1,6 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
-import { plan } from "../../../drizzle/schemas/billing.schema";
+import { plan } from "../../../lib/schemas/billing.schema";
 import type { IPlanMutationRepository, UpsertPlanInput } from "./plan.types";
 
 export class PlanMutationRepository implements IPlanMutationRepository {

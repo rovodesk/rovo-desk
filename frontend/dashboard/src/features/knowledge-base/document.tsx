@@ -31,11 +31,9 @@ import {
 	Star,
 	X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import * as Y from "yjs";
+import { useState } from "react";
 import { avatars } from "@/data/active-avatars";
 import { MainContent } from "@/layout/main-content";
-import { partyKitProvider } from "@/lib/partykit";
 import { pickUserColor } from "@/lib/utils/pick-color";
 import { ActiveAvatars } from "./_components/active-avatars";
 
@@ -59,10 +57,10 @@ export function Document({ id }: { id: string }) {
 	// Page Decorative States
 	const [showIcon, setShowIcon] = useState(false);
 
-	const { user } = useUser();
-	const name = user.name;
-	const userAvatar = user.image ?? Placeholder.avatar(user.email);
-	const userColor = pickUserColor(user.id);
+	const { data: user } = useUser();
+	const name = user?.givenName;
+	const userAvatar = user?.picture ?? Placeholder.avatar(user?.email);
+	const userColor = pickUserColor(user?.id);
 
 	const handleSave = () => {
 		setIsSaving(true);
@@ -89,53 +87,52 @@ export function Document({ id }: { id: string }) {
 		toast.success("Added to favorites");
 	}
 
-	const ydoc = useMemo(() => new Y.Doc(), []);
+	// const ydoc = useMemo(() => new Y.Doc(), []);
 
-	const provider = useMemo(
-		() => partyKitProvider(knowledge.id, ydoc),
-		[knowledge.id, ydoc]
-	);
+	// const provider = useMemo(
+	// 	() => partyKitProvider(knowledge.id, ydoc),
+	// 	[knowledge.id, ydoc]
+	// );
 
 	// Collaboration Options
+	// const collaborationOptions = useMemo(
+	// 	() => ({
+	// 		provider,
+	// 		fragmentName: knowledge.id,
+	// 		doc: ydoc,
+	// 		user: {
+	// 			id: user?.id,
+	// 			name,
+	// 			color: userColor,
+	// 			username: name,
+	// 			avatarUrl: userAvatar,
+	// 		},
+	// 		resolveUsers: (userIds: string[]) => {
+	// 			const states = provider.awareness.getStates();
 
-	const collaborationOptions = useMemo(
-		() => ({
-			provider,
-			fragmentName: knowledge.id,
-			doc: ydoc,
-			user: {
-				id: user.id,
-				name,
-				color: userColor,
-				username: name,
-				avatarUrl: userAvatar,
-			},
-			resolveUsers: (userIds: string[]) => {
-				const states = provider.awareness.getStates();
+	// 			const usersById = new Map();
 
-				const usersById = new Map();
+	// 			states.forEach((state) => {
+	// 				if (state?.user?.id) {
+	// 					usersById.set(state.user.id, state.user);
+	// 				}
+	// 			});
 
-				states.forEach((state) => {
-					if (state?.user?.id) {
-						usersById.set(state.user.id, state.user);
-					}
-				});
+	// 			return userIds.map((userId) => {
+	// 				const u = usersById.get(userId);
 
-				return userIds.map((userId) => {
-					const u = usersById.get(userId);
-
-					return {
-						id: userId,
-						name: u?.name ?? "Unknown",
-						color: u?.color ?? "#000000",
-						username: u?.username ?? u?.name ?? "unknown",
-						avatarUrl: u?.avatarUrl ?? "",
-					};
-				});
-			},
-		}),
-		[provider, ydoc, knowledge.id, name, userColor, user.id, userAvatar]
-	);
+	// 				return {
+	// 					id: userId,
+	// 					name: u?.name ?? "Unknown",
+	// 					color: u?.color ?? "#000000",
+	// 					username: u?.username ?? u?.name ?? "unknown",
+	// 					avatarUrl: u?.avatarUrl ?? "",
+	// 				};
+	// 			});
+	// 		},
+	// 	}),
+	// 	[provider, ydoc, knowledge.id, name, userColor, user?.id, userAvatar]
+	// );
 
 	if (isLoading) return <DocumentSkeleton />;
 
@@ -273,7 +270,7 @@ export function Document({ id }: { id: string }) {
 							<AvatarFallback
 								className={cn("text-[10px]", `bg-${userColor}-600`)}
 							>
-								{name.charAt(0).toUpperCase()}
+								{name?.charAt(0).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>
 						<InputGroup className="border-none bg-muted-foreground/10 p-2 shadow-none focus-within:ring-0">
@@ -293,7 +290,7 @@ export function Document({ id }: { id: string }) {
 				{/* Editor Area */}
 				<RichTextEditor
 					className="mt-5"
-					collaborationOptions={collaborationOptions}
+					// collaborationOptions={collaborationOptions}
 					initialContent={knowledge.content}
 					onChange={handleOnChange}
 					onSave={handleSave}

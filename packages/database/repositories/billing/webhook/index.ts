@@ -1,7 +1,7 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import { eq, sql } from "drizzle-orm";
-import { stripeWebhookEvent } from "../../../drizzle/schemas/billing.schema";
+import { stripeWebhookEvent } from "../../../lib/schemas/billing.schema";
 import type {
 	CreateWebhookEventInput,
 	IWebhookEventRepository,

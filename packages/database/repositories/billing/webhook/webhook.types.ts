@@ -3,7 +3,7 @@ import type {
 	stripeWebhookEvent,
 	usageEventTypeEnum,
 	webhookEventStatusEnum,
-} from "../../../drizzle/schemas/billing.schema";
+} from "../../../lib/schemas/billing.schema";
 
 export type UsageEventType = (typeof usageEventTypeEnum.enumValues)[number];
 

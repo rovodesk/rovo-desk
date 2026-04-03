@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
-import type { ORGANIZATION } from "@zero-heads-lab/contract/dto/auth.dto";
+import type { ORGANIZATION } from "@zero-heads-lab/contract/lib/dto/auth.dto";
 import {
 	Alert,
 	AlertDescription,

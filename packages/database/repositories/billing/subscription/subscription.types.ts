@@ -1,7 +1,7 @@
 import type {
 	billingIntervalEnum,
 	subscriptionStatusEnum,
-} from "../../../drizzle/schemas/billing.schema";
+} from "../../../lib/schemas/billing.schema";
 
 export type SubscriptionStatus =
 	(typeof subscriptionStatusEnum.enumValues)[number];

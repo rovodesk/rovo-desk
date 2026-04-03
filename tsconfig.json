@@ -3,10 +3,11 @@
   "compilerOptions": {
     "noEmit": true,
     "strictNullChecks": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "paths": {
-      "@zero-heads-lab/*": ["./*"]
+      "@zero-heads-lab/*": ["./packages/*"]
     },
     "types": ["@cloudflare/workers-types"]
   },

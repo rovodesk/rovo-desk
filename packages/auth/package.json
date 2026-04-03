@@ -3,28 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.ts",
+  "exports": {
+    ".": "./lib/index.ts",
+    "./hooks": "./lib/hooks/index.ts"
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "vitest run"
+    "build": "tsc -p ./tsconfig.build.json",
+    "test": "vitest"
   },
   "dependencies": {
-    "@better-auth/api-key": "catalog:betterauth",
-    "@better-auth/passkey": "catalog:betterauth",
-    "@better-auth/scim": "catalog:betterauth",
-    "@better-auth/sso": "catalog:betterauth",
-    "@better-auth/stripe": "catalog:betterauth",
-    "@t3-oss/env-core": "catalog:",
+    "@kinde-oss/kinde-auth-react": "catalog:kinde",
+    "@kinde-oss/kinde-typescript-sdk": "catalog:kinde",
     "@tanstack/react-query": "catalog:tanstack",
-    "@zero-heads-lab/analytics": "workspace:*",
-    "@zero-heads-lab/billing": "workspace:*",
-    "@zero-heads-lab/cache": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
-    "@zero-heads-lab/design-system": "workspace:*",
-    "@zero-heads-lab/email": "workspace:*",
-    "@zero-heads-lab/shared": "workspace:*",
-    "better-auth": "catalog:betterauth",
-    "jose": "^6.2.1",
+    "jose": "^6.2.2",
     "lucide-react": "catalog:",
     "react": "catalog:react19",
     "zod": "catalog:"

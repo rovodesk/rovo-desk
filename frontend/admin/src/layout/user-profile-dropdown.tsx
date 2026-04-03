@@ -1,5 +1,5 @@
 import { SignOutDialog } from "@zero-heads-lab/auth/components/sign-out-dialog";
-import { useUser } from "@zero-heads-lab/auth/hooks/use-user";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,

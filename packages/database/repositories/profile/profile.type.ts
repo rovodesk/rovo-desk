@@ -3,7 +3,7 @@ import type {
 	onboarding as onboardingSchema,
 	userProfile as userProfileSchema,
 	workspaceProfile as workspaceProfileSchema,
-} from "../../drizzle/schemas/profile.schema";
+} from "../../lib/schemas/profile.schema";
 
 export type OnboardingProgress = InferSelectModel<typeof onboardingSchema>;
 export type WorkspaceProfile = InferSelectModel<typeof workspaceProfileSchema>;

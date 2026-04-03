@@ -1,30 +1,33 @@
-import { type StepComponentProps, useOnboarding } from "@onboardjs/react";
-import { DomainForm } from "@zero-heads-lab/auth/components/forms/domain-form";
+// import { type StepComponentProps, useOnboarding } from "@onboardjs/react";
+// import { DomainForm } from "@zero-heads-lab/auth/components/forms/domain-form";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { Globe, LayoutPanelLeft } from "lucide-react";
 
-export function WorkspaceStep({
-	className,
-	context,
-	...props
-}: React.ComponentProps<"div"> & StepComponentProps) {
-	const { updateContext, next, loading: isOnboardingLoading } = useOnboarding();
+export function WorkspaceStep(
+	{
+		className,
+		// context,
+		...props
+	}: React.ComponentProps<"div">
+	// & StepComponentProps
+) {
+	// const { updateContext, next, loading: isOnboardingLoading } = useOnboarding();
 
-	const defaultValues = {
-		name: context.flowData?.name || "",
-		slug: context.flowData?.slug || "",
-	};
+	// const defaultValues = {
+	// 	name: context.flowData?.name || "",
+	// 	slug: context.flowData?.slug || "",
+	// };
 
-	const pending = isOnboardingLoading.isAnyLoading;
+	// const pending = isOnboardingLoading.isAnyLoading;
 
-	const handleWorkspaceStepSubmit = (value: { name: string; slug: string }) => {
-		updateContext({
-			flowData: {
-				...value,
-			},
-		});
-		next();
-	};
+	// const handleWorkspaceStepSubmit = (value: { name: string; slug: string }) => {
+	// 	updateContext({
+	// 		flowData: {
+	// 			...value,
+	// 		},
+	// 	});
+	// 	next();
+	// };
 
 	return (
 		<div
@@ -58,13 +61,13 @@ export function WorkspaceStep({
 							<span>Workspace Identity</span>
 						</div>
 
-						<DomainForm
+						{/* <DomainForm
 							cancelable
 							defaultValues={defaultValues}
 							isPending={pending}
 							onCancel={() => next()}
 							onSubmit={handleWorkspaceStepSubmit}
-						/>
+						/> */}
 					</div>
 				</div>
 

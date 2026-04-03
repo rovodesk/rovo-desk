@@ -2,7 +2,7 @@ import type { ITracer } from "@zero-heads-lab/analytics/types";
 import type { Database } from "@zero-heads-lab/database";
 import type { WidgetConfig } from "@zero-heads-lab/shared/types";
 import { eq } from "drizzle-orm";
-import { widget } from "../../drizzle/schemas/widget.schema";
+import { widget } from "../../lib/schemas/widget.schema";
 import type { IWidgetMutationRepository } from "./widget.types";
 
 export class WidgetMutationRepository implements IWidgetMutationRepository {

@@ -1,38 +1,21 @@
-import { DeleteAccountDialog } from "@zero-heads-lab/auth/components/delete-account-dialog";
-import { useSession } from "@zero-heads-lab/auth/hooks";
+import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
-import { Badge } from "@zero-heads-lab/design-system/components/ui/badge";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-} from "@zero-heads-lab/design-system/components/ui/input-group";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
-
-import {
-	AtSignIcon,
-	CheckCircle2Icon,
-	GlobeIcon,
-	Pencil,
-	UserIcon,
-	XCircleIcon,
-} from "lucide-react";
+import { GlobeIcon, Pencil, UserIcon } from "lucide-react";
 import { useState } from "react";
+import { DeleteAccountDialog } from "@/components/dialogs/delete-account-dialog";
 
 export function ProfilePage() {
-	const { session, loading } = useSession();
+	const { data: user, isLoading } = useUser();
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
-	if (loading) return <ProfileSkeleton />;
-	if (!session?.user) return null;
-
-	const user = session.user;
+	if (isLoading) return <ProfileSkeleton />;
 
 	return (
 		<div className="flex min-h-screen flex-col bg-muted/30">
@@ -57,10 +40,10 @@ export function ProfilePage() {
 				<div className="absolute -bottom-12 left-10">
 					<div className="group relative z-10">
 						<Avatar className="h-24 w-24 border-4 border-muted transition-colors hover:border-primary">
-							{user.image ? (
-								<AvatarImage src={user.image} />
+							{user?.picture ? (
+								<AvatarImage src={user?.picture} />
 							) : (
-								<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+								<AvatarFallback>{user?.givenName?.charAt(0)}</AvatarFallback>
 							)}
 						</Avatar>
 
@@ -80,13 +63,13 @@ export function ProfilePage() {
 				{/* Header */}
 				<div className="group flex items-center justify-between">
 					<div className="group relative flex flex-col gap-2 pr-10">
-						<Badge variant="outline">{user.role}</Badge>
+						{/* <Badge variant="outline">{user.role}</Badge> */}
 
 						<div className="flex flex-col gap-1">
 							<h1 className="font-semibold text-2xl tracking-tight">
-								{user.name}
+								{user?.givenName}
 							</h1>
-							<p className="text-muted-foreground text-sm">{user.email}</p>
+							<p className="text-muted-foreground text-sm">{user?.email}</p>
 						</div>
 
 						<Button
@@ -150,7 +133,7 @@ export function ProfilePage() {
 								</Button>
 							</div>
 
-							<div className="space-y-4">
+							{/* <div className="space-y-4">
 								<div className="flex items-center justify-start text-sm">
 									{user.emailVerified ? (
 										<span className="flex items-center gap-1 text-emerald-600 text-xs">
@@ -175,7 +158,7 @@ export function ProfilePage() {
 										value={user.email}
 									/>
 								</InputGroup>
-							</div>
+							</div> */}
 						</div>
 					</div>
 
@@ -237,9 +220,9 @@ export function ProfilePage() {
 
 					{/* FOOTER */}
 					<div className="flex items-center justify-between border-t py-6">
-						<p className="text-muted-foreground text-xs">
-							Last updated on {session?.user.updatedAt.toLocaleDateString()}
-						</p>
+						{/* <p className="text-muted-foreground text-xs">
+							Last updated on {.user.updatedAt.toLocaleDateString()}
+						</p> */}
 						<Button className="min-w-[120px]">Save Changes</Button>
 					</div>
 				</div>

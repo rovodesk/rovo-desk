@@ -16,9 +16,12 @@ import { Route as AuthenticatedInboxRouteImport } from './routes/_authenticated/
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_authenticated/knowledge-base/index'
+import { Route as AuthenticatedGetStartedIndexRouteImport } from './routes/_authenticated/get-started/index'
 import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
 import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
 import { Route as AuthenticatedSettingsWidgetRouteImport } from './routes/_authenticated/settings/widget'
@@ -63,6 +66,16 @@ const errors401Route = errors401RouteImport.update({
   path: '/401',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedSettingsRouteRoute =
   AuthenticatedSettingsRouteRouteImport.update({
     id: '/settings',
@@ -79,6 +92,12 @@ const AuthenticatedKnowledgeBaseIndexRoute =
   AuthenticatedKnowledgeBaseIndexRouteImport.update({
     id: '/knowledge-base/',
     path: '/knowledge-base/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedGetStartedIndexRoute =
+  AuthenticatedGetStartedIndexRouteImport.update({
+    id: '/get-started/',
+    path: '/get-started/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedFunnelsIndexRoute =
@@ -139,6 +158,8 @@ const AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
@@ -152,11 +173,14 @@ export interface FileRoutesByFullPath {
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels/': typeof AuthenticatedFunnelsIndexRoute
+  '/get-started/': typeof AuthenticatedGetStartedIndexRoute
   '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
 }
 export interface FileRoutesByTo {
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/500': typeof errors500Route
@@ -171,6 +195,7 @@ export interface FileRoutesByTo {
   '/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels': typeof AuthenticatedFunnelsIndexRoute
+  '/get-started': typeof AuthenticatedGetStartedIndexRoute
   '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -179,6 +204,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/500': typeof errors500Route
@@ -193,6 +220,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/widget': typeof AuthenticatedSettingsWidgetRoute
   '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
+  '/_authenticated/get-started/': typeof AuthenticatedGetStartedIndexRoute
   '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
@@ -202,6 +230,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/settings'
+    | '/login'
+    | '/register'
     | '/401'
     | '/403'
     | '/500'
@@ -215,11 +245,14 @@ export interface FileRouteTypes {
     | '/settings/widget'
     | '/settings/workspace'
     | '/funnels/'
+    | '/get-started/'
     | '/knowledge-base/'
     | '/settings/'
     | '/knowledge-base/knowledge/$knowledgeId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/login'
+    | '/register'
     | '/401'
     | '/403'
     | '/500'
@@ -234,6 +267,7 @@ export interface FileRouteTypes {
     | '/settings/widget'
     | '/settings/workspace'
     | '/funnels'
+    | '/get-started'
     | '/knowledge-base'
     | '/settings'
     | '/knowledge-base/knowledge/$knowledgeId'
@@ -241,6 +275,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/_authenticated/settings'
+    | '/(auth)/login'
+    | '/(auth)/register'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/500'
@@ -255,6 +291,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/widget'
     | '/_authenticated/settings/workspace'
     | '/_authenticated/funnels/'
+    | '/_authenticated/get-started/'
     | '/_authenticated/knowledge-base/'
     | '/_authenticated/settings/'
     | '/_authenticated/knowledge-base/knowledge/$knowledgeId'
@@ -262,6 +299,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors500Route: typeof errors500Route
@@ -318,6 +357,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof errors401RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -337,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/knowledge-base'
       fullPath: '/knowledge-base/'
       preLoaderRoute: typeof AuthenticatedKnowledgeBaseIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/get-started/': {
+      id: '/_authenticated/get-started/'
+      path: '/get-started'
+      fullPath: '/get-started/'
+      preLoaderRoute: typeof AuthenticatedGetStartedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/funnels/': {
@@ -441,6 +501,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedFunnelsIndexRoute: typeof AuthenticatedFunnelsIndexRoute
+  AuthenticatedGetStartedIndexRoute: typeof AuthenticatedGetStartedIndexRoute
   AuthenticatedKnowledgeBaseIndexRoute: typeof AuthenticatedKnowledgeBaseIndexRoute
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
 }
@@ -451,6 +512,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedFunnelsIndexRoute: AuthenticatedFunnelsIndexRoute,
+  AuthenticatedGetStartedIndexRoute: AuthenticatedGetStartedIndexRoute,
   AuthenticatedKnowledgeBaseIndexRoute: AuthenticatedKnowledgeBaseIndexRoute,
   AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute:
     AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute,
@@ -461,6 +523,8 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  authLoginRoute: authLoginRoute,
+  authRegisterRoute: authRegisterRoute,
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors500Route: errors500Route,
