@@ -1,30 +1,33 @@
 import type { ICacheStore } from "@zero-heads-lab/cache";
 import type { WorkerEnv } from "@zero-heads-lab/global";
+import type { KindeCredentialsClient } from "./lib/auth-client";
 import type { UserRepository } from "./modules/user/repository";
 
-type AUTH_EVENTS = {
-	type: 
-}
-
-export type Bindings = WorkerEnv["Bindings"] & {
+export type AuthServiceBindings = WorkerEnv["Bindings"] & {
 	// add more worker bindings here later
-	DATABASE_URL?: string;
-	AUTH_SERVICE_QUEUE: Queue<AUTH_MESSAGES>;
-	KV: KVNamespace<string>;
-	KINDE_CLIENT_ID: string;
-	KINDE_CLIENT_SECRET: string;
-	KINDE_REDIRECT_URL: string;
-	KINDE_LOGOUT_REDIRECT_URL: string;
+	DATABASE_URL: string;
+	AUTH_EVENTS_QUEUE: Queue;
+	KV_CACHE: KVNamespace<string>;
+	KINDE_DOMAIN: string;
+	KINDE_M2M_CLIENT_ID: string;
+	KINDE_M2M_CLIENT_SECRET: string;
 };
 
-export type Variables = WorkerEnv["Variables"] & {
-	userId?: string;
-	orgId?: string;
-	database: UserRepository;
+export type KindeConfig = {
+	domain: string;
+	clientId: string;
+	clientSecret: string;
+};
+
+export type AuthServiceVariables = WorkerEnv["Variables"] & {
+	repositories: {
+		userRepository: UserRepository;
+	};
 	cacheStore: ICacheStore;
+	authClient: KindeCredentialsClient;
 };
 
 export type AuthServieEnv = {
-	Bindings: Bindings;
-	Variables: Variables;
+	Bindings: AuthServiceBindings;
+	Variables: AuthServiceVariables;
 };

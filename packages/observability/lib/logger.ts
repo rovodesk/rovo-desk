@@ -9,10 +9,9 @@ export interface ILogger {
 	withContext(ctx: Record<string, unknown>): ILogger;
 	withTrace(traceId?: string, spanId?: string): ILogger;
 	withUser(userId?: string, workspaceId?: string, roleId?: string): ILogger;
-	error(message: string, err?: unknown, data?: Record<string, unknown>): void;
+	error(message: string, data?: Record<string, unknown>, err?: unknown): void;
 	warn(message: string, data?: Record<string, unknown>): void;
 	info(message: string, data?: Record<string, unknown>): void;
-	log(message: string, data?: Record<string, unknown>): void;
 	debug(message: string, data?: Record<string, unknown>): void;
 }
 
@@ -34,16 +33,6 @@ export type LogLevel =
 	| "info"
 	| "debug"
 	| "trace";
-
-const LOG_LEVELS: Record<LogLevel, number> = {
-	silent: 0,
-	fatal: 10,
-	error: 20,
-	warn: 30,
-	info: 40,
-	debug: 50,
-	trace: 60,
-};
 
 const DEFAULT_LOG_LEVEL: LogLevel = "info";
 
@@ -67,12 +56,12 @@ export interface LoggerOptions {
 export class Logger implements ILogger {
 	private readonly pino: PinoLogger;
 	private readonly debugMode: boolean;
-	private readonly options?: LoggerOptions;
+	private readonly context: LogContext;
 
 	constructor(opts?: LoggerOptions) {
 		this.debugMode = opts?.debug ?? false;
-		this.options = opts;
-		// decide transport
+		this.context = opts?.context ?? {};
+
 		const transport =
 			opts?.mode === "pretty"
 				? {
@@ -93,20 +82,18 @@ export class Logger implements ILogger {
 						app: opts.app,
 						version: opts.version,
 					}
-				: null,
-			timestamp: pino.stdTimeFunctions.epochTime,
-			customLevels: LOG_LEVELS,
-			useOnlyCustomLevels: true,
+				: undefined,
+			timestamp: pino.stdTimeFunctions.isoTime,
 			level: opts?.level ?? DEFAULT_LOG_LEVEL,
 			formatters: {
 				level: (label) => ({ level: label }),
 			},
 			...(transport ? { transport } : {}),
 		};
+
 		this.pino = opts?.pinoInstance ?? pino(pinoOptions);
 	}
 
-	//Object Cleaner for logs
 	private cleanObject(obj: Record<string, unknown>) {
 		return Object.fromEntries(
 			Object.entries(obj).filter(([, value]) => value !== undefined)
@@ -131,22 +118,36 @@ export class Logger implements ILogger {
 	}
 
 	private enrich(data?: Record<string, unknown>) {
-		const traceCtx = this.getTraceContext();
-		return {
-			...traceCtx,
+		return this.cleanObject({
+			...this.context,
+			...this.getTraceContext(),
 			...data,
+		});
+	}
+
+	private normalizeError(err: unknown) {
+		if (err instanceof Error) {
+			return {
+				name: err.name,
+				message: err.message,
+				stack: this.debugMode ? err.stack : undefined,
+			};
+		}
+
+		return {
+			name: "Error",
+			message: typeof err === "string" ? err : String(err),
 		};
 	}
 
 	withContext(ctx: LogContext): ILogger {
-		const mergedContext = {
-			...(this.options?.context ?? {}),
-			...ctx,
-		};
 		return new Logger({
-			...this.options,
-			context: mergedContext,
-			pinoInstance: this.pino.child(ctx),
+			debug: this.debugMode,
+			context: {
+				...this.context,
+				...ctx,
+			},
+			pinoInstance: this.pino,
 		});
 	}
 
@@ -158,40 +159,12 @@ export class Logger implements ILogger {
 		return this.withContext({ userId, workspaceId, roleId });
 	}
 
-	private normalizeError(err: unknown) {
-		if (err && typeof err === "object") {
-			const e = err as {
-				message?: unknown;
-				name?: unknown;
-				stack?: unknown;
-				code?: unknown;
-			};
-
-			return {
-				message:
-					typeof e.message === "string" ? e.message : JSON.stringify(err),
-				name: typeof e.name === "string" ? e.name : "Error",
-				code:
-					typeof e.code === "string" || typeof e.code === "number"
-						? e.code
-						: undefined,
-				stack:
-					this.debugMode && typeof e.stack === "string" ? e.stack : undefined,
-			};
-		}
-
-		return {
-			message: typeof err === "string" ? err : String(err),
-			name: "Error",
-		};
-	}
-
-	error(message: string, err?: unknown, data?: Record<string, unknown>) {
+	error(message: string, data?: Record<string, unknown>, err?: unknown) {
 		this.pino.error(
 			this.enrich({
+				message,
 				...this.cleanObject(data ?? {}),
 				error: err ? this.normalizeError(err) : undefined,
-				message,
 			})
 		);
 	}
@@ -199,8 +172,8 @@ export class Logger implements ILogger {
 	warn(message: string, data?: Record<string, unknown>) {
 		this.pino.warn(
 			this.enrich({
-				...this.cleanObject(data ?? {}),
 				message,
+				...this.cleanObject(data ?? {}),
 			})
 		);
 	}
@@ -208,17 +181,8 @@ export class Logger implements ILogger {
 	info(message: string, data?: Record<string, unknown>) {
 		this.pino.info(
 			this.enrich({
-				...this.cleanObject(data ?? {}),
 				message,
-			})
-		);
-	}
-
-	log(message: string, data?: Record<string, unknown>) {
-		this.pino.trace(
-			this.enrich({
 				...this.cleanObject(data ?? {}),
-				message,
 			})
 		);
 	}
@@ -226,8 +190,8 @@ export class Logger implements ILogger {
 	debug(message: string, data?: Record<string, unknown>) {
 		this.pino.debug(
 			this.enrich({
-				...this.cleanObject(data ?? {}),
 				message,
+				...this.cleanObject(data ?? {}),
 			})
 		);
 	}

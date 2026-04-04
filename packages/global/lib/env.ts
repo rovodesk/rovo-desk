@@ -8,14 +8,14 @@ import type {
 export type CoreBindings = {
 	WRANGLER_LOG: string;
 	WORKER_ENV: "development" | "staging" | "production";
-	logger: ILogger;
-	tracer: ITracer;
 };
 
 export type CoreVariables = {
 	requestId: string;
 	span: Span;
 	ctx: OtelContext;
+	logger: ILogger;
+	tracer: ITracer;
 };
 
 export type WorkerEnv<

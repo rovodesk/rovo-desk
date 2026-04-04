@@ -35,7 +35,14 @@
     "*.css": "tailwindcss",
     "**/wrangler.json": "jsonc"
   },
-  "todo-tree.general.tags": ["TODO", "FIXME", "BUG", "FUTURE", "TEST"],
+  "todo-tree.general.tags": [
+    "TODO",
+    "FIXME",
+    "BUG",
+    "FUTURE",
+    "TEST",
+    "SECURITY"
+  ],
   "todo-tree.highlights.defaultHighlight": {
     "fontWeight": "bold",
     "type": "text",
@@ -75,6 +82,13 @@
       "background": "#12e15e",
       "icon": "beaker",
       "iconColour": "#12e15e",
+      "gutterIcon": true
+    },
+    "SECURITY": {
+      "foreground": "#ffffff",
+      "background": "#ff0000",
+      "icon": "lock",
+      "iconColour": "#ff0000",
       "gutterIcon": true
     }
   },

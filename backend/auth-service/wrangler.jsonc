@@ -26,6 +26,12 @@
       "invocation_logs": true
     }
   },
+  "kv_namespaces": [
+    {
+      "binding": "KV_CACHE",
+      "id": "76498561a52c431b908703a12bacfc47"
+    }
+  ],
 
   "secrets_store_secrets": [
     {
@@ -72,7 +78,7 @@
       },
 
       "secrets": {
-        "required": ["DATABASE_URL", "JWT_ISSUER"]
+        "required": ["DATABASE_URL", "KINDE_DOMAIN", "KINDE_M2M_CLIENT_ID", "KINDE_M2M_CLIENT_SECRET"]
       },
 
       "queues": {
@@ -83,6 +89,13 @@
           }
         ]
       },
+
+      "kv_namespaces": [
+        {
+          "binding": "KV_CACHE",
+          "id": "76498561a52c431b908703a12bacfc47"
+        }
+      ],
 
       "vars": {
         "CLOUDFLARE_ENV": "staging"

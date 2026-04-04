@@ -1,6 +1,7 @@
 import {
 	boolean,
 	index,
+	integer,
 	jsonb,
 	pgSchema,
 	primaryKey,
@@ -9,7 +10,6 @@ import {
 	unique,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
-
 export const authSchema = pgSchema("auth");
 
 export const membershipStatusEnum = authSchema.enum("membership_status", [
@@ -27,19 +27,17 @@ export const invitationStatusEnum = authSchema.enum("invitation_status", [
 ]);
 
 export const user = authSchema.table("user", {
-	id: text("id")
-		.primaryKey()
-		.notNull()
-		.$defaultFn(() => crypto.randomUUID()),
+	id: text("id").primaryKey().notNull(),
 
 	externalId: text("external_id").unique().notNull(), // Kinde user.id
 
-	email: text("email").notNull().unique(),
-	username: text("username"),
-
 	firstName: text("first_name"),
 	lastName: text("last_name"),
-	phone: text("phone"),
+
+	preferredEmail: text("preferred_email").unique(),
+
+	online: boolean("online").default(true).notNull(),
+	lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
 
 	avatarUrl: text("avatar_url"),
 
@@ -59,6 +57,33 @@ export const user = authSchema.table("user", {
 		.$onUpdate(() => new Date()),
 	deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
+
+export const identity = authSchema.table("identity", {
+	id: text("id").primaryKey().notNull(),
+	userId: text("user_id").references(() => user.id, {
+		onDelete: "cascade",
+	}),
+
+	name: text("name").notNull(),
+	type: text("type").notNull(),
+	email: text("email").notNull(),
+	isPrimary: boolean("is_primary").notNull().default(false),
+	isConfirmed: boolean("is_confirmed").notNull().default(false),
+	lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+	totalLogins: integer("total_logins").notNull().default(0),
+
+	externalId: text("external_id").unique().notNull(),
+
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updated_at", { withTimezone: true })
+		.notNull()
+		.defaultNow()
+		.$onUpdate(() => new Date()),
+	deletedAt: timestamp("deleted_at", { withTimezone: true }),
+});
+
 export const organization = authSchema.table("organization", {
 	id: text("id")
 		.primaryKey()
@@ -346,42 +371,6 @@ export const membershipRole = authSchema.table(
 		primaryKey({ columns: [t.membershipId, t.roleId] }),
 		index("membership_role_membership_idx").on(t.membershipId),
 		index("membership_role_role_idx").on(t.roleId),
-	]
-);
-
-export const providerIdentity = authSchema.table(
-	"provider_identity",
-	{
-		id: text("id")
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
-
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-
-		provider: text("provider").notNull().default("kinde"), // Kinde is default
-		providerUserId: text("provider_user_id").notNull(),
-
-		email: text("email"),
-		subject: text("subject"),
-
-		metadata: jsonb("metadata"),
-
-		createdAt: timestamp("created_at", { withTimezone: true })
-			.notNull()
-			.defaultNow(),
-		updatedAt: timestamp("updated_at", { withTimezone: true })
-			.notNull()
-			.defaultNow()
-			.$onUpdate(() => new Date()),
-	},
-	(t) => [
-		unique("provider_identity_provider_user_unique").on(
-			t.provider,
-			t.providerUserId
-		),
-		index("provider_identity_user_idx").on(t.userId),
 	]
 );
 

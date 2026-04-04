@@ -13,9 +13,9 @@ export class KVSessionManager implements SessionManager {
 	private readonly sessionId: string;
 	private readonly ttl = DEFAULT_SESSION_TTL;
 
-	constructor(cache: ICacheStore, sessionId: string) {
-		this.sessionId = sessionId;
-		this.cacheStore = cache.withPrefix(`session:${sessionId}`);
+	constructor(cache: ICacheStore, sessionId?: string) {
+		this.sessionId = sessionId || createId();
+		this.cacheStore = cache.withPrefix(`session:${this.sessionId}`);
 	}
 
 	async getSessionItem<T = unknown>(key: string): Promise<T | null> {
@@ -83,9 +83,9 @@ export const clearSessionCookie = (c: Context<AuthServieEnv>) => {
 	});
 };
 
-export const createSessionManager = (c: Context<AuthServieEnv>) => {
-	const sessionId = getOrCreateSessionId(c);
-	const cacheStore = c.get("cacheStore");
-
-	return new KVSessionManager(cacheStore, sessionId);
+export const createSessionManager = (cacheStore: ICacheStore) => {
+	return (c: Context<AuthServieEnv>) => {
+		const sessionId = getOrCreateSessionId(c);
+		return new KVSessionManager(cacheStore, sessionId);
+	};
 };

@@ -1,30 +1,29 @@
-/** biome-ignore-all lint/suspicious/useAwait: No awaited function */
+import type { ICacheStore } from "@zero-heads-lab/cache";
 import { type Database, eq } from "@zero-heads-lab/database";
-import {
-	providerIdentity,
-	user as userSchema,
-} from "@zero-heads-lab/database/schemas";
+import { user as userSchema } from "@zero-heads-lab/database/schemas";
 import type { ITracer } from "@zero-heads-lab/observability";
-import type { SaveUserInput, UpdateUserInput } from "./types";
+import type { InsertUserType, SelectUserType, UpdateUserType } from "../types";
 
 export interface IMutationRepository {
-	saveUserTx(params: SaveUserInput): Promise<void>;
-	updateUser(params: UpdateUserInput): Promise<void>;
+	saveUser(params: InsertUserType, provider?: string): Promise<void>;
+	updateUser(params: UpdateUserType): Promise<void>;
 	markUserAsDeleted(params: { userId: string }): Promise<void>;
 }
 
 export class MutationRepository implements IMutationRepository {
 	private readonly db: Database;
 	private readonly tracer: ITracer;
+	private readonly cache: ICacheStore;
 
-	constructor(db: Database, tracer: ITracer) {
+	constructor(db: Database, tracer: ITracer, cache: ICacheStore) {
 		this.db = db;
 		this.tracer = tracer;
+		this.cache = cache;
 	}
 
 	async markUserAsDeleted(params: { userId: string }): Promise<void> {
-		return this.tracer.withSpan(
-			"auth.database.mutation.markUserAsDeleted",
+		await this.tracer.withSpan(
+			"auth.database.mutation.database.markUserAsDeleted",
 			async (span) => {
 				span.setAttribute("auth.user_id", params.userId);
 
@@ -41,40 +40,39 @@ export class MutationRepository implements IMutationRepository {
 				"db.table": "user",
 			}
 		);
+
+		await this.tracer.withSpan(
+			"auth.database.mutation.cache.delete",
+			async (span) => {
+				span.setAttribute("auth.user_id", params.userId);
+				await this.cache.delete(params.userId);
+			},
+			{
+				"cache.operation": "delete",
+				"cache.key": `${this.cache.getPrefix()}:${params.userId}`,
+			}
+		);
 	}
 
-	async saveUserTx(params: SaveUserInput): Promise<void> {
-		const { user, provider } = params;
-
-		return this.tracer.withSpan(
+	async saveUser(params: SelectUserType): Promise<void> {
+		await this.tracer.withSpan(
 			"auth.database.mutation.saveUser",
 			async (span) => {
-				span.setAttribute("auth.user_id", user.id);
-				span.setAttribute("auth.provider", provider);
-
+				span.setAttribute("auth.user_id", params.id);
 				await this.db.transaction(async (tx) => {
 					await tx.insert(userSchema).values({
-						id: user.id,
-						email: user.email,
-						externalId: user.externalId,
-						firstName: user.firstName ?? null,
-						lastName: user.lastName ?? null,
-						createdAt: user.createdAt,
-						updatedAt: user.updatedAt,
-						deletedAt: user.deletedAt ?? null,
-						banned: user.banned,
-						bannedAt: user.bannedAt ?? null,
-						bannedExpiresAt: user.bannedExpiresAt ?? null,
-						bannedReason: user.bannedReason ?? null,
-					});
-
-					await tx.insert(providerIdentity).values({
-						userId: user.id,
-						provider,
-						providerUserId: user.externalId,
-						email: user.email,
-						subject: "user",
-						metadata: {},
+						id: params.id,
+						externalId: params.externalId,
+						firstName: params.firstName,
+						lastName: params.lastName,
+						metadata: params.metadata,
+						createdAt: params.createdAt,
+						updatedAt: params.updatedAt,
+						deletedAt: params.deletedAt,
+						banned: params.banned,
+						bannedAt: params.bannedAt,
+						bannedExpiresAt: params.bannedExpiresAt,
+						bannedReason: params.bannedReason,
 					});
 				});
 			},
@@ -83,41 +81,62 @@ export class MutationRepository implements IMutationRepository {
 				"db.table": "user",
 			}
 		);
+
+		await this.tracer.withSpan(
+			"auth.database.mutation.cache.set",
+			async (span) => {
+				span.setAttribute("auth.user_id", params.id);
+				await this.cache.set(params.id, params);
+			},
+			{
+				"cache.operation": "set",
+				"cache.key": `${this.cache.getPrefix()}:${params.id}`,
+			}
+		);
 	}
 
-	async updateUser(params: UpdateUserInput): Promise<void> {
-		return this.tracer.withSpan(
+	async updateUser(params: UpdateUserType): Promise<void> {
+		const { userId, ...updateData } = params;
+		const now = new Date();
+
+		// 1. Database Update (Source of Truth)
+		await this.tracer.withSpan(
 			"auth.database.mutation.updateUser",
 			async (span) => {
-				span.setAttribute("auth.user_id", params.userId);
-
-				const now = new Date();
+				span.setAttribute("auth.user_id", userId);
 
 				await this.db.transaction(async (tx) => {
 					await tx
 						.update(userSchema)
 						.set({
-							email: params.email,
-							firstName: params.firstName,
-							lastName: params.lastName,
-							externalId: params.externalId,
+							...updateData,
 							updatedAt: now,
 						})
-						.where(eq(userSchema.id, params.userId));
-
-					await tx
-						.update(providerIdentity)
-						.set({
-							email: params.email,
-							providerUserId: params.externalId,
-							updatedAt: now,
-						})
-						.where(eq(providerIdentity.userId, params.userId));
+						.where(eq(userSchema.id, userId));
 				});
 			},
 			{
 				"db.operation": "update",
 				"db.table": "user",
+			}
+		);
+
+		/**
+		 * 2. Cache Invalidation Strategy
+		 * Instead of 'Get -> Merge -> Set', we delete the cache key.
+		 * The next 'findUserById' (Read-Through) will fetch the fresh data from DB.
+		 * This prevents stale data if the 'Get' happened during a different transaction.
+		 */
+		await this.tracer.withSpan(
+			"auth.database.mutation.cache.invalidate",
+			async (span) => {
+				span.setAttribute("auth.user_id", userId);
+				const cacheKey = `user:id:${userId}`;
+				await this.cache.delete(cacheKey);
+			},
+			{
+				"cache.operation": "delete",
+				"cache.key": `${this.cache.getPrefix()}:user:id:${userId}`,
 			}
 		);
 	}
