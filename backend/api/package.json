@@ -2,7 +2,7 @@
   "name": "api",
   "private": true,
   "version": "0.0.1",
-  "description": "API",
+  "description": "Encore API",
   "type": "module",
   "scripts": {
     "test": "vitest --passWithNoTests",
@@ -10,13 +10,18 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@vitest/coverage-istanbul": "catalog:testing",
-    "@zero-heads-lab/testing": "workspace:*",
     "typescript": "catalog:",
-    "vitest": "catalog:testing"
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "vitest": "catalog:testing",
+    "zod": "catalog:"
   },
   "dependencies": {
-    "encore.dev": "^1.56.2"
+    "@zero-heads-lab/cache": "workspace:*",
+    "@zero-heads-lab/database": "workspace:*",
+    "@zero-heads-lab/observability": "workspace:*",
+    "drizzle-zod": "^0.8.3",
+    "encore.dev": "^1.56.3",
+    "pg": "^8.11.3"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.13.0"

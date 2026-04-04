@@ -34,7 +34,7 @@ export const user = authSchema.table("user", {
 	firstName: text("first_name"),
 	lastName: text("last_name"),
 
-	preferredEmail: text("preferred_email").unique(),
+	preferedEmail: text("prefered_email").unique(),
 
 	online: boolean("online").default(true).notNull(),
 	lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),

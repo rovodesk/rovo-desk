@@ -1,14 +1,31 @@
 {
-  "references": [{ "path": "./tsconfig.test.json" }],
-  "extends": "@zero-heads-lab/typescript-config/encore.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "composite": false,
-    "baseUrl": ".",
+    /* Basic Options */
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "types": ["node"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@zero-heads-lab/*": ["../../packages/*"]
-    }
-  },
-  "include": ["./**/*.ts", "./**/*.d.ts"],
-  "exclude": ["node_modules", "./**/*.spec.ts", "./**/*.test.ts"]
+      "~encore/*": ["./encore.gen/*"]
+    },
+
+    /* Workspace Settings */
+    "composite": true,
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+
+    /* Module Resolution Options */
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+
+    "declaration": true,
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  }
 }
