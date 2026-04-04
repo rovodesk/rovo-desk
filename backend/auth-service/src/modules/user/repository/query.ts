@@ -1,132 +1,103 @@
-/** biome-ignore-all lint/suspicious/useAwait: No awaited tasks */
+/** biome-ignore-all lint/suspicious/useAwait: no await */
+
+import type { ICacheStore } from "@zero-heads-lab/cache";
 import { type Database, eq } from "@zero-heads-lab/database";
 import { user as userSchema } from "@zero-heads-lab/database/schemas";
 import type { ITracer } from "@zero-heads-lab/observability";
-import { User } from "../domain/user";
+import type { SelectUserFields, SelectUserType } from "../types";
 
 export interface IQueryRepository {
-	findUserById(params: { userId: string }): Promise<User | null>;
-	findUserByEmail(params: { email: string }): Promise<User | null>;
-	findUserByExternalId(params: { externalId: string }): Promise<User | null>;
+	findUserById(params: {
+		id: string;
+		fields?: SelectUserFields;
+	}): Promise<SelectUserType | null>;
+	findUserByExternalId(params: {
+		externalId: string;
+		fields?: SelectUserFields;
+	}): Promise<SelectUserType | null>;
 }
 
 export class QueryRepository implements IQueryRepository {
 	private readonly db: Database;
 	private readonly tracer: ITracer;
+	private readonly cache: ICacheStore;
+	private readonly CACHE_TTL = 3600; // 1 hour
 
-	constructor(db: Database, tracer: ITracer) {
+	constructor(db: Database, tracer: ITracer, cache: ICacheStore) {
 		this.db = db;
 		this.tracer = tracer;
+		this.cache = cache;
 	}
 
-	async findUserById(params: { userId: string }): Promise<User | null> {
-		return this.tracer.withSpan(
-			"auth.database.query.findUserById",
-			async (span) => {
-				span.setAttribute("auth.user_id", params.userId);
-
-				const [row] = await this.db
-					.select()
-					.from(userSchema)
-					.where(eq(userSchema.id, params.userId))
-					.limit(1);
-
-				if (!row) return null;
-
-				return User.rehydrate({
-					id: row.id,
-					email: row.email,
-					externalId: row.externalId,
-					firstName: row.firstName,
-					lastName: row.lastName,
-					createdAt: row.createdAt,
-					updatedAt: row.updatedAt,
-					deletedAt: row.deletedAt,
-					banned: row.banned,
-					bannedAt: row.bannedAt,
-					bannedExpiresAt: row.bannedExpiresAt,
-					bannedReason: row.bannedReason,
-				});
-			},
-			{
-				"db.operation": "select",
-				"db.table": "user",
+	/**
+	 * Helper to handle the Read-Through logic:
+	 * 1. Check Cache -> 2. If Miss, Query DB -> 3. Populate Cache -> 4. Return
+	 */
+	private async readThrough<T>(
+		cacheKey: string,
+		spanName: string,
+		dbQuery: () => Promise<T | null>
+	): Promise<T | null> {
+		return await this.tracer.withSpan(spanName, async (span) => {
+			// 1. Attempt to get from cache
+			const cached = await this.cache.get<T>(cacheKey);
+			if (cached) {
+				span.setAttribute("cache.hit", true);
+				return cached;
 			}
-		);
+
+			span.setAttribute("cache.hit", false);
+
+			// 2. Query Database
+			const result = await dbQuery();
+
+			// 3. If exists, populate cache for next time
+			if (result) {
+				await this.cache.set(cacheKey, result, this.CACHE_TTL);
+			}
+
+			return result;
+		});
 	}
 
-	async findUserByEmail(params: { email: string }): Promise<User | null> {
-		const normalizedEmail = params.email.trim().toLowerCase();
+	async findUserById(params: {
+		id: string;
+		fields?: SelectUserFields;
+	}): Promise<SelectUserType | null> {
+		const cacheKey = `user:id:${params.id}`;
 
-		return this.tracer.withSpan(
-			"auth.database.query.findUserByEmail",
-			async (span) => {
-				span.setAttribute("auth.email", normalizedEmail);
-
+		return this.readThrough(
+			cacheKey,
+			"auth.repository.findUserById",
+			async () => {
 				const [row] = await this.db
 					.select()
 					.from(userSchema)
-					.where(eq(userSchema.email, normalizedEmail))
+					.where(eq(userSchema.id, params.id))
 					.limit(1);
 
-				if (!row) return null;
-
-				return User.rehydrate({
-					id: row.id,
-					email: row.email,
-					externalId: row.externalId,
-					firstName: row.firstName,
-					lastName: row.lastName,
-					createdAt: row.createdAt,
-					updatedAt: row.updatedAt,
-					deletedAt: row.deletedAt,
-					banned: row.banned,
-					bannedAt: row.bannedAt,
-					bannedExpiresAt: row.bannedExpiresAt,
-					bannedReason: row.bannedReason,
-				});
-			},
-			{
-				"db.operation": "select",
-				"db.table": "user",
+				return (row as SelectUserType) || null;
 			}
 		);
 	}
 
 	async findUserByExternalId(params: {
 		externalId: string;
-	}): Promise<User | null> {
-		return this.tracer.withSpan(
-			"auth.database.query.findUserByExternalId",
-			async (span) => {
-				span.setAttribute("auth.external_id", params.externalId);
+		fields?: SelectUserFields;
+	}): Promise<SelectUserType | null> {
+		const cacheKey = `user:ext:${params.externalId}`;
 
+		return this.readThrough(
+			cacheKey,
+			"auth.repository.findUserByExternalId",
+			async () => {
 				const [row] = await this.db
 					.select()
 					.from(userSchema)
 					.where(eq(userSchema.externalId, params.externalId))
 					.limit(1);
 
-				if (!row) return null;
-
-				return User.rehydrate({
-					id: row.id,
-					email: row.email,
-					externalId: params.externalId,
-					firstName: row.firstName,
-					lastName: row.lastName,
-					createdAt: row.createdAt,
-					updatedAt: row.updatedAt,
-					deletedAt: row.deletedAt,
-					banned: row.banned,
-					bannedAt: row.bannedAt,
-					bannedExpiresAt: row.bannedExpiresAt,
-					bannedReason: row.bannedReason,
-				});
-			},
-			{
-				"db.operation": "select",
-				"db.table": "user",
+				return (row as SelectUserType) || null;
 			}
 		);
 	}

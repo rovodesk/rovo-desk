@@ -6,9 +6,7 @@ export function createTracerMiddleware(
 	tracer: ITracer // Use the concrete class or updated interface
 ): MiddlewareHandler<WorkerEnv> {
 	return async (c, next) => {
-		// Put tracer in env
-		c.env.tracer = tracer;
-		// Extract context from incoming request headers
+		c.set("tracer", tracer);
 		const parentContext = tracer.extractContext(c.req.header());
 		const params = c.req.param();
 		const path = c.req.path;

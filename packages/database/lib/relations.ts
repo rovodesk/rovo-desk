@@ -3,12 +3,12 @@ import { relations } from "drizzle-orm";
 import {
 	accessRequest,
 	auditLog,
+	identity,
 	invitation,
 	membership,
 	membershipRole,
 	organization,
 	permission,
-	providerIdentity,
 	role,
 	rolePermission,
 	team,
@@ -22,7 +22,7 @@ import {
 
 export const userRelations = relations(user, ({ many }) => ({
 	memberships: many(membership),
-	providerIdentities: many(providerIdentity),
+	identities: many(identity),
 	invitationsSent: many(invitation, {
 		relationName: "invitedByUser",
 	}),
@@ -173,20 +173,6 @@ export const membershipRoleRelations = relations(membershipRole, ({ one }) => ({
 		references: [role.id],
 	}),
 }));
-
-/* =========================================================
- * PROVIDER IDENTITY
- * ========================================================= */
-
-export const providerIdentityRelations = relations(
-	providerIdentity,
-	({ one }) => ({
-		user: one(user, {
-			fields: [providerIdentity.userId],
-			references: [user.id],
-		}),
-	})
-);
 
 /* =========================================================
  * ACCESS REQUEST

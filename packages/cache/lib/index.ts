@@ -1,4 +1,4 @@
-import type { ITracer } from "@zero-heads-lab/observability";
+import type { ILogger, ITracer } from "@zero-heads-lab/observability";
 
 export interface ICacheStore {
 	get<T = unknown>(key: string): Promise<T | null>;
@@ -9,68 +9,110 @@ export interface ICacheStore {
 	}): Promise<KVNamespaceListResult<unknown, string>>;
 	delete(key: string): Promise<void>;
 	withPrefix(prefix: string): ICacheStore;
+	getPrefix(): string;
 }
 
 export class CacheStore implements ICacheStore {
 	private readonly kv: KVNamespace;
 	private readonly prefix?: string;
-	private readonly trace: ITracer;
+	private readonly logger: ILogger;
+	private readonly tracer: ITracer;
+	static readonly CACHE_TTL = 3600; // 1 hour
 
-	constructor(kv: KVNamespace, trace: ITracer, prefix?: string) {
+	constructor(
+		kv: KVNamespace,
+		logger: ILogger,
+		tracer: ITracer,
+		prefix?: string
+	) {
 		this.kv = kv;
 		this.prefix = prefix;
-		this.trace = trace;
+		this.logger = logger;
+		this.tracer = tracer;
 	}
 
 	// Key function to set key and prefix
-	private key(key: string) {
+	private readonly key = (key: string) => {
 		return this.prefix ? `${this.prefix}:${key}` : key;
-	}
+	};
 
-	async get<T = unknown>(key: string): Promise<T | null> {
-		return await this.trace.withSpan("cache.get", async (span) => {
-			span.setAttribute("cache.key", this.key(key));
-			return await this.kv.get<T>(this.key(key), "json");
+	get = async <T = unknown>(key: string): Promise<T | null> => {
+		return await this.tracer.withSpan("cache.get", async (span) => {
+			const fullKey = this.key(key);
+			span.setAttribute("cache.key", fullKey);
+
+			const value = await this.kv.get<T>(fullKey, "json");
+			if (!value) {
+				this.logger.info("Cache miss", {
+					key: fullKey,
+					prefix: this.prefix,
+				});
+			}
+
+			return value;
 		});
-	}
+	};
 
-	async set(key: string, value: unknown, ttl?: number): Promise<void> {
-		await this.trace.withSpan("cache.set", async (span) => {
-			span.setAttribute("cache.key", this.key(key));
-			await this.kv.put(this.key(key), JSON.stringify(value), {
-				expirationTtl: ttl,
+	set = async (key: string, value: unknown, ttl?: number): Promise<void> => {
+		return await this.tracer.withSpan("cache.set", async (span) => {
+			const fullKey = this.key(key);
+			span.setAttribute("cache.key", fullKey);
+
+			this.logger.info("Cache set", {
+				key: fullKey,
+				prefix: this.prefix,
+				ttl: ttl ?? CacheStore.CACHE_TTL,
+			});
+
+			await this.kv.put(fullKey, JSON.stringify(value), {
+				expirationTtl: ttl ?? CacheStore.CACHE_TTL,
 			});
 		});
-	}
+	};
 
-	async delete(key: string): Promise<void> {
-		await this.trace.withSpan("cache.delete", async (span) => {
-			span.setAttribute("cache.key", this.key(key));
-			await this.kv.delete(this.key(key));
+	delete = async (key: string): Promise<void> => {
+		return await this.tracer.withSpan("cache.delete", async (span) => {
+			const fullKey = this.key(key);
+			span.setAttribute("cache.key", fullKey);
+
+			await this.kv.delete(fullKey);
+
+			this.logger.info("Cache delete", {
+				key: fullKey,
+				prefix: this.prefix,
+			});
 		});
-	}
+	};
 
-	async list(listOptions?: {
+	list = async (listOptions?: {
 		limit?: number;
 		cursor?: string;
-	}): Promise<KVNamespaceListResult<unknown, string>> {
-		return await this.trace.withSpan("cache.list", async (span) => {
+	}): Promise<KVNamespaceListResult<unknown, string>> => {
+		return await this.tracer.withSpan("cache.list", async (span) => {
 			const prefix = this.prefix ? `${this.prefix}:` : undefined;
-			span.setAttribute("cache.prefix", prefix || "");
-			return await this.kv.list({
+
+			if (prefix) {
+				span.setAttribute("cache.prefix", prefix);
+			}
+
+			const result = await this.kv.list({
 				limit: listOptions?.limit,
 				prefix,
 				cursor: listOptions?.cursor,
 			});
+
+			this.logger.info("Cache list", { prefix });
+
+			return result;
 		});
-	}
+	};
 
-	/**
-	 * Creates a scoped cache store with additional prefix
-	 */
-	withPrefix(prefix: string): ICacheStore {
+	withPrefix = (prefix: string): ICacheStore => {
 		const newPrefix = this.prefix ? `${this.prefix}:${prefix}` : prefix;
+		return new CacheStore(this.kv, this.logger, this.tracer, newPrefix);
+	};
 
-		return new CacheStore(this.kv, this.trace, newPrefix);
-	}
+	getPrefix = (): string => {
+		return this.prefix || "";
+	};
 }

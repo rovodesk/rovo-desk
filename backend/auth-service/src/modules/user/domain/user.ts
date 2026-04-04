@@ -1,82 +1,71 @@
-export type UserProps = {
-	id: string;
-	email: string;
-	externalId: string;
+import type { SelectUserType, UpdateUserType } from "../types";
 
-	firstName?: string | null;
-	lastName?: string | null;
-
-	metadata?: Record<string, unknown> | null;
-
-	createdAt: Date;
-	updatedAt: Date;
-
-	deletedAt?: Date | null;
-
-	banned: boolean;
-	bannedAt?: Date | null;
-	bannedExpiresAt?: Date | null;
-	bannedReason?: string | null;
-};
-
-export type CreateUserProps = Omit<
-	UserProps,
-	| "id"
-	| "createdAt"
-	| "updatedAt"
-	| "deletedAt"
-	| "banned"
-	| "bannedAt"
-	| "bannedExpiresAt"
-	| "bannedReason"
-> & {
-	id: string;
-	firstName?: string | null;
-	lastName?: string | null;
-};
-
-export type UpdateUserProps = {
-	id: string;
-} & Partial<CreateUserProps>;
-
+/**
+ * Interface representing the core User domain behaviors.
+ */
 export interface IUser {
-	updateProfile(input: UpdateUserProps): void;
+	updateProfile(
+		input: Partial<Pick<UpdateUserType, "firstName" | "lastName">>
+	): void;
 	ban(input?: { reason?: string | null; expiresAt?: Date | null }): void;
 	unban(): void;
 	softDelete(): void;
 	restore(): void;
-	toObject(): UserProps;
+	toObject(): SelectUserType;
 }
 
 export class User implements IUser {
-	private readonly props: UserProps;
+	private readonly props: SelectUserType;
 
-	constructor(props: CreateUserProps) {
-		this.props = {
-			id: props.id,
-			email: User.normalizeEmail(props.email),
-			externalId: props.externalId,
-			firstName: props.firstName,
-			lastName: props.lastName,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			deletedAt: null,
-			banned: false,
-			bannedAt: null,
-			bannedExpiresAt: null,
-			bannedReason: null,
-		};
+	/**
+	 * Private constructor to enforce the use of static factory methods.
+	 * Use User.create() for new users and User.rehydrate() for DB records.
+	 */
+	private constructor(props: SelectUserType) {
+		this.props = props;
 	}
 
 	/* =========================================================
 	 * FACTORIES
 	 * ========================================================= */
 
-	static rehydrate(input: UserProps): User {
+	/**
+	 * Creates a brand new User instance with default values.
+	 */
+	static create(input: {
+		externalId: string;
+		preferredEmail?: string;
+		firstName?: string | null;
+		lastName?: string | null;
+		metadata?: Record<string, unknown>;
+		createdAt?: string | Date;
+	}): User {
+		const now = new Date();
 		return new User({
-			...input,
-			email: User.normalizeEmail(input.email),
+			id: crypto.randomUUID(),
+			externalId: input.externalId,
+			firstName: input.firstName ?? null,
+			lastName: input.lastName ?? null,
+			preferredEmail: input.preferredEmail ?? null,
+			online: true,
+			metadata: input.metadata ?? {},
+			lastSeenAt: null,
+			avatarUrl: null,
+			createdAt: new Date(input.createdAt ?? now),
+			updatedAt: now,
+			deletedAt: null,
+			banned: false,
+			bannedAt: null,
+			bannedExpiresAt: null,
+			bannedReason: null,
 		});
+	}
+
+	/**
+	 * Reconstitutes an existing User from the database.
+	 */
+	static rehydrate(input: SelectUserType): User {
+		return new User(input);
 	}
 
 	/* =========================================================
@@ -86,51 +75,34 @@ export class User implements IUser {
 	get id(): string {
 		return this.props.id;
 	}
-
-	get email(): string {
-		return this.props.email;
-	}
-
 	get externalId(): string {
 		return this.props.externalId;
 	}
-
-	get firstName(): string | null | undefined {
+	get firstName(): string | null {
 		return this.props.firstName;
 	}
-
-	get lastName(): string | null | undefined {
+	get lastName(): string | null {
 		return this.props.lastName;
 	}
-
+	get isOnline(): boolean {
+		return this.props.online;
+	}
 	get createdAt(): Date {
 		return this.props.createdAt;
 	}
-
 	get updatedAt(): Date {
 		return this.props.updatedAt;
 	}
-
-	get deletedAt(): Date | null | undefined {
+	get deletedAt(): Date | null {
 		return this.props.deletedAt;
 	}
-
 	get banned(): boolean {
 		return this.props.banned;
 	}
 
-	get bannedAt(): Date | null | undefined {
-		return this.props.bannedAt;
-	}
-
-	get bannedExpiresAt(): Date | null | undefined {
-		return this.props.bannedExpiresAt;
-	}
-
-	get bannedReason(): string | null | undefined {
-		return this.props.bannedReason;
-	}
-
+	/**
+	 * Derives the full name from first and last name.
+	 */
 	get fullName(): string {
 		return [this.props.firstName, this.props.lastName]
 			.filter(Boolean)
@@ -138,76 +110,97 @@ export class User implements IUser {
 			.trim();
 	}
 
-	get isDeleted(): boolean {
-		return !!this.props.deletedAt;
-	}
-
+	/**
+	 * Checks if the user is currently banned, accounting for expiration dates.
+	 */
 	get isCurrentlyBanned(): boolean {
 		if (!this.props.banned) return false;
 		if (!this.props.bannedExpiresAt) return true;
-
 		return this.props.bannedExpiresAt.getTime() > Date.now();
 	}
 
 	/* =========================================================
-	 * BEHAVIOR
+	 * BEHAVIOR (Domain Logic)
 	 * ========================================================= */
 
+	/**
+	 * Updates profile information and normalizes email if provided.
+	 */
 	updateProfile(input: {
 		firstName?: string | null;
 		lastName?: string | null;
-		email?: string;
 	}) {
-		if (input.email !== undefined) {
-			this.props.email = User.normalizeEmail(input.email);
-		}
-
 		if (input.firstName !== undefined) {
 			this.props.firstName = input.firstName;
 		}
-
 		if (input.lastName !== undefined) {
 			this.props.lastName = input.lastName;
 		}
-
 		this.touch();
 	}
 
+	/**
+	 * Places the user in a banned state.
+	 */
 	ban(input?: { reason?: string | null; expiresAt?: Date | null }) {
 		this.props.banned = true;
 		this.props.bannedAt = new Date();
 		this.props.bannedExpiresAt = input?.expiresAt ?? null;
 		this.props.bannedReason = input?.reason ?? null;
-
 		this.touch();
 	}
 
+	/**
+	 * Removes the ban and clears ban-related metadata.
+	 */
 	unban() {
 		this.props.banned = false;
 		this.props.bannedAt = null;
 		this.props.bannedExpiresAt = null;
 		this.props.bannedReason = null;
-
 		this.touch();
 	}
 
+	/**
+	 * Marks the user as deleted without removing them from the store.
+	 */
 	softDelete() {
 		if (this.props.deletedAt) return;
-
 		this.props.deletedAt = new Date();
 		this.touch();
 	}
 
+	/**
+	 * Reverses a soft delete.
+	 */
 	restore() {
 		this.props.deletedAt = null;
 		this.touch();
+	}
+
+	/**
+	 * Toggles the online status.
+	 * If setting to true, we don't necessarily update lastSeenAt.
+	 * If setting to false, we record the current time as lastSeenAt.
+	 */
+	toggleOnline(): void {
+		this.props.online = !this.props.online;
+
+		if (!this.props.online) {
+			this.props.lastSeenAt = new Date();
+		}
+
+		this.touch(); // Updates updatedAt
 	}
 
 	/* =========================================================
 	 * SERIALIZATION
 	 * ========================================================= */
 
-	toObject(): UserProps {
+	/**
+	 * Converts the domain entity back into a plain data object.
+	 */
+	toObject(): SelectUserType {
 		return { ...this.props };
 	}
 
@@ -217,15 +210,5 @@ export class User implements IUser {
 
 	private touch() {
 		this.props.updatedAt = new Date();
-	}
-
-	private static normalizeEmail(email: string): string {
-		const normalized = email.trim().toLowerCase();
-
-		if (!normalized) {
-			throw new Error("User email is required");
-		}
-
-		return normalized;
 	}
 }
