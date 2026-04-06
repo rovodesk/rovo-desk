@@ -6,7 +6,11 @@
     "paths": {
       "@/*": ["./*"],
       "~encore/*": ["./encore.gen/*"],
-      "encore/client": ["./client.ts"]
+      "encore/client": ["./client.ts"],
+      "@zero-heads-lab/observability": [
+        "../../packages/observability/lib/index.ts"
+      ],
+      "@zero-heads-lab/shared": ["../../packages/shared/lib/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],

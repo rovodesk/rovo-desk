@@ -20,7 +20,7 @@ import {
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
-import { capitalize } from "@zero-heads-lab/shared/utils";
+import { capitalize } from "@zero-heads-lab/shared/lib/utils";
 import { Bell, ChevronRight, CreditCard, Settings, User2 } from "lucide-react";
 // import { SignOutDialog } from "@/components/dialogs/";
 import { useAuth } from "@/hooks/use-auth";

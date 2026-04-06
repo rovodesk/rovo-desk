@@ -1,7 +1,7 @@
 import type {
 	UserSettings,
 	WorkspaceSettings,
-} from "@zero-heads-lab/shared/types";
+} from "@zero-heads-lab/shared/lib/types";
 import { relations } from "drizzle-orm";
 import {
 	boolean,

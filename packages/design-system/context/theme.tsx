@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
-import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'
+import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/lib/utils'
 
 export type Theme = 'dark' | 'light' | 'system'
 type ResolvedTheme = Exclude<Theme, 'system'>

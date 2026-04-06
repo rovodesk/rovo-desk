@@ -1,4 +1,4 @@
-import type { AnyBlock } from "@zero-heads-lab/shared/types";
+import type { AnyBlock } from "@zero-heads-lab/shared/lib/types";
 import { renderError } from "components/error";
 import { createLauncher } from "components/launcher";
 import { renderLoading } from "components/loading";

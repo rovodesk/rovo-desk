@@ -1,4 +1,4 @@
-import { extractOrigins } from "@zero-heads-lab/shared/utils";
+import { extractOrigins } from "@zero-heads-lab/shared/lib/utils";
 import { env } from "@/env";
 
 export function safelyRedirectTo(url: string): string {

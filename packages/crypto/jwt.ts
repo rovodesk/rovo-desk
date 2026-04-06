@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { decodeJwt, type JWTVerifyOptions, jwtVerify, SignJWT } from "jose";
-import type { JWTPayload } from "types";
+import type { JWTPayload } from "lib/types";
 
 export async function signJWTToken<T extends JWTPayload>(
 	payload: T,

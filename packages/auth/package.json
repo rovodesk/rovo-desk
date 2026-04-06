@@ -1,0 +1,33 @@
+{
+  "name": "@zero-heads-lab/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./server": "./lib/server/index.ts",
+    "./client": "./lib/client/index.ts",
+    "./hooks": "./lib/client/hooks/index.ts",
+    "./helpers": "./lib/helpers.ts",
+    "./types": "./lib/types.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.1024.0",
+    "cookie": "^1.1.1",
+    "encore.dev": "catalog:",
+    "jose": "^6.2.2",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@zero-heads-lab/testing": "workspace:*",
+    "vitest": "catalog:testing"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  }
+}

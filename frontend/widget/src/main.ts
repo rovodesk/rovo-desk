@@ -1,4 +1,4 @@
-import { SDKConfigSchema } from "@zero-heads-lab/shared/validations";
+import { SDKConfigSchema } from "@zero-heads-lab/shared/lib/validations";
 import { mountWidget } from "./components/mount";
 import "./style/widget.css";
 

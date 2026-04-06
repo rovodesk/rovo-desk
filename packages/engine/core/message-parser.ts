@@ -1,4 +1,4 @@
-import type { Message } from "@zero-heads-lab/shared/types";
+import type { Message } from "@zero-heads-lab/shared/lib/types";
 import type { StateUpdater, WidgetState } from "../types";
 
 export type MessageType =

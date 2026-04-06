@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { getCookie } from "@zero-heads-lab/shared/utils";
+import { getCookie } from "@zero-heads-lab/shared/lib/utils";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: ({ context }) => {

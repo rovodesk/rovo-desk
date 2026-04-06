@@ -1,4 +1,4 @@
-import type { WidgetConfig } from "@zero-heads-lab/shared/types";
+import type { WidgetConfig } from "@zero-heads-lab/shared/lib/types";
 import { relations } from "drizzle-orm";
 import { integer, jsonb, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { organization } from "./auth.schema";

@@ -1,5 +1,5 @@
 import type { WidgetState } from "@zero-heads-lab/engine";
-import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/types";
+import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/lib/types";
 import { type ScreenKey, screenRegistry } from "./screens";
 import { WelcomeScreen } from "./screens/welcome";
 

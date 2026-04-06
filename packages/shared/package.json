@@ -2,6 +2,17 @@
   "name": "@zero-heads-lab/shared",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "main": "./lib/index.ts",
+  "module": "./lib/index.ts",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.ts",
+    "./contracts": "./lib/contracts/index.ts",
+    "./types": "./lib/types/index.ts",
+    "./utils": "./lib/utils/index.ts",
+    "./defaults": "./lib/defaults/index.ts"
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

@@ -1,3 +1,4 @@
+import type { OAuthStateData } from "@zero-heads-lab/auth/server";
 import {
 	CacheCluster,
 	expireInMinutes,
@@ -5,7 +6,6 @@ import {
 	StringKeyspace,
 	StructKeyspace,
 } from "encore.dev/storage/cache";
-import type { OAuthStateData } from "./types";
 
 const cluster = CacheCluster.named("shared-cache");
 

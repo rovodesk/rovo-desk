@@ -28,7 +28,8 @@
     "yjs": "^13.6.29",
     "@biomejs/biome": "2.3.10",
     "recharts": "^3.8.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "encore.dev": "^1.56.3"
   },
   "catalogs": {
     "partykit": {

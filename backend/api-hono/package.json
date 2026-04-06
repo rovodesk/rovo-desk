@@ -15,7 +15,6 @@
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/queue": "workspace:*",
-    "@zero-heads-lab/contract": "workspace:*",
     "hono": "catalog:hono",
     "hono-party": "catalog:partykit",
     "lib0": "^0.2.117",

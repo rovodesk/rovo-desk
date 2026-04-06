@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearch } from "@tanstack/react-router";
-// import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
-import type { ORGANIZATION } from "@zero-heads-lab/contract/lib/dto/auth.dto";
 import {
 	Alert,
 	AlertDescription,
@@ -29,7 +27,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "@zero-heads-lab/design-system/components/ui/table";
-import { formatDateTime } from "@zero-heads-lab/shared/utils";
+// import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
+import type { ORGANIZATION } from "@zero-heads-lab/shared/lib/contracts/auth.dto";
+import { formatDateTime } from "@zero-heads-lab/shared/lib/utils";
 import { Search, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
