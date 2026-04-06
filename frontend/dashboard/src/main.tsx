@@ -7,8 +7,6 @@ import {
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { AnalyticsProvider } from "@zero-heads-lab/analytics/client/provider";
-import { useAuth } from "@zero-heads-lab/auth/hooks";
-import { AuthProvider } from "@zero-heads-lab/auth/lib/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
@@ -18,12 +16,13 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { GeneralError } from "@/features/errors/general-error";
 import { NotFoundError } from "@/features/errors/not-found-error";
+import { useAuth } from "@/hooks/use-auth";
 import { handleMutationError } from "@/lib/utils/error";
+import { AuthProvider } from "@/providers/auth";
 import { OnboardingProvider } from "@/providers/onboarding";
 import { routeTree } from "@/routeTree.gen";
 
 import "@tanstack/react-router";
-import { env } from "./env";
 import { SearchProvider } from "./providers/search";
 import type { RouterContext } from "./types/router-context";
 
@@ -93,13 +92,7 @@ if (!rootElement.innerHTML) {
 			<AppErrorBoundary>
 				<AnalyticsProvider>
 					<QueryClientProvider client={queryClient}>
-						<AuthProvider
-							audience={env.VITE_KINDE_AUDIENCE}
-							clientId={env.VITE_KINDE_CLIENT_ID}
-							domain={env.VITE_KINDE_DOMAIN}
-							logoutUri={env.VITE_KINDE_LOGOUT_URI}
-							redirectUri={env.VITE_KINDE_REDIRECT_URI}
-						>
+						<AuthProvider>
 							<OnboardingProvider>
 								<SearchProvider>
 									<UIProvider>

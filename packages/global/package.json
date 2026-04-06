@@ -18,7 +18,6 @@
     "build": "tsc -p ./tsconfig.build.json"
   },
   "dependencies": {
-    "@zero-heads-lab/auth": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",
     "hono": "catalog:hono",
     "uuid": "^13.0.0",

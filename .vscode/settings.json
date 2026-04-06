@@ -10,7 +10,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[json]": {
     "editor.defaultFormatter": "biomejs.biome"
@@ -26,7 +26,7 @@
     "source.fixAll.biome": "explicit"
   },
   "editor.defaultFormatter": "biomejs.biome",
-  "editor.formatOnPaste": true,
+  "editor.formatOnPaste": false,
   "editor.formatOnSave": true,
   "emmet.showExpandedAbbreviation": "never",
   "prettier.enable": false,
@@ -99,6 +99,8 @@
     "bunfig.toml": true,
     ".husky": true,
     "**/.tanstack": true,
+    "**/.encore": true,
+    "**/encore.gen": true,
     "frontend/auth": true
   },
   "files.readonlyInclude": {

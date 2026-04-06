@@ -1,4 +1,3 @@
-import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
@@ -10,6 +9,7 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { GlobeIcon, Pencil, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { DeleteAccountDialog } from "@/components/dialogs/delete-account-dialog";
+import { useUser } from "@/hooks/use-user";
 
 export function ProfilePage() {
 	const { data: user, isLoading } = useUser();
@@ -43,7 +43,7 @@ export function ProfilePage() {
 							{user?.picture ? (
 								<AvatarImage src={user?.picture} />
 							) : (
-								<AvatarFallback>{user?.givenName?.charAt(0)}</AvatarFallback>
+								<AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
 							)}
 						</Avatar>
 
@@ -67,7 +67,7 @@ export function ProfilePage() {
 
 						<div className="flex flex-col gap-1">
 							<h1 className="font-semibold text-2xl tracking-tight">
-								{user?.givenName}
+								{user?.name}
 							</h1>
 							<p className="text-muted-foreground text-sm">{user?.email}</p>
 						</div>

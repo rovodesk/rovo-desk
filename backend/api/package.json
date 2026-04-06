@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest --passWithNoTests",
+    "gen:types": "encore gen client --lang=ts -o ./client.ts",
     "dev": "encore run"
   },
   "devDependencies": {
@@ -16,11 +17,14 @@
     "zod": "catalog:"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.1024.0",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",
+    "cookie": "^1.1.1",
     "drizzle-zod": "^0.8.3",
     "encore.dev": "^1.56.3",
+    "jose": "^6.2.2",
     "pg": "^8.11.3"
   },
   "optionalDependencies": {

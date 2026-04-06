@@ -9,7 +9,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zero-heads-lab/auth": "workspace:*",
     "@zero-heads-lab/events": "workspace:*",
     "@zero-heads-lab/global": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",

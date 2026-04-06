@@ -3,6 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "composite": false,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "@zero-heads-lab/observability": [
         "../../packages/observability/lib/index.ts"

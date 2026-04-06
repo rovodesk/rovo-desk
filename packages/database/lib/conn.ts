@@ -1,7 +1,7 @@
 import type { ILogger } from "@zero-heads-lab/observability";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import * as schema from "./schemas";
+import * as schema from "./schemas/index.ts";
 
 export type Database = PostgresJsDatabase<typeof schema>;
 

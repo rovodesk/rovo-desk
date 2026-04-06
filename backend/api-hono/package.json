@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@zero-heads-lab/analytics": "workspace:*",
-    "@zero-heads-lab/auth": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",

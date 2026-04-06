@@ -1,4 +1,3 @@
-import { useOrganization } from "@zero-heads-lab/auth/hooks";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import {
@@ -19,6 +18,7 @@ import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
 import { Copy, Import, Trash, Users } from "lucide-react";
 import { useState } from "react";
+import { useOrganization } from "@/hooks/use-organization";
 import { SectionHeader } from "../_components/section-header";
 import SectionMain from "../_components/section-main";
 import { SettingRow } from "../_components/setting-row";

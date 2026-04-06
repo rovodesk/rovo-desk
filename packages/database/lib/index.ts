@@ -4,4 +4,4 @@ export {
 	type InferInsertModel,
 	type InferSelectModel,
 } from "drizzle-orm";
-export * from "./conn";
+export * from "./conn.ts";

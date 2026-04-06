@@ -1,5 +1,5 @@
-export * from "./auth.schema";
-// export * from "./billing.schema";
-export * from "./internal.schema";
+export * from "./auth.schema.ts";
+// export * from "./billing.schema.ts";
+export * from "./internal.schema.ts";
 // export * from "./profile.schema";
 // export * from "./widget.schema";

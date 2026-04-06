@@ -6,8 +6,7 @@
     "paths": {
       "@zero-heads-lab/observability": [
         "../../packages/observability/lib/index.ts"
-      ],
-      "@zero-heads-lab/auth": ["../../packages/auth/lib/index.ts"]
+      ]
     }
   },
   "include": [
