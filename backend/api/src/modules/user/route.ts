@@ -118,7 +118,7 @@ export const updateUserProfile = api(
 				success: true,
 				data: updatedUser.toObject(),
 			};
-		} catch (_err) {
+		} catch (err) {
 			throw APIError.internal("Update failed");
 		}
 	}
@@ -180,7 +180,6 @@ export const ensureUserExists = api<
 		path: "/internal/users/ensure",
 		expose: false, // internal only
 	},
-	// biome-ignore lint/suspicious/useAwait: No awaited function
 	async (req) => {
 		// TODO: replace with real DB logic
 		return {

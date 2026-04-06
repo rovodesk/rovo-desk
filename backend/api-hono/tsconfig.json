@@ -1,4 +1,5 @@
 {
+  "references": [{ "path": "./tsconfig.test.json" }],
   "extends": "@zero-heads-lab/typescript-config/hono.json",
   "compilerOptions": {
     "composite": false,

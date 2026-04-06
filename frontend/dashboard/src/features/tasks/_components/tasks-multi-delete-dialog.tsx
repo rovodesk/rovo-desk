@@ -8,7 +8,7 @@ import {
 import { Input } from "@zero-heads-lab/design-system/components/ui/input";
 import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { sleep } from "@zero-heads-lab/shared/lib/utils";
+import { sleep } from "@zero-heads-lab/shared/utils";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 

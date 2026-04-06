@@ -1,5 +1,5 @@
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { getErrorStatus } from "@zero-heads-lab/shared/lib/utils";
+import { getErrorStatus } from "@zero-heads-lab/shared/utils";
 import { AxiosError } from "axios";
 
 export function handleMutationError(error: unknown) {

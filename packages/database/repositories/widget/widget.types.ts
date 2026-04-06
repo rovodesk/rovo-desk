@@ -1,4 +1,4 @@
-import type { WidgetConfig } from "@zero-heads-lab/shared/lib/types";
+import type { WidgetConfig } from "@zero-heads-lab/shared/types";
 import type { InferSelectModel } from "drizzle-orm";
 import type { widget as widgetSchema } from "../../lib/schemas/widget.schema";
 

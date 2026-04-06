@@ -1,4 +1,4 @@
-import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/lib/types";
+import type { AnyBlock, WidgetTabType } from "@zero-heads-lab/shared/types";
 import type { BotState } from "types";
 
 export const getObject = (object: unknown): Record<string, unknown> | null => {

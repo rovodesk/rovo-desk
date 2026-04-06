@@ -1,6 +1,6 @@
 import { Outlet, redirect } from "@tanstack/react-router";
 import { SidebarProvider } from "@zero-heads-lab/design-system/components/ui/sidebar";
-import { getCookie, setCookie } from "@zero-heads-lab/shared/lib/utils";
+import { getCookie, setCookie } from "@zero-heads-lab/shared/utils";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { PrimarySidebar } from "@/layout/sidebar/primary-sidebar";

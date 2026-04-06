@@ -101,7 +101,7 @@
     "**/.tanstack": true,
     "**/.encore": true,
     "**/encore.gen": true,
-    "frontend/auth": false
+    "frontend/auth": true
   },
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true

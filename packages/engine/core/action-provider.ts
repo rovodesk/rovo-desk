@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/useAwait: No awaited functions are used here*/
 
 import { WIDGET_INIT_RESPONSE } from "@zero-heads-lab/shared/contracts/api/widget";
-import type { Message, WidgetTabType } from "@zero-heads-lab/shared/lib/types";
-import { SDKConfigSchema } from "@zero-heads-lab/shared/lib/validations/widget";
+import type { Message, WidgetTabType } from "@zero-heads-lab/shared/types";
+import { SDKConfigSchema } from "@zero-heads-lab/shared/validations/widget";
 import type { SDKConfig, User, WidgetState } from "../types";
 import { MessageParser } from "./message-parser";
 import type { Store } from "./store";

@@ -1,4 +1,4 @@
-import { faker } from "@zero-heads-lab/shared/lib/utils";
+import { faker } from "@zero-heads-lab/shared/utils";
 import {
 	AlertCircle,
 	ArrowDown,

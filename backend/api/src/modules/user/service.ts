@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/useAwait: <explanation> */
 import type { ICacheStore } from "@zero-heads-lab/cache";
 import type { ILogger, ITracer } from "@zero-heads-lab/observability";
 import { z } from "zod";

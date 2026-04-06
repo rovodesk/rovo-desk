@@ -26,6 +26,7 @@
     "@tanstack/router-plugin": "catalog:tanstack",
     "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
+    "@zero-heads-lab/contract": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
     "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",

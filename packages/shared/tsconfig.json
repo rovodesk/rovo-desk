@@ -6,6 +6,6 @@
     "baseUrl": ".",
     "strictNullChecks": true
   },
-  "include": ["lib/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "test", "dist"]
 }

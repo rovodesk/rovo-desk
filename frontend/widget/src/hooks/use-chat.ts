@@ -1,4 +1,4 @@
-import type { Message } from "@zero-heads-lab/shared/lib/types";
+import type { Message } from "@zero-heads-lab/shared/types";
 import PartySocket from "partysocket";
 import { useEffect, useRef, useState } from "react";
 

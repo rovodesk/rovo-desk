@@ -1,4 +1,4 @@
-import type { AnyBlock } from "@zero-heads-lab/shared/lib/types/index.js";
+import type { AnyBlock } from "@zero-heads-lab/shared/types";
 import type { IActionProvider } from "./action-provider.js";
 
 const scrollIntoView = (): void => {

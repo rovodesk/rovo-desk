@@ -1,7 +1,5 @@
-import type { AuthenticatedSession } from "@zero-heads-lab/auth/types";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
-
-const db = SQLDatabase.named("shared-db");
+import type { AuthenticatedSession } from "./types";
 
 export interface ISessionRepository {
 	insertSession(session: AuthenticatedSession): Promise<void>;
@@ -13,8 +11,9 @@ export interface ISessionRepository {
 	deleteExpiredSessions(): Promise<void>;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: Accepts any value
-function mapRow(row: Record<string, any>): AuthenticatedSession {
+const db = SQLDatabase.named("shared-db");
+
+function mapRow(row: any): AuthenticatedSession {
 	return {
 		sessionId: row.session_id,
 		userId: row.user_id,

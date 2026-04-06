@@ -11,7 +11,7 @@ import {
 	ToggleGroup,
 	ToggleGroupItem,
 } from "@zero-heads-lab/design-system/components/ui/toggle-group";
-import type { WidgetLauncher } from "@zero-heads-lab/shared/lib/types";
+import type { WidgetLauncher } from "@zero-heads-lab/shared/types";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 

@@ -2,8 +2,8 @@ import type {
 	Message,
 	WidgetConfig,
 	WidgetTabType,
-} from "@zero-heads-lab/shared/lib/types";
-import type { SDKConfigSchema } from "@zero-heads-lab/shared/lib/validations/widget";
+} from "@zero-heads-lab/shared/types";
+import type { SDKConfigSchema } from "@zero-heads-lab/shared/validations/widget";
 import type { z } from "zod";
 
 export type SDKConfig = z.infer<typeof SDKConfigSchema>;

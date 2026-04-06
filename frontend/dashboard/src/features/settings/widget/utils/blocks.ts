@@ -2,7 +2,7 @@ import type {
 	WidgetConfig,
 	WidgetMode,
 	WidgetTabType,
-} from "@zero-heads-lab/shared/lib/types";
+} from "@zero-heads-lab/shared/types";
 
 export function resolveBlocks(
 	config: WidgetConfig,

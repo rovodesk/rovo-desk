@@ -25,7 +25,7 @@ import { Separator } from "@zero-heads-lab/design-system/components/ui/separator
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { TooltipProvider } from "@zero-heads-lab/design-system/components/ui/tooltip";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import type { ConversationItem } from "@zero-heads-lab/shared/lib/types";
+import type { ConversationItem } from "@zero-heads-lab/shared/types";
 import {
 	Archive,
 	ArrowRight,

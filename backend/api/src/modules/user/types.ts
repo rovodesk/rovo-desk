@@ -10,7 +10,7 @@ import { z } from "zod";
  * Path params
  */
 export const userIdParamSchema = z.object({
-	id: z.uuid(),
+	id: z.string().min(1, "User ID is required"),
 });
 export type UserIdParamType = z.infer<typeof userIdParamSchema>;
 

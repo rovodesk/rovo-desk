@@ -9,7 +9,7 @@ import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-a
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { TooltipProvider } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import type { Conversation } from "@zero-heads-lab/shared/lib/types";
+import type { Conversation } from "@zero-heads-lab/shared/types";
 
 import {
 	Calendar,

@@ -1,7 +1,7 @@
 import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
-import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import { Building2Icon, ClockIcon } from "lucide-react";
 import { z } from "zod";
 import { useApiKeys } from "../../hooks/use-apikey";

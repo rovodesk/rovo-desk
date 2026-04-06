@@ -18,7 +18,7 @@ import {
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	Calendar,
 	CheckSquare,

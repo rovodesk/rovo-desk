@@ -1,7 +1,7 @@
-import type { AnonymousSession } from "@zero-heads-lab/auth/types";
 import { APIError, api } from "encore.dev/api";
 import { z } from "zod";
 import { sessionService } from "../service";
+import type { AnonymousSession } from "../types";
 
 const getAnonymousSessionSchema = z.object({
 	accessToken: z.uuid(),

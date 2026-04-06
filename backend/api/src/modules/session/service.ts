@@ -1,9 +1,9 @@
-import type {
-	AnonymousSession,
-	AuthenticatedSession,
-} from "@zero-heads-lab/auth/types";
-import { type ISessionCacheRepository, SessionCacheRepository } from "./cache";
+import {
+	type ISessionCacheRepository,
+	SessionCacheRepository,
+} from "./cache-repository";
 import { type ISessionRepository, SessionRepository } from "./repository";
+import type { AnonymousSession, AuthenticatedSession } from "./types";
 
 const MAX_ACTIVE_SESSIONS = 10;
 const LAST_SEEN_WRITE_THROTTLE_MS = 5 * 60 * 1000; // 5 min
@@ -22,13 +22,10 @@ export interface ISessionService {
 }
 
 export class SessionService implements ISessionService {
-	private readonly repository: ISessionRepository;
-	private readonly cacheRepository: ISessionCacheRepository;
-
-	constructor() {
-		this.repository = new SessionRepository();
-		this.cacheRepository = new SessionCacheRepository();
-	}
+	constructor(
+		private readonly repository: ISessionRepository = new SessionRepository(),
+		private readonly cacheRepository: ISessionCacheRepository = new SessionCacheRepository()
+	) {}
 
 	/**
 	 * Create a durable authenticated session.
@@ -133,7 +130,7 @@ export class SessionService implements ISessionService {
 	 * List active sessions for account/device management UI
 	 */
 	async listUserSessions(userId: string): Promise<AuthenticatedSession[]> {
-		return await this.repository.listActiveSessionsByUserId(userId);
+		return this.repository.listActiveSessionsByUserId(userId);
 	}
 
 	/**

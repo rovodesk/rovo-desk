@@ -13,7 +13,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { sleep } from "@zero-heads-lab/shared/lib/utils";
+import { sleep } from "@zero-heads-lab/shared/utils";
 import { ArrowUpDown, CircleArrowUp, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { priorities, statuses } from "../data";

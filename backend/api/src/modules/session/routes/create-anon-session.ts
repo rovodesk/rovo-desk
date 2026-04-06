@@ -1,12 +1,26 @@
-import {
-	type CreateAnonymousSessionRequest,
-	type CreateAnonymousSessionResponse,
-	createAnonymousSessionRequestSchema,
-	createAnonymousSessionResponseSchema,
-} from "@zero-heads-lab/shared/contracts";
 import { APIError, api } from "encore.dev/api";
 import { z } from "zod";
 import { sessionService } from "../service";
+
+const createAnonymousSessionSchema = z.object({
+	accessToken: z.uuid(),
+	email: z.email(),
+	cognitoSession: z.string().min(1),
+	challengeName: z.string().optional().nullable(),
+	createdAt: z.iso.datetime(),
+});
+
+export interface CreateAnonymousSessionRequest {
+	accessToken: string;
+	email: string;
+	cognitoSession: string;
+	challengeName?: string | null;
+	createdAt: string;
+}
+
+export interface CreateAnonymousSessionResponse {
+	success: true;
+}
 
 export const createAnonymousSession = api<
 	CreateAnonymousSessionRequest,
@@ -18,7 +32,7 @@ export const createAnonymousSession = api<
 		expose: false,
 	},
 	async (req) => {
-		const parsed = createAnonymousSessionRequestSchema.safeParse(req);
+		const parsed = createAnonymousSessionSchema.safeParse(req);
 		if (!parsed.success) {
 			console.error(z.treeifyError(parsed.error).errors);
 			throw APIError.invalidArgument("Invalid session payload");
@@ -26,15 +40,8 @@ export const createAnonymousSession = api<
 
 		await sessionService.createAnonymousSession(parsed.data);
 
-		const parsedRes = createAnonymousSessionResponseSchema.safeParse({
-			accessToken: parsed.data.accessToken,
-		});
-
-		if (!parsedRes.success) {
-			console.error(z.treeifyError(parsedRes.error).errors);
-			throw APIError.internal("Failed to create anonymous session");
-		}
-
-		return parsedRes.data;
+		return {
+			success: true,
+		};
 	}
 );

@@ -1,5 +1,5 @@
-import { generateUUID } from "@zero-heads-lab/shared/lib/utils";
-import { extractOrigins } from "@zero-heads-lab/shared/lib/utils/extract-origins";
+import { generateUUID } from "@zero-heads-lab/shared/utils";
+import { extractOrigins } from "@zero-heads-lab/shared/utils/extract-origins";
 import type { Context } from "hono";
 import type { SecretLike } from "@/types";
 

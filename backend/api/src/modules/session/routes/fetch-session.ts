@@ -1,12 +1,25 @@
-import {
-	type GetSessionRequest,
-	type GetSessionResponse,
-	getSessionRequestSchema,
-	getSessionResponseSchema,
-} from "@zero-heads-lab/shared/contracts";
-import { APIError, api } from "encore.dev/api";
-import { z } from "zod";
+import { api } from "encore.dev/api";
 import { sessionService } from "../service";
+
+interface GetSessionRequest {
+	sessionId: string;
+}
+
+interface GetSessionResponse {
+	authenticated: boolean;
+	user: {
+		id: string;
+		email: string | null;
+		name: string | null;
+		provider: string | null;
+	} | null;
+	session: {
+		sessionId: string;
+		createdAt: string;
+		lastSeenAt: string;
+		mfaVerified: boolean;
+	} | null;
+}
 
 export const getSession = api<GetSessionRequest, GetSessionResponse>(
 	{
@@ -15,13 +28,7 @@ export const getSession = api<GetSessionRequest, GetSessionResponse>(
 		expose: true,
 	},
 	async (req) => {
-		const parsed = getSessionRequestSchema.safeParse(req);
-		if (!parsed.success) {
-			console.error(z.treeifyError(parsed.error).errors);
-			throw APIError.invalidArgument("Invalid session payload");
-		}
-
-		const sessionId = parsed.data.sessionId?.trim();
+		const sessionId = req.sessionId?.trim();
 
 		if (!sessionId) {
 			return {
@@ -43,7 +50,7 @@ export const getSession = api<GetSessionRequest, GetSessionResponse>(
 
 		await sessionService.ensureSessionExists(sessionId);
 
-		const res: GetSessionResponse = {
+		return {
 			authenticated: true,
 			user: {
 				id: currentSession.userId,
@@ -58,13 +65,5 @@ export const getSession = api<GetSessionRequest, GetSessionResponse>(
 				mfaVerified: currentSession.mfaVerified,
 			},
 		};
-
-		const parsedRes = getSessionResponseSchema.safeParse(res);
-		if (!parsedRes.success) {
-			console.error(z.treeifyError(parsedRes.error).errors);
-			throw APIError.internal("Failed to parse session response");
-		}
-
-		return parsedRes.data;
 	}
 );

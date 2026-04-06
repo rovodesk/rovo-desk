@@ -1,12 +1,18 @@
-import {
-	type RevokeSessionRequest,
-	type RevokeSessionResponse,
-	revokeSessionRequestSchema,
-	revokeSessionResponseSchema,
-} from "@zero-heads-lab/shared/contracts";
 import { APIError, api } from "encore.dev/api";
 import { z } from "zod";
 import { sessionService } from "../service";
+
+const revokeSessionSchema = z.object({
+	sessionId: z.string().uuid(),
+});
+
+export interface RevokeSessionRequest {
+	sessionId: string;
+}
+
+export interface RevokeSessionResponse {
+	success: true;
+}
 
 export const revokeSession = api<RevokeSessionRequest, RevokeSessionResponse>(
 	{
@@ -15,21 +21,16 @@ export const revokeSession = api<RevokeSessionRequest, RevokeSessionResponse>(
 		expose: false,
 	},
 	async (req) => {
-		const parsed = revokeSessionRequestSchema.safeParse(req);
+		const parsed = revokeSessionSchema.safeParse(req);
+
 		if (!parsed.success) {
 			throw APIError.invalidArgument("Invalid session ID");
 		}
 
 		await sessionService.revokeSession(parsed.data.sessionId);
 
-		const parsedRes = revokeSessionResponseSchema.safeParse({
+		return {
 			success: true,
-		});
-		if (!parsedRes.success) {
-			console.error(z.treeifyError(parsedRes.error).errors);
-			throw APIError.internal("Failed to parse session response");
-		}
-
-		return parsedRes.data;
+		};
 	}
 );

@@ -9,7 +9,7 @@ import {
 import {
 	type WidgetConfig,
 	WidgetConfigKeys,
-} from "@zero-heads-lab/shared/lib/types";
+} from "@zero-heads-lab/shared/types";
 import { useCallback } from "react";
 import { AdvancedTab } from "./tabs/advanced-tab";
 import { AppearanceTab } from "./tabs/appearance-tab";

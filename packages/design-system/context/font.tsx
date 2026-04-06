@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/lib/utils'
+import { getCookie, setCookie, removeCookie } from '@zero-heads-lab/shared/utils'
 
 /**
  * List of available font names (visit the url `/settings/appearance`).

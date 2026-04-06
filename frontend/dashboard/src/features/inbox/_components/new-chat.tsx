@@ -21,10 +21,7 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/dialog";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import type {
-	Conversation,
-	Participant,
-} from "@zero-heads-lab/shared/lib/types";
+import type { Conversation, Participant } from "@zero-heads-lab/shared/types";
 import { Check, Send, Users, X } from "lucide-react";
 import { useMemo, useState } from "react";
 

@@ -11,7 +11,7 @@ import {
 	CardTitle,
 } from "@zero-heads-lab/design-system/components/ui/card";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
-import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import SectionHeader from "./section-header";
 import SectionMain from "./section-main";
 
