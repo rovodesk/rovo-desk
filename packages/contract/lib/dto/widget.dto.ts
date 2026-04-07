@@ -1,4 +1,4 @@
-import { WidgetConfigSchema } from "@zero-heads-lab/shared/validations/widget";
+import { WidgetConfigSchema } from "@zero-heads-lab/shared/lib/validations/widget";
 import { z } from "zod";
 
 export const updateWidgetConfigSchema = WidgetConfigSchema.partial({

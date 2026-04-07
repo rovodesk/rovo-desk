@@ -1,9 +1,9 @@
 import { api } from "encore.dev/api";
-import { AuthConfig } from "@/src/modules/auth/auth.config";
+import { AuthConfig } from "@/modules/auth/config";
 import {
 	clearAppSessionCookie,
 	getAppSessionToken,
-} from "@/src/modules/session/utils";
+} from "@/modules/session/utils";
 import { session } from "~encore/clients";
 
 export const logout = api.raw(
@@ -44,6 +44,7 @@ export const logoutCallback = api.raw(
 		path: "/auth/logout/callback",
 		expose: true,
 	},
+	// biome-ignore lint/suspicious/useAwait: No async operations needed
 	async (_req, res) => {
 		const redirectUrl = new URL(AuthConfig.postLogoutRedirect);
 

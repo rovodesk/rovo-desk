@@ -14,7 +14,7 @@ import {
 	CardTitle,
 } from "@zero-heads-lab/design-system/components/ui/card";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { getCookie, noop, setCookie } from "@zero-heads-lab/shared/utils";
+import { getCookie, noop, setCookie } from "@zero-heads-lab/shared/lib/utils";
 import { Cookie } from "lucide-react";
 import * as React from "react";
 

@@ -1,16 +1,7 @@
 {
   "extends": "@zero-heads-lab/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "composite": false,
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "paths": {
-      "@zero-heads-lab/observability": [
-        "../../packages/observability/lib/index.ts"
-      ]
-    }
+    "composite": false
   },
   "include": ["lib/**/*.ts", "lib/**/*.tsx"],
   "exclude": ["node_modules", "dist"]

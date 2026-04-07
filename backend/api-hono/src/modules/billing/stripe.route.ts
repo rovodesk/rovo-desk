@@ -1,4 +1,4 @@
-import { WebhookEventRepository } from "@zero-heads-lab/database/repositories/billing/webhook";
+import { WebhookEventRepository } from "../../../../api/src/infra/database/repositories/billing/webhook";
 import { Hono } from "hono";
 import type { Bindings, Variables } from "@/types";
 

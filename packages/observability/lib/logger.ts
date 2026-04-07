@@ -1,97 +1,102 @@
-import { trace } from "@opentelemetry/api";
-import type {
-	LoggerOptions as PinoBaseOptions,
-	Logger as PinoLogger,
-} from "pino";
-import pino from "pino";
+import pino, { type Logger as PinoLogger } from "pino";
+import { v4 as uuidv4 } from "uuid";
+import { getContext } from "./context.js";
+import { type OTLPExporterOptions, OTLPLogExporter } from "./otlp.js";
+import { getTraceContext } from "./tracer.js";
+import type { LoggerOptions, LogLevel, LogPayload } from "./types.js";
 
-export interface ILogger {
-	withContext(ctx: Record<string, unknown>): ILogger;
-	withTrace(traceId?: string, spanId?: string): ILogger;
-	withUser(userId?: string, workspaceId?: string, roleId?: string): ILogger;
-	error(message: string, data?: Record<string, unknown>, err?: unknown): void;
-	warn(message: string, data?: Record<string, unknown>): void;
-	info(message: string, data?: Record<string, unknown>): void;
-	debug(message: string, data?: Record<string, unknown>): void;
+export abstract class ILogger {
+	abstract trace(message: string, data?: Record<string, unknown>): void;
+	abstract debug(message: string, data?: Record<string, unknown>): void;
+	abstract info(message: string, data?: Record<string, unknown>): void;
+	abstract warn(message: string, data?: Record<string, unknown>): void;
+	abstract error(
+		message: string,
+		data?: Record<string, unknown>,
+		err?: unknown
+	): void;
+	abstract fatal(
+		message: string,
+		data?: Record<string, unknown>,
+		err?: unknown
+	): void;
+	abstract child(context: Record<string, unknown>): ILogger;
+	abstract flush(): Promise<void>;
+	abstract shutdown(): Promise<void>;
 }
 
-export type LogContext = {
-	requestId?: string;
-	traceId?: string;
-	spanId?: string;
-	userId?: string;
-	workspaceId?: string;
-	roleId?: string;
-	[key: string]: unknown;
+export type LoggerConfig = LoggerOptions & {
+	redactKeys?: string[];
+	otlp?: Omit<OTLPExporterOptions, "url" | "resourceAttributes">;
 };
-
-export type LogLevel =
-	| "silent"
-	| "fatal"
-	| "error"
-	| "warn"
-	| "info"
-	| "debug"
-	| "trace";
-
-const DEFAULT_LOG_LEVEL: LogLevel = "info";
-
-export interface LoggerOptions {
-	level?: LogLevel;
-	debug?: boolean;
-	context?: LogContext;
-	pinoInstance?: PinoLogger;
-	mode?: "pretty" | "json";
-	prettyOptions?: {
-		colorize?: boolean;
-		translateTime?: boolean | string;
-		ignore?: string;
-		singleLine?: boolean;
-		messageFormat?: string;
-	};
-	app?: string;
-	version?: string;
-}
 
 export class Logger implements ILogger {
 	private readonly pino: PinoLogger;
-	private readonly debugMode: boolean;
-	private readonly context: LogContext;
+	private readonly exporter?: OTLPLogExporter;
+	private readonly app: string;
+	private readonly version?: string;
+	private readonly bindings: Record<string, unknown>;
+	private readonly level: LogLevel;
+	private readonly otlpUrl?: string;
+	private readonly redactKeys: string[];
 
-	constructor(opts?: LoggerOptions) {
-		this.debugMode = opts?.debug ?? false;
-		this.context = opts?.context ?? {};
+	constructor(
+		options: LoggerConfig,
+		bindings: Record<string, unknown> = {},
+		pinoInstance?: PinoLogger
+	) {
+		this.app = options.app;
+		this.version = options.version;
+		this.bindings = bindings;
+		this.level = options.level ?? "info";
+		this.otlpUrl = options.otlpUrl;
+		this.redactKeys = options.redactKeys ?? [
+			"password",
+			"token",
+			"accessToken",
+			"refreshToken",
+			"authorization",
+			"cookie",
+			"idToken",
+			"secret",
+		];
 
-		const transport =
-			opts?.mode === "pretty"
-				? {
-						target: "pino-pretty",
-						options: {
-							colorize: true,
-							translateTime: "HH:MM:ss",
-							ignore: "pid,hostname",
-							singleLine: false,
-							...opts?.prettyOptions,
-						},
-					}
-				: undefined;
+		this.pino =
+			pinoInstance ??
+			pino({
+				level: this.level,
+				base: undefined,
+				timestamp: pino.stdTimeFunctions.isoTime,
+				redact: this.redactKeys,
+			});
 
-		const pinoOptions: PinoBaseOptions = {
-			base: opts?.app
-				? {
-						app: opts.app,
-						version: opts.version,
-					}
-				: undefined,
-			timestamp: pino.stdTimeFunctions.isoTime,
-			level: opts?.level ?? DEFAULT_LOG_LEVEL,
-			formatters: {
-				level: (label) => ({ level: label }),
+		if (this.otlpUrl) {
+			this.exporter = new OTLPLogExporter({
+				url: this.otlpUrl,
+				...(options.otlp ?? {}),
+				resourceAttributes: {
+					"service.name": this.app,
+					"service.version": this.version ?? "1.0.0",
+				},
+			});
+		}
+	}
+
+	child(context: Record<string, unknown>): ILogger {
+		return new Logger(
+			{
+				app: this.app,
+				version: this.version,
+				level: this.level,
+				otlpUrl: this.otlpUrl,
+				redactKeys: this.redactKeys,
 			},
-			...(transport ? { transport } : {}),
-		};
-
-		this.pino = opts?.pinoInstance ?? pino(pinoOptions);
+			{
+				...this.bindings,
+				...context,
+			},
+			this.pino.child(context)
+		);
 	}
 
 	private cleanObject(obj: Record<string, unknown>) {
@@ -100,99 +105,116 @@ export class Logger implements ILogger {
 		);
 	}
 
-	private getTraceContext() {
-		const span = trace.getActiveSpan();
-		const spanContext = span?.spanContext();
+	private redact(value: unknown): unknown {
+		if (Array.isArray(value)) {
+			return value.map((item) => this.redact(item));
+		}
 
-		const isValidTraceId =
-			spanContext?.traceId &&
-			spanContext.traceId !== "00000000000000000000000000000000";
+		if (value && typeof value === "object") {
+			return Object.fromEntries(
+				Object.entries(value as Record<string, unknown>).map(([key, val]) => [
+					key,
+					this.redactKeys.includes(key) ? "[REDACTED]" : this.redact(val),
+				])
+			);
+		}
 
-		const isValidSpanId =
-			spanContext?.spanId && spanContext.spanId !== "0000000000000000";
-
-		return {
-			traceId: isValidTraceId ? spanContext?.traceId : undefined,
-			spanId: isValidSpanId ? spanContext?.spanId : undefined,
-		};
-	}
-
-	private enrich(data?: Record<string, unknown>) {
-		return this.cleanObject({
-			...this.context,
-			...this.getTraceContext(),
-			...data,
-		});
+		return value;
 	}
 
 	private normalizeError(err: unknown) {
+		if (!err) return undefined;
+
 		if (err instanceof Error) {
 			return {
 				name: err.name,
 				message: err.message,
-				stack: this.debugMode ? err.stack : undefined,
+				stack: err.stack,
 			};
 		}
 
-		return {
-			name: "Error",
-			message: typeof err === "string" ? err : String(err),
-		};
+		if (typeof err === "object") return this.redact(err);
+
+		return { message: String(err) };
 	}
 
-	withContext(ctx: LogContext): ILogger {
-		return new Logger({
-			debug: this.debugMode,
-			context: {
-				...this.context,
-				...ctx,
-			},
-			pinoInstance: this.pino,
-		});
-	}
+	private enrich(payload: LogPayload) {
+		const asyncContext = getContext();
+		const traceContext = getTraceContext();
 
-	withTrace(traceId?: string, spanId?: string): ILogger {
-		return this.withContext({ traceId, spanId });
-	}
-
-	withUser(userId?: string, workspaceId?: string, roleId?: string): ILogger {
-		return this.withContext({ userId, workspaceId, roleId });
-	}
-
-	error(message: string, data?: Record<string, unknown>, err?: unknown) {
-		this.pino.error(
-			this.enrich({
-				message,
-				...this.cleanObject(data ?? {}),
-				error: err ? this.normalizeError(err) : undefined,
-			})
+		return this.cleanObject(
+			this.redact({
+				...this.bindings,
+				...asyncContext,
+				...traceContext,
+				...payload,
+				traceId: traceContext.traceId ?? asyncContext.traceId ?? uuidv4(),
+				spanId: traceContext.spanId ?? asyncContext.spanId,
+				app: this.app,
+				version: this.version,
+				timestamp: new Date().toISOString(),
+			}) as Record<string, unknown>
 		);
 	}
 
-	warn(message: string, data?: Record<string, unknown>) {
-		this.pino.warn(
-			this.enrich({
-				message,
-				...this.cleanObject(data ?? {}),
-			})
-		);
+	private write(level: LogLevel, payload: LogPayload) {
+		const enriched = this.enrich(payload);
+
+		this.pino[level](enriched);
+
+		if (this.exporter) {
+			this.exporter.export({
+				level,
+				...enriched,
+			});
+		}
 	}
 
-	info(message: string, data?: Record<string, unknown>) {
-		this.pino.info(
-			this.enrich({
-				message,
-				...this.cleanObject(data ?? {}),
-			})
-		);
+	trace(message: string, data?: Record<string, unknown>) {
+		this.write("trace", { message, ...(data ?? {}) });
 	}
 
 	debug(message: string, data?: Record<string, unknown>) {
-		this.pino.debug(
-			this.enrich({
-				message,
-				...this.cleanObject(data ?? {}),
-			})
-		);
+		this.write("debug", { message, ...(data ?? {}) });
 	}
+
+	info(message: string, data?: Record<string, unknown>) {
+		this.write("info", { message, ...(data ?? {}) });
+	}
+
+	warn(message: string, data?: Record<string, unknown>) {
+		this.write("warn", { message, ...(data ?? {}) });
+	}
+
+	error(message: string, data?: Record<string, unknown>, err?: unknown) {
+		this.write("error", {
+			message,
+			...(data ?? {}),
+			error: this.normalizeError(err),
+		});
+	}
+
+	fatal(message: string, data?: Record<string, unknown>, err?: unknown) {
+		this.write("fatal", {
+			message,
+			...(data ?? {}),
+			error: this.normalizeError(err),
+		});
+	}
+
+	async flush(): Promise<void> {
+		if (this.exporter) {
+			await this.exporter.flush();
+		}
+	}
+
+	async shutdown(): Promise<void> {
+		if (this.exporter) {
+			await this.exporter.shutdown();
+		}
+	}
+}
+
+export function createLogger(options: LoggerConfig) {
+	return new Logger(options);
 }

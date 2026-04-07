@@ -1,8 +1,6 @@
 export interface AuthenticatedSession {
 	sessionId: string;
 	userId: string;
-	email?: string | null;
-	name?: string | null;
 	provider?: string | null;
 	mfaVerified: boolean;
 	createdAt: string;

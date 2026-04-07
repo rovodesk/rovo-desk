@@ -1,6 +1,6 @@
 import type { IncomingMessage } from "node:http";
 import { parse, serialize } from "cookie";
-import { SessionConfig } from "./session.config";
+import { SessionConfig } from "./config";
 
 export function clearAppSessionCookie(): string {
 	return serialize(SessionConfig.cookieName, "", {

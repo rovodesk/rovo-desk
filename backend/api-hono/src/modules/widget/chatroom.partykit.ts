@@ -1,4 +1,4 @@
-import type { Message } from "@zero-heads-lab/shared/types";
+import type { Message } from "@zero-heads-lab/shared/lib/types";
 import { type Connection, type PartyServerOptions, Server } from "partyserver";
 import type { PartyBindings } from "../../types";
 

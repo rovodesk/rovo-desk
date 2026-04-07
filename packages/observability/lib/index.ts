@@ -1,7 +1,5 @@
-export type {
-	Context as OtelContext,
-	Span,
-} from "@opentelemetry/api";
-export { SpanStatusCode } from "@opentelemetry/api";
-export * from "./logger";
-export * from "./tracer";
+export * from "./context.js";
+export * from "./instrument.js";
+export * from "./logger.js";
+export * from "./tracer.js";
+export * from "./types.js";

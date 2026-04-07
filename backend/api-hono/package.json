@@ -12,7 +12,6 @@
     "@zero-heads-lab/analytics": "workspace:*",
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",
     "@zero-heads-lab/queue": "workspace:*",
     "@zero-heads-lab/contract": "workspace:*",

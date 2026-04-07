@@ -1,5 +1,5 @@
 import type { ITracer } from "@zero-heads-lab/analytics/types";
-import type { IWebhookEventRepository } from "@zero-heads-lab/database/repositories/billing/webhook/webhook.types";
+import type { IWebhookEventRepository } from "../../../../api/src/infra/database/repositories/billing/webhook/webhook.types";
 
 export async function processWebhookEvent(
 	eventId: string,

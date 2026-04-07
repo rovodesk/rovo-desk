@@ -6,7 +6,6 @@ import {
 } from "./types";
 
 export interface UserResponse {
-	success: true;
 	data: {
 		id: string;
 		externalId: string;
@@ -14,26 +13,24 @@ export interface UserResponse {
 		lastName: string | null;
 		email?: string | null;
 		online: boolean;
-		lastSeenAt?: Date | null;
-		createdAt: Date;
-		updatedAt: Date;
-		deletedAt?: Date | null;
+		lastSeenAt?: string | null;
+		createdAt: string;
+		updatedAt: string;
+		deletedAt?: string | null;
 		banned?: boolean;
-		bannedAt?: Date | null;
-		bannedExpiresAt?: Date | null;
+		bannedAt?: string | null;
+		bannedExpiresAt?: string | null;
 		bannedReason?: string | null;
 	};
 }
 
 export interface ToggleOnlineResponse {
-	success: true;
 	data: {
 		isOnline: boolean;
 	};
 }
 
 export interface DeleteUserResponse {
-	success: true;
 	data: {
 		id: string;
 		deleted: boolean;
@@ -79,7 +76,6 @@ export const getUserById = api(
 		}
 
 		return {
-			success: true,
 			data: user.toObject(),
 		};
 	}
@@ -91,10 +87,12 @@ export const createUser = api(
 	async (body: CreateUserBody): Promise<UserResponse> => {
 		const parsed = createUserRequestSchema.parse(body);
 
-		const user = await userService.createUser(parsed.externalId);
+		const user = await userService.createUser({
+			...parsed,
+			email: parsed.email ?? null,
+		});
 
 		return {
-			success: true,
 			data: user.toObject(),
 		};
 	}
@@ -115,10 +113,10 @@ export const updateUserProfile = api(
 			});
 
 			return {
-				success: true,
 				data: updatedUser.toObject(),
 			};
 		} catch (err) {
+			console.error(err);
 			throw APIError.internal("Update failed");
 		}
 	}
@@ -132,7 +130,6 @@ export const toggleOnlineStatus = api(
 			const isOnline = await userService.toggleOnlineStatus(id);
 
 			return {
-				success: true,
 				data: { isOnline },
 			};
 		} catch {
@@ -149,7 +146,6 @@ export const deleteUser = api(
 			await userService.delete(id);
 
 			return {
-				success: true,
 				data: { id, deleted: true },
 			};
 		} catch {
@@ -180,7 +176,7 @@ export const ensureUserExists = api<
 		path: "/internal/users/ensure",
 		expose: false, // internal only
 	},
-	async (req) => {
+	(_req) => {
 		// TODO: replace with real DB logic
 		return {
 			id: crypto.randomUUID(),

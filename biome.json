@@ -15,6 +15,7 @@
       "!apps/cms/src/payload-types.ts"
     ]
   },
+
   "formatter": {
     "enabled": true,
     "indentStyle": "tab"
@@ -37,7 +38,8 @@
         "noHeadElement": "off",
         "useConsistentTypeDefinitions": "off",
         "useFilenamingConvention": "off",
-        "noNestedTernary": "off"
+        "noNestedTernary": "off",
+        "noParameterProperties": "off"
       },
       "performance": {
         "noBarrelFile": "off",
@@ -58,13 +60,17 @@
       },
       "complexity": {
         "noForEach": "off",
-        "noExcessiveCognitiveComplexity": "off"
+        "noExcessiveCognitiveComplexity": "off",
+        "noStaticOnlyClass": "off"
       }
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "assist": {

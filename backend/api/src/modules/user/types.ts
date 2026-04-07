@@ -1,76 +1,162 @@
-import { user } from "@zero-heads-lab/database/schemas";
 import {
 	createInsertSchema,
 	createSelectSchema,
 	createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
+import { user } from "@/infra/database/schemas";
 
 /**
+ * ----------------------------------------------------------------------------
  * Path params
+ * ----------------------------------------------------------------------------
  */
+
 export const userIdParamSchema = z.object({
 	id: z.string().min(1, "User ID is required"),
 });
-export type UserIdParamType = z.infer<typeof userIdParamSchema>;
+
+export interface UserIdParamType {
+	id: string;
+}
 
 /**
- * Request body for user creation
+ * ----------------------------------------------------------------------------
+ * API request DTOs
+ * ----------------------------------------------------------------------------
  */
+
 export const createUserRequestSchema = z.object({
 	externalId: z.string().min(1, "External ID is required"),
+	email: z.email(),
+	firstName: z.string().optional().nullable(),
+	lastName: z.string().optional().nullable(),
+	avatarUrl: z.string().url().optional().nullable(),
 });
-export type CreateUserRequestType = z.infer<typeof createUserRequestSchema>;
 
-/**
- * DB schemas
- */
-export const selectUserSchema = createSelectSchema(user);
-export type SelectUserType = z.infer<typeof selectUserSchema>;
-type UserFields = {
-	[K in keyof SelectUserType]?: boolean;
-};
-export type SelectUserFields = Omit<
-	UserFields,
-	"id" | "externalId" | "createdAt" | "updatedAt" | "deletedAt"
->;
+export interface CreateUserRequestType {
+	externalId: string;
+	email: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	avatarUrl?: string | null;
+}
 
-export const insertUserSchema = createInsertSchema(user);
-export type InsertUserType = z.infer<typeof insertUserSchema>;
-
-export const updateUserSchema = createUpdateSchema(user);
-type UpdateUserRaw = z.infer<typeof updateUserSchema>;
-
-type UpdateUserCleaned = Omit<
-	UpdateUserRaw,
-	"id" | "externalId" | "createdAt" | "updatedAt" | "deletedAt"
->;
-
-export type UpdateUserType = UpdateUserCleaned & {
-	userId: string;
-};
-
-/**
- * Request body for PATCH /:id/profile
- */
 export const updateUserProfileRequestSchema = z
 	.object({
 		firstName: z.string().min(1).optional().nullable(),
 		lastName: z.string().min(1).optional().nullable(),
 		email: z.email().optional(),
 		online: z.boolean().optional(),
-		lastSeenAt: z.date().optional().nullable(),
+		lastSeenAt: z.iso.datetime().optional().nullable(),
+		avatarUrl: z.string().url().optional().nullable(),
 		banned: z.boolean().optional(),
-		bannedAt: z.date().optional().nullable(),
-		bannedExpiresAt: z.date().optional().nullable(),
+		bannedAt: z.iso.datetime().optional().nullable(),
+		bannedExpiresAt: z.iso.datetime().optional().nullable(),
 		bannedReason: z.string().optional().nullable(),
 	})
 	.strict();
 
-export type UpdateUserProfileRequestType = z.infer<
-	typeof updateUserProfileRequestSchema
->;
+export interface UpdateUserProfileRequestType {
+	firstName?: string | null;
+	lastName?: string | null;
+	email?: string;
+	online?: boolean;
+	lastSeenAt?: string | null;
+	avatarUrl?: string | null;
+	banned?: boolean;
+	bannedAt?: string | null;
+	bannedExpiresAt?: string | null;
+	bannedReason?: string | null;
+}
 
+/**
+ * ----------------------------------------------------------------------------
+ * DB entity DTOs
+ * ----------------------------------------------------------------------------
+ */
+
+export interface SelectUserType {
+	id: string;
+	externalId: string;
+	firstName: string | null;
+	lastName: string | null;
+	email: string;
+	online: boolean;
+	lastSeenAt: string | null;
+	avatarUrl: string | null;
+	banned: boolean;
+	bannedReason: string | null;
+	bannedAt: string | null;
+	bannedExpiresAt: string | null;
+	metadata: Record<string, unknown>;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt: string | null;
+}
+
+export interface InsertUserType {
+	id: string;
+	externalId: string;
+	email: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	online?: boolean;
+	lastSeenAt?: string | null;
+	avatarUrl?: string | null;
+	banned?: boolean;
+	bannedReason?: string | null;
+	bannedAt?: string | null;
+	bannedExpiresAt?: string | null;
+	metadata?: Record<string, unknown>;
+	createdAt?: string;
+	updatedAt?: string;
+	deletedAt?: string | null;
+}
+
+export interface UpdateUserType {
+	userId: string;
+	firstName?: string | null;
+	lastName?: string | null;
+	email?: string;
+	online?: boolean;
+	lastSeenAt?: string | null;
+	avatarUrl?: string | null;
+	banned?: boolean;
+	bannedReason?: string | null;
+	bannedAt?: string | null;
+	bannedExpiresAt?: string | null;
+	metadata?: Record<string, unknown>;
+	deletedAt?: string | null;
+}
+
+/**
+ * Optional field selector support
+ */
+export type SelectUserFields = {
+	firstName?: boolean;
+	lastName?: boolean;
+	email?: boolean;
+	online?: boolean;
+	lastSeenAt?: boolean;
+	avatarUrl?: boolean;
+	banned?: boolean;
+	bannedReason?: boolean;
+	bannedAt?: boolean;
+	bannedExpiresAt?: boolean;
+	metadata?: boolean;
+};
+
+/**
+ * Optional validators
+ */
+export const selectUserSchema = createSelectSchema(user);
+export const insertUserSchema = createInsertSchema(user);
+export const updateUserSchema = createUpdateSchema(user);
+
+/**
+ * Generic API responses
+ */
 export const successResponseSchemaWithData = <T extends z.ZodTypeAny>(
 	schema: T
 ) =>
@@ -87,9 +173,3 @@ export const errorResponseSchema = z.object({
 	success: z.literal(false),
 	error: z.string(),
 });
-
-export type KindeConfig = {
-	domain: string;
-	clientId: string;
-	clientSecret: string;
-};

@@ -1,6 +1,6 @@
 import { Loader } from "@zero-heads-lab/design-system/components/loader";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { setCookie } from "@zero-heads-lab/shared/utils";
+import { setCookie } from "@zero-heads-lab/shared/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { RightSidebar } from "@/layout/sidebar/right-sidebar";
 import {

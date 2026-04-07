@@ -12,7 +12,6 @@
     "@zero-heads-lab/events": "workspace:*",
     "@zero-heads-lab/global": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "hono": "catalog:hono",
     "zod": "^catalog:"
   },

@@ -1,8 +1,5 @@
-import {
-	type ISessionCacheRepository,
-	SessionCacheRepository,
-} from "./cache-repository";
-import { type ISessionRepository, SessionRepository } from "./repository";
+import type { ISessionCacheRepository } from "./repo/cache.repo";
+import type { ISessionRepository } from "./repo/db-repo";
 import type { AnonymousSession, AuthenticatedSession } from "./types";
 
 const MAX_ACTIVE_SESSIONS = 10;
@@ -22,16 +19,17 @@ export interface ISessionService {
 }
 
 export class SessionService implements ISessionService {
-	constructor(
-		private readonly repository: ISessionRepository = new SessionRepository(),
-		private readonly cacheRepository: ISessionCacheRepository = new SessionCacheRepository()
-	) {}
+	private readonly repository: ISessionRepository;
+	private readonly cacheRepository: ISessionCacheRepository;
 
-	/**
-	 * Create a durable authenticated session.
-	 * Enforces max 10 active sessions per user.
-	 * If user already has 10 sessions, oldest session is revoked first.
-	 */
+	constructor(
+		repository: ISessionRepository,
+		cacheRepository: ISessionCacheRepository
+	) {
+		this.repository = repository;
+		this.cacheRepository = cacheRepository;
+	}
+
 	async createSession(session: AuthenticatedSession): Promise<void> {
 		const activeSessions = await this.repository.listActiveSessionsByUserId(
 			session.userId
@@ -57,9 +55,6 @@ export class SessionService implements ISessionService {
 		await this.cacheRepository.saveSession(session);
 	}
 
-	/**
-	 * Get session using cache-first, DB fallback.
-	 */
 	async getSession(sessionId: string): Promise<AuthenticatedSession | null> {
 		const cached = await this.cacheRepository.findSessionById(sessionId);
 		if (cached && this.isSessionActive(cached)) {
@@ -78,11 +73,6 @@ export class SessionService implements ISessionService {
 		return persisted;
 	}
 
-	/**
-	 * Sliding session touch.
-	 * Cache is updated every request.
-	 * DB is updated only if lastSeenAt is stale enough.
-	 */
 	async ensureSessionExists(sessionId: string): Promise<void> {
 		const session = await this.getSession(sessionId);
 		if (!session) return;
@@ -103,17 +93,11 @@ export class SessionService implements ISessionService {
 		}
 	}
 
-	/**
-	 * Revoke one session
-	 */
 	async revokeSession(sessionId: string): Promise<void> {
 		await this.repository.revokeSession(sessionId, new Date().toISOString());
 		await this.cacheRepository.deleteSession(sessionId);
 	}
 
-	/**
-	 * Revoke all sessions for a user
-	 */
 	async revokeAllSessions(userId: string): Promise<void> {
 		const activeSessions =
 			await this.repository.listActiveSessionsByUserId(userId);
@@ -126,16 +110,10 @@ export class SessionService implements ISessionService {
 		);
 	}
 
-	/**
-	 * List active sessions for account/device management UI
-	 */
 	async listUserSessions(userId: string): Promise<AuthenticatedSession[]> {
-		return this.repository.listActiveSessionsByUserId(userId);
+		return await this.repository.listActiveSessionsByUserId(userId);
 	}
 
-	/**
-	 * Anonymous OTP / pre-auth session
-	 */
 	async createAnonymousSession(session: AnonymousSession): Promise<void> {
 		await this.cacheRepository.saveAnonymousSession(session);
 	}
@@ -143,11 +121,9 @@ export class SessionService implements ISessionService {
 	async getAnonymousSession(
 		accessToken: string
 	): Promise<AnonymousSession | null> {
-		const session =
-			await this.cacheRepository.findAnonymousSessionByAccessToken(accessToken);
-		if (!session) return null;
-
-		return session;
+		return await this.cacheRepository.findAnonymousSessionByAccessToken(
+			accessToken
+		);
 	}
 
 	async revokeAnonymousSession(accessToken: string): Promise<void> {
@@ -164,5 +140,3 @@ export class SessionService implements ISessionService {
 		return expiresAt > now && revokedAt === null;
 	}
 }
-
-export const sessionService = new SessionService();

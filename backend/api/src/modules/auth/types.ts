@@ -1,4 +1,4 @@
-import type { TrustedSocialProvider } from "@/src/modules/auth/auth.config";
+import type { TrustedSocialProvider } from "@/modules/auth/config";
 
 export type TokenResponse = {
 	access_token: string;

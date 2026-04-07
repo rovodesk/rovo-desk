@@ -1,18 +1,10 @@
 {
   "extends": "@zero-heads-lab/typescript-config/hono.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "composite": false,
-    "paths": {
-      "@zero-heads-lab/observability": [
-        "../../packages/observability/lib/index.ts"
-      ]
-    }
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": [
-    "lib/**/*.ts",
-    "lib/**/*.tsx",
-    "../../backend/api-gateway/src/middlewares/auth.middleware.ts"
-  ],
+  "include": ["lib/**/*.ts", "lib/**/*.tsx", "lib/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

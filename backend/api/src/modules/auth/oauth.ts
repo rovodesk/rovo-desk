@@ -1,5 +1,5 @@
 import { APIError } from "encore.dev/api";
-import type { TrustedSocialProvider } from "@/src/modules/auth/auth.config";
+import type { TrustedSocialProvider } from "@/modules/auth/config";
 import { user } from "~encore/clients";
 import { oauthStates } from "./cache";
 import { exchangeCodeForTokens } from "./cognito";

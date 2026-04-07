@@ -40,7 +40,7 @@ import type {
 	BlockType,
 	WidgetConfig,
 	WidgetScreenConfig,
-} from "@zero-heads-lab/shared/types";
+} from "@zero-heads-lab/shared/lib/types";
 import {
 	BookOpen,
 	ChevronDown,

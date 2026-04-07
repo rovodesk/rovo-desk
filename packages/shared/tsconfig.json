@@ -3,9 +3,13 @@
   "references": [{ "path": "./tsconfig.test.json" }],
   "compilerOptions": {
     "composite": false,
-    "baseUrl": ".",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "module": "es2015",
+    "moduleResolution": "bundler",
+    "target": "es2023"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["lib/**/*.ts"],
   "exclude": ["node_modules", "test", "dist"]
 }

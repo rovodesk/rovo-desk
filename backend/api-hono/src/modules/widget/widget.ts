@@ -1,6 +1,6 @@
 import { implement, ORPCError } from "@orpc/server";
 import { WidgetAdminContract } from "@zero-heads-lab/contract/orpc/widget.contract";
-import { WidgetRepository } from "@zero-heads-lab/database/repositories/widget";
+import { WidgetRepository } from "../../../../api/src/infra/database/repositories/widget";
 import { AuthGuard } from "@/lib/guards/auth.guard";
 import { BaseGuard } from "@/lib/guards/base.guard";
 import { OrganizationGuard } from "@/lib/guards/organization.guard";

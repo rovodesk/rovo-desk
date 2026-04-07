@@ -1,9 +1,6 @@
 import crypto from "node:crypto";
 import { APIError } from "encore.dev/api";
-import {
-	AuthConfig,
-	type TrustedSocialProvider,
-} from "@/src/modules/auth/auth.config";
+import { AuthConfig, type TrustedSocialProvider } from "@/modules/auth/config";
 
 export function randomString(length = 64): string {
 	const charset =
@@ -77,7 +74,7 @@ export function mapProviderToCognito(provider: TrustedSocialProvider): string {
 	return providerOverrides[provider] ?? capitalize(provider);
 }
 
-export function parseJwt(token: string): any {
+export function parseJwt(token: string) {
 	const payload = token.split(".")[1];
 	return JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
 }

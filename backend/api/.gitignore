@@ -9,3 +9,5 @@ node_modules
 .env.local
 .env.*
 !.env.example
+
+src/infra/database/migrations

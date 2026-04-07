@@ -1,4 +1,7 @@
-import type { ILogger, ITracer } from "@zero-heads-lab/observability";
+import type {
+	ILogger,
+	ITracer,
+} from "@zero-heads-lab/observability/lib/server";
 
 export interface ICacheStore {
 	get<T = unknown>(key: string): Promise<T | null>;

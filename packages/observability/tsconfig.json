@@ -1,10 +1,9 @@
 {
   "extends": "@zero-heads-lab/typescript-config/hono.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": false,
-    "types": ["@cloudflare/workers-types"]
+    "types": []
   },
-  "include": ["lib/**/*.ts", "lib/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
+  "include": ["lib/**/*.ts"],
   "exclude": ["node_modules", "test", "dist"]
 }

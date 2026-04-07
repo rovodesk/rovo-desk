@@ -6,21 +6,26 @@
   "type": "module",
   "scripts": {
     "test": "vitest --passWithNoTests",
-    "gen:types": "encore gen client --lang=ts -o ./client.ts",
+    "gen:types": "encore gen client --lang=ts -o ./client.ts && drizzle-kit generate --config drizzle.config.ts",
     "dev": "encore run"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "@zero-heads-lab/typescript-config": "workspace:*",
+    "dotenv": "catalog:",
+    "drizzle-kit": "catalog:drizzle",
+    "testcontainers": "^11.13.0",
+    "typescript": "catalog:",
     "vitest": "catalog:testing",
     "zod": "catalog:"
   },
   "dependencies": {
+    "postgres": "^3.4.8",
+    "drizzle-orm": "catalog:drizzle",
     "@aws-sdk/client-cognito-identity-provider": "^3.1024.0",
     "@zero-heads-lab/cache": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",
+    "@zero-heads-lab/shared": "workspace:*",
     "cookie": "^1.1.1",
     "drizzle-zod": "^0.8.3",
     "encore.dev": "^1.56.3",

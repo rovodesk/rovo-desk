@@ -4,7 +4,7 @@ import { Tracer } from "@zero-heads-lab/analytics/lib/tracer";
 import type { LogLevel } from "@zero-heads-lab/analytics/types";
 import type { STRIPE_WEBHOOK_MESSAGE_EVENT } from "@zero-heads-lab/contract/event/stripe";
 import { createDatabase } from "@zero-heads-lab/database";
-import { WebhookEventRepository } from "@zero-heads-lab/database/repositories/billing/webhook";
+import { WebhookEventRepository } from "../../../../api/src/infra/database/repositories/billing/webhook";
 import { resolveSecret } from "@/lib/utils";
 import type { Bindings } from "@/types";
 import { processWebhookEvent } from "./billing";

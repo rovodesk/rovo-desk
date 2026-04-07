@@ -28,7 +28,6 @@
     "@zero-heads-lab/cache": "workspace:*",
     "@zero-heads-lab/contract": "workspace:*",
     "@zero-heads-lab/crypto": "workspace:*",
-    "@zero-heads-lab/database": "workspace:*",
     "@zero-heads-lab/design-system": "workspace:*",
     "@zero-heads-lab/email": "workspace:*",
     "@zero-heads-lab/shared": "workspace:*",

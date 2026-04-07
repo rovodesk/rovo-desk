@@ -2,7 +2,7 @@ import { implement, ORPCError } from "@orpc/server";
 import { USER_STATUS_CHANGED_EVENT } from "@zero-heads-lab/analytics/events";
 import { determineAuthRoles } from "@zero-heads-lab/auth/helpers";
 import { ProfileContract } from "@zero-heads-lab/contract/orpc/profile.contract";
-import { ProfileRepository } from "@zero-heads-lab/database/repositories/profile";
+import { ProfileRepository } from "../../../../api/src/infra/database/repositories/profile";
 import { AuthGuard } from "@/lib/guards/auth.guard";
 import { BaseGuard } from "@/lib/guards/base.guard";
 import { OrganizationGuard } from "@/lib/guards/organization.guard";

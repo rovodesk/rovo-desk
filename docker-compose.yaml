@@ -1,4 +1,4 @@
-# services:
+services:
 #   # payload:
 #   #   image: node:18-alpine
 #   #   ports:
@@ -119,3 +119,21 @@
 #   #     - "5540:5540"
 #   #   depends_on:
 #   #     - redis
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    volumes:
+      - ./docker/otel/collector-config.yaml:/etc/otelcol/config.yaml
+    environment:
+      AXIOM_ENDPOINT: ${AXIOM_ENDPOINT}
+      AXIOM_API_TOKEN: ${AXIOM_API_TOKEN}
+      AXIOM_DATASET: ${AXIOM_DATASET}
+    ports:
+      - "1888:1888"
+      - "8888:8888"
+      - "8889:8889"
+      - "13133:13133"
+      - "4317:4317"
+      - "4318:4318"
+      - "55679:55679"
+    command: ["--config=/etc/otelcol/config.yaml"]

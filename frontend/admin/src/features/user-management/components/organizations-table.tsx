@@ -29,7 +29,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@zero-heads-lab/design-system/components/ui/table";
-import { formatDateTime } from "@zero-heads-lab/shared/utils";
+import { formatDateTime } from "@zero-heads-lab/shared/lib/utils";
 import { Search, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";

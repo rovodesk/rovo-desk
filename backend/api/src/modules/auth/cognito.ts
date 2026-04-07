@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { APIError } from "encore.dev/api";
 import { z } from "zod";
-import { AuthConfig } from "@/src/modules/auth/auth.config";
+import { AuthConfig } from "@/modules/auth/config";
 
 export const cognito = new CognitoIdentityProviderClient({
 	region: AuthConfig.region,

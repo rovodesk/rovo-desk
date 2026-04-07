@@ -2,7 +2,7 @@ import { useAppForm } from "@zero-heads-lab/design-system/components/form";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { fonts, useFont } from "@zero-heads-lab/design-system/context/font";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
-import { capitalize } from "@zero-heads-lab/shared/utils";
+import { capitalize } from "@zero-heads-lab/shared/lib/utils";
 import { Sparkles, TypeIcon } from "lucide-react";
 import { z } from "zod";
 import { ThemePreview } from "@/components/theme-preview";

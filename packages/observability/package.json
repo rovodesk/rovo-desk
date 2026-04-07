@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./lib/index.ts",
-  "module": "./lib/index.ts",
-  "types": "./lib/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./lib/index.ts",
-    "./instrument": "./lib/instrument.ts",
-    "./mocks": "./lib/mocks/index.ts"
+    ".": "./dist/index.js",
+    "./mocks": "./dist/mocks/index.js",
+    "./logger": "./dist/logger.js"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -17,17 +17,32 @@
     "build": "tsc -p ./tsconfig.build.json"
   },
   "dependencies": {
-    "@microlabs/otel-cf-workers": "^1.0.0-rc.52",
+    "@nestjs/common": "^11.1.18",
     "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.214.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.214.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.214.0",
+    "@opentelemetry/instrumentation-express": "^0.62.0",
+    "@opentelemetry/instrumentation-http": "^0.214.0",
+    "@opentelemetry/instrumentation-undici": "^0.24.0",
     "@opentelemetry/resources": "^2.6.1",
+    "@opentelemetry/sdk-logs": "^0.214.0",
+    "@opentelemetry/sdk-metrics": "^2.6.1",
+    "@opentelemetry/sdk-node": "^0.214.0",
     "@opentelemetry/sdk-trace-base": "^2.6.1",
     "@opentelemetry/semantic-conventions": "^1.40.0",
-    "pino": "^10.3.1"
+    "colorette": "^2.0.20",
+    "convert-pino-request-to-curl": "^1.0.11",
+    "luxon": "^3.7.2",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@zero-heads-lab/typescript-config": "workspace:*",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^25.5.2",
     "@zero-heads-lab/testing": "workspace:*",
+    "@zero-heads-lab/typescript-config": "workspace:*",
     "vitest": "catalog:testing"
   },
   "peerDependencies": {
