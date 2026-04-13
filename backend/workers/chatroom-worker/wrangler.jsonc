@@ -1,0 +1,52 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "chatroom",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-11",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CHAT_ROOM",
+        "class_name": "ChatRoom"
+      }
+    ]
+  },
+  "kv_namespaces": [
+    {
+      "preview_id": "test",
+      "binding": "RATE_LIMIT_KV",
+    }
+  ],
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "ChatRoom"
+      ]
+    }
+  ],
+  "ai": {
+    "binding": "AI",
+    "remote": true,
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "persist": true,
+      "invocation_logs": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "persist": true
+    }
+  },
+  "vars": {
+    "MAX_MESSAGE_LIMIT": 100,
+    "RATE_LIMIT_WINDOW_MS": 10000,
+    "RATE_LIMIT_USER": 10,
+    "RATE_LIMIT_AGENT": 50,
+    "RATE_LIMIT_AI": 100,
+    "AI_MODEL": "@cf/meta/llama-3-8b-instruct"
+  }
+}

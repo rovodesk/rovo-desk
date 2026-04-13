@@ -1,0 +1,236 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "contact": {}
+  },
+  "paths": {
+    "/login/callback/{provider}": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Handle login callback",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Provider",
+            "name": "provider",
+            "in": "path"
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/login/social/{provider}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Social login redirect",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Provider",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Logout user",
+        "responses": {}
+      }
+    },
+    "/logout/callback": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout callback",
+        "responses": {}
+      }
+    },
+    "/resend-verification-code": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Auth"],
+        "summary": "Resend Verification Code",
+        "parameters": [
+          {
+            "description": "Resend Input",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.ResendInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/session": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["Auth"],
+        "summary": "Get current session",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/auth.SessionResponse"
+            }
+          }
+        }
+      }
+    },
+    "/signup": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Auth"],
+        "summary": "Register user",
+        "parameters": [
+          {
+            "description": "Register Input",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.RegisterInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/auth.RegisterOutput"
+            }
+          }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Auth"],
+        "summary": "Confirm user signup",
+        "parameters": [
+          {
+            "description": "Confirm Input",
+            "name": "query",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.ConfirmInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "auth.AuthSession": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "challengeName": {
+          "type": "string"
+        },
+        "cognitoSession": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.ConfirmInput": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.RegisterInput": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.RegisterOutput": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "type": "string"
+        },
+        "user_sub": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "auth.ResendInput": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.SessionResponse": {
+      "type": "object",
+      "properties": {
+        "session": {
+          "$ref": "#/definitions/auth.AuthSession"
+        },
+        "user": {}
+      }
+    }
+  }
+}

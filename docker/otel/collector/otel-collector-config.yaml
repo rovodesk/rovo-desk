@@ -1,0 +1,52 @@
+receivers:
+  otlp:
+    protocols:
+      # grpc:
+      http:
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  batch:
+    send_batch_size: ${OTEL_BATCH_SIZE}
+    timeout: ${OTEL_BATCH_TIMEOUT_SEC}
+
+exporters:
+  otlphttp:
+    compression: zstd
+    endpoint: ${AXIOM_ENDPOINT}
+    headers:
+      authorization: Bearer ${AXIOM_API_TOKEN}
+      x-axiom-dataset: ${AXIOM_DATASET}
+
+  otlphttp/metrics:
+    compression: zstd
+    endpoint: ${AXIOM_ENDPOINT}
+    headers:
+      authorization: Bearer ${AXIOM_API_TOKEN}
+      x-axiom-metrics-dataset: ${AXIOM_DATASET}
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp]
+
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp]
+
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/metrics]
