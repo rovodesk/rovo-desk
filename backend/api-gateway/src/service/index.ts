@@ -1,5 +1,5 @@
 import { type BaseEvent, baseEventSchema } from "@zero-heads-lab/events";
-import type { ILogger, ITracer } from "@zero-heads-lab/observability";
+import type { ILogger, ITracer } from "@zero-heads-lab/observability/lib/server";
 import type { Context } from "hono";
 import type { ApiGatewayServiceEnv, AuthQueueMessage } from "src/types";
 

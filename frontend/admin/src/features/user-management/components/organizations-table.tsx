@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearch } from "@tanstack/react-router";
-import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
+// import { AddDomainDialog } from "@zero-heads-lab/auth/components/add-domain-dialog";
 import type { ORGANIZATION } from "@zero-heads-lab/contract/lib/dto/auth.dto";
 import {
 	Alert,
@@ -29,7 +29,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@zero-heads-lab/design-system/components/ui/table";
-import { formatDateTime } from "@zero-heads-lab/shared/utils";
+import { formatDateTime } from "@zero-heads-lab/shared/lib/utils";
 import { Search, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { z } from "zod";
@@ -53,8 +53,8 @@ export function OrganizationsTable() {
 	});
 
 	const [searchSlug, setSearchSlug] = useState(slug);
-	const [isAddOrganizationDialogOpen, setIsAddOrganizationDialogOpen] =
-		useState(false);
+	// const [isAddOrganizationDialogOpen, setIsAddOrganizationDialogOpen] =
+	// 	useState(false);
 
 	/* ---------------- navigation helper ---------------- */
 
@@ -127,7 +127,7 @@ export function OrganizationsTable() {
 
 			<button
 				className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm"
-				onClick={() => setIsAddOrganizationDialogOpen(true)}
+				// onClick={() => setIsAddOrganizationDialogOpen(true)}
 			>
 				<UserPlus className="h-4 w-4" />
 				Add Organization
@@ -283,14 +283,14 @@ export function OrganizationsTable() {
 				)}
 			</div>
 
-			<AddDomainDialog
+			{/* <AddDomainDialog
 				isOpen={isAddOrganizationDialogOpen}
 				onOpenChange={(value) => setIsAddOrganizationDialogOpen(value)}
 				onSuccess={() => {
 					navigate({ page: 1 });
 				}}
 				skipInviteStep
-			/>
+			/> */}
 		</div>
 	);
 }

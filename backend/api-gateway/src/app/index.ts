@@ -2,7 +2,7 @@ import {
 	createLoggerMiddleware,
 	createTracerMiddleware,
 } from "@zero-heads-lab/global/middlewares";
-import type { ILogger, ITracer } from "@zero-heads-lab/observability";
+import type { ILogger, ITracer } from "@zero-heads-lab/observability/lib/server";
 import { Hono } from "hono";
 import type { ApiGatewayServiceEnv } from "@/types";
 

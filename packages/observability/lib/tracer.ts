@@ -9,28 +9,39 @@ import {
 	SpanStatusCode,
 	trace,
 } from "@opentelemetry/api";
+import type { TracerOptions } from "./types.js";
 
-export type TracerOptions = {
-	app: string;
-	version: string;
-};
-
-export interface ITracer {
-	withSpan<T>(
+export abstract class ITracer {
+	abstract withSpan<T>(
 		name: string,
 		fn: (span: Span, ctx: Context) => Promise<T>,
 		attrs?: Attributes,
 		ctx?: Context,
 		options?: SpanOptions
 	): Promise<T>;
-	recordError(span: Span, err: unknown): Promise<void>;
-	getTracer(): OTelTracer;
-	getActiveSpan(): Span | undefined;
-	extractContext(headers: Headers | Record<string, string>): Context;
+
+	abstract recordError(span: Span, err: unknown): void;
+	abstract getTracer(): OTelTracer;
+	abstract getActiveSpan(): Span | undefined;
+	abstract getActiveContext(): Context;
+
+	abstract extractContext(headers: Headers | Record<string, string>): Context;
+	abstract injectContext(
+		carrier?: Record<string, string>,
+		ctx?: Context
+	): Record<string, string>;
+}
+
+function safeStringify(value: unknown): string {
+	try {
+		return JSON.stringify(value);
+	} catch {
+		return "[Unserializable error object]";
+	}
 }
 
 export function getTraceContext() {
-	const span = trace.getActiveSpan();
+	const span = trace.getSpan(context.active());
 	const spanContext = span?.spanContext();
 
 	const isValidTraceId =
@@ -53,20 +64,21 @@ export class Tracer implements ITracer {
 		this.otelTracer = trace.getTracer(opts.app, opts.version);
 	}
 
-	getTracer() {
+	getTracer(): OTelTracer {
 		return this.otelTracer;
 	}
 
 	getActiveSpan(): Span | undefined {
-		return trace.getActiveSpan();
+		return trace.getSpan(context.active());
 	}
 
-	/**
-	 * Extracts context from incoming headers (e.g., from a Hono request).
-	 * This is the "bridge" for distributed tracing.
-	 */
+	getActiveContext(): Context {
+		return context.active();
+	}
+
 	extractContext(headers: Headers | Record<string, string>): Context {
 		const headerObj: Record<string, string> = {};
+
 		if (headers instanceof Headers) {
 			headers.forEach((v, k) => {
 				headerObj[k] = v;
@@ -74,7 +86,16 @@ export class Tracer implements ITracer {
 		} else {
 			Object.assign(headerObj, headers);
 		}
+
 		return propagation.extract(context.active(), headerObj);
+	}
+
+	injectContext(
+		carrier: Record<string, string> = {},
+		ctx: Context = context.active()
+	): Record<string, string> {
+		propagation.inject(ctx, carrier);
+		return carrier;
 	}
 
 	withSpan<T>(
@@ -84,24 +105,25 @@ export class Tracer implements ITracer {
 		ctx?: Context,
 		options?: SpanOptions
 	): Promise<T> {
-		// 1. Determine the starting context
 		const parentContext = ctx ?? context.active();
 
-		// 2. Start the span as "Active"
-		// In CF Workers, the callback of startActiveSpan is the safest place to capture context
 		return this.otelTracer.startActiveSpan(
 			name,
-			{ ...options, attributes: { ...attrs, ...options?.attributes } },
+			{
+				...options,
+				attributes: {
+					...options?.attributes,
+					...attrs,
+				},
+			},
 			parentContext,
 			async (span) => {
-				// 3. Create the new context explicitly for manual propagation
 				const activeContext = trace.setSpan(parentContext, span);
 
 				try {
-					// 4. Pass the new context into the callback
 					return await fn(span, activeContext);
 				} catch (err) {
-					await this.recordError(span, err);
+					this.recordError(span, err);
 					throw err;
 				} finally {
 					span.end();
@@ -110,8 +132,7 @@ export class Tracer implements ITracer {
 		);
 	}
 
-	// biome-ignore lint/suspicious/useAwait: No awaitable function is used
-	async recordError(span: Span, err: unknown) {
+	recordError(span: Span, err: unknown): void {
 		let message = "Unknown error";
 
 		if (err instanceof Error) {
@@ -121,9 +142,10 @@ export class Tracer implements ITracer {
 			message = err;
 			span.recordException({ message: err });
 		} else if (typeof err === "object" && err !== null) {
-			message = JSON.stringify(err);
+			message = safeStringify(err);
 			span.recordException({ message });
 		} else {
+			message = String(err);
 			span.recordException({ message });
 		}
 

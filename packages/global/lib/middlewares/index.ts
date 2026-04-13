@@ -1,4 +1,2 @@
-export * from "../../../../backend/api-gateway/src/middlewares/auth.middleware";
-export * from "./cors.middleware";
-export * from "./logger.middleware";
-export * from "./trace.middleware";
+export * from "./logger-context.middleware.js";
+export * from "./tracer-context.middleware.js";

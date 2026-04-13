@@ -1,0 +1,14 @@
+{
+  "extends": "@zero-heads-lab/typescript-config/encore.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@/*": ["./src/*"],
+      "~encore/*": ["./encore.gen/*"],
+      "encore/client": ["./client.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "test"]
+}

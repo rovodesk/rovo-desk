@@ -6,7 +6,7 @@ import {
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { AuthProvider } from "@zero-heads-lab/auth/lib/provider";
+import { AuthProvider } from "@zero-heads-lab/auth/lib/client/provider";
 import { UIProvider } from "@zero-heads-lab/design-system";
 import { AppErrorBoundary } from "@zero-heads-lab/design-system/components/error-boundary";
 import { Loader } from "@zero-heads-lab/design-system/components/loader";

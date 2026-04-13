@@ -4,7 +4,7 @@ import {
 	AvatarImage,
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Placeholder } from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
 import { AnimatedList } from "@/components/animated-list";
 
 interface Item {

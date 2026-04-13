@@ -1,5 +1,5 @@
-import { SignOutDialog } from "@zero-heads-lab/auth/components/sign-out-dialog";
-import { useUser } from "@zero-heads-lab/auth/hooks";
+// import { SignOutDialog } from "@zero-heads-lab/auth/components/sign-out-dialog";
+
 import {
 	Avatar,
 	AvatarFallback,
@@ -21,18 +21,20 @@ import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Bell, CreditCard } from "lucide-react";
 import { useState } from "react";
 
+// import { useUser } from "@/hooks/";
+
 function UserProfileDropdown() {
 	const { isMobile } = useSidebar();
 	const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
 
-	const { user, isLoading: isUserLoading } = useUser();
+	// const { user, isLoading: isUserLoading } = useUser();
 
-	if (isUserLoading) return <ProfileDropdownSkeleton />;
+	// if (isUserLoading) return <ProfileDropdownSkeleton />;
 
-	const name = user?.name;
-	const email = user?.email;
-	const image =
-		user?.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
+	// const name = user?.name;
+	// const email = user?.email;
+	// const image =
+	// 	user?.image || `https://api.dicebear.com/9.x/initials/svg?seed=${name}`;
 
 	// Improved abbreviation logic
 	const abbreviation = (
@@ -132,10 +134,10 @@ function UserProfileDropdown() {
 
 						{/* LOGOUT */}
 						<DropdownMenuItem asChild className="rounded-md px-3 py-2">
-							<SignOutDialog
+							{/* <SignOutDialog
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}
-							/>
+							/> */}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

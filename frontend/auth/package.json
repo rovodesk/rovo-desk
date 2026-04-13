@@ -14,7 +14,6 @@
     "@tanstack/react-query": "catalog:tanstack",
     "@tanstack/react-router": "catalog:tanstack",
     "@zero-heads-lab/design-system": "workspace:*",
-    "@zero-heads-lab/auth": "workspace:*",
     "axios": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:react19",

@@ -3,40 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./lib/index.ts",
-  "module": "./lib/index.ts",
-  "types": "./lib/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./lib/index.ts",
-    "./schemas": "./lib/schemas/index.ts"
+    ".": "./dist/index.js",
+    "./adapter": "./dist/adapter.js",
+    "./repository": "./dist/repository.js",
+    "./types": "./dist/types.js"
   },
   "scripts": {
-    "build": "drizzle-kit generate --config drizzle.config.ts",
-    "migrate": "npm run build && bunx drizzle-kit migrate --config drizzle.config.ts",
-    "push": "drizzle-kit push --config drizzle.config.ts",
-    "pull": "drizzle-kit pull --config drizzle.config.ts",
-    "check": "drizzle-kit check --config drizzle.config.ts",
-    "snapshot": "drizzle-kit up --config drizzle.config.ts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "vitest run"
+    "build": "tsc -p ./tsconfig.build.json"
   },
   "dependencies": {
-    "@t3-oss/env-core": "catalog:",
-    "@zero-heads-lab/testing": "workspace:*",
     "@zero-heads-lab/observability": "workspace:*",
-    "drizzle-orm": "catalog:drizzle",
-    "postgres": "^3.4.8",
-    "zod": "catalog:"
+    "@zero-heads-lab/secrets": "workspace:*",
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.28",
+    "@zero-heads-lab/shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "catalog:",
-    "@types/react": "catalog:react19",
     "@zero-heads-lab/typescript-config": "workspace:*",
-    "dotenv": "catalog:",
-    "drizzle-kit": "catalog:drizzle",
-    "drizzle-seed": "catalog:drizzle",
-    "testcontainers": "catalog:testing",
+    "@zero-heads-lab/testing": "workspace:*",
     "vitest": "catalog:testing"
   },
   "peerDependencies": {

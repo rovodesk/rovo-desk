@@ -1,4 +1,4 @@
-import { Logger, type LogLevel, Tracer } from "@zero-heads-lab/observability";
+import { Logger, type LogLevel, Tracer } from "@zero-heads-lab/observability/lib/server";
 import type { ApiGatewayServiceEnv } from "@/types";
 import { name, version } from "../package.json";
 

@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	type PartialBlock,
 	RichTextEditor,
@@ -19,7 +18,7 @@ import {
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Placeholder } from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
 import {
 	Calendar,
 	CheckSquare,
@@ -33,6 +32,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { avatars } from "@/data/active-avatars";
+import { useUser } from "@/hooks/use-user";
 import { MainContent } from "@/layout/main-content";
 import { pickUserColor } from "@/lib/utils/pick-color";
 import { ActiveAvatars } from "./_components/active-avatars";
@@ -58,7 +58,7 @@ export function Document({ id }: { id: string }) {
 	const [showIcon, setShowIcon] = useState(false);
 
 	const { data: user } = useUser();
-	const name = user?.givenName;
+	const name = user?.name;
 	const userAvatar = user?.picture ?? Placeholder.avatar(user?.email);
 	const userColor = pickUserColor(user?.id);
 

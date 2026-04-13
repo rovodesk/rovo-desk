@@ -1,6 +1,6 @@
 import type { ILogger, ITracer } from "@zero-heads-lab/analytics/types";
-import type { UpsertSubscriptionInput } from "@zero-heads-lab/database/repositories/billing/subscription/subscription.types";
 import type Stripe from "stripe";
+import type { UpsertSubscriptionInput } from "../../backend/api/src/infra/database/repositories/billing/subscription/subscription.types";
 import type { BillingEnv } from "./keys";
 import { getStripeClient } from "./stripe-client";
 import { type IBilling, type Plan, PlanNames } from "./types";

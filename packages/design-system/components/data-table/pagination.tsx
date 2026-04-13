@@ -1,6 +1,6 @@
 
 import { type Table } from '@tanstack/react-table'
-import { getPageNumbers } from '@zero-heads-lab/shared/utils'
+import { getPageNumbers } from '@zero-heads-lab/shared/lib/utils'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/button'
 import {

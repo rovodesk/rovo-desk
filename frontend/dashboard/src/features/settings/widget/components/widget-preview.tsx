@@ -7,7 +7,7 @@ import type {
 	WidgetConfig,
 	WidgetMode,
 	WidgetTabType,
-} from "@zero-heads-lab/shared/types";
+} from "@zero-heads-lab/shared/lib/types";
 import {
 	BookOpen,
 	ChevronLeft,

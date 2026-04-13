@@ -1,5 +1,4 @@
 import { IconPackageExport } from "@tabler/icons-react";
-import { useUser } from "@zero-heads-lab/auth/hooks";
 import { ThemeSwitch } from "@zero-heads-lab/design-system/components/theme-switch";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import {
@@ -14,6 +13,7 @@ import { Separator } from "@zero-heads-lab/design-system/components/ui/separator
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
 import { Columns3Cog } from "lucide-react";
 import { Search } from "@/components/search";
+import { useUser } from "@/hooks/use-user";
 import { MainContent } from "@/layout/main-content";
 import { Analytics } from "./_components/analytics";
 import { Overview } from "./_components/overview";
@@ -75,12 +75,12 @@ export function Dashboard() {
 					<div className="space-y-1">
 						<div className="flex items-center gap-3">
 							<h1 className="font-semibold text-xl tracking-tight">
-								{user?.givenName}'s Dashboard
+								{user?.name}'s Dashboard
 							</h1>
 						</div>
 
 						<p className="text-muted-foreground text-sm">
-							Overview of activity and performance for {user?.givenName}
+							Overview of activity and performance for {user?.name}
 						</p>
 					</div>
 					<Button variant="secondary">

@@ -6,7 +6,7 @@ import {
 import { Label } from "@zero-heads-lab/design-system/components/ui/label";
 import { Switch } from "@zero-heads-lab/design-system/components/ui/switch";
 import { Textarea } from "@zero-heads-lab/design-system/components/ui/textarea";
-import type { WidgetAdvancedConfig } from "@zero-heads-lab/shared/types";
+import type { WidgetAdvancedConfig } from "@zero-heads-lab/shared/lib/types";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 

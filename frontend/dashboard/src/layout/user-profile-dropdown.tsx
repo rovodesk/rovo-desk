@@ -1,6 +1,4 @@
 import { Link } from "@tanstack/react-router";
-// import { SignOutDialog } from "@/components/dialogs/";
-import { useAuth, useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
@@ -20,13 +18,15 @@ import {
 	useSidebar,
 } from "@zero-heads-lab/design-system/components/ui/sidebar";
 import { Skeleton } from "@zero-heads-lab/design-system/components/ui/skeleton";
-import { Switch } from "@zero-heads-lab/design-system/components/ui/switch";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { useTheme } from "@zero-heads-lab/design-system/context/theme";
-import { capitalize } from "@zero-heads-lab/shared/utils";
+import { capitalize } from "@zero-heads-lab/shared/lib/utils";
 import { Bell, ChevronRight, CreditCard, Settings, User2 } from "lucide-react";
-import { useMemo } from "react";
-import { useProfile } from "@/hooks/use-profile";
+// import { SignOutDialog } from "@/components/dialogs/";
+import { useAuth } from "@/hooks/use-auth";
+import { useUser } from "@/hooks/use-user";
+
+// import { useProfile } from "@/hooks/use-profile";
 
 // import { DomainSwitcher } from "@/layout/domain-switcher";
 
@@ -38,17 +38,17 @@ function UserProfileDropdown() {
 	const { theme } = useTheme();
 
 	const { data: user, isLoading: isUserLoading } = useUser();
-	const { userProfileQuery, toggleUserActiveMutation } = useProfile();
+	// const { userProfileQuery, toggleUserActiveMutation } = useProfile();
 
-	const loading = isUserLoading || userProfileQuery.isLoading;
+	const loading = isUserLoading;
 
-	const isUserActive = useMemo(() => {
-		return userProfileQuery.data?.isActive === true;
-	}, [userProfileQuery.data?.isActive]);
+	// const isUserActive = useMemo(() => {
+	// 	return userProfileQuery.data?.isActive === true;
+	// }, [userProfileQuery.data?.isActive]);
 
 	if (loading) return <ProfileDropdownSkeleton />;
 
-	const name = user?.givenName;
+	const name = user?.name;
 	const email = user?.email;
 	const image = user?.picture;
 
@@ -61,19 +61,19 @@ function UserProfileDropdown() {
 			.slice(0, 2) || "??"
 	).toUpperCase();
 
-	const handleUserActiveToggle = async (checked: boolean) => {
-		try {
-			await toggleUserActiveMutation.mutateAsync({ active: checked });
-			toast.success(`User is ${checked ? "Available" : "Away"} now.`);
-		} catch (error) {
-			console.error("Failed to update user active status", error);
-			toast.error("Failed to update user active status");
-		}
-	};
+	// const handleUserActiveToggle = async (checked: boolean) => {
+	// 	try {
+	// 		await toggleUserActiveMutation.mutateAsync({ active: checked });
+	// 		toast.success(`User is ${checked ? "Available" : "Away"} now.`);
+	// 	} catch (error) {
+	// 		console.error("Failed to update user active status", error);
+	// 		toast.error("Failed to update user active status");
+	// 	}
+	// };
 
-	const handleLogout = async () => {
+	const handleLogout = () => {
 		try {
-			await logout();
+			logout();
 			toast.success("Logged out successfully");
 		} catch (error) {
 			console.error("Failed to log out", error);
@@ -95,11 +95,10 @@ function UserProfileDropdown() {
 							</Avatar>
 
 							{/* Status indicator */}
-							<span
-								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${
-									isUserActive ? "bg-green-500" : "bg-slate-500"
-								}`}
-							/>
+							{/* <span
+								className={`absolute right-0 bottom-0 h-3 w-3 rounded-full ring-2 ring-background ${isUserActive ? "bg-green-500" : "bg-slate-500"
+									}`}
+							/> */}
 						</div>
 					</DropdownMenuTrigger>
 
@@ -121,11 +120,10 @@ function UserProfileDropdown() {
 								</Avatar>
 
 								{/* Status indicator */}
-								<span
-									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${
-										isUserActive ? "bg-green-500" : "bg-slate-500"
-									}`}
-								/>
+								{/* <span
+									className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${isUserActive ? "bg-green-500" : "bg-slate-500"
+										}`}
+								/> */}
 							</div>
 
 							<div className="min-w-0 flex-1">
@@ -137,7 +135,7 @@ function UserProfileDropdown() {
 						</div>
 
 						{/* AWAY TOGGLE */}
-						<div className="flex items-center justify-between px-2 py-2 text-sm">
+						{/* <div className="flex items-center justify-between px-2 py-2 text-sm">
 							<span className="text-muted-foreground">
 								Status: {isUserActive ? "Available" : "Away"}
 							</span>
@@ -145,7 +143,7 @@ function UserProfileDropdown() {
 								checked={isUserActive}
 								onCheckedChange={handleUserActiveToggle}
 							/>
-						</div>
+						</div> */}
 
 						<DropdownMenuSeparator />
 
@@ -242,7 +240,7 @@ function UserProfileDropdown() {
 								onOpenChange={setSignOutDialogOpen}
 								open={signOutDialogOpen}
 							/> */}
-							<Button onClick={() => logout()}>Logout</Button>
+							<Button onClick={() => handleLogout()}>Logout</Button>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

@@ -1,4 +1,14 @@
 {
-  "extends": "./tsconfig.build.json",
-  "include": ["lib/**/*.ts", "lib/**/*.tsx"]
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "allowImportingTsExtensions": false,
+    "outDir": "./dist",
+    "rootDir": "./lib",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["lib/**/*.ts"],
+  "exclude": ["node_modules", "dist", "test"]
 }

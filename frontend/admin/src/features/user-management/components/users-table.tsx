@@ -44,7 +44,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@zero-heads-lab/design-system/components/ui/tooltip";
-import { formatDateTime } from "@zero-heads-lab/shared/utils";
+import { formatDateTime } from "@zero-heads-lab/shared/lib/utils";
 import {
 	Ban,
 	Check,

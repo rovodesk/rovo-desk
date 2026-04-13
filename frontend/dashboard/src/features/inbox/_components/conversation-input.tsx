@@ -1,4 +1,3 @@
-import { useUser } from "@zero-heads-lab/auth/hooks";
 import {
 	Avatar,
 	AvatarFallback,
@@ -6,9 +5,10 @@ import {
 } from "@zero-heads-lab/design-system/components/ui/avatar";
 import { Button } from "@zero-heads-lab/design-system/components/ui/button";
 import { Textarea } from "@zero-heads-lab/design-system/components/ui/textarea";
-import { Placeholder } from "@zero-heads-lab/shared/utils";
+import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
 import { Paperclip, Send, Smile } from "lucide-react";
 import { useState } from "react";
+import { useUser } from "@/hooks/use-user";
 
 const ConversationInput = () => {
 	const { data: user } = useUser();

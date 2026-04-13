@@ -1,5 +1,5 @@
-import type { UpsertSubscriptionInput } from "@zero-heads-lab/database/repositories/billing/subscription/subscription.types";
 import type { Stripe } from "stripe";
+import type { UpsertSubscriptionInput } from "../../backend/api/src/infra/database/repositories/billing/subscription/subscription.types";
 
 export type Plan = {
 	name: string;
