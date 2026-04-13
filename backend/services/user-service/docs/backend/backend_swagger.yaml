@@ -1,0 +1,167 @@
+definitions:
+  user.CreateUserInput:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      tenant_id:
+        type: string
+      username:
+        type: string
+    required:
+    - tenant_id
+    type: object
+  user.ListUsersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/user.UserResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/user.PaginationMeta'
+    type: object
+  user.PaginationMeta:
+    properties:
+      has_next:
+        type: boolean
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  user.UpdateUserInput:
+    properties:
+      avatar_url:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      tenant_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - tenant_id
+    - user_id
+    type: object
+  user.UserResponse:
+    properties:
+      created_at:
+        type: string
+      emails:
+        items:
+          type: string
+        type: array
+      first_name:
+        type: string
+      id:
+        type: string
+      identities:
+        items:
+          type: string
+        type: array
+      last_name:
+        type: string
+      mfa_enabled:
+        type: boolean
+      tenant_id:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/users:
+    get:
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ListUsersResponse'
+      summary: List users
+      tags:
+      - User
+      - Backend
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: Create user
+      tags:
+      - User
+      - Backend
+  /v1/users/{id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: Get user by ID
+      tags:
+      - User
+      - Backend
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: Update user
+      tags:
+      - User
+      - Backend
+swagger: "2.0"

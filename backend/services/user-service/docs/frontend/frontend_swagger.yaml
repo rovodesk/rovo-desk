@@ -1,0 +1,81 @@
+definitions:
+  user.UpdateUserInput:
+    properties:
+      avatar_url:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      tenant_id:
+        type: string
+      user_id:
+        type: string
+    required:
+    - tenant_id
+    - user_id
+    type: object
+  user.UserResponse:
+    properties:
+      created_at:
+        type: string
+      emails:
+        items:
+          type: string
+        type: array
+      first_name:
+        type: string
+      id:
+        type: string
+      identities:
+        items:
+          type: string
+        type: array
+      last_name:
+        type: string
+      mfa_enabled:
+        type: boolean
+      tenant_id:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/me:
+    get:
+      description: Get logged-in user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: Get current user
+      tags:
+      - User
+      - Frontend
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Update user
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.UserResponse'
+      summary: Update current user
+      tags:
+      - User
+      - Frontend
+swagger: "2.0"

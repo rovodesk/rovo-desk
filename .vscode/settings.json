@@ -120,5 +120,8 @@
   "reactSnippets.settings.typescript": true,
   "[html]": {
     "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
   }
 }

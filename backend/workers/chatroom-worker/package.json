@@ -1,0 +1,19 @@
+{
+  "name": "chatroom",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "hono": "^4.12.12",
+    "hono-party": "^2.0.3",
+    "partyserver": "^0.4.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260411.1",
+    "wrangler": "^4.4.0"
+  }
+}

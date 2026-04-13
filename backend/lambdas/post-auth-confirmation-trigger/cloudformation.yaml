@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Cognito Post Confirmation Stack - VPC Enabled (No KMS)
+
+Parameters:
+  LambdaName:
+    Type: String
+    Default: post-confirmation-handler
+  ExistingUserPoolId:
+    Type: String
+    Description: The ID of your existing Cognito User Pool.
+
+Resources:
+  # Standard SNS Topic (No KMS)
+  UserSignupTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: auth-topic
+
+  # IAM Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${LambdaName}-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Essential for VPC networking (ENI management)
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+
+  # Standalone Policy to satisfy IAM_NO_INLINE_POLICY_CHECK
+  LambdaSnsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: LambdaSnsPublishPolicy
+      Roles:
+        - !Ref LambdaExecutionRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: !Ref UserSignupTopic
+
+  # Lambda Function
+  PostConfirmationLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref LambdaName
+      PackageType: Image
+      Architectures:
+        - arm64
+      Code:
+        # Fixed ImageUri using Partition-safe Pseudo Parameters
+        ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/post-confirmation-lambda:latest"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 10
+      MemorySize: 128
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref UserSignupTopic
+
+  # Permission using Partition-safe ARN construction
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostConfirmationLambda.Arn
+      Action: lambda:InvokeFunction
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !Sub "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${ExistingUserPoolId}"
+
+Outputs:
+  LambdaArn:
+    Value: !GetAtt PostConfirmationLambda.Arn
+    Description: Use this ARN to update your existing Cognito User Pool triggers.

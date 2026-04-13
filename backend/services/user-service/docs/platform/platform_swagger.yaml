@@ -1,0 +1,72 @@
+definitions:
+  user.ListUsersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/user.UserResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/user.PaginationMeta'
+    type: object
+  user.PaginationMeta:
+    properties:
+      has_next:
+        type: boolean
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  user.UserResponse:
+    properties:
+      created_at:
+        type: string
+      emails:
+        items:
+          type: string
+        type: array
+      first_name:
+        type: string
+      id:
+        type: string
+      identities:
+        items:
+          type: string
+        type: array
+      last_name:
+        type: string
+      mfa_enabled:
+        type: boolean
+      tenant_id:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/instance/users:
+    get:
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.ListUsersResponse'
+      summary: List Instance users
+      tags:
+      - User
+      - Platform
+swagger: "2.0"

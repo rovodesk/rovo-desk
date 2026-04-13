@@ -1,0 +1,18 @@
+{
+  "port": ":5001",
+  "enableGinConsoleLog": true,
+  "enableGinFileLog": true,
+
+  "logFilename": "logs/server.log",
+  "logMaxSize": 10,
+  "logMaxBackups": 10,
+  "logMaxAge": 30,
+
+  "DbAddrs": "127.0.0.1:27017",
+  "DbName": "go-microservices",
+  "DbUsername": "",
+  "DbPassword": "",
+
+  "jwtSecretPassword": "raycad",
+  "issuer": "seedotech"
+}

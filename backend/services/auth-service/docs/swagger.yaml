@@ -1,0 +1,170 @@
+definitions:
+  auth.AuthSession:
+    properties:
+      accessToken:
+        type: string
+      challengeName:
+        type: string
+      cognitoSession:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      expiresAt:
+        type: string
+    type: object
+  auth.ConfirmInput:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
+  auth.RegisterInput:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+    type: object
+  auth.RegisterOutput:
+    properties:
+      session:
+        type: string
+      user_sub:
+        type: string
+      verified:
+        type: boolean
+    type: object
+  auth.ResendInput:
+    properties:
+      email:
+        type: string
+    type: object
+  auth.SessionResponse:
+    properties:
+      session:
+        $ref: '#/definitions/auth.AuthSession'
+      user: {}
+    type: object
+info:
+  contact: {}
+paths:
+  /login/callback/{provider}:
+    post:
+      parameters:
+      - description: Provider
+        in: path
+        name: provider
+        type: string
+      responses: {}
+      summary: Handle login callback
+      tags:
+      - Auth
+  /login/social/{provider}:
+    get:
+      parameters:
+      - description: Provider
+        in: path
+        name: provider
+        required: true
+        type: string
+      responses: {}
+      summary: Social login redirect
+      tags:
+      - Auth
+  /logout:
+    get:
+      responses: {}
+      summary: Logout user
+      tags:
+      - Auth
+  /logout/callback:
+    post:
+      responses: {}
+      summary: Logout callback
+      tags:
+      - Auth
+  /resend-verification-code:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Resend Input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ResendInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resend Verification Code
+      tags:
+      - Auth
+  /session:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.SessionResponse'
+      summary: Get current session
+      tags:
+      - Auth
+  /signup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Register Input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.RegisterOutput'
+      summary: Register user
+      tags:
+      - Auth
+  /verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Confirm Input
+        in: body
+        name: query
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ConfirmInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Confirm user signup
+      tags:
+      - Auth
+swagger: "2.0"

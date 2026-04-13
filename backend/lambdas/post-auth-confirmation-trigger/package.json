@@ -1,0 +1,7 @@
+{
+  "name": "post-auth-confirmation-trigger",
+  "version": "1.0.0",
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.1030.0"
+  }
+}
