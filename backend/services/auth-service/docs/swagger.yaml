@@ -1,23 +1,33 @@
+basePath: /v1
 definitions:
-  auth.AuthSession:
-    properties:
-      accessToken:
-        type: string
-      challengeName:
-        type: string
-      cognitoSession:
-        type: string
-      createdAt:
-        type: string
-      email:
-        type: string
-      expiresAt:
-        type: string
-    type: object
   auth.ConfirmInput:
     properties:
       code:
         type: string
+      email:
+        type: string
+    type: object
+  auth.ErrorResponse:
+    properties:
+      code:
+        type: string
+      details:
+        additionalProperties: true
+        type: object
+      message:
+        type: string
+      request_id:
+        type: string
+    type: object
+  auth.LoginCallbackInput:
+    properties:
+      code:
+        type: string
+      codeVerifier:
+        type: string
+    type: object
+  auth.LoginViaEmailInput:
+    properties:
       email:
         type: string
     type: object
@@ -44,56 +54,151 @@ definitions:
       email:
         type: string
     type: object
-  auth.SessionResponse:
-    properties:
-      session:
-        $ref: '#/definitions/auth.AuthSession'
-      user: {}
-    type: object
+externalDocs:
+  description: OpenAPI
+  url: http://localhost:5001/docs/openapi.json
+host: localhost:5001
 info:
   contact: {}
+  description: This is  server.
+  title: Auth Service API
+  version: "1.0"
 paths:
+  /email/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email and Code
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Verify email change
+      tags:
+      - Email Verification
+  /email/verify/send-code:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Send email verification code
+      tags:
+      - Email Verification
   /login/callback/{provider}:
     post:
-      parameters:
-      - description: Provider
-        in: path
-        name: provider
-        type: string
-      responses: {}
-      summary: Handle login callback
-      tags:
-      - Auth
-  /login/social/{provider}:
-    get:
+      consumes:
+      - application/json
       parameters:
       - description: Provider
         in: path
         name: provider
         required: true
         type: string
-      responses: {}
-      summary: Social login redirect
+      - description: Code and Verifier
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginCallbackInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Handle login callback
       tags:
-      - Auth
-  /logout:
-    get:
-      responses: {}
-      summary: Logout user
-      tags:
-      - Auth
-  /logout/callback:
-    post:
-      responses: {}
-      summary: Logout callback
-      tags:
-      - Auth
-  /resend-verification-code:
+      - Social Login
+  /login/email-otp:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Resend Input
+      - description: Email
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginViaEmailInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Start email OTP login
+      tags:
+      - Email OTP Login
+  /login/email-otp/resend:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email
         in: body
         name: body
         required: true
@@ -105,12 +210,110 @@ paths:
         "200":
           description: OK
           schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Resend email OTP
+      tags:
+      - Email OTP Login
+  /login/email-otp/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email and OTP
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Verify email OTP
+      tags:
+      - Email OTP Login
+  /login/social/{provider}:
+    get:
+      parameters:
+      - description: Provider (google, github)
+        in: path
+        name: provider
+        required: true
+        type: string
+      responses: {}
+      summary: Social login redirect
+      tags:
+      - Social Login
+  /logout:
+    get:
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+      summary: Get logout URL
+      tags:
+      - Logout
+  /logout/callback:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
             additionalProperties:
               type: string
             type: object
-      summary: Resend Verification Code
+      summary: Handle logout callback
       tags:
-      - Auth
+      - Logout
+  /refresh-token:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Refresh access token
+      tags:
+      - Token Management
   /session:
     get:
       produces:
@@ -119,16 +322,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.SessionResponse'
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Get current session
       tags:
-      - Auth
+      - Session
   /signup:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Register Input
+      - description: Signup Data
         in: body
         name: body
         required: true
@@ -141,17 +351,51 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/auth.RegisterOutput'
-      summary: Register user
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Register a new user
       tags:
-      - Auth
-  /verify:
+      - Signup
+  /signup/resend:
     post:
       consumes:
       - application/json
       parameters:
-      - description: Confirm Input
+      - description: Email
         in: body
-        name: query
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ResendInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Resend signup verification code
+      tags:
+      - Signup
+  /signup/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Confirmation Code
+        in: body
+        name: body
         required: true
         schema:
           $ref: '#/definitions/auth.ConfirmInput'
@@ -161,10 +405,16 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
+            additionalProperties: true
             type: object
-      summary: Confirm user signup
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/auth.ErrorResponse'
+      summary: Verify signup email
       tags:
-      - Auth
+      - Signup
+securityDefinitions:
+  BasicAuth:
+    type: basic
 swagger: "2.0"
