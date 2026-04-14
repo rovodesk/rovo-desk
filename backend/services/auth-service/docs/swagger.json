@@ -1,28 +1,116 @@
 {
   "swagger": "2.0",
   "info": {
-    "contact": {}
+    "description": "This server is for authentication and authorization.",
+    "title": "Auth Service API",
+    "contact": {},
+    "version": "1.0"
   },
+  "host": "localhost:8080",
+  "basePath": "/",
   "paths": {
-    "/login/callback/{provider}": {
+    "/email/verify": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "Handle login callback",
-        "parameters": [
+        "security": [
           {
-            "type": "string",
-            "description": "Provider",
-            "name": "provider",
-            "in": "path"
+            "Bearer": []
           }
         ],
-        "responses": {}
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Email Verification"],
+        "summary": "Verify email change",
+        "parameters": [
+          {
+            "description": "Email and Code",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
       }
     },
-    "/login/social/{provider}": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Social login redirect",
+    "/email/verify/send-code": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Email Verification"],
+        "summary": "Send email verification code",
+        "parameters": [
+          {
+            "description": "Email",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/login/callback/{provider}": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Social Login"],
+        "summary": "Handle login callback",
         "parameters": [
           {
             "type": "string",
@@ -30,34 +118,83 @@
             "name": "provider",
             "in": "path",
             "required": true
+          },
+          {
+            "description": "Code and Verifier",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.LoginCallbackInput"
+            }
           }
         ],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
       }
     },
-    "/logout": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Logout user",
-        "responses": {}
-      }
-    },
-    "/logout/callback": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Logout callback",
-        "responses": {}
-      }
-    },
-    "/resend-verification-code": {
+    "/login/email-otp": {
       "post": {
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["Auth"],
-        "summary": "Resend Verification Code",
+        "tags": ["Email OTP Login"],
+        "summary": "Start email OTP login",
         "parameters": [
           {
-            "description": "Resend Input",
+            "description": "Email",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.LoginViaEmailInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/login/email-otp/resend": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Email OTP Login"],
+        "summary": "Resend email OTP",
+        "parameters": [
+          {
+            "description": "Email",
             "name": "body",
             "in": "body",
             "required": true,
@@ -71,6 +208,108 @@
             "description": "OK",
             "schema": {
               "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/login/email-otp/verify": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Email OTP Login"],
+        "summary": "Verify email OTP",
+        "parameters": [
+          {
+            "description": "Email and OTP",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.ConfirmInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/login/social/{provider}": {
+      "get": {
+        "tags": ["Social Login"],
+        "summary": "Social login redirect",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Provider (google, github)",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/logout": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["Logout"],
+        "summary": "Get logout URL",
+        "responses": {
+          "302": {
+            "description": "Found"
+          }
+        }
+      }
+    },
+    "/logout/callback": {
+      "post": {
+        "produces": ["application/json"],
+        "tags": ["Logout"],
+        "summary": "Handle logout callback",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
               "additionalProperties": {
                 "type": "string"
               }
@@ -79,16 +318,51 @@
         }
       }
     },
+    "/refresh-token": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Token Management"],
+        "summary": "Refresh access token",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/session": {
       "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "produces": ["application/json"],
-        "tags": ["Auth"],
+        "tags": ["Session"],
         "summary": "Get current session",
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/auth.SessionResponse"
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
             }
           }
         }
@@ -98,11 +372,11 @@
       "post": {
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["Auth"],
-        "summary": "Register user",
+        "tags": ["Signup"],
+        "summary": "Register a new user",
         "parameters": [
           {
-            "description": "Register Input",
+            "description": "Signup Data",
             "name": "body",
             "in": "body",
             "required": true,
@@ -117,20 +391,66 @@
             "schema": {
               "$ref": "#/definitions/auth.RegisterOutput"
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
           }
         }
       }
     },
-    "/verify": {
+    "/signup/resend": {
       "post": {
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "tags": ["Auth"],
-        "summary": "Confirm user signup",
+        "tags": ["Signup"],
+        "summary": "Resend signup verification code",
         "parameters": [
           {
-            "description": "Confirm Input",
-            "name": "query",
+            "description": "Email",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.ResendInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/signup/verify": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Signup"],
+        "summary": "Verify signup email",
+        "parameters": [
+          {
+            "description": "Confirmation Code",
+            "name": "body",
             "in": "body",
             "required": true,
             "schema": {
@@ -143,9 +463,13 @@
             "description": "OK",
             "schema": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/auth.ErrorResponse"
             }
           }
         }
@@ -153,35 +477,49 @@
     }
   },
   "definitions": {
-    "auth.AuthSession": {
-      "type": "object",
-      "properties": {
-        "accessToken": {
-          "type": "string"
-        },
-        "challengeName": {
-          "type": "string"
-        },
-        "cognitoSession": {
-          "type": "string"
-        },
-        "createdAt": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "expiresAt": {
-          "type": "string"
-        }
-      }
-    },
     "auth.ConfirmInput": {
       "type": "object",
       "properties": {
         "code": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "message": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.LoginCallbackInput": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "codeVerifier": {
+          "type": "string"
+        }
+      }
+    },
+    "auth.LoginViaEmailInput": {
+      "type": "object",
+      "properties": {
         "email": {
           "type": "string"
         }
@@ -222,15 +560,15 @@
           "type": "string"
         }
       }
-    },
-    "auth.SessionResponse": {
-      "type": "object",
-      "properties": {
-        "session": {
-          "$ref": "#/definitions/auth.AuthSession"
-        },
-        "user": {}
-      }
     }
+  },
+  "securityDefinitions": {
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "externalDocs": {
+    "description": "OpenAPI",
+    "url": "http://localhost:8080/docs/openapi.json"
   }
 }

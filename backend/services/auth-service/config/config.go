@@ -1,6 +1,7 @@
 package config
 
 import (
+	"net/http"
 	"time"
 )
 
@@ -21,6 +22,8 @@ type AppConfig struct {
 	AuthConfig     AuthConfig
 	Cache          CacheConfig
 	Observability  ObservabilityConfig
+	RateLimit      RateLimitConfig
+	CORS           CORSConfig
 }
 
 type DBConfig struct {
@@ -53,34 +56,57 @@ type ObservabilityConfig struct {
 }
 
 type CognitoConfig struct {
-	Region        string
-	ClientID      string
-	ClientSecret  string
-	CallbackURL   string
-	CognitoDomain string
+	Region       string
+	ClientID     string
+	ClientSecret string
+	CallbackURL  string
+	UserPoolId   string
 }
 
 type AuthConfig struct {
-	SignupSessionTTL  time.Duration
-	LoginSessionTTL   time.Duration
-	SessionTTL        time.Duration
-	SessionCookieName string
-	CookieSecret      []byte
+	SignupSessionTTL      time.Duration
+	LoginSessionTTL       time.Duration
+	SessionTTL            time.Duration
+	SessionCookieName     string
+	CookieSecret          []byte
+	CookieDomain          string
+	CookiePath            string
+	CookieMaxAge          int
+	CookieSecure          bool
+	CookieHttpOnly        bool
+	CookieSameSite        http.SameSite
+	OTPRateLimitAttempts  int
+	OTPRateLimitWindow    time.Duration
+	ResendRateLimitWindow time.Duration
+}
+
+type RateLimitConfig struct {
+	Enabled       bool
+	Requests      int
+	WindowSeconds int
+}
+
+type CORSConfig struct {
+	Enabled        bool
+	AllowedOrigins []string
+	AllowedMethods []string
+	AllowedHeaders []string
+	MaxAge         int
 }
 
 func Load() AppConfig {
 	return AppConfig{
-		Env:            Env(getEnv("APP_ENV", string(EnvDev))),
-		ServiceName:    getEnv("SERVICE_NAME", "user-service"),
+		Env:            Env(getEnv("SERVER_ENV", string(EnvDev))),
+		ServiceName:    getEnv("SERVICE_NAME", "auth-service"),
 		ServiceVersion: getEnv("SERVICE_VERSION", "v1"),
-		Addr:           getEnv("ADDR", ":5001"),
+		Addr:           getEnv("SERVER_HOST", "0.0.0.0") + ":" + getEnv("SERVER_PORT", "8080"),
 
 		Cognito: CognitoConfig{
-			Region:        getEnv("COGNITO_REGION", "ap-south-1"),
-			ClientID:      mustEnv("COGNITO_CLIENT_ID"),
-			ClientSecret:  mustEnv("COGNITO_CLIENT_SECRET"),
-			CallbackURL:   getEnv("COGNITO_CALLBACK_URL", "http://localhost:5001/auth/callback"),
-			CognitoDomain: mustEnv("COGNITO_DOMAIN"),
+			Region:       getEnv("COGNITO_REGION", "us-east-1"),
+			ClientID:     getEnv("COGNITO_CLIENT_ID", ""),
+			ClientSecret: getEnv("COGNITO_CLIENT_SECRET", ""),
+			CallbackURL:  getEnv("COGNITO_REDIRECT_URI", "http://localhost:8080/auth/callback"),
+			UserPoolId:   getEnv("COGNITO_USER_POOL_ID", ""),
 		},
 
 		Cache: CacheConfig{
@@ -92,11 +118,34 @@ func Load() AppConfig {
 		},
 
 		AuthConfig: AuthConfig{
-			SignupSessionTTL:  getEnvDuration("SIGNUP_SESSION_TTL", 10*time.Minute),
-			LoginSessionTTL:   getEnvDuration("LOGIN_SESSION_TTL", 10*time.Minute),
-			SessionTTL:        getEnvDuration("SESSION_TTL", 24*time.Hour),
-			SessionCookieName: getEnv("SESSION_COOKIE_NAME", "__session"),
-			CookieSecret:      []byte(mustEnv("COOKIE_SECRET")),
+			SignupSessionTTL:      getEnvDuration("SIGNUP_SESSION_TTL", 10*time.Minute),
+			LoginSessionTTL:       getEnvDuration("LOGIN_SESSION_TTL", 10*time.Minute),
+			SessionTTL:            getEnvDuration("SESSION_TTL", 24*time.Hour),
+			SessionCookieName:     getEnv("SESSION_COOKIE_NAME", "__session"),
+			CookieSecret:          []byte(getEnv("COOKIE_SECRET", "dev-secret-key-change-in-production")),
+			CookieDomain:          getEnv("COOKIE_DOMAIN", ".localhost"),
+			CookiePath:            getEnv("COOKIE_PATH", "/"),
+			CookieMaxAge:          getEnvInt("COOKIE_MAX_AGE", 604800), // 7 days
+			CookieSecure:          getEnvBool("COOKIE_SECURE", false),
+			CookieHttpOnly:        getEnvBool("COOKIE_HTTP_ONLY", true),
+			CookieSameSite:        http.SameSiteLaxMode,
+			OTPRateLimitAttempts:  getEnvInt("OTP_RATE_LIMIT_ATTEMPTS", 5),
+			OTPRateLimitWindow:    getEnvDuration("OTP_RATE_LIMIT_WINDOW_MINUTES", 5*time.Minute),
+			ResendRateLimitWindow: getEnvDuration("RESEND_RATE_LIMIT_WINDOW_MINUTES", 1*time.Minute),
+		},
+
+		RateLimit: RateLimitConfig{
+			Enabled:       getEnvBool("RATE_LIMIT_ENABLED", true),
+			Requests:      getEnvInt("RATE_LIMIT_REQUESTS", 100),
+			WindowSeconds: getEnvInt("RATE_LIMIT_WINDOW_SECONDS", 60),
+		},
+
+		CORS: CORSConfig{
+			Enabled:        getEnvBool("CORS_ENABLED", true),
+			AllowedOrigins: parseStringList(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
+			AllowedMethods: parseStringList(getEnv("CORS_ALLOWED_METHODS", "GET,POST,PUT,DELETE,OPTIONS")),
+			AllowedHeaders: parseStringList(getEnv("CORS_ALLOWED_HEADERS", "Content-Type,Authorization")),
+			MaxAge:         getEnvInt("CORS_MAX_AGE", 3600),
 		},
 
 		Observability: ObservabilityConfig{

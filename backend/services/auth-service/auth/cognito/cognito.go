@@ -26,17 +26,27 @@ type SignUpAttrs struct {
 }
 
 type Service interface {
+	// Email OTP Login
 	InitiateEmailOTPAuth(ctx context.Context, email string) (*cip.InitiateAuthOutput, error)
 	RespondToEmailOTPChallenge(ctx context.Context, email, otp, session string) (*cip.RespondToAuthChallengeOutput, error)
 	ExchangeCodeForTokens(ctx context.Context, code, codeVerifier string) (*ExchangeResult, error)
+	RefreshAccessToken(ctx context.Context, refreshToken string) (*cip.RespondToAuthChallengeOutput, error)
+
+	// Social Login
 	GetOauthLoginURL(provider string) (string, string, error)
 
+	// Sign Up
 	SignUp(ctx context.Context, email string, attrs ...map[string]string) (*cip.SignUpOutput, error)
 	ConfirmSignUp(ctx context.Context, email, code string) (*cip.ConfirmSignUpOutput, error)
 	ResendConfirmationCode(ctx context.Context, email string) (*cip.ResendConfirmationCodeOutput, error)
 
+	// Confirm Email post change email
 	SendEmailVerificationCode(ctx context.Context, accessToken, email string) (*cip.GetUserAttributeVerificationCodeOutput, error)
 	VerifyEmail(ctx context.Context, accessToken, email, code string) (*cip.VerifyUserAttributeOutput, error)
+
+	// JWKS
+	Domain() string
+	JWTIssuer() string
 }
 
 type service struct {
@@ -68,6 +78,14 @@ func (s *service) secretHash(username string) *string {
 
 	hash := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 	return &hash
+}
+
+func (s *service) Domain() string {
+	return fmt.Sprintf("https://%s.auth.%s.amazoncognito.com", s.cfg.UserPoolId, s.cfg.Region)
+}
+
+func (s *service) JWTIssuer() string {
+	return fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", s.cfg.Region, s.cfg.UserPoolId)
 }
 
 func (s *service) InitiateEmailOTPAuth(ctx context.Context, email string) (*cip.InitiateAuthOutput, error) {
@@ -148,7 +166,7 @@ func (s *service) ExchangeCodeForTokens(ctx context.Context, code, codeVerifier 
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		fmt.Sprintf("%s/oauth2/token", s.cfg.CognitoDomain),
+		fmt.Sprintf("%s/oauth2/token", s.Domain()),
 		bytes.NewBufferString(data.Encode()),
 	)
 	if err != nil {
@@ -188,7 +206,7 @@ func (s *service) ExchangeCodeForTokens(ctx context.Context, code, codeVerifier 
 }
 
 func (s *service) GetOauthLoginURL(provider string) (string, string, error) {
-	baseURL := fmt.Sprintf("%s/oauth2/authorize", s.cfg.CognitoDomain)
+	baseURL := fmt.Sprintf("%s/oauth2/authorize", s.Domain())
 
 	u, err := url.Parse(baseURL)
 	if err != nil {
@@ -337,4 +355,27 @@ func (s *service) VerifyEmail(ctx context.Context, accessToken, email, code stri
 	}
 
 	return res, nil
+}
+
+// RefreshAccessToken refreshes the access token using a refresh token
+func (s *service) RefreshAccessToken(ctx context.Context, refreshToken string) (*cip.RespondToAuthChallengeOutput, error) {
+	authParameters := map[string]string{
+		"REFRESH_TOKEN": refreshToken,
+	}
+
+	// Add SECRET_HASH if required
+	if s.cfg.ClientSecret != "" {
+		mac := hmac.New(sha256.New, []byte(s.cfg.ClientSecret))
+		mac.Write([]byte(s.cfg.ClientID))
+		hash := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+		authParameters["SECRET_HASH"] = hash
+	}
+
+	input := &cip.RespondToAuthChallengeInput{
+		ClientId:           aws.String(s.cfg.ClientID),
+		ChallengeName:      types.ChallengeNameType("REFRESH_TOKEN"),
+		ChallengeResponses: authParameters,
+	}
+
+	return s.client.RespondToAuthChallenge(ctx, input)
 }
