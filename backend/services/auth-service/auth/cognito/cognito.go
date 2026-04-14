@@ -45,8 +45,8 @@ type Service interface {
 	VerifyEmail(ctx context.Context, accessToken, email, code string) (*cip.VerifyUserAttributeOutput, error)
 
 	// JWKS
-	JWKSURL() string
 	Domain() string
+	JWTIssuer() string
 }
 
 type service struct {
@@ -84,8 +84,8 @@ func (s *service) Domain() string {
 	return fmt.Sprintf("https://%s.auth.%s.amazoncognito.com", s.cfg.UserPoolId, s.cfg.Region)
 }
 
-func (s *service) JWKSURL() string {
-	return fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", s.cfg.Region, s.cfg.UserPoolId)
+func (s *service) JWTIssuer() string {
+	return fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", s.cfg.Region, s.cfg.UserPoolId)
 }
 
 func (s *service) InitiateEmailOTPAuth(ctx context.Context, email string) (*cip.InitiateAuthOutput, error) {

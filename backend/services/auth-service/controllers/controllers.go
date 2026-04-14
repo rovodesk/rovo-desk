@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -112,6 +113,7 @@ func (c *AuthController) GetSession(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	c.logger.InfoContext(ctx, "GetSession request")
 
+	// TODO: Get Session and Verify Session and return user attributes and session
 	userID := r.Header.Get("X-User-ID")
 	if userID == "" {
 		c.logger.WarnContext(ctx, "GetSession: missing user id")
@@ -183,7 +185,7 @@ func (c *AuthController) StartEmailOTPLogin(w http.ResponseWriter, r *http.Reque
 // @Tags Email OTP Login
 // @Accept json
 // @Produce json
-// @Param body body map[string]string true "Email and OTP"
+// @Param body body auth.ConfirmInput true "Email and OTP"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} auth.ErrorResponse
 // @Failure 401 {object} auth.ErrorResponse
@@ -193,11 +195,7 @@ func (c *AuthController) VerifyEmailOTP(w http.ResponseWriter, r *http.Request) 
 	ctx := r.Context()
 	defer r.Body.Close()
 
-	var input struct {
-		Email string `json:"email"`
-		OTP   string `json:"otp"`
-	}
-
+	var input auth.ConfirmInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		utils.WriteJSON(w, http.StatusBadRequest, map[string]string{
 			"error": "invalid request body",
@@ -205,12 +203,12 @@ func (c *AuthController) VerifyEmailOTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	input.Email = strings.TrimSpace(input.Email)
-	input.OTP = strings.TrimSpace(input.OTP)
+	email := strings.TrimSpace(*input.Email)
+	code := strings.TrimSpace(input.Code)
 
-	c.logger.InfoContext(ctx, "Verifying email OTP", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Verifying email OTP", slog.String("email", email))
 
-	tokenResult, err := c.svc.VerifyEmailOTP(ctx, input.Email, input.OTP)
+	tokenResult, err := c.svc.VerifyEmailOTP(ctx, email, code)
 	if err != nil {
 		c.writeErrorResponse(w, err)
 		return
@@ -231,7 +229,7 @@ func (c *AuthController) VerifyEmailOTP(w http.ResponseWriter, r *http.Request) 
 	// Clear auth_session cookie
 	_ = c.cookieManager.SetCookie(w, "auth_session", "", utils.SessionOnlyCookieOptions())
 
-	c.logger.InfoContext(ctx, "Email OTP verified successfully", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Email OTP verified successfully", slog.String("email", email))
 
 	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
 		"message":    "Login successful",
@@ -305,6 +303,7 @@ func (c *AuthController) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	log.Println("Signup request", input)
 
 	input.Email = strings.TrimSpace(input.Email)
 
@@ -334,11 +333,7 @@ func (c *AuthController) VerifySignup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	defer r.Body.Close()
 
-	var input struct {
-		Email string `json:"email"`
-		Code  string `json:"code"`
-	}
-
+	var input auth.ConfirmInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		utils.WriteJSON(w, http.StatusBadRequest, map[string]string{
 			"error": "invalid request body",
@@ -346,20 +341,20 @@ func (c *AuthController) VerifySignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input.Email = strings.TrimSpace(input.Email)
+	email := strings.TrimSpace(*input.Email)
 	input.Code = strings.TrimSpace(input.Code)
 
-	c.logger.InfoContext(ctx, "Verifying signup", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Verifying signup", slog.String("email", email))
 
-	session, err := c.svc.Confirm(ctx, input.Email, input.Code)
+	session, err := c.svc.Confirm(ctx, email, input.Code)
 	if err != nil {
 		c.writeErrorResponse(w, err)
 		return
 	}
 
-	c.logger.InfoContext(ctx, "Signup verified successfully", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Signup verified successfully", slog.String("email", email))
 
-	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
 		"message": "Email verified successfully",
 		"session": session,
 	})
@@ -474,11 +469,7 @@ func (c *AuthController) VerifyEmailChange(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	defer r.Body.Close()
 
-	var input struct {
-		Email string `json:"email"`
-		Code  string `json:"code"`
-	}
-
+	var input auth.ConfirmInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		utils.WriteJSON(w, http.StatusBadRequest, map[string]string{
 			"error": "invalid request body",
@@ -486,7 +477,7 @@ func (c *AuthController) VerifyEmailChange(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	input.Email = strings.TrimSpace(input.Email)
+	email := strings.TrimSpace(*input.Email)
 	input.Code = strings.TrimSpace(input.Code)
 
 	// Get access token from cookie
@@ -498,15 +489,15 @@ func (c *AuthController) VerifyEmailChange(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	c.logger.InfoContext(ctx, "Verifying email change", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Verifying email change", slog.String("email", email))
 
-	err = c.svc.VerifyEmail(ctx, input.Email, input.Code, accessToken)
+	err = c.svc.VerifyEmail(ctx, email, input.Code, accessToken)
 	if err != nil {
 		c.writeErrorResponse(w, err)
 		return
 	}
 
-	c.logger.InfoContext(ctx, "Email verified successfully", slog.String("email", input.Email))
+	c.logger.InfoContext(ctx, "Email verified successfully", slog.String("email", email))
 
 	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "Email verified successfully",

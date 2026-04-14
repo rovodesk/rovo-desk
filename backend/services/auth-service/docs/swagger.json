@@ -1,13 +1,13 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is  server.",
+    "description": "This server is for authentication and authorization.",
     "title": "Auth Service API",
     "contact": {},
     "version": "1.0"
   },
-  "host": "localhost:5001",
-  "basePath": "/v1",
+  "host": "localhost:8080",
+  "basePath": "/",
   "paths": {
     "/email/verify": {
       "post": {
@@ -239,10 +239,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/auth.ConfirmInput"
             }
           }
         ],
@@ -572,6 +569,6 @@
   },
   "externalDocs": {
     "description": "OpenAPI",
-    "url": "http://localhost:5001/docs/openapi.json"
+    "url": "http://localhost:8080/docs/openapi.json"
   }
 }

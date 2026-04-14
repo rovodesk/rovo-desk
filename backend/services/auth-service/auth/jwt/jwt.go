@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"fmt"
-	"strings"
+	"time"
 
 	"github.com/MicahParks/keyfunc/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -21,28 +21,26 @@ type JwtPayload struct {
 	Raw         map[string]any `json:"-"`
 }
 
-// ----------------------
-// JWKS URL
-// ----------------------
-
-func CreateJWKSURL(domain string) string {
-	if !strings.HasPrefix(domain, "http") {
-		domain = "https://" + domain
-	}
-	return fmt.Sprintf("%s/.well-known/jwks.json", domain)
+func createJWKSURL(issuer string) string {
+	return issuer + "/.well-known/jwks.json"
 }
 
 // ----------------------
 // Verify JWT (like jose.jwtVerify)
 // ----------------------
 
-func VerifyJWTToken(token string, domain, audience, issuer string) (*JwtPayload, error) {
-	if !strings.HasPrefix(domain, "http") {
-		domain = "https://" + domain
+func VerifyJWTToken(issuer, audience, token string) (*JwtPayload, error) {
+	if issuer == "" {
+		return nil, fmt.Errorf("issuer is required")
+	}
+	if token == "" {
+		return nil, fmt.Errorf("token is required")
 	}
 
-	jwksURL := CreateJWKSURL(domain)
+	// Create Remote JWKS
+	jwksURL := createJWKSURL(issuer)
 
+	// Get JWKS from Remote
 	jwks, err := keyfunc.Get(jwksURL, keyfunc.Options{
 		RefreshInterval: 0, // can tune later
 	})
@@ -50,24 +48,24 @@ func VerifyJWTToken(token string, domain, audience, issuer string) (*JwtPayload,
 		return nil, err
 	}
 
+	// Parse JWT Token
 	parsed, err := jwt.Parse(token, jwks.Keyfunc)
 	if err != nil {
 		return nil, err
 	}
 
+	// Validate JWT Token
 	if !parsed.Valid {
 		return nil, fmt.Errorf("invalid token")
 	}
 
+	// Get Claims
 	claimsMap, ok := parsed.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil, fmt.Errorf("invalid claims")
 	}
 
 	// Validate issuer
-	if issuer == "" {
-		issuer = domain
-	}
 	if claimsMap["iss"] != issuer {
 		return nil, fmt.Errorf("invalid issuer")
 	}
@@ -82,6 +80,14 @@ func VerifyJWTToken(token string, domain, audience, issuer string) (*JwtPayload,
 		}
 	}
 
+	// Validate Expiry
+	if exp, ok := claimsMap["exp"].(float64); ok {
+		if exp < float64(time.Now().Add(-5*time.Minute).Unix()) {
+			return nil, fmt.Errorf("token has expired")
+		}
+	}
+
+	// Create Payload
 	payload := &JwtPayload{
 		Raw: map[string]interface{}(claimsMap),
 	}

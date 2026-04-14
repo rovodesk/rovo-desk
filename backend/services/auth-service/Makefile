@@ -1,7 +1,3 @@
-# ============================================================================
-# Production-Grade Authentication Service Makefile with CI/CD Support
-# ============================================================================
-
 # Configuration
 APP_NAME := auth-service
 CMD_PATH := ./cmd
@@ -85,19 +81,18 @@ help:
 .PHONY: run
 run:
 	@echo "$(BLUE)Running $(APP_NAME)...$(NC)"
-	$(GOCMD) run $(CMD_PATH)/main.go
+	$(GOCMD) run $(CMD_PATH)
 
 .PHONY: dev
 dev:
 	@echo "$(BLUE)Running $(APP_NAME) with .env...$(NC)"
 	@if [ -f .env ]; then \
 		echo "$(GREEN)✓ Loading .env$(NC)"; \
-		export $$(cat .env | xargs) && $(GOCMD) run $(CMD_PATH)/main.go; \
+		export $$(grep -v '^#' .env | grep -v '^$$' | xargs) && $(GOCMD) run $(CMD_PATH)/main.go; \
 	else \
 		echo "$(YELLOW)⚠ .env not found, running without it$(NC)"; \
 		$(GOCMD) run $(CMD_PATH)/main.go; \
 	fi
-
 .PHONY: build
 build: clean
 	@echo "$(BLUE)Building $(APP_NAME) (v$(VERSION))...$(NC)"

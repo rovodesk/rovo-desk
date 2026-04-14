@@ -281,10 +281,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/auth.ConfirmInput"
                         }
                     }
                 ],
@@ -652,18 +649,18 @@ const docTemplate = `{
     },
     "externalDocs": {
         "description": "OpenAPI",
-        "url": "http://localhost:5001/docs/openapi.json"
+        "url": "http://localhost:8080/docs/openapi.json"
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:5001",
-	BasePath:         "/v1",
+	Host:             "localhost:8080",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Auth Service API",
-	Description:      "This is  server.",
+	Description:      "This server is for authentication and authorization.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

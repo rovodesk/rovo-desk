@@ -282,10 +282,9 @@ func (s *authService) VerifyEmailOTP(ctx context.Context, email string, otp stri
 
 	idToken := *res.AuthenticationResult.IdToken
 	claims, err := jwt.VerifyJWTToken(
+		s.cognito.JWTIssuer(),     // Iss / JWKS
+		s.config.Cognito.ClientID, // Aud
 		idToken,
-		s.cognito.JWKSURL(),
-		s.config.Cognito.ClientID,
-		s.cognito.Domain(),
 	)
 	if err != nil {
 		s.logger.ErrorContext(ctx, "JWT token verification failed",
@@ -316,6 +315,8 @@ func (s *authService) VerifyEmailOTP(ctx context.Context, email string, otp stri
 		TokenType:    "Bearer",
 	}
 
+	//TODO: Save tokens in cache and return session cookie
+
 	s.logger.InfoContext(ctx, "Email OTP verification successful",
 		slog.String("email", email),
 		slog.Int("expires_in", expiresIn))
@@ -325,6 +326,7 @@ func (s *authService) VerifyEmailOTP(ctx context.Context, email string, otp stri
 
 // RefreshAccessToken refreshes the access token using refresh token
 func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken string) (TokenResult, error) {
+	//TODO: Retrieve refresh token from cache
 	if strings.TrimSpace(refreshToken) == "" {
 		return TokenResult{}, ErrRefreshTokenExpired.WithDetail("reason", "refresh token is required")
 	}

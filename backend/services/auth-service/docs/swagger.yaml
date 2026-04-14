@@ -1,4 +1,4 @@
-basePath: /v1
+basePath: /
 definitions:
   auth.ConfirmInput:
     properties:
@@ -56,11 +56,11 @@ definitions:
     type: object
 externalDocs:
   description: OpenAPI
-  url: http://localhost:5001/docs/openapi.json
-host: localhost:5001
+  url: http://localhost:8080/docs/openapi.json
+host: localhost:8080
 info:
   contact: {}
-  description: This is  server.
+  description: This server is for authentication and authorization.
   title: Auth Service API
   version: "1.0"
 paths:
@@ -233,9 +233,7 @@ paths:
         name: body
         required: true
         schema:
-          additionalProperties:
-            type: string
-          type: object
+          $ref: '#/definitions/auth.ConfirmInput'
       produces:
       - application/json
       responses:
