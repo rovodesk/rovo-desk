@@ -16,3 +16,30 @@
 - organization_deleted
 
 - onboarding_progress
+
+### Infra 
+
+```
+infra/
+├── kubernetes/
+│   ├── base/
+│   │   ├── namespace.yaml
+│   │   ├── ingress.yaml
+│   │   └── configmap.yaml
+│   │
+│   ├── apps/
+│   │   ├── auth-service/
+│   │   ├── user-service/
+│   │   └── analytics-service/
+│   │
+│   └── helm/
+│       ├── charts/
+│       └── values/
+│
+├── ansible/
+│   ├── inventories/
+│   ├── roles/
+│   └── playbooks/
+│
+└── scripts/
+```
