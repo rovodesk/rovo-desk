@@ -24,6 +24,9 @@ const config = defineConfig({
 		strictPort: true,
 		allowedHosts: ["dashboard.zeroheads.local"],
 	},
+	optimizeDeps: {
+		exclude: ["node:crypto"],
+	},
 });
 
 export default config;

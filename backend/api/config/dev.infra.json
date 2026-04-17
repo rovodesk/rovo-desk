@@ -1,0 +1,88 @@
+{
+  "$schema": "https://encore.dev/schemas/infra.schema.json",
+  "metadata": {
+    "app_id": "rovodesk",
+    "env_name": "dev",
+    "env_type": "development",
+    "cloud": "aws",
+    "base_url": "https://dev.rovodesk.app"
+  },
+  "sql_servers": [
+    {
+      "host": "localhost:5432",
+      "databases": {
+        "auth": {
+          "username": "service-auth",
+          "password": { "$env": "DB_PASSWORD" }
+        },
+        "user": {
+          "username": "service-user",
+          "password": { "$env": "DB_PASSWORD" }
+        }
+      }
+    }
+  ],
+  "service_discovery": {
+    "auth": {
+      "base_url": "https://auth.rovodesk.app"
+    },
+    "user": {
+      "base_url": "https://user.rovodesk.app"
+    }
+  },
+  "redis": {
+    "my-redis": {
+      "database_index": 0,
+      "auth": {
+        "type": "acl",
+        "username": "encoreredis",
+        "password": { "$env": "REDIS_PASSWORD" }
+      },
+      "host": "my-redis-host"
+    }
+  },
+  "metrics": {
+    "type": "prometheus",
+    "remote_write_url": "https://my-remote-write-url"
+  },
+  "graceful_shutdown": {
+    "total": 30
+  },
+  "auth": [
+    {
+      "type": "key",
+      "id": 1,
+      "key": { "$env": "SVC_TO_SVC_KEY" }
+    }
+  ],
+  "secrets": {
+    "AppSecret": { "$env": "APP_SECRET" }
+  },
+  "pubsub": [
+    {
+      "type": "aws_sns_sqs",
+      "project_id": "rovodesk",
+      "topics": {
+        "auth-events": {
+          "name": "auth-events",
+          "subscriptions": {
+            "auth-events-subscription": {
+              "name": "auth-events-subscription"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "object_storage": [
+    {
+      "type": "s3",
+      "region": "us-east-1",
+      "buckets": {
+        "images": {
+          "name": "images"
+        }
+      }
+    }
+  ]
+}

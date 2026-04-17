@@ -1,4 +1,4 @@
-import { generateUUID, slugify } from "@zero-heads-lab/shared/lib/utils";
+import { generateUUID, slugify } from "@zero-heads-lab/shared/utils";
 import {
 	createContext,
 	type ReactNode,

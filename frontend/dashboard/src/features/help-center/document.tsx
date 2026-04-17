@@ -1,3 +1,4 @@
+import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useMutation } from "@tanstack/react-query";
 import {
 	type PartialBlock,
@@ -18,7 +19,7 @@ import {
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { toast } from "@zero-heads-lab/design-system/components/ui/toast";
 import { cn } from "@zero-heads-lab/design-system/lib/utils";
-import { Placeholder } from "@zero-heads-lab/shared/lib/utils";
+import { Placeholder } from "@zero-heads-lab/shared/utils";
 import {
 	Calendar,
 	CheckSquare,
@@ -36,6 +37,7 @@ import { useUser } from "@/hooks/use-user";
 import { MainContent } from "@/layout/main-content";
 import { pickUserColor } from "@/lib/utils/pick-color";
 import { ActiveAvatars } from "./_components/active-avatars";
+import { documentCollection } from "./collection";
 
 const useKnowledgeById = (id: string) => {
 	return {
@@ -80,6 +82,12 @@ export function Document({ id }: { id: string }) {
 	const handleOnChange = (content: PartialBlock[]) => {
 		update.mutate({ content });
 	};
+
+	const { data: docs, isError } = useLiveQuery((q) =>
+		q.from({ docs: documentCollection }).where(({ docs }) => eq(docs.id, id))
+	);
+	console.log(docs);
+	console.log(isError);
 
 	// Add to Favourite
 	function handleAddToFavorite() {

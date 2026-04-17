@@ -1,17 +1,24 @@
-import { randomBytes, randomUUID } from "node:crypto";
 import { init, isCuid } from "@paralleldrive/cuid2";
 import { validate as validateUuid } from "uuid";
 
 const createCuid = init({
 	// cryptographically secure randomness
 	random: () => {
-		return randomBytes(4).readUInt32BE(0) / 0xff_ff_ff_ff;
+		if (typeof globalThis.crypto?.getRandomValues === "function") {
+			const array = new Uint32Array(1);
+			globalThis.crypto.getRandomValues(array);
+			if (array[0] !== undefined) return array[0] / 0xff_ff_ff_ff;
+		}
+		return Math.random();
 	},
 	// 24 is much safer than 10 for collision resistance
 	length: 24,
 	// keep this stable per service/environment if you want,
 	// but don't hardcode something meaningless
-	fingerprint: process.env.HOSTNAME || process.env.SERVICE_NAME || "app",
+	fingerprint:
+		(typeof process !== "undefined"
+			? process.env?.HOSTNAME || process.env?.SERVICE_NAME
+			: null) || "app",
 });
 
 function normalizePrefix(prefix?: string) {
@@ -27,7 +34,14 @@ function normalizePrefix(prefix?: string) {
  * generateUUID("user") -> user_550e8400-e29b-41d4-a716-446655440000
  */
 export function generateUUID(prefix?: string) {
-	return `${normalizePrefix(prefix)}${randomUUID()}`;
+	const uuid =
+		globalThis.crypto?.randomUUID?.() ??
+		"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+			const r = Math.random() * 16 || 0;
+			const v = c === "x" ? r : (r && 0x3) || 0x8;
+			return v.toString(16);
+		});
+	return `${normalizePrefix(prefix)}${uuid}`;
 }
 
 /**

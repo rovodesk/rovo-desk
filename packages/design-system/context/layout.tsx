@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from 'react'
-import { getCookie, setCookie } from '@zero-heads-lab/shared/lib/utils'
+import { getCookie, setCookie } from '@zero-heads-lab/shared/utils'
 
 export type Collapsible = "icon" | "none" | "offcanvas"
 export type Variant = 'inset' | 'sidebar' | 'floating'
