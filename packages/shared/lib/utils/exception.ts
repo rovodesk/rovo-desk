@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type { ErrorModel } from "./error.js";
 
 export type ApiExceptionOptions = {
@@ -29,7 +28,10 @@ export class ApiException extends Error {
 		this.statusCode = options.statusCode ?? 500;
 		this.code = options.code;
 		this.context = options.context;
-		this.traceId = options.traceId ?? randomUUID();
+		this.traceId =
+			options.traceId ??
+			globalThis.crypto?.randomUUID?.() ??
+			Math.random().toString(36).substring(2);
 		this.config = options.config;
 		this.user = options.user;
 

@@ -1,6 +1,8 @@
-import type { Message } from "@zero-heads-lab/shared/lib/types";
+import { generateCUID } from "@zero-heads-lab/shared/utils";
 import PartySocket from "partysocket";
 import { useEffect, useRef, useState } from "react";
+
+type Message = any;
 
 type ServerEvent =
 	| { type: "history"; data: Message[] }
@@ -110,7 +112,7 @@ export function useChat({
 	const sendMessage = (text: string) => {
 		if (!socketRef.current) return;
 
-		const tempId = crypto.randomUUID();
+		const tempId = generateCUID();
 
 		const tempMessage: Message = {
 			id: tempId,

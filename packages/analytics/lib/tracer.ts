@@ -40,11 +40,9 @@ export class Tracer implements ITracer {
 
 		return {
 			// Fallback to a random UUID if OTel provider isn't active (common in local Wrangler)
-			traceId: isTraceValid ? sc.traceId : `fb-${crypto.randomUUID()}`,
+			traceId: isTraceValid || sc.traceId,
 			// Fallback to a random 16-char hex for the Span ID
-			spanId: isSpanValid
-				? sc.spanId
-				: Math.random().toString(16).substring(2, 18).padStart(16, "0"),
+			spanId: isSpanValid || sc.spanId,
 		};
 	}
 

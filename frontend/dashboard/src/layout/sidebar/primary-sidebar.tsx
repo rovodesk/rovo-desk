@@ -52,10 +52,10 @@ const primaryNavItems: PrimaryNavItem[] = [
 		path: "/funnels",
 	},
 	{
-		id: "knowledge-base",
+		id: "help-center",
 		icon: IconStack2Filled,
-		label: "Knowledge Base",
-		path: "/knowledge-base",
+		label: "Help Center",
+		path: "/help-center",
 	},
 	{
 		id: "tasks",

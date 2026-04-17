@@ -41,6 +41,5 @@ docker/**/data/*
 
 backend/api-gateway/*
 backend/api-hono/*
-backend/api/*
 .env
 infrastructure

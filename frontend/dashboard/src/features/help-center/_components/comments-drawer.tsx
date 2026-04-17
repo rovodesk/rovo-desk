@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from "@zero-heads-lab/design-system/components/ui/scroll-area";
 import { Separator } from "@zero-heads-lab/design-system/components/ui/separator";
 import { Textarea } from "@zero-heads-lab/design-system/components/ui/textarea";
+import { generateCUID } from "@zero-heads-lab/shared/utils";
 import { formatDistanceToNow } from "date-fns";
 import { MessageCircle, Send } from "lucide-react";
 import { useState } from "react";
@@ -56,7 +57,7 @@ const CommentsDrawer = () => {
 		setIsSubmitting(true);
 
 		const newComment: Comment = {
-			id: crypto.randomUUID(),
+			id: generateCUID(),
 			author: "You",
 			content: message,
 			createdAt: new Date(),

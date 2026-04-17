@@ -1,6 +1,6 @@
 
 import { type Table } from '@tanstack/react-table'
-import { getPageNumbers } from '@zero-heads-lab/shared/lib/utils'
+import { getPageNumbers } from '@zero-heads-lab/shared/utils'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/button'
 import {
@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '../ui/select'
 import { ArrowLeftCircleIcon, ChevronLeftIcon, ChevronRight } from 'lucide-react'
+import { JSX } from 'react'
 
 
 type DataTablePaginationProps<TData> = {
@@ -21,7 +22,7 @@ type DataTablePaginationProps<TData> = {
 export function DataTablePagination<TData>({
   table,
   className,
-}: DataTablePaginationProps<TData>) {
+}: DataTablePaginationProps<TData>): JSX.Element {
   const currentPage = table.getState().pagination.pageIndex + 1
   const totalPages = table.getPageCount()
   const pageNumbers = getPageNumbers(currentPage, totalPages)

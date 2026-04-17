@@ -93,7 +93,7 @@ const documents = [
 	{ id: "15", title: "API Notes", createdAt: new Date("2024-01-11") },
 ];
 
-const route = getRouteApi("/_authenticated/knowledge-base/");
+const route = getRouteApi("/_authenticated/help-center/");
 
 type ViewType = "list" | "card";
 type SortType = "asc" | "desc";
@@ -187,8 +187,8 @@ export function KnowledgeBaseHome() {
 							<Link
 								className="transition-transform hover:-translate-y-1"
 								key={template.id}
-								params={{ knowledgeId: template.id }}
-								to={"/knowledge-base/knowledge/$knowledgeId"}
+								params={{ documentId: template.id }}
+								to={"/help-center/documents/$documentId"}
 							>
 								<TemplateCard {...template} />
 							</Link>
@@ -286,8 +286,8 @@ export function KnowledgeBaseHome() {
 								<Link
 									className="group"
 									key={doc.id}
-									params={{ knowledgeId: doc.id }}
-									to={"/knowledge-base/knowledge/$knowledgeId"}
+									params={{ documentId: doc.id }}
+									to={"/help-center/documents/$documentId"}
 								>
 									<DocCard
 										{...doc}
