@@ -1,0 +1,12 @@
+services:
+  electric:
+    container_name: electric_sync
+    image: electricsql/electric:latest
+    env_file:
+      - .env
+    hostname: electric_sync
+    ports:
+      - 30000:7000
+    volumes:
+      - ./electric-data:/electric
+    restart: unless-stopped

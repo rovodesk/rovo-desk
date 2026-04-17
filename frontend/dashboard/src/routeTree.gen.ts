@@ -20,7 +20,7 @@ import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
-import { Route as AuthenticatedKnowledgeBaseIndexRouteImport } from './routes/_authenticated/knowledge-base/index'
+import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedGetStartedIndexRouteImport } from './routes/_authenticated/get-started/index'
 import { Route as AuthenticatedFunnelsIndexRouteImport } from './routes/_authenticated/funnels/index'
 import { Route as AuthenticatedSettingsWorkspaceRouteImport } from './routes/_authenticated/settings/workspace'
@@ -30,7 +30,7 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsIntegrationsRouteImport } from './routes/_authenticated/settings/integrations'
 import { Route as AuthenticatedSettingsBillingRouteImport } from './routes/_authenticated/settings/billing'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
-import { Route as AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport } from './routes/_authenticated/knowledge-base/knowledge.$knowledgeId'
+import { Route as AuthenticatedHelpCenterDocumentsDocumentIdRouteImport } from './routes/_authenticated/help-center/documents.$documentId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -88,10 +88,10 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedKnowledgeBaseIndexRoute =
-  AuthenticatedKnowledgeBaseIndexRouteImport.update({
-    id: '/knowledge-base/',
-    path: '/knowledge-base/',
+const AuthenticatedHelpCenterIndexRoute =
+  AuthenticatedHelpCenterIndexRouteImport.update({
+    id: '/help-center/',
+    path: '/help-center/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedGetStartedIndexRoute =
@@ -148,10 +148,10 @@ const AuthenticatedSettingsAppearanceRoute =
     path: '/appearance',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute =
-  AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport.update({
-    id: '/knowledge-base/knowledge/$knowledgeId',
-    path: '/knowledge-base/knowledge/$knowledgeId',
+const AuthenticatedHelpCenterDocumentsDocumentIdRoute =
+  AuthenticatedHelpCenterDocumentsDocumentIdRouteImport.update({
+    id: '/help-center/documents/$documentId',
+    path: '/help-center/documents/$documentId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -174,9 +174,9 @@ export interface FileRoutesByFullPath {
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/get-started/': typeof AuthenticatedGetStartedIndexRoute
-  '/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
+  '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
+  '/help-center/documents/$documentId': typeof AuthenticatedHelpCenterDocumentsDocumentIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
@@ -196,9 +196,9 @@ export interface FileRoutesByTo {
   '/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/funnels': typeof AuthenticatedFunnelsIndexRoute
   '/get-started': typeof AuthenticatedGetStartedIndexRoute
-  '/knowledge-base': typeof AuthenticatedKnowledgeBaseIndexRoute
+  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
-  '/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
+  '/help-center/documents/$documentId': typeof AuthenticatedHelpCenterDocumentsDocumentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -221,9 +221,9 @@ export interface FileRoutesById {
   '/_authenticated/settings/workspace': typeof AuthenticatedSettingsWorkspaceRoute
   '/_authenticated/funnels/': typeof AuthenticatedFunnelsIndexRoute
   '/_authenticated/get-started/': typeof AuthenticatedGetStartedIndexRoute
-  '/_authenticated/knowledge-base/': typeof AuthenticatedKnowledgeBaseIndexRoute
+  '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/_authenticated/knowledge-base/knowledge/$knowledgeId': typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
+  '/_authenticated/help-center/documents/$documentId': typeof AuthenticatedHelpCenterDocumentsDocumentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -246,9 +246,9 @@ export interface FileRouteTypes {
     | '/settings/workspace'
     | '/funnels/'
     | '/get-started/'
-    | '/knowledge-base/'
+    | '/help-center/'
     | '/settings/'
-    | '/knowledge-base/knowledge/$knowledgeId'
+    | '/help-center/documents/$documentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -268,9 +268,9 @@ export interface FileRouteTypes {
     | '/settings/workspace'
     | '/funnels'
     | '/get-started'
-    | '/knowledge-base'
+    | '/help-center'
     | '/settings'
-    | '/knowledge-base/knowledge/$knowledgeId'
+    | '/help-center/documents/$documentId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -292,9 +292,9 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/workspace'
     | '/_authenticated/funnels/'
     | '/_authenticated/get-started/'
-    | '/_authenticated/knowledge-base/'
+    | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
-    | '/_authenticated/knowledge-base/knowledge/$knowledgeId'
+    | '/_authenticated/help-center/documents/$documentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -385,11 +385,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/knowledge-base/': {
-      id: '/_authenticated/knowledge-base/'
-      path: '/knowledge-base'
-      fullPath: '/knowledge-base/'
-      preLoaderRoute: typeof AuthenticatedKnowledgeBaseIndexRouteImport
+    '/_authenticated/help-center/': {
+      id: '/_authenticated/help-center/'
+      path: '/help-center'
+      fullPath: '/help-center/'
+      preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/get-started/': {
@@ -455,11 +455,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/knowledge-base/knowledge/$knowledgeId': {
-      id: '/_authenticated/knowledge-base/knowledge/$knowledgeId'
-      path: '/knowledge-base/knowledge/$knowledgeId'
-      fullPath: '/knowledge-base/knowledge/$knowledgeId'
-      preLoaderRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRouteImport
+    '/_authenticated/help-center/documents/$documentId': {
+      id: '/_authenticated/help-center/documents/$documentId'
+      path: '/help-center/documents/$documentId'
+      fullPath: '/help-center/documents/$documentId'
+      preLoaderRoute: typeof AuthenticatedHelpCenterDocumentsDocumentIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -502,8 +502,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedFunnelsIndexRoute: typeof AuthenticatedFunnelsIndexRoute
   AuthenticatedGetStartedIndexRoute: typeof AuthenticatedGetStartedIndexRoute
-  AuthenticatedKnowledgeBaseIndexRoute: typeof AuthenticatedKnowledgeBaseIndexRoute
-  AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute: typeof AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute
+  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedHelpCenterDocumentsDocumentIdRoute: typeof AuthenticatedHelpCenterDocumentsDocumentIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -513,9 +513,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedFunnelsIndexRoute: AuthenticatedFunnelsIndexRoute,
   AuthenticatedGetStartedIndexRoute: AuthenticatedGetStartedIndexRoute,
-  AuthenticatedKnowledgeBaseIndexRoute: AuthenticatedKnowledgeBaseIndexRoute,
-  AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute:
-    AuthenticatedKnowledgeBaseKnowledgeKnowledgeIdRoute,
+  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedHelpCenterDocumentsDocumentIdRoute:
+    AuthenticatedHelpCenterDocumentsDocumentIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

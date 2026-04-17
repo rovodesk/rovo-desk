@@ -1,6 +1,7 @@
-import type { Message } from "@zero-heads-lab/shared/lib/types";
+// import type { Message } from "@zero-heads-lab/shared/types";
 import type { StateUpdater, WidgetState } from "../types";
 
+type Message = any;
 export type MessageType =
 	| "ai"
 	| "user"

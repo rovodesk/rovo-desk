@@ -1,3 +1,4 @@
+import { generateCUID } from "@zero-heads-lab/shared/utils";
 import type { ChatbotEngine } from "../core/engine";
 import type { Message } from "../core/message-parser";
 import type { BotState, View } from "../types";
@@ -396,7 +397,7 @@ const createForm = (engine: ChatbotEngine<BotState>): HTMLElement => {
 		inputWrapper.style.boxShadow = "none";
 	};
 
-	const userId = crypto.randomUUID();
+	const userId = generateCUID("user");
 
 	// ===== Submit Logic =====
 	form.onsubmit = async (e) => {

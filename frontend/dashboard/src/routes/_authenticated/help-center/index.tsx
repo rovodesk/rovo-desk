@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { KnowledgeBaseHome } from "@/features/knowledge-base";
+import { KnowledgeBaseHome } from "@/features/help-center";
 
-export const Route = createFileRoute("/_authenticated/knowledge-base/")({
+export const Route = createFileRoute("/_authenticated/help-center/")({
 	component: KnowledgeBaseHome,
 	validateSearch: z.object({
 		filter: z.string().optional(),
@@ -10,7 +10,4 @@ export const Route = createFileRoute("/_authenticated/knowledge-base/")({
 		view: z.enum(["list", "card"]).default("card"),
 		sort: z.enum(["asc", "desc"]).default("desc"),
 	}),
-	staticData: {
-		breadcrumb: () => "Knowledge Base",
-	},
 });

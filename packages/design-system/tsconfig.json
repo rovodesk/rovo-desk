@@ -2,10 +2,6 @@
   "extends": "@zero-heads-lab/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@zero-heads-lab/*": ["../*"],
-      "@zero-heads-lab/design-system/*": ["./*"]
-    },
     "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx", "layout/main-content.tsx", "layout/header.tsx", "layout/app-title.tsx", "../../apps/dashboard/src/components/command-menu.tsx", "../../apps/dashboard/src/components/search.tsx"],
